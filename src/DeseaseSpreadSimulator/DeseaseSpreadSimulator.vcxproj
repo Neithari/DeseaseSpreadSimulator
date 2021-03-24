@@ -22,8 +22,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3bda9214-8cf4-48af-a87b-f6169cf123ab}</ProjectGuid>
-    <RootNamespace>DeseaseSpreadSimulation</RootNamespace>
+    <ProjectGuid>{6b355e10-96dc-49c1-9d47-273f4378eb05}</ProjectGuid>
+    <RootNamespace>DeseaseSpreadSimulator</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
