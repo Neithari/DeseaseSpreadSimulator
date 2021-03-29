@@ -1,0 +1,76 @@
+#include "pch.h"
+#include "Desease/DeseaseBuilder.h"
+const Desease& DeseaseBuilder::CreateCorona()
+{
+	SetDeseaseName("COVID-19");
+	SetIncubationPeriod(6);
+	SetDaysContagious(8);
+	SetDeseaseDuration(14, 42);
+	SetMortalityByAge({ 0.0f, 0.14f, 0.12f, 0.2f, 0.38f, 0.98f, 2.98f, 7.94f, 17.34f });
+	SetDaysTillDeath(14, 56);
+
+	return CreateDesease();
+}
+
+void DeseaseBuilder::SetDeseaseName(const std::string name)
+{
+	setupDone[0] = true;
+
+	this->name = name;
+}
+
+void DeseaseBuilder::SetIncubationPeriod(const int period)
+{
+	setupDone[1] = true;
+
+	incubationPeriod = period;
+}
+
+void DeseaseBuilder::SetDaysContagious(const int days)
+{
+	setupDone[2] = true;
+
+	daysContagious = days;
+}
+
+void DeseaseBuilder::SetDeseaseDuration(const int min, const int max)
+{
+	setupDone[3] = true;
+
+	deseaseDurationRange = { min, max };
+}
+
+void DeseaseBuilder::SetMortalityByAge(const std::vector<float>& mortality)
+{
+	setupDone[4] = true;
+
+	mortalityByAge = mortality;
+}
+
+void DeseaseBuilder::SetMortalityByAge(std::vector<float>&& mortality)
+{
+	setupDone[4] = true;
+
+	mortalityByAge = std::move(mortality);
+}
+
+void DeseaseBuilder::SetDaysTillDeath(const int min, const int max)
+{
+	setupDone[5] = true;
+
+	daysTillDeathRange = { min, max };
+}
+
+const Desease& DeseaseBuilder::CreateDesease()
+{
+	for (bool& setup : setupDone)
+	{
+		// will throw if you didn't setup everything befor trying to create the desease
+		if (!setup)
+		{
+			throw std::logic_error("Complete setup to create a desease!");
+		}
+	}
+
+	return deseases.emplace_back(name, incubationPeriod, daysContagious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+}
