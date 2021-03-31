@@ -24,6 +24,9 @@ public:
 	const Desease& CreateDesease();
 
 	void SaveDeseaseToFile(std::string fileName) const;
+
+private:
+	static unsigned int GetID();
 	
 private:
 	std::string name = "";
@@ -32,7 +35,6 @@ private:
 	std::pair<int, int> deseaseDurationRange{ 0,0 };
 	std::vector<float> mortalityByAge = {};
 	std::pair<int, int> daysTillDeathRange{ 0,0 };
-	static unsigned int nextID = 0;
 	// for setup
 	bool setupDone[6] = {};
 
