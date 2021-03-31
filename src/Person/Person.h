@@ -9,16 +9,16 @@ public:
 	void Update();
 
 	void Contact(Person& other);
-	const std::string GetDeseaseName() const;
+	std::string GetDeseaseName() const;
 	void Contaminate(const Desease* infection);
 	// advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 	void AdvanceDay();
 
-	const bool isReceptible() const;
-	const bool isContagious() const;
-	const bool isQuarantined() const;
-	const bool isAlive() const;
-	const bool hasDesease(const std::string& deseaseName) const;
+	bool isReceptible() const;
+	bool isContagious() const;
+	bool isQuarantined() const;
+	bool isAlive() const;
+	bool hasDesease(const std::string& deseaseName) const;
 
 private:
 	void Move();

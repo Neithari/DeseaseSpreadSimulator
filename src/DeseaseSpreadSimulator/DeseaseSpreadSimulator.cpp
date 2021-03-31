@@ -5,7 +5,9 @@
 
 int main()
 {	
-	System::Instance().Run();
+	System simulation;
+
+	simulation.Run();
 
 	return 0;
 }

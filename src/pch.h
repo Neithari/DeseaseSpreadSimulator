@@ -18,18 +18,13 @@
 #include <stdexcept>
 #include <random>
 #include <algorithm>
+#include <utility>
 
 // Data structures
 #include <string>
 #include <vector>
 #include <thread>
 #include <coroutine>
-
-// SFML
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
 
 #ifdef _MSC_VER
 #pragma warning(pop)			// Restore warning levels for our code

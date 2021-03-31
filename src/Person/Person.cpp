@@ -4,7 +4,7 @@
 Person::Person(unsigned int age, std::pair<float, float> position)
 	:
 	age(age),
-	position(position)
+	position(std::move(position))
 {
 }
 
@@ -13,7 +13,7 @@ void Person::Update()
 	// move person
 	Move();
 	//  if we have a desease...
-	if (desease)
+	if (desease != nullptr)
 	{
 		// ...advance day
 		AdvanceDay();
@@ -24,6 +24,8 @@ void Person::Update()
 
 void Person::Contact(Person& other)
 {
+	/// TODO: Should be possible to only alter myself and take other as const
+
 	// if the other person is contagious and I have no desease, now I have
 	if (other.contagious && desease == nullptr)
 	{
@@ -38,9 +40,9 @@ void Person::Contact(Person& other)
 	}
 }
 
-const std::string Person::GetDeseaseName() const
+std::string Person::GetDeseaseName() const
 {
-	if (desease)
+	if (desease != nullptr)
 	{
 		return desease->GetDeseaseName();
 	}
@@ -62,29 +64,29 @@ void Person::Contaminate(const Desease* infection)
 	}
 }
 
-const bool Person::isReceptible() const
+bool Person::isReceptible() const
 {
 	return receptible;
 }
 
-const bool Person::isContagious() const
+bool Person::isContagious() const
 {
 	return contagious;
 }
 
-const bool Person::isQuarantined() const
+bool Person::isQuarantined() const
 {
 	return quarantined;
 }
 
-const bool Person::isAlive() const
+bool Person::isAlive() const
 {
 	return alive;
 }
 
-const bool Person::hasDesease(const std::string& deseaseName) const
+bool Person::hasDesease(const std::string& deseaseName) const
 {
-	if (!desease)
+	if (desease == nullptr)
 	{
 		return false;
 	}
@@ -94,7 +96,7 @@ const bool Person::hasDesease(const std::string& deseaseName) const
 
 void Person::DeseaseCheck()
 {
-	if (desease)
+	if (desease != nullptr)
 	{
 		if (!contagious)
 		{
@@ -128,7 +130,7 @@ void Person::Move()
 
 void Person::AdvanceDay()
 {
-	if (desease)
+	if (desease != nullptr)
 	{
 		if (!contagious && daysTillOutbreak > 0)
 		{

@@ -11,13 +11,12 @@ public:
 	const Desease& CreateCorona();
 
 	// desease setup functions
-	void SetDeseaseName(const std::string name);
+	void SetDeseaseName(std::string name);
 	void SetIncubationPeriod(const int period);
 	void SetDaysContagious(const int days);
 	void SetDeseaseDuration(const int min, const int max);
 	// data in % between 0-1 and for age groups of 10 years, eg. 0-9,10-19,...,80+
-	void SetMortalityByAge(const std::vector<float>& mortality);
-	void SetMortalityByAge(std::vector<float>&& mortality);
+	void SetMortalityByAge(std::vector<float> mortality);
 	void SetDaysTillDeath(const int min, const int max);
 
 	const Desease& CreateDeseaseFromFile(std::string fileName);
@@ -33,6 +32,7 @@ private:
 	std::pair<int, int> deseaseDurationRange{ 0,0 };
 	std::vector<float> mortalityByAge = {};
 	std::pair<int, int> daysTillDeathRange{ 0,0 };
+	static unsigned int nextID = 0;
 	// for setup
 	bool setupDone[6] = {};
 

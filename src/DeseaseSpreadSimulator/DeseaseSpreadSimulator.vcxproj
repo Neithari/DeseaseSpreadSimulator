@@ -80,7 +80,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -llvmlibc-implementation-in-namespace*, -modernize-use-trailing-return-type*, -llvmlibc-callee-namespace*</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -96,7 +96,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -llvmlibc-implementation-in-namespace*, -modernize-use-trailing-return-type*, -llvmlibc-callee-namespace*</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

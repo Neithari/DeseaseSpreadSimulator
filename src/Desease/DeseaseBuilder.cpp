@@ -12,11 +12,11 @@ const Desease& DeseaseBuilder::CreateCorona()
 	return CreateDesease();
 }
 
-void DeseaseBuilder::SetDeseaseName(const std::string deseaseName)
+void DeseaseBuilder::SetDeseaseName(std::string deseaseName)
 {
 	setupDone[0] = true;
 
-	name = deseaseName;
+	name = std::move(deseaseName);
 }
 
 void DeseaseBuilder::SetIncubationPeriod(const int period)
@@ -40,14 +40,7 @@ void DeseaseBuilder::SetDeseaseDuration(const int min, const int max)
 	deseaseDurationRange = { min, max };
 }
 
-void DeseaseBuilder::SetMortalityByAge(const std::vector<float>& mortality)
-{
-	setupDone[4] = true;
-
-	mortalityByAge = mortality;
-}
-
-void DeseaseBuilder::SetMortalityByAge(std::vector<float>&& mortality)
+void DeseaseBuilder::SetMortalityByAge(std::vector<float> mortality)
 {
 	setupDone[4] = true;
 
@@ -72,5 +65,11 @@ const Desease& DeseaseBuilder::CreateDesease()
 		}
 	}
 
-	return deseases.emplace_back(name, incubationPeriod, daysContagious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+	return deseases.emplace_back(name, GetID(), incubationPeriod, daysContagious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+}
+
+unsigned int DeseaseBuilder::GetID()
+{
+	static unsigned int id = 0;
+	return id++;
 }
