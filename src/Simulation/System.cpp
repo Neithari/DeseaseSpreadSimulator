@@ -61,7 +61,7 @@ void System::HandleSFEvents()
 
 void System::Update()
 {
-	human.Update(0.005f);
+	human.Update();
 }
 
 void System::Render()
@@ -71,7 +71,6 @@ void System::Render()
 
 	// render everything
 	/// Test shape
-	human.Render(window);
 
 
 	// Display rendered items

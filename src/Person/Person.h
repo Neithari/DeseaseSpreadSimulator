@@ -1,42 +1,45 @@
 #pragma once
 #include "Desease\Desease.h"
-#include <SFML/Graphics.hpp>
 
 class Person
 {
 public:
-	Person(unsigned int age, sf::Vector2f position);
+	Person(unsigned int age, std::pair<float, float> position);
 
-	void Update(const float deltaAdvanceTime);
-	void Render(sf::RenderTarget& target) const;
+	void Update();
 
 	void Contact(Person& other);
 	const std::string GetDeseaseName() const;
 	void Contaminate(const Desease* infection);
+	// advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
+	void AdvanceDay();
 
+	const bool isReceptible() const;
 	const bool isContagious() const;
+	const bool isQuarantined() const;
+	const bool isAlive() const;
+	const bool hasDesease(const std::string& deseaseName) const;
 
 private:
 	void Move();
-	// advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
-	void AdvanceDay(const float deltaAdvanceTime);
 	void DeseaseCheck();
 
 private:
 	unsigned int age;
+	std::pair<float, float> position;
+
+	bool receptible = false;
 	bool contagious = false;
+	bool quarantined = false;
 	unsigned int spreadCount = 0;
 
+	// Desease Stuff
 	const Desease* desease = nullptr;
-	float daysTillOutbreak = 0.0f;
-	float daysContagious = 0.0f;
-	float daysTillCured = 0.0f;
+	unsigned int daysTillOutbreak = 0;
+	unsigned int daysContagious = 0;
+	unsigned int daysTillCured = 0;
 
-	float daysToLive = 0.0f;
+	bool alive = true;
+	unsigned int daysToLive = 0;
 	bool willDie = false;
-
-	// for render
-	sf::CircleShape shape{ 10.0f };
-	sf::Vector2f speed{ .02f, .01f };
-	float dayOver = 1.0f;
 };

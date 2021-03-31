@@ -12,11 +12,11 @@ const Desease& DeseaseBuilder::CreateCorona()
 	return CreateDesease();
 }
 
-void DeseaseBuilder::SetDeseaseName(const std::string name)
+void DeseaseBuilder::SetDeseaseName(const std::string deseaseName)
 {
 	setupDone[0] = true;
 
-	this->name = name;
+	name = deseaseName;
 }
 
 void DeseaseBuilder::SetIncubationPeriod(const int period)

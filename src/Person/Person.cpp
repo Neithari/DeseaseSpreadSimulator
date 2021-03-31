@@ -1,15 +1,14 @@
 #include "pch.h"
 #include "Person\Person.h"
 
-Person::Person(unsigned int age, sf::Vector2f position)
+Person::Person(unsigned int age, std::pair<float, float> position)
 	:
-	age(age)
+	age(age),
+	position(position)
 {
-	shape.setFillColor(sf::Color::Green);
-	shape.setPosition(position);
 }
 
-void Person::Update(const float deltaAdvanceTime)
+void Person::Update()
 {
 	// move person
 	Move();
@@ -17,15 +16,10 @@ void Person::Update(const float deltaAdvanceTime)
 	if (desease)
 	{
 		// ...advance day
-		AdvanceDay(deltaAdvanceTime);
+		AdvanceDay();
 		// ...desease check
 		DeseaseCheck();
 	}
-}
-
-void Person::Render(sf::RenderTarget& target) const
-{
-	target.draw(shape);
 }
 
 void Person::Contact(Person& other)
@@ -50,30 +44,52 @@ const std::string Person::GetDeseaseName() const
 	{
 		return desease->GetDeseaseName();
 	}
-	return std::string();
+	return "";
 }
 
 void Person::Contaminate(const Desease* infection)
 {
 	desease = infection;
 	
-	daysTillOutbreak = (float)desease->IncubationPeriod();
-	daysContagious = (float)desease->DaysContagious();
-	daysTillCured = (float)desease->GetDeseaseDuration();
+	daysTillOutbreak = desease->IncubationPeriod();
+	daysContagious = desease->DaysContagious();
+	daysTillCured = desease->GetDeseaseDuration();
 	// check if the person will die from the infection
 	if (desease->isFatal(age))
 	{
 		willDie = true;
-		daysToLive = (float)desease->DaysTillDeath();
+		daysToLive = desease->DaysTillDeath();
 	}
+}
 
-	// set shape color to represent an infection
-	shape.setFillColor(sf::Color::Cyan);
+const bool Person::isReceptible() const
+{
+	return receptible;
 }
 
 const bool Person::isContagious() const
 {
 	return contagious;
+}
+
+const bool Person::isQuarantined() const
+{
+	return quarantined;
+}
+
+const bool Person::isAlive() const
+{
+	return alive;
+}
+
+const bool Person::hasDesease(const std::string& deseaseName) const
+{
+	if (!desease)
+	{
+		return false;
+	}
+	return desease->GetDeseaseName() == deseaseName;
+	
 }
 
 void Person::DeseaseCheck()
@@ -83,61 +99,52 @@ void Person::DeseaseCheck()
 		if (!contagious)
 		{
 			// if daysContagious is 0 person had the desease already but is not fully cured
-			if (daysTillOutbreak <= 0 && daysContagious > 0)
+			if (daysTillOutbreak == 0 && daysContagious > 0)
 			{
 				// person is contagious when it has a desease and daysTillOutbreak reached 0
 				contagious = true;
-
-				// set shape color to represent contagious
-				shape.setFillColor(sf::Color::Red);
 			}
 		}
 		else
 		{
-			if (daysContagious <= 0)
+			if (daysContagious == 0)
 			{
 				contagious = false;
-
-				// set shape color to represent an infection
-				shape.setFillColor(sf::Color::Cyan);
 			}
 		}
-		if (daysTillCured <= 0)
+		if (daysTillCured == 0)
 		{
 			contagious = false;
 			willDie = false;
 			desease = nullptr;
-
-			// set shape color to represent being cured
-			shape.setFillColor(sf::Color::Blue);
 		}
 	}
 }
 
 void Person::Move()
 {
-	shape.move(speed);
+	/// TODO: implement move function
 }
 
-void Person::AdvanceDay(const float deltaAdvanceTime)
+void Person::AdvanceDay()
 {
 	if (desease)
 	{
-		if (!contagious && daysTillOutbreak > 0.0f)
+		if (!contagious && daysTillOutbreak > 0)
 		{
-			daysTillOutbreak -= deltaAdvanceTime;
+			daysTillOutbreak--;
 		}
-		else if (daysContagious > 0.0f)
+		else if (daysContagious > 0)
 		{
-			daysContagious -= deltaAdvanceTime;
+			daysContagious--;
 		}
-		if (daysTillCured > 0.0f)
+		if (daysTillCured > 0)
 		{
-			daysTillCured -= deltaAdvanceTime;
+			daysTillCured--;
 		}
 		if (willDie)
 		{
-			daysToLive -= deltaAdvanceTime;
+			daysToLive--;
 		}
 	}
 }
