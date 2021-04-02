@@ -1,45 +1,47 @@
 #pragma once
-#include "Desease\Desease.h"
 
-class Person
+namespace DeseaseSpreadSimulation
 {
-public:
-	Person(unsigned int age, std::pair<float, float> position);
+	class Person
+	{
+	public:
+		Person(unsigned int age, std::pair<float, float> position);
 
-	void Update();
+		void Update();
 
-	void Contact(Person& other);
-	std::string GetDeseaseName() const;
-	void Contaminate(const Desease* infection);
-	// advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
-	void AdvanceDay();
+		void Contact(Person& other);
+		std::string GetDeseaseName() const;
+		void Contaminate(const Desease* infection);
+		// advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
+		void AdvanceDay();
 
-	bool isReceptible() const;
-	bool isContagious() const;
-	bool isQuarantined() const;
-	bool isAlive() const;
-	bool hasDesease(const std::string& deseaseName) const;
+		bool isReceptible() const;
+		bool isContagious() const;
+		bool isQuarantined() const;
+		bool isAlive() const;
+		bool hasDesease(const std::string& deseaseName) const;
 
-private:
-	void Move();
-	void DeseaseCheck();
+	private:
+		void Move();
+		void DeseaseCheck();
 
-private:
-	unsigned int age;
-	std::pair<float, float> position;
+	private:
+		unsigned int age;
+		std::pair<float, float> position;
 
-	bool receptible = false;
-	bool contagious = false;
-	bool quarantined = false;
-	unsigned int spreadCount = 0;
+		bool receptible = false;
+		bool contagious = false;
+		bool quarantined = false;
+		unsigned int spreadCount = 0;
 
-	// Desease Stuff
-	const Desease* desease = nullptr;
-	unsigned int daysTillOutbreak = 0;
-	unsigned int daysContagious = 0;
-	unsigned int daysTillCured = 0;
+		// Desease Stuff
+		const Desease* desease = nullptr;
+		unsigned int daysTillOutbreak = 0;
+		unsigned int daysContagious = 0;
+		unsigned int daysTillCured = 0;
 
-	bool alive = true;
-	unsigned int daysToLive = 0;
-	bool willDie = false;
-};
+		bool alive = true;
+		unsigned int daysToLive = 0;
+		bool willDie = false;
+	};
+}

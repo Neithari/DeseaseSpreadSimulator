@@ -16,7 +16,7 @@ private: // Private functions go in here
 
 private: // Private variables go in here
 	/// Test
-	Person human{ 10,{30.f,30.f} };
-	DeseaseBuilder deseases;
+	DeseaseSpreadSimulation::Person human{ 10,{30.f,30.f} };
+	DeseaseSpreadSimulation::DeseaseBuilder deseases;
 	/// /Test
 };

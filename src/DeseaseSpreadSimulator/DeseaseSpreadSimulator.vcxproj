@@ -80,7 +80,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -llvmlibc-implementation-in-namespace*, -modernize-use-trailing-return-type*, -llvmlibc-callee-namespace*</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -88,7 +88,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -96,7 +96,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -llvmlibc-implementation-in-namespace*, -modernize-use-trailing-return-type*, -llvmlibc-callee-namespace*</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -104,7 +104,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -235,6 +235,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Simulation\Simulation.cpp" />
     <ClCompile Include="..\Simulation\System.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -271,6 +272,7 @@
     <ClInclude Include="..\Desease\DeseaseBuilder.h" />
     <ClInclude Include="..\pch.h" />
     <ClInclude Include="..\Person\Person.h" />
+    <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\System.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />
   </ItemGroup>

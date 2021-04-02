@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "Person\Person.h"
 
-Person::Person(unsigned int age, std::pair<float, float> position)
+DeseaseSpreadSimulation::Person::Person(unsigned int age, std::pair<float, float> position)
 	:
 	age(age),
 	position(std::move(position))
 {
 }
 
-void Person::Update()
+void DeseaseSpreadSimulation::Person::Update()
 {
 	// move person
 	Move();
@@ -22,7 +22,7 @@ void Person::Update()
 	}
 }
 
-void Person::Contact(Person& other)
+void DeseaseSpreadSimulation::Person::Contact(Person& other)
 {
 	/// TODO: Should be possible to only alter myself and take other as const
 
@@ -40,7 +40,7 @@ void Person::Contact(Person& other)
 	}
 }
 
-std::string Person::GetDeseaseName() const
+std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 {
 	if (desease != nullptr)
 	{
@@ -49,7 +49,7 @@ std::string Person::GetDeseaseName() const
 	return "";
 }
 
-void Person::Contaminate(const Desease* infection)
+void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 {
 	desease = infection;
 	
@@ -64,27 +64,27 @@ void Person::Contaminate(const Desease* infection)
 	}
 }
 
-bool Person::isReceptible() const
+bool DeseaseSpreadSimulation::Person::isReceptible() const
 {
 	return receptible;
 }
 
-bool Person::isContagious() const
+bool DeseaseSpreadSimulation::Person::isContagious() const
 {
 	return contagious;
 }
 
-bool Person::isQuarantined() const
+bool DeseaseSpreadSimulation::Person::isQuarantined() const
 {
 	return quarantined;
 }
 
-bool Person::isAlive() const
+bool DeseaseSpreadSimulation::Person::isAlive() const
 {
 	return alive;
 }
 
-bool Person::hasDesease(const std::string& deseaseName) const
+bool DeseaseSpreadSimulation::Person::hasDesease(const std::string& deseaseName) const
 {
 	if (desease == nullptr)
 	{
@@ -94,7 +94,7 @@ bool Person::hasDesease(const std::string& deseaseName) const
 	
 }
 
-void Person::DeseaseCheck()
+void DeseaseSpreadSimulation::Person::DeseaseCheck()
 {
 	if (desease != nullptr)
 	{
@@ -123,12 +123,12 @@ void Person::DeseaseCheck()
 	}
 }
 
-void Person::Move()
+void DeseaseSpreadSimulation::Person::Move()
 {
 	/// TODO: implement move function
 }
 
-void Person::AdvanceDay()
+void DeseaseSpreadSimulation::Person::AdvanceDay()
 {
 	if (desease != nullptr)
 	{

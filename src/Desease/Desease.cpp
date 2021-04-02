@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Desease\Desease.h"
 
-Desease::Desease(std::string name, const int id, const int incubationPeriod, const int daysContagious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
+DeseaseSpreadSimulation::Desease::Desease(std::string name, const int id, const int incubationPeriod, const int daysContagious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
 	:
 	name(std::move(name)),
 	id(id),
@@ -13,22 +13,22 @@ Desease::Desease(std::string name, const int id, const int incubationPeriod, con
 {
 }
 
-const std::string& Desease::GetDeseaseName() const
+const std::string& DeseaseSpreadSimulation::Desease::GetDeseaseName() const
 {
 	return name;
 }
 
-int Desease::IncubationPeriod() const
+int DeseaseSpreadSimulation::Desease::IncubationPeriod() const
 {
 	return incubationPeriod;
 }
 
-int Desease::DaysContagious() const
+int DeseaseSpreadSimulation::Desease::DaysContagious() const
 {
 	return daysContagious;
 }
 
-float Desease::GetMortalityByAge(const unsigned int age) const
+float DeseaseSpreadSimulation::Desease::GetMortalityByAge(const unsigned int age) const
 {
 	if (age < 10)
 	{
@@ -66,7 +66,7 @@ float Desease::GetMortalityByAge(const unsigned int age) const
 	return mortalityByAge.at(8);
 }
 
-int Desease::GetDeseaseDuration() const
+int DeseaseSpreadSimulation::Desease::GetDeseaseDuration() const
 {
 	std::random_device seed;
 	std::mt19937 randomNumberGenerator(seed());
@@ -76,7 +76,7 @@ int Desease::GetDeseaseDuration() const
 	return deseaseDistribution(randomNumberGenerator);
 }
 
-int Desease::DaysTillDeath() const
+int DeseaseSpreadSimulation::Desease::DaysTillDeath() const
 {
 	std::random_device seed;
 	std::mt19937 randomNumberGenerator(seed());
@@ -86,17 +86,17 @@ int Desease::DaysTillDeath() const
 	return deathDistribution(randomNumberGenerator);
 }
 
-unsigned int Desease::GetID() const
+unsigned int DeseaseSpreadSimulation::Desease::GetID() const
 {
 	return id;
 }
 
-bool Desease::isSame(const Desease& other) const
+bool DeseaseSpreadSimulation::Desease::isSame(const Desease& other) const
 {
 	return other.GetID() == id;
 }
 
-bool Desease::isFatal(const unsigned int age) const
+bool DeseaseSpreadSimulation::Desease::isFatal(const unsigned int age) const
 {
 	std::random_device seed;
 	std::mt19937 randomNumberGenerator(seed());

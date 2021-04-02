@@ -1,10 +1,13 @@
 #pragma once
 
-class TimeManager
+namespace DeseaseSpreadSimulation
 {
-public:
-	TimeManager();
+	class TimeManager
+	{
+	public:
+		TimeManager() = default;
 
-	
-private:
-};
+
+	private:
+	};
+}

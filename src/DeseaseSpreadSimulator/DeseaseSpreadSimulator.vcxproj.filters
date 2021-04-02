@@ -39,6 +39,9 @@
     <ClCompile Include="..\pch.cpp">
       <Filter>Header Files\pch</Filter>
     </ClCompile>
+    <ClCompile Include="..\Simulation\Simulation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h">
@@ -58,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="..\pch.h">
       <Filter>Header Files\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Simulation\Simulation.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

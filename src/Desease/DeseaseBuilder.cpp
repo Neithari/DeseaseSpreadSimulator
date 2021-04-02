@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Desease/DeseaseBuilder.h"
-const Desease& DeseaseBuilder::CreateCorona()
+
+const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder::CreateCorona()
 {
 	SetDeseaseName("COVID-19");
 	SetIncubationPeriod(6);
@@ -12,49 +13,49 @@ const Desease& DeseaseBuilder::CreateCorona()
 	return CreateDesease();
 }
 
-void DeseaseBuilder::SetDeseaseName(std::string deseaseName)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDeseaseName(std::string deseaseName)
 {
 	setupDone[0] = true;
 
 	name = std::move(deseaseName);
 }
 
-void DeseaseBuilder::SetIncubationPeriod(const int period)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetIncubationPeriod(const int period)
 {
 	setupDone[1] = true;
 
 	incubationPeriod = period;
 }
 
-void DeseaseBuilder::SetDaysContagious(const int days)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysContagious(const int days)
 {
 	setupDone[2] = true;
 
 	daysContagious = days;
 }
 
-void DeseaseBuilder::SetDeseaseDuration(const int min, const int max)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDeseaseDuration(const int min, const int max)
 {
 	setupDone[3] = true;
 
 	deseaseDurationRange = { min, max };
 }
 
-void DeseaseBuilder::SetMortalityByAge(std::vector<float> mortality)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetMortalityByAge(std::vector<float> mortality)
 {
 	setupDone[4] = true;
 
 	mortalityByAge = std::move(mortality);
 }
 
-void DeseaseBuilder::SetDaysTillDeath(const int min, const int max)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysTillDeath(const int min, const int max)
 {
 	setupDone[5] = true;
 
 	daysTillDeathRange = { min, max };
 }
 
-const Desease& DeseaseBuilder::CreateDesease()
+const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder::CreateDesease()
 {
 	for (bool& setup : setupDone)
 	{
@@ -68,7 +69,7 @@ const Desease& DeseaseBuilder::CreateDesease()
 	return deseases.emplace_back(name, GetID(), incubationPeriod, daysContagious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
 }
 
-unsigned int DeseaseBuilder::GetID()
+unsigned int DeseaseSpreadSimulation::DeseaseBuilder::GetID()
 {
 	static unsigned int id = 0;
 	return id++;

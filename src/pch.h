@@ -13,8 +13,6 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include <list>
-#include <chrono>
 #include <stdexcept>
 #include <random>
 #include <algorithm>
@@ -23,11 +21,10 @@
 // Data structures
 #include <string>
 #include <vector>
-#include <thread>
-#include <coroutine>
 
 #ifdef _MSC_VER
 #pragma warning(pop)			// Restore warning levels for our code
 #endif
 
 // My
+#include "Desease\Desease.h"
