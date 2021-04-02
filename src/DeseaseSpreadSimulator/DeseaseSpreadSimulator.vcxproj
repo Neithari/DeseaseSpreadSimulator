@@ -80,7 +80,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type, -llvmlibc-implementation-in-namespace, -llvmlibc-callee-namespace, -readability-uppercase-literal-suffix, -hicpp-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -88,7 +88,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type, -llvmlibc-implementation-in-namespace, -llvmlibc-callee-namespace, -readability-uppercase-literal-suffix, -hicpp-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -96,7 +96,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type, -llvmlibc-implementation-in-namespace, -llvmlibc-callee-namespace, -readability-uppercase-literal-suffix, -hicpp-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -104,7 +104,7 @@
     <IntDir>$(SolutionDir)build\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
-    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type*, -llvmlibc-implementation-in-namespace*, -llvmlibc-callee-namespace*, -readability-uppercase-literal-suffix</ClangTidyChecks>
+    <ClangTidyChecks>*, boost-*, clang-analyzer-*, concurrency-*, cppcoreguidelines-*, performance-*, -modernize-use-trailing-return-type, -llvmlibc-implementation-in-namespace, -llvmlibc-callee-namespace, -readability-uppercase-literal-suffix, -hicpp-uppercase-literal-suffix</ClangTidyChecks>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
