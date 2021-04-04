@@ -13,7 +13,7 @@ namespace DeseaseSpreadSimulation
 		// desease setup functions
 		void SetDeseaseName(std::string name);
 		void SetIncubationPeriod(const int period);
-		void SetDaysContagious(const int days);
+		void SetDaysInfectious(const int days);
 		void SetDeseaseDuration(const int min, const int max);
 		// data in % between 0-1 and for age groups of 10 years, eg. 0-9,10-19,...,80+
 		void SetMortalityByAge(std::vector<float> mortality);
@@ -31,7 +31,7 @@ namespace DeseaseSpreadSimulation
 	private:
 		std::string name = "";
 		int incubationPeriod = 0;
-		int daysContagious = 0;
+		int daysInfectious = 0;
 		std::pair<int, int> deseaseDurationRange{ 0,0 };
 		std::vector<float> mortalityByAge = {};
 		std::pair<int, int> daysTillDeathRange{ 0,0 };

@@ -5,7 +5,7 @@ const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder:
 {
 	SetDeseaseName("COVID-19");
 	SetIncubationPeriod(6);
-	SetDaysContagious(8);
+	SetDaysInfectious(8);
 	SetDeseaseDuration(14, 42);
 	SetMortalityByAge({ 0.0f, 0.14f, 0.12f, 0.2f, 0.38f, 0.98f, 2.98f, 7.94f, 17.34f });
 	SetDaysTillDeath(14, 56);
@@ -27,11 +27,11 @@ void DeseaseSpreadSimulation::DeseaseBuilder::SetIncubationPeriod(const int peri
 	incubationPeriod = period;
 }
 
-void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysContagious(const int days)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysInfectious(const int days)
 {
 	setupDone[2] = true;
 
-	daysContagious = days;
+	daysInfectious = days;
 }
 
 void DeseaseSpreadSimulation::DeseaseBuilder::SetDeseaseDuration(const int min, const int max)
@@ -66,7 +66,7 @@ const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder:
 		}
 	}
 
-	return deseases.emplace_back(name, GetNextID(), incubationPeriod, daysContagious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+	return deseases.emplace_back(name, GetNextID(), incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
 }
 
 unsigned int DeseaseSpreadSimulation::DeseaseBuilder::GetNextID()
