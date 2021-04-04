@@ -93,7 +93,22 @@ unsigned int DeseaseSpreadSimulation::Desease::GetID() const
 
 bool DeseaseSpreadSimulation::Desease::isSame(const Desease& other) const
 {
-	return other.GetID() == id;
+
+	bool same = true;
+
+	if (name != other.name) same = false;
+	if (id != other.id) same = false;
+	if (incubationPeriod != other.incubationPeriod) same = false;
+	if (daysInfectious != other.daysInfectious) same = false;
+	if (durationRange != other.durationRange) same = false;
+	if (!(mortalityByAge == other.mortalityByAge)) same = false;
+	if (daysTillDeathRange != other.daysTillDeathRange) same = false;
+	return same;
+}
+
+bool DeseaseSpreadSimulation::Desease::hasSameID(const Desease& other) const
+{
+	return GetID() == other.GetID();
 }
 
 bool DeseaseSpreadSimulation::Desease::isFatal(const unsigned int age) const

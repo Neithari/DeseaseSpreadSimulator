@@ -21,6 +21,7 @@ namespace DeseaseSpreadSimulation
 
 		unsigned int GetID() const;
 		bool isSame(const Desease& other) const;
+		bool hasSameID(const Desease& other) const;
 		bool isFatal(const unsigned int age) const;
 
 	private:
