@@ -33,7 +33,7 @@ void DeseaseSpreadSimulation::Person::Contact(Person& other)
 		other.spreadCount++;
 	}
 	// if I am infectious and the other person has no desease, now he has
-	 else if (isInfectious() && other.isSusceptible())
+	else if (isInfectious() && other.isSusceptible())
 	{
 		other.Contaminate(desease);
 		spreadCount++;

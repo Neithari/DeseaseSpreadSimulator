@@ -7,7 +7,7 @@
 #pragma warning(disable: 4710) // Suppress 'function ... not inlined' for Release builds
 #pragma warning(disable: 4514) // Suppress '... unreferenced inline function has been removed'
 #pragma warning(disable: 4786) // Suppress '... truncated to 255 chars in debug'
-#pragma warning(push, 3)       // Set warning levels to a quieter level for the STL
+#pragma warning(push, 3)       // Set warning levels to a quieter level
 #endif
 
 #include <iostream>
@@ -17,6 +17,7 @@
 #include <random>
 #include <algorithm>
 #include <utility>
+#include <chrono>
 
 // Data structures
 #include <string>
