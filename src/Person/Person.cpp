@@ -26,14 +26,14 @@ void DeseaseSpreadSimulation::Person::Contact(Person& other)
 {
 	/// TODO: Should be possible to only alter myself and take other as const
 
-	// if the other person is contagious and I have no desease, now I have
-	if (other.contagious && desease == nullptr)
+	// if the other person is infectious and I have no desease, now I have
+	if (other.isInfectious() && isSusceptible())
 	{
 		Contaminate(other.desease);
 		other.spreadCount++;
 	}
-	// if I am contagious and the other person has no desease, now he has
-	if (contagious && other.desease == nullptr)
+	// if I am infectious and the other person has no desease, now he has
+	 else if (isInfectious() && other.isSusceptible())
 	{
 		other.Contaminate(desease);
 		spreadCount++;
@@ -52,9 +52,10 @@ std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 {
 	desease = infection;
+	state = Seir_State::Exposed;
 	
-	daysTillOutbreak = desease->IncubationPeriod();
-	daysContagious = desease->DaysContagious();
+	latentPeriod = desease->IncubationPeriod();
+	daysInfectious = desease->DaysInfectious();
 	daysTillCured = desease->GetDeseaseDuration();
 	// check if the person will die from the infection
 	if (desease->isFatal(age))
@@ -64,14 +65,14 @@ void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 	}
 }
 
-bool DeseaseSpreadSimulation::Person::isReceptible() const
+bool DeseaseSpreadSimulation::Person::isSusceptible() const
 {
-	return receptible;
+	return state == Seir_State::Susceptible;
 }
 
-bool DeseaseSpreadSimulation::Person::isContagious() const
+bool DeseaseSpreadSimulation::Person::isInfectious() const
 {
-	return contagious;
+	return state == Seir_State::Infectious;
 }
 
 bool DeseaseSpreadSimulation::Person::isQuarantined() const
@@ -96,30 +97,19 @@ bool DeseaseSpreadSimulation::Person::hasDesease(const std::string& deseaseName)
 
 void DeseaseSpreadSimulation::Person::DeseaseCheck()
 {
-	if (desease != nullptr)
+	// A person is infectious when it was exposed to a desease and 
+	if (state == Seir_State::Exposed && latentPeriod <= 0)
 	{
-		if (!contagious)
-		{
-			// if daysContagious is 0 person had the desease already but is not fully cured
-			if (daysTillOutbreak == 0 && daysContagious > 0)
-			{
-				// person is contagious when it has a desease and daysTillOutbreak reached 0
-				contagious = true;
-			}
-		}
-		else
-		{
-			if (daysContagious == 0)
-			{
-				contagious = false;
-			}
-		}
-		if (daysTillCured == 0)
-		{
-			contagious = false;
-			willDie = false;
-			desease = nullptr;
-		}
+		state = Seir_State::Infectious;
+	}
+	// it is recovered when it is 
+	else if (state == Seir_State::Infectious && daysInfectious <= 0)
+	{
+		state = Seir_State::Recovered;
+	}
+	else if (state == Seir_State::Recovered && daysTillCured == 0)
+	{
+		desease = nullptr;
 	}
 }
 
@@ -130,23 +120,29 @@ void DeseaseSpreadSimulation::Person::Move()
 
 void DeseaseSpreadSimulation::Person::AdvanceDay()
 {
-	if (desease != nullptr)
+	// If the person has no desease, has recovered, is immune or dead do nothing (recovered/immune/dead are all Seir_State::Recovered)
+	if (state == Seir_State::Susceptible || state == Seir_State::Recovered)
 	{
-		if (!contagious && daysTillOutbreak > 0)
+		return;
+	}
+	if (latentPeriod > 0)
+	{
+		latentPeriod--;
+	}
+	if (daysInfectious > 0)
+	{
+		daysInfectious--;
+	}
+	if (daysTillCured > 0)
+	{
+		daysTillCured--;
+	}
+	if (willDie)
+	{
+		// decrement daysToLive and if it reached 0 the person will die
+		if (--daysToLive <= 0)
 		{
-			daysTillOutbreak--;
-		}
-		else if (daysContagious > 0)
-		{
-			daysContagious--;
-		}
-		if (daysTillCured > 0)
-		{
-			daysTillCured--;
-		}
-		if (willDie)
-		{
-			daysToLive--;
+			alive = false;
 		}
 	}
 }

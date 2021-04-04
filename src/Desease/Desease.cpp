@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Desease\Desease.h"
 
-DeseaseSpreadSimulation::Desease::Desease(std::string name, const int id, const int incubationPeriod, const int daysContagious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
+DeseaseSpreadSimulation::Desease::Desease(std::string name, const int id, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
 	:
 	name(std::move(name)),
 	id(id),
 	incubationPeriod(incubationPeriod),
-	daysContagious(daysContagious),
+	daysInfectious(daysInfectious),
 	durationRange(std::move(deseaseDurationRange)),
 	mortalityByAge(std::move(mortalityByAge)),
 	daysTillDeathRange(std::move(daysTillDeathRange))
@@ -23,9 +23,9 @@ int DeseaseSpreadSimulation::Desease::IncubationPeriod() const
 	return incubationPeriod;
 }
 
-int DeseaseSpreadSimulation::Desease::DaysContagious() const
+int DeseaseSpreadSimulation::Desease::DaysInfectious() const
 {
-	return daysContagious;
+	return daysInfectious;
 }
 
 float DeseaseSpreadSimulation::Desease::GetMortalityByAge(const unsigned int age) const

@@ -15,8 +15,8 @@ namespace DeseaseSpreadSimulation
 		// advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
 
-		bool isReceptible() const;
-		bool isContagious() const;
+		bool isSusceptible() const;
+		bool isInfectious() const;
 		bool isQuarantined() const;
 		bool isAlive() const;
 		bool hasDesease(const std::string& deseaseName) const;
@@ -29,15 +29,14 @@ namespace DeseaseSpreadSimulation
 		unsigned int age;
 		std::pair<float, float> position;
 
-		bool receptible = false;
-		bool contagious = false;
+		Seir_State state = Seir_State::Susceptible;
 		bool quarantined = false;
 		unsigned int spreadCount = 0;
 
 		// Desease Stuff
 		const Desease* desease = nullptr;
-		unsigned int daysTillOutbreak = 0;
-		unsigned int daysContagious = 0;
+		unsigned int latentPeriod = 0;
+		unsigned int daysInfectious = 0;
 		unsigned int daysTillCured = 0;
 
 		bool alive = true;
