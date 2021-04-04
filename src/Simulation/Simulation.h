@@ -20,7 +20,7 @@ namespace DeseaseSpreadSimulation
 		Desease desease;
 		bool withPrint = false;
 
-		uint16_t personCount = 1000;
+		unsigned int personCount = 1000;
 		std::vector<Person> persons;
 	};
 }
