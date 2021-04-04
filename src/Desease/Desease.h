@@ -2,6 +2,8 @@
 
 namespace DeseaseSpreadSimulation
 {
+	enum class Seir_State { Susceptible, Exposed, Infectious, Recovered };
+
 	class Desease
 	{
 	public:

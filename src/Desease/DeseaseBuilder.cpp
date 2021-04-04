@@ -66,10 +66,10 @@ const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder:
 		}
 	}
 
-	return deseases.emplace_back(name, GetID(), incubationPeriod, daysContagious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+	return deseases.emplace_back(name, GetNextID(), incubationPeriod, daysContagious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
 }
 
-unsigned int DeseaseSpreadSimulation::DeseaseBuilder::GetID()
+unsigned int DeseaseSpreadSimulation::DeseaseBuilder::GetNextID()
 {
 	static unsigned int id = 0;
 	return id++;

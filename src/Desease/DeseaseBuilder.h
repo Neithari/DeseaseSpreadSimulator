@@ -26,7 +26,7 @@ namespace DeseaseSpreadSimulation
 		void SaveDeseaseToFile(std::string fileName) const;
 
 	private:
-		static unsigned int GetID();
+		static unsigned int GetNextID();
 
 	private:
 		std::string name = "";
