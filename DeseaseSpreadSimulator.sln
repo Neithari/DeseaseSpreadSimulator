@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BoostUnitTests", "tests\Boo
 		{6B355E10-96DC-49C1-9D47-273F4378EB05} = {6B355E10-96DC-49C1-9D47-273F4378EB05}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GoogleUnitTests", "tests\GoogleUnitTests\GoogleUnitTests.vcxproj", "{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{57FA9658-5DA9-41C9-8450-0072C0FB37FF}.Release|x64.Build.0 = Release|x64
 		{57FA9658-5DA9-41C9-8450-0072C0FB37FF}.Release|x86.ActiveCfg = Release|Win32
 		{57FA9658-5DA9-41C9-8450-0072C0FB37FF}.Release|x86.Build.0 = Release|Win32
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Debug|x64.ActiveCfg = Debug|x64
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Debug|x64.Build.0 = Debug|x64
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Debug|x86.ActiveCfg = Debug|Win32
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Debug|x86.Build.0 = Debug|Win32
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Release|x64.ActiveCfg = Release|x64
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Release|x64.Build.0 = Release|x64
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Release|x86.ActiveCfg = Release|Win32
+		{7D204E4F-3C6B-4CDF-A8FA-202747C4BB01}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
