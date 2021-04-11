@@ -1,6 +1,6 @@
 #pragma once
-#include "Person\Person.h"
-#include "Desease\DeseaseBuilder.h"
+#include "Person/Person.h"
+#include "Desease/DeseaseBuilder.h"
 
 class System
 {
@@ -16,7 +16,7 @@ private: // Private functions go in here
 
 private: // Private variables go in here
 	/// Test
-	DeseaseSpreadSimulation::Person human{ 10,{30.f,30.f} };
+	DeseaseSpreadSimulation::Person human{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, {30.f,30.f} };
 	DeseaseSpreadSimulation::DeseaseBuilder deseases;
 	/// /Test
 };
