@@ -18,14 +18,18 @@
 #include <algorithm>
 #include <utility>
 #include <chrono>
+#include <map>
 
 // Data structures
 #include <string>
 #include <vector>
+
+// GSL: Guidelines Support Library
+#include <gsl/gsl>
 
 #ifdef _MSC_VER
 #pragma warning(pop)			// Restore warning levels for our code
 #endif
 
 // My
-#include "Desease\Desease.h"
+#include "Desease/Desease.h"
