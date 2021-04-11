@@ -42,6 +42,9 @@
     <ClCompile Include="..\Simulation\Simulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Person\PersonPopulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files\pch</Filter>
     </ClInclude>
     <ClInclude Include="..\Simulation\Simulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Person\PersonPopulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

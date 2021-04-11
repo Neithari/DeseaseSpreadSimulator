@@ -5,13 +5,14 @@
 #include "src/Desease/DeseaseBuilder.h"
 #include "src/Person/Person.h"
 #include "src/Simulation/TimeManager.h"
+#include "src/Person/PersonPopulator.h"
 
 namespace UnitTests {
     class DeseaseTest : public ::testing::Test
     {
     protected:
         std::string name = "a";
-        int id = 0;
+        unsigned int id = 0;
         int incubationPeriod = 1;
         int daysInfectious = 1;
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
@@ -53,23 +54,43 @@ namespace UnitTests {
             ASSERT_TRUE(inRange(days, daysTillDeathRange)) << "Days till death: " << days << " is not between: " << daysTillDeathRange.first << " and " << daysTillDeathRange.second;
         }
     }
+    TEST_F(DeseaseTest, MortalityByAgeGroup)
+    {
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderTen),     mortalityByAge.at(0));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderTwenty),  mortalityByAge.at(1));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderThirty),  mortalityByAge.at(2));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderFourty),  mortalityByAge.at(3));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderFifty),   mortalityByAge.at(4));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderSixty),   mortalityByAge.at(5));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderSeventy), mortalityByAge.at(6));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::UnderEighty),  mortalityByAge.at(7));
+        ASSERT_EQ(desease.GetMortalityByAgeGroup(DeseaseSpreadSimulation::Age_Group::AboveEighty),  mortalityByAge.at(8));
+    }
     TEST_F(DeseaseTest, MortalityByAge)
     {
         // Check age 0-89
         int age = 0;
-        for (int index = 0; index < mortalityByAge.size(); index++)
+        for (size_t index = 0; index < mortalityByAge.size(); index++)
         {
             for (int i = 0; i < 10; i++)
             {
                 // Age will be between 0 and 89
                 age = index * 10 + i;
-                EXPECT_FLOAT_EQ(mortalityByAge.at(index), desease.GetMortalityByAge(age));
+                // mortalityByAge vector does only have 9 members so prevent an out of bound
+                if (index <= 8)
+                {
+                    EXPECT_FLOAT_EQ(desease.GetMortalityByAge(age), mortalityByAge.at(index));
+                }
+                else
+                {
+                    EXPECT_FLOAT_EQ(desease.GetMortalityByAge(age), mortalityByAge.back());
+                }
             }
         }
         // Check age >=90
         for (int age = 90; age < 111; age++)
         {
-            EXPECT_FLOAT_EQ(mortalityByAge.back(), desease.GetMortalityByAge(age));
+            EXPECT_FLOAT_EQ(desease.GetMortalityByAge(age), mortalityByAge.back());
         }
     }
     TEST_F(DeseaseTest, IsSame)
@@ -81,7 +102,7 @@ namespace UnitTests {
         EXPECT_FALSE(desease1.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease1));
         
-        int id1 = 1;
+        unsigned int id1 = 1;
         DeseaseSpreadSimulation::Desease desease2{ name, id1, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease2.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease2));
@@ -115,7 +136,7 @@ namespace UnitTests {
     TEST(DeseaseBuilderTests, DeseaseBuilderCreateCorona)
     {
         std::string name = "COVID-19";
-        int id = 0;
+        unsigned int id = 0;
         int incubationPeriod = 6;
         int daysInfectious = 8;
         std::pair<int, int> deseaseDurationRange{ 14, 42 };
@@ -124,16 +145,16 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Desease corona{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
 
         DeseaseSpreadSimulation::DeseaseBuilder builder;
-        auto& builtCorona = builder.CreateCorona();
+        auto builtCorona = builder.CreateCorona();
 
         EXPECT_TRUE(builtCorona.isSame(corona));
     }
-    /// TODO: implement ID set tests
+
     class DeseaseBuilderTest : public ::testing::Test
     {
     protected:
         std::string name = "a";
-        int id = 1; // id is now 1 because the GetID function in DeseaseBuilder has advanced the id when we created corona inside DeseaseBuilderCreateCorona test
+        unsigned int id = 1; // id is now 1 because the GetID function in DeseaseBuilder has advanced the id when we created corona inside DeseaseBuilderCreateCorona test
         int incubationPeriod = 1;
         int daysInfectious = 1;
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
@@ -225,9 +246,26 @@ namespace UnitTests {
         builder.SetMortalityByAge(mortalityByAge);
         builder.SetDaysTillDeath(daysTillDeathRange.first, daysTillDeathRange.second);
 
-        auto& builtDesease = builder.CreateDesease();
+        auto builtDesease = builder.CreateDesease();
 
         ASSERT_TRUE(builtDesease.isSame(desease));
+    }
+    TEST_F(DeseaseBuilderTest, IDHasAdvanced)
+    {
+        DeseaseSpreadSimulation::DeseaseBuilder builder;
+        builder.SetDeseaseName(name);
+        builder.SetIncubationPeriod(incubationPeriod);
+        builder.SetDaysInfectious(daysInfectious);
+        builder.SetDeseaseDuration(deseaseDurationRange.first, deseaseDurationRange.second);
+        builder.SetMortalityByAge(mortalityByAge);
+        builder.SetDaysTillDeath(daysTillDeathRange.first, daysTillDeathRange.second);
+
+        auto builtDesease = builder.CreateDesease();
+
+        DeseaseSpreadSimulation::Desease desease1{ name, ++id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+
+        ASSERT_FALSE(builtDesease.isSame(desease));
+        ASSERT_TRUE(builtDesease.isSame(desease1));
     }
 
     TEST(TimeTests, FrameTimeAfterWait)
@@ -273,20 +311,18 @@ namespace UnitTests {
     };
     TEST_F(PersonTest, ContaminateAPerson)
     {
-        int age = 10;
         std::pair<float, float> position{ 10.f, 10.f };
 
-        DeseaseSpreadSimulation::Person patient(age, position);
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
         patient.Contaminate(&desease);
 
         ASSERT_EQ(patient.GetDeseaseName(), desease.GetDeseaseName());
     }
     TEST_F(PersonTest, PersonIsInfectiousAfterLatentPeriod)
     {
-        int age = 10;
         std::pair<float, float> position{ 10.f, 10.f };
 
-        DeseaseSpreadSimulation::Person patient(age, position);
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
         patient.Contaminate(&desease);
 
         // Patient is not contagious right after contamination
@@ -300,12 +336,11 @@ namespace UnitTests {
     }
     TEST_F(PersonTest, ContactWithOtherPersonWillInfect)
     {
-        int age = 10;
         std::pair<float, float> position{ 10.f, 10.f };
         // Create 3 patients
-        DeseaseSpreadSimulation::Person patient1(age, position);
-        DeseaseSpreadSimulation::Person patient2(age, position);
-        DeseaseSpreadSimulation::Person patient3(age, position);
+        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
+        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
+        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
         // Contaminate 1
         patient1.Contaminate(&desease);
         // Advance patient beyond latent period
@@ -320,5 +355,193 @@ namespace UnitTests {
         // Check infected has contact with non infected
         patient1.Contact(patient3);
         EXPECT_EQ(patient1.GetDeseaseName(), patient3.GetDeseaseName());
+    }
+
+    class PersonPopulatorTest : public ::testing::Test
+    {
+    protected:
+        size_t evenCount = 100;
+        size_t unevenCount = 111;
+
+        DeseaseSpreadSimulation::PersonPopulator::Human human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
+        DeseaseSpreadSimulation::PersonPopulator::Human human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
+        DeseaseSpreadSimulation::PersonPopulator::Human human3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.25f };
+        DeseaseSpreadSimulation::PersonPopulator::Human human4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
+
+        DeseaseSpreadSimulation::PersonPopulator::Human human5{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.10f };
+        DeseaseSpreadSimulation::PersonPopulator::Human human6{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.20f };
+        DeseaseSpreadSimulation::PersonPopulator::Human human7{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.30f };
+        DeseaseSpreadSimulation::PersonPopulator::Human human8{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.40f };
+
+        std::vector<DeseaseSpreadSimulation::PersonPopulator::Human> evenDistribution{ human1, human2, human3, human4 };
+        std::vector<DeseaseSpreadSimulation::PersonPopulator::Human> unevenDistribution{ human5, human6, human7, human8 };
+
+
+        std::vector<DeseaseSpreadSimulation::Person> population1 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(evenCount, evenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population2 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(unevenCount, evenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population3 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(evenCount, unevenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population4 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(unevenCount, unevenDistribution);
+    };
+    TEST_F(PersonPopulatorTest, SizeIsEqualEvenCount)
+    {
+        ASSERT_EQ(population1.size(), evenCount);
+        ASSERT_EQ(population3.size(), evenCount);
+    }
+    TEST_F(PersonPopulatorTest, SizeIsEqualUnevenCount)
+    {
+        ASSERT_EQ(population2.size(), unevenCount);
+        ASSERT_EQ(population4.size(), unevenCount);
+    }
+    TEST_F(PersonPopulatorTest, EvenDistributionIsGood)
+    {
+        float countHuman1 = 0.f;
+        float countHuman2 = 0.f;
+        float countHuman3 = 0.f;
+        float countHuman4 = 0.f;
+
+        for (const auto& person : population1)
+        {
+            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            
+            if (h == human1)
+            {
+                countHuman1 += 1.f;
+            }
+            else if (h == human2)
+            {
+                countHuman2 += 1.f;
+            }
+            else if (h == human3)
+            {
+                countHuman3++;
+            }
+            else if (h == human4)
+            {
+                countHuman4 += 1.f;
+            }
+        }
+
+        countHuman1 = countHuman1 / evenCount;
+        countHuman2 = countHuman2 / evenCount;
+        countHuman3 = countHuman3 / evenCount;
+        countHuman4 = countHuman4 / evenCount;
+
+        EXPECT_NEAR(countHuman1, human1.percent, 0.01f);
+        EXPECT_NEAR(countHuman2, human2.percent, 0.01f);
+        EXPECT_NEAR(countHuman3, human3.percent, 0.01f);
+        EXPECT_NEAR(countHuman4, human4.percent, 0.01f);
+
+        countHuman1 = 0.f;
+        countHuman2 = 0.f;
+        countHuman3 = 0.f;
+        countHuman4 = 0.f;
+
+        for (const auto& person : population2)
+        {
+            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+
+            if (h == human1)
+            {
+                countHuman1 += 1.f;
+            }
+            else if (h == human2)
+            {
+                countHuman2 += 1.f;
+            }
+            else if (h == human3)
+            {
+                countHuman3++;
+            }
+            else if (h == human4)
+            {
+                countHuman4 += 1.f;
+            }
+        }
+
+        countHuman1 = countHuman1 / unevenCount;
+        countHuman2 = countHuman2 / unevenCount;
+        countHuman3 = countHuman3 / unevenCount;
+        countHuman4 = countHuman4 / unevenCount;
+
+        EXPECT_NEAR(countHuman1, human1.percent, 0.01f);
+        EXPECT_NEAR(countHuman2, human2.percent, 0.01f);
+        EXPECT_NEAR(countHuman3, human3.percent, 0.01f);
+        EXPECT_NEAR(countHuman4, human4.percent, 0.01f);
+    }
+    TEST_F(PersonPopulatorTest, UnevenDistributionIsGood)
+    {
+        float countHuman1 = 0.f;
+        float countHuman2 = 0.f;
+        float countHuman3 = 0.f;
+        float countHuman4 = 0.f;
+
+        for (const auto& person : population3)
+        {
+            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+
+            if (h == human5)
+            {
+                countHuman1 += 1.f;
+            }
+            else if (h == human6)
+            {
+                countHuman2 += 1.f;
+            }
+            else if (h == human7)
+            {
+                countHuman3++;
+            }
+            else if (h == human8)
+            {
+                countHuman4 += 1.f;
+            }
+        }
+
+        countHuman1 = countHuman1 / evenCount;
+        countHuman2 = countHuman2 / evenCount;
+        countHuman3 = countHuman3 / evenCount;
+        countHuman4 = countHuman4 / evenCount;
+
+        EXPECT_NEAR(countHuman1, human5.percent, 0.01f);
+        EXPECT_NEAR(countHuman2, human6.percent, 0.01f);
+        EXPECT_NEAR(countHuman3, human7.percent, 0.01f);
+        EXPECT_NEAR(countHuman4, human8.percent, 0.01f);
+
+        countHuman1 = 0.f;
+        countHuman2 = 0.f;
+        countHuman3 = 0.f;
+        countHuman4 = 0.f;
+
+        for (const auto& person : population4)
+        {
+            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+
+            if (h == human5)
+            {
+                countHuman1 += 1.f;
+            }
+            else if (h == human6)
+            {
+                countHuman2 += 1.f;
+            }
+            else if (h == human7)
+            {
+                countHuman3++;
+            }
+            else if (h == human8)
+            {
+                countHuman4 += 1.f;
+            }
+        }
+
+        countHuman1 = countHuman1 / unevenCount;
+        countHuman2 = countHuman2 / unevenCount;
+        countHuman3 = countHuman3 / unevenCount;
+        countHuman4 = countHuman4 / unevenCount;
+
+        EXPECT_NEAR(countHuman1, human5.percent, 0.01f);
+        EXPECT_NEAR(countHuman2, human6.percent, 0.01f);
+        EXPECT_NEAR(countHuman3, human7.percent, 0.01f);
+        EXPECT_NEAR(countHuman4, human8.percent, 0.01f);
     }
 }
