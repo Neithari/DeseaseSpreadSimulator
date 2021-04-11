@@ -2,10 +2,11 @@
 
 namespace DeseaseSpreadSimulation
 {
+	
 	class Person
 	{
 	public:
-		Person(unsigned int age, std::pair<float, float> position);
+		Person(Age_Group age, Sex sex, std::pair<float, float> position);
 
 		void Update();
 
@@ -21,12 +22,16 @@ namespace DeseaseSpreadSimulation
 		bool isAlive() const;
 		bool hasDesease(const std::string& deseaseName) const;
 
+		Age_Group GetAgeGroup() const;
+		Sex GetSex() const;
+
 	private:
 		void Move();
 		void DeseaseCheck();
 
 	private:
-		unsigned int age;
+		Age_Group age;
+		Sex sex;
 		std::pair<float, float> position;
 
 		Seir_State state = Seir_State::Susceptible;

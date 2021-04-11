@@ -1,9 +1,10 @@
 #include "pch.h"
-#include "Person\Person.h"
+#include "Person/Person.h"
 
-DeseaseSpreadSimulation::Person::Person(unsigned int age, std::pair<float, float> position)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, std::pair<float, float> position)
 	:
 	age(age),
+	sex(sex),
 	position(std::move(position))
 {
 }
@@ -93,6 +94,16 @@ bool DeseaseSpreadSimulation::Person::hasDesease(const std::string& deseaseName)
 	}
 	return desease->GetDeseaseName() == deseaseName;
 	
+}
+
+DeseaseSpreadSimulation::Age_Group DeseaseSpreadSimulation::Person::GetAgeGroup() const
+{
+	return age;
+}
+
+DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
+{
+	return sex;
 }
 
 void DeseaseSpreadSimulation::Person::DeseaseCheck()
