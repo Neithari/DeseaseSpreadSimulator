@@ -12,19 +12,20 @@ namespace DeseaseSpreadSimulation
 		int64_t GetFrameTime() const;
 		// returns the simulation days elapsed since the start of the simulation. Rounded down to full days.
 		unsigned long long GetElapsedDays() const;
-		void SetSimulationTimeMultiplier(unsigned int multiplier);
+		// calling without a argument will default to 1x speed
+		void SetSimulationTimeMultiplier(uint16_t multiplier = 1);
 
 	private:
 		std::chrono::time_point<std::chrono::steady_clock> currentFrameTime;
 		std::chrono::time_point<std::chrono::steady_clock> lastFrameTime;
 		// milliseconds
 		std::chrono::milliseconds frameTime = {};
-		uint64_t frameSum = 0;
+		uint32_t frameSum = 0;
 		// tick in ms
-		uint64_t tick = 1000;
-		// seconds
-		uint64_t simulationTime = 0;
+		uint32_t tick = 1000u;
+		// in sumulation days. 1 day per tick
+		uint64_t simulationTime = 0u;
 
-		unsigned int simulationTimeMultiplier = 10;
+		uint32_t simulationTimeMultiplier = 1;
 	};
 }

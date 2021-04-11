@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Simulation\TimeManager.h"
+#include "Simulation/TimeManager.h"
 
 DeseaseSpreadSimulation::TimeManager::TimeManager()
 	:
@@ -17,7 +17,7 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 	frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - lastFrameTime);
 
 	// sum the time the simulation is running and scale it with the multiplier
-	frameSum += frameTime.count() * simulationTimeMultiplier;
+	frameSum += static_cast<uint32_t>(frameTime.count()) * simulationTimeMultiplier;
 	// while the sum > tick advance the sumulationTime
 	while (frameSum >= tick)
 	{
@@ -25,7 +25,6 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 		frameSum -= tick;
 	}
 }
-
 int64_t DeseaseSpreadSimulation::TimeManager::GetFrameTime() const
 {
 	return frameTime.count();
@@ -36,7 +35,7 @@ uint64_t DeseaseSpreadSimulation::TimeManager::GetElapsedDays() const
 	return simulationTime;
 }
 
-void DeseaseSpreadSimulation::TimeManager::SetSimulationTimeMultiplier(unsigned int multiplier)
+void DeseaseSpreadSimulation::TimeManager::SetSimulationTimeMultiplier(uint16_t multiplier)
 {
 	simulationTimeMultiplier = multiplier;
 }
