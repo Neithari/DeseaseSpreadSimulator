@@ -3,26 +3,28 @@
 namespace DeseaseSpreadSimulation
 {
 	enum class Seir_State { Susceptible, Exposed, Infectious, Recovered };
-
 	// Age groups to differentiate between parts of the population from 0-9 years as first group up to > than 80 years as last group
 	enum class Age_Group { UnderTen, UnderTwenty, UnderThirty, UnderFourty, UnderFifty, UnderSixty, UnderSeventy, UnderEighty, AboveEighty };
+
+	enum class Sex { Female, Male };
 
 	class Desease
 	{
 	public:
-		Desease(std::string name, const int id, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange);
+		Desease(std::string name, const unsigned int id, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange);
 
 		const std::string& GetDeseaseName() const;
 		int IncubationPeriod() const;
 		int DaysInfectious() const;
-		float GetMortalityByAge(const unsigned int age) const;
+		float GetMortalityByAge(int age) const;
+		float GetMortalityByAgeGroup(Age_Group age) const;
 		int GetDeseaseDuration() const;
 		int DaysTillDeath() const;
 
 		unsigned int GetID() const;
 		bool isSame(const Desease& other) const;
 		bool hasSameID(const Desease& other) const;
-		bool isFatal(const unsigned int age) const;
+		bool isFatal(Age_Group age) const;
 
 	private:
 		const std::string name{};

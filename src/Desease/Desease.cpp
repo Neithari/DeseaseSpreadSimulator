@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "Desease\Desease.h"
+#include "Desease/Desease.h"
 
-DeseaseSpreadSimulation::Desease::Desease(std::string name, const int id, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
+DeseaseSpreadSimulation::Desease::Desease(std::string name, const unsigned int id, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
 	:
 	name(std::move(name)),
 	id(id),
@@ -28,42 +28,76 @@ int DeseaseSpreadSimulation::Desease::DaysInfectious() const
 	return daysInfectious;
 }
 
-float DeseaseSpreadSimulation::Desease::GetMortalityByAge(const unsigned int age) const
+float DeseaseSpreadSimulation::Desease::GetMortalityByAge(int age) const
 {
-	if (age < 10)
+	switch (age / 10)
 	{
+	case 0:
+		return GetMortalityByAgeGroup(Age_Group::UnderTen);
+		break;
+	case 1:
+		return GetMortalityByAgeGroup(Age_Group::UnderTwenty);
+		break;
+	case 2:
+		return GetMortalityByAgeGroup(Age_Group::UnderThirty);
+		break;
+	case 3:
+		return GetMortalityByAgeGroup(Age_Group::UnderFourty);
+		break;
+	case 4:
+		return GetMortalityByAgeGroup(Age_Group::UnderFifty);
+		break;
+	case 5:
+		return GetMortalityByAgeGroup(Age_Group::UnderSixty);
+		break;
+	case 6:
+		return GetMortalityByAgeGroup(Age_Group::UnderSeventy);
+		break;
+	case 7:
+		return GetMortalityByAgeGroup(Age_Group::UnderEighty);
+		break;
+	default:
+		return GetMortalityByAgeGroup(Age_Group::AboveEighty);
+		break;
+	}
+}
+
+
+float DeseaseSpreadSimulation::Desease::GetMortalityByAgeGroup(Age_Group age) const
+{
+	switch (age)
+	{
+	case Age_Group::UnderTen:
 		return mortalityByAge.at(0);
-	}
-	if (age < 20)
-	{
+		break;
+	case Age_Group::UnderTwenty:
 		return mortalityByAge.at(1);
-	}
-	if (age < 30)
-	{
+		break;
+	case Age_Group::UnderThirty:
 		return mortalityByAge.at(2);
-	}
-	if (age < 40)
-	{
+		break;
+	case Age_Group::UnderFourty:
 		return mortalityByAge.at(3);
-	}
-	if (age < 50)
-	{
+		break;
+	case Age_Group::UnderFifty:
 		return mortalityByAge.at(4);
-	}
-	if (age < 60)
-	{
+		break;
+	case Age_Group::UnderSixty:
 		return mortalityByAge.at(5);
-	}
-	if (age < 70)
-	{
+		break;
+	case Age_Group::UnderSeventy:
 		return mortalityByAge.at(6);
-	}
-	if (age < 80)
-	{
+		break;
+	case Age_Group::UnderEighty:
 		return mortalityByAge.at(7);
+		break;
+	case Age_Group::AboveEighty:
+		return mortalityByAge.at(8);
+		break;
+	default:
+		throw std::logic_error("No Valid Age!");
+		break;
 	}
-	
-	return mortalityByAge.at(8);
 }
 
 int DeseaseSpreadSimulation::Desease::GetDeseaseDuration() const
@@ -111,12 +145,12 @@ bool DeseaseSpreadSimulation::Desease::hasSameID(const Desease& other) const
 	return GetID() == other.GetID();
 }
 
-bool DeseaseSpreadSimulation::Desease::isFatal(const unsigned int age) const
+bool DeseaseSpreadSimulation::Desease::isFatal(DeseaseSpreadSimulation::Age_Group age) const
 {
 	std::random_device seed;
 	std::mt19937 randomNumberGenerator(seed());
 	std::uniform_real_distribution<float> fatalityDistribution(0.0f, 1.0f);
 
 	// infection is fatal if the random number is <= than the mortality rate
-	return (fatalityDistribution(randomNumberGenerator) <= GetMortalityByAge(age));
+	return (fatalityDistribution(randomNumberGenerator) <= GetMortalityByAgeGroup(age));
 }
