@@ -58,10 +58,11 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 		}
 	}
 
-	return std::move(population);
+	return population;
 }
 
 size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_t count, float percent)
 {
-	return static_cast<size_t>(count * percent);
+	// scale count by percent and then omit the decimal
+	return static_cast<size_t>(count * static_cast<double>(percent));
 }

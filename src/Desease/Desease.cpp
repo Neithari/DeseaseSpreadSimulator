@@ -30,6 +30,8 @@ int DeseaseSpreadSimulation::Desease::DaysInfectious() const
 
 float DeseaseSpreadSimulation::Desease::GetMortalityByAge(int age) const
 {
+	// any number devided by 10 will result the tens and we switch on them to get the Age_Group
+	// everything above 7 is Age_Group::AboveEighty
 	switch (age / 10)
 	{
 	case 0:
@@ -65,39 +67,7 @@ float DeseaseSpreadSimulation::Desease::GetMortalityByAge(int age) const
 
 float DeseaseSpreadSimulation::Desease::GetMortalityByAgeGroup(Age_Group age) const
 {
-	switch (age)
-	{
-	case Age_Group::UnderTen:
-		return mortalityByAge.at(0);
-		break;
-	case Age_Group::UnderTwenty:
-		return mortalityByAge.at(1);
-		break;
-	case Age_Group::UnderThirty:
-		return mortalityByAge.at(2);
-		break;
-	case Age_Group::UnderFourty:
-		return mortalityByAge.at(3);
-		break;
-	case Age_Group::UnderFifty:
-		return mortalityByAge.at(4);
-		break;
-	case Age_Group::UnderSixty:
-		return mortalityByAge.at(5);
-		break;
-	case Age_Group::UnderSeventy:
-		return mortalityByAge.at(6);
-		break;
-	case Age_Group::UnderEighty:
-		return mortalityByAge.at(7);
-		break;
-	case Age_Group::AboveEighty:
-		return mortalityByAge.at(8);
-		break;
-	default:
-		throw std::logic_error("No Valid Age!");
-		break;
-	}
+	return mortalityByAge.at(static_cast<size_t>(age));
 }
 
 int DeseaseSpreadSimulation::Desease::GetDeseaseDuration() const
@@ -137,6 +107,7 @@ bool DeseaseSpreadSimulation::Desease::isSame(const Desease& other) const
 	if (durationRange != other.durationRange) same = false;
 	if (!(mortalityByAge == other.mortalityByAge)) same = false;
 	if (daysTillDeathRange != other.daysTillDeathRange) same = false;
+
 	return same;
 }
 

@@ -37,6 +37,7 @@ namespace DeseaseSpreadSimulation
 	private:
 		// United States Census Bureau - Population by Age and Sex:2018 -> https://www.census.gov/data/tables/2018/demo/age-and-sex/2018-age-sex-composition.html
 		// Male population is only 99.9% in that document. Added .1% to AboveEighty to get to 100% and prevent possible bugs
+		/// TODO: change static const to a constexpr with initializer list: currently not working although the documentation says it should
 		static const std::vector<Human> defaultAgeDistributionUSA;
 	};
 }

@@ -40,7 +40,7 @@ void DeseaseSpreadSimulation::Simulation::Resume()
 
 void DeseaseSpreadSimulation::Simulation::SetSimulationSpeedMultiplier(uint16_t multiplier)
 {
-	simulationTime.SetSimulationTimeMultiplier(std::move(multiplier));
+	simulationTime.SetSimulationTimeMultiplier(multiplier);
 }
 
 void DeseaseSpreadSimulation::Simulation::Update()
