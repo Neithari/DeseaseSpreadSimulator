@@ -363,18 +363,18 @@ namespace UnitTests {
         size_t evenCount = 100;
         size_t unevenCount = 111;
 
-        DeseaseSpreadSimulation::PersonPopulator::Human human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
-        DeseaseSpreadSimulation::PersonPopulator::Human human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
-        DeseaseSpreadSimulation::PersonPopulator::Human human3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.25f };
-        DeseaseSpreadSimulation::PersonPopulator::Human human4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.25f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
 
-        DeseaseSpreadSimulation::PersonPopulator::Human human5{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.10f };
-        DeseaseSpreadSimulation::PersonPopulator::Human human6{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.20f };
-        DeseaseSpreadSimulation::PersonPopulator::Human human7{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.30f };
-        DeseaseSpreadSimulation::PersonPopulator::Human human8{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.40f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human5{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.10f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human6{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.20f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human7{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.30f };
+        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human8{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.40f };
 
-        std::vector<DeseaseSpreadSimulation::PersonPopulator::Human> evenDistribution{ human1, human2, human3, human4 };
-        std::vector<DeseaseSpreadSimulation::PersonPopulator::Human> unevenDistribution{ human5, human6, human7, human8 };
+        std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
+        std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
 
 
         std::vector<DeseaseSpreadSimulation::Person> population1 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(evenCount, evenDistribution);
@@ -394,154 +394,154 @@ namespace UnitTests {
     }
     TEST_F(PersonPopulatorTest, EvenDistributionIsGood)
     {
-        float countHuman1 = 0.f;
-        float countHuman2 = 0.f;
-        float countHuman3 = 0.f;
-        float countHuman4 = 0.f;
+        float countHumanDistribution1 = 0.f;
+        float countHumanDistribution2 = 0.f;
+        float countHumanDistribution3 = 0.f;
+        float countHumanDistribution4 = 0.f;
 
         for (const auto& person : population1)
         {
-            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
             
             if (h == human1)
             {
-                countHuman1 += 1.f;
+                countHumanDistribution1 += 1.f;
             }
             else if (h == human2)
             {
-                countHuman2 += 1.f;
+                countHumanDistribution2 += 1.f;
             }
             else if (h == human3)
             {
-                countHuman3++;
+                countHumanDistribution3++;
             }
             else if (h == human4)
             {
-                countHuman4 += 1.f;
+                countHumanDistribution4 += 1.f;
             }
         }
 
-        countHuman1 = countHuman1 / evenCount;
-        countHuman2 = countHuman2 / evenCount;
-        countHuman3 = countHuman3 / evenCount;
-        countHuman4 = countHuman4 / evenCount;
+        countHumanDistribution1 = countHumanDistribution1 / evenCount;
+        countHumanDistribution2 = countHumanDistribution2 / evenCount;
+        countHumanDistribution3 = countHumanDistribution3 / evenCount;
+        countHumanDistribution4 = countHumanDistribution4 / evenCount;
 
-        EXPECT_NEAR(countHuman1, human1.percent, 0.01f);
-        EXPECT_NEAR(countHuman2, human2.percent, 0.01f);
-        EXPECT_NEAR(countHuman3, human3.percent, 0.01f);
-        EXPECT_NEAR(countHuman4, human4.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution1, human1.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution2, human2.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01f);
 
-        countHuman1 = 0.f;
-        countHuman2 = 0.f;
-        countHuman3 = 0.f;
-        countHuman4 = 0.f;
+        countHumanDistribution1 = 0.f;
+        countHumanDistribution2 = 0.f;
+        countHumanDistribution3 = 0.f;
+        countHumanDistribution4 = 0.f;
 
         for (const auto& person : population2)
         {
-            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human1)
             {
-                countHuman1 += 1.f;
+                countHumanDistribution1 += 1.f;
             }
             else if (h == human2)
             {
-                countHuman2 += 1.f;
+                countHumanDistribution2 += 1.f;
             }
             else if (h == human3)
             {
-                countHuman3++;
+                countHumanDistribution3++;
             }
             else if (h == human4)
             {
-                countHuman4 += 1.f;
+                countHumanDistribution4 += 1.f;
             }
         }
 
-        countHuman1 = countHuman1 / unevenCount;
-        countHuman2 = countHuman2 / unevenCount;
-        countHuman3 = countHuman3 / unevenCount;
-        countHuman4 = countHuman4 / unevenCount;
+        countHumanDistribution1 = countHumanDistribution1 / unevenCount;
+        countHumanDistribution2 = countHumanDistribution2 / unevenCount;
+        countHumanDistribution3 = countHumanDistribution3 / unevenCount;
+        countHumanDistribution4 = countHumanDistribution4 / unevenCount;
 
-        EXPECT_NEAR(countHuman1, human1.percent, 0.01f);
-        EXPECT_NEAR(countHuman2, human2.percent, 0.01f);
-        EXPECT_NEAR(countHuman3, human3.percent, 0.01f);
-        EXPECT_NEAR(countHuman4, human4.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution1, human1.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution2, human2.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01f);
     }
     TEST_F(PersonPopulatorTest, UnevenDistributionIsGood)
     {
-        float countHuman1 = 0.f;
-        float countHuman2 = 0.f;
-        float countHuman3 = 0.f;
-        float countHuman4 = 0.f;
+        float countHumanDistribution1 = 0.f;
+        float countHumanDistribution2 = 0.f;
+        float countHumanDistribution3 = 0.f;
+        float countHumanDistribution4 = 0.f;
 
         for (const auto& person : population3)
         {
-            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human5)
             {
-                countHuman1 += 1.f;
+                countHumanDistribution1 += 1.f;
             }
             else if (h == human6)
             {
-                countHuman2 += 1.f;
+                countHumanDistribution2 += 1.f;
             }
             else if (h == human7)
             {
-                countHuman3++;
+                countHumanDistribution3++;
             }
             else if (h == human8)
             {
-                countHuman4 += 1.f;
+                countHumanDistribution4 += 1.f;
             }
         }
 
-        countHuman1 = countHuman1 / evenCount;
-        countHuman2 = countHuman2 / evenCount;
-        countHuman3 = countHuman3 / evenCount;
-        countHuman4 = countHuman4 / evenCount;
+        countHumanDistribution1 = countHumanDistribution1 / evenCount;
+        countHumanDistribution2 = countHumanDistribution2 / evenCount;
+        countHumanDistribution3 = countHumanDistribution3 / evenCount;
+        countHumanDistribution4 = countHumanDistribution4 / evenCount;
 
-        EXPECT_NEAR(countHuman1, human5.percent, 0.01f);
-        EXPECT_NEAR(countHuman2, human6.percent, 0.01f);
-        EXPECT_NEAR(countHuman3, human7.percent, 0.01f);
-        EXPECT_NEAR(countHuman4, human8.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution1, human5.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01f);
 
-        countHuman1 = 0.f;
-        countHuman2 = 0.f;
-        countHuman3 = 0.f;
-        countHuman4 = 0.f;
+        countHumanDistribution1 = 0.f;
+        countHumanDistribution2 = 0.f;
+        countHumanDistribution3 = 0.f;
+        countHumanDistribution4 = 0.f;
 
         for (const auto& person : population4)
         {
-            DeseaseSpreadSimulation::PersonPopulator::Human h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human5)
             {
-                countHuman1 += 1.f;
+                countHumanDistribution1 += 1.f;
             }
             else if (h == human6)
             {
-                countHuman2 += 1.f;
+                countHumanDistribution2 += 1.f;
             }
             else if (h == human7)
             {
-                countHuman3++;
+                countHumanDistribution3++;
             }
             else if (h == human8)
             {
-                countHuman4 += 1.f;
+                countHumanDistribution4 += 1.f;
             }
         }
 
-        countHuman1 = countHuman1 / unevenCount;
-        countHuman2 = countHuman2 / unevenCount;
-        countHuman3 = countHuman3 / unevenCount;
-        countHuman4 = countHuman4 / unevenCount;
+        countHumanDistribution1 = countHumanDistribution1 / unevenCount;
+        countHumanDistribution2 = countHumanDistribution2 / unevenCount;
+        countHumanDistribution3 = countHumanDistribution3 / unevenCount;
+        countHumanDistribution4 = countHumanDistribution4 / unevenCount;
 
-        EXPECT_NEAR(countHuman1, human5.percent, 0.01f);
-        EXPECT_NEAR(countHuman2, human6.percent, 0.01f);
-        EXPECT_NEAR(countHuman3, human7.percent, 0.01f);
-        EXPECT_NEAR(countHuman4, human8.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution1, human5.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01f);
+        EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01f);
     }
 }

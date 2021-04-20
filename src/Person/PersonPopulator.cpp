@@ -3,7 +3,7 @@
 #include "Person/Person.h"
 
 // Value is in percent with 1.f = 100%
-const std::vector<DeseaseSpreadSimulation::PersonPopulator::Human> DeseaseSpreadSimulation::PersonPopulator::defaultAgeDistributionUSA{
+const std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::defaultAgeDistributionUSA{
 	{ Age_Group::UnderTen,	  Sex::Female, 0.119f },
 	{ Age_Group::UnderTwenty, Sex::Female, 0.124f },
 	{ Age_Group::UnderThirty, Sex::Female, 0.134f },
@@ -25,7 +25,7 @@ const std::vector<DeseaseSpreadSimulation::PersonPopulator::Human> DeseaseSpread
 	{ Age_Group::AboveEighty, Sex::Male,   0.031f }
 };
 
-std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetPopulation(size_t count, const std::vector<Human>& distribution)
+std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetPopulation(size_t count, const std::vector<HumanDistribution>& distribution)
 {
 	std::vector<Person> population;
 	population.reserve(count);

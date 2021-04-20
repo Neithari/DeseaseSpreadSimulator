@@ -7,16 +7,16 @@ namespace DeseaseSpreadSimulation
 	class PersonPopulator
 	{
 	public:
-		struct Human
+		struct HumanDistribution
 		{
-			Human(Age_Group ageGroup, Sex sex, float percent)
+			HumanDistribution(Age_Group ageGroup, Sex sex, float percent)
 				:
 				ageGroup(ageGroup),
 				sex(sex),
 				percent(percent)
 			{};
 
-			inline bool operator==(const Human& rhs)
+			inline bool operator==(const HumanDistribution& rhs)
 			{
 				return ageGroup == rhs.ageGroup && sex == rhs.sex;
 			};
@@ -26,7 +26,7 @@ namespace DeseaseSpreadSimulation
 			float percent = 0.f;
 		};
 
-		static std::vector<Person> GetPopulation(size_t count, const std::vector<Human>& distribution = defaultAgeDistributionUSA);
+		static std::vector<Person> GetPopulation(size_t count, const std::vector<HumanDistribution>& distribution = defaultAgeDistributionUSA);
 
 	private:
 		PersonPopulator() = default;
@@ -38,6 +38,6 @@ namespace DeseaseSpreadSimulation
 		// United States Census Bureau - Population by Age and Sex:2018 -> https://www.census.gov/data/tables/2018/demo/age-and-sex/2018-age-sex-composition.html
 		// Male population is only 99.9% in that document. Added .1% to AboveEighty to get to 100% and prevent possible bugs
 		/// TODO: change static const to a constexpr with initializer list: currently not working although the documentation says it should
-		static const std::vector<Human> defaultAgeDistributionUSA;
+		static const std::vector<HumanDistribution> defaultAgeDistributionUSA;
 	};
 }
