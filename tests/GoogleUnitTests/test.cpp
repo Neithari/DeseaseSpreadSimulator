@@ -70,7 +70,7 @@ namespace UnitTests {
     {
         // Check age 0-89
         int age = 0;
-        for (size_t index = 0; index < mortalityByAge.size(); index++)
+        for (int index = 0; index < mortalityByAge.size(); index++)
         {
             for (int i = 0; i < 10; i++)
             {
