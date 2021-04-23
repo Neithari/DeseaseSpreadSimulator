@@ -6,6 +6,8 @@
 #include "src/Person/Person.h"
 #include "src/Simulation/TimeManager.h"
 #include "src/Person/PersonPopulator.h"
+#include "src/IDGenerator/IDGenerator.h"
+#include "src/Places/Places.h"
 
 namespace UnitTests {
     class DeseaseTest : public ::testing::Test
@@ -543,5 +545,108 @@ namespace UnitTests {
         EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01f);
         EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01f);
         EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01f);
+    }
+
+    TEST(IDGeneratorTests, IDIncrementing)
+    {
+        for (size_t i = 0; i < 10; i++)
+        {
+            EXPECT_EQ(IDGenerator::IDGenerator<char>::GetNextID(), i);
+        }
+    }
+    TEST(IDGeneratorTests, IndependentIDs)
+    {
+        for (size_t i = 0; i < 10; i++)
+        {
+            EXPECT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), i);
+        }
+
+        EXPECT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), 10);
+        EXPECT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), 0);
+
+        for (size_t i = 1; i < 10; i++)
+        {
+            EXPECT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), i);
+        }
+        
+        EXPECT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), 0);
+        
+        for (size_t i = 1; i < 10; i++)
+        {
+            EXPECT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), i);
+        }
+    }
+    TEST(IDGeneratorTests, UserDefinedClasses)
+    {
+        struct Foo
+        {
+            int f;
+        };
+        struct Bar
+        {
+            int b;
+        };
+
+        for (size_t i = 0; i < 10; i++)
+        {
+            EXPECT_EQ(IDGenerator::IDGenerator<Foo>::GetNextID(), i);
+            EXPECT_EQ(IDGenerator::IDGenerator<Bar>::GetNextID(), i);
+        }
+    }
+    TEST(IDGeneratorTests, DerivedClasses)
+    {
+        class Base
+        {
+        protected:
+            int b;
+        };
+        class Derived : public Base
+        {
+        private:
+            int d;
+        };
+        for (size_t i = 0; i < 10; i++)
+        {
+            EXPECT_EQ(IDGenerator::IDGenerator<Base>::GetNextID(), i);
+            EXPECT_EQ(IDGenerator::IDGenerator<Derived>::GetNextID(), i);
+        }
+    }
+
+    TEST(PlacesTests, IDAdvancing)
+    {
+        DeseaseSpreadSimulation::Home home;
+        DeseaseSpreadSimulation::Supply market;
+        DeseaseSpreadSimulation::Work work;
+        DeseaseSpreadSimulation::HardwareStore hardware;
+            
+        EXPECT_EQ(home.GetID(), 0);
+        EXPECT_EQ(market.GetID(), 0);
+        EXPECT_EQ(work.GetID(), 0);
+        EXPECT_EQ(hardware.GetID(), 0);
+
+        for (size_t i = 1; i < 10; i++)
+        {
+            DeseaseSpreadSimulation::Home home1;
+            DeseaseSpreadSimulation::Supply market1;
+            DeseaseSpreadSimulation::Work work1;
+            DeseaseSpreadSimulation::HardwareStore hardware1;
+
+            EXPECT_EQ(home1.GetID(), i);
+            EXPECT_EQ(market1.GetID(), i);
+            EXPECT_EQ(work1.GetID(), i);
+            EXPECT_EQ(hardware1.GetID(), i);
+        }
+    }
+    TEST(PlacesTests, GetTypeName)
+    {
+        DeseaseSpreadSimulation::Home home;
+        DeseaseSpreadSimulation::Supply market;
+        DeseaseSpreadSimulation::Work work;
+        DeseaseSpreadSimulation::HardwareStore hardware;
+
+        EXPECT_EQ(home.GetTypeName(), "Home10");
+        EXPECT_EQ(market.GetTypeName(), "Supply10");
+        EXPECT_EQ(work.GetTypeName(), "Work10");
+        EXPECT_EQ(hardware.GetTypeName(), "HardwareStore10");
     }
 }
