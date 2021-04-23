@@ -229,6 +229,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\IDGenerator\IDGenerator.cpp" />
     <ClCompile Include="..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -250,6 +251,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\Person\PersonPopulator.cpp" />
+    <ClCompile Include="..\Places\Places.cpp" />
     <ClCompile Include="..\Simulation\Simulation.cpp" />
     <ClCompile Include="..\Simulation\System.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -285,9 +287,11 @@
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h" />
     <ClInclude Include="..\Desease\DeseaseBuilder.h" />
+    <ClInclude Include="..\IDGenerator\IDGenerator.h" />
     <ClInclude Include="..\pch.h" />
     <ClInclude Include="..\Person\Person.h" />
     <ClInclude Include="..\Person\PersonPopulator.h" />
+    <ClInclude Include="..\Places\Places.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\System.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />

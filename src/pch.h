@@ -19,6 +19,7 @@
 #include <utility>
 #include <chrono>
 #include <map>
+#include <atomic>
 
 // Data structures
 #include <string>
@@ -33,3 +34,4 @@
 
 // My
 #include "Desease/Desease.h"
+#include "IDGenerator/IDGenerator.h"
