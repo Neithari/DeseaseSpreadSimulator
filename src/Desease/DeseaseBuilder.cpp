@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Desease/DeseaseBuilder.h"
+#include "IDGenerator/IDGenerator.h"
 
 const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder::CreateCorona()
 {

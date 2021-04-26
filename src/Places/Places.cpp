@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Places/Places.h"
 #include "Person/Person.h"
+#include "IDGenerator/IDGenerator.h"
 
 unsigned int DeseaseSpreadSimulation::Place::GetID() const
 {
