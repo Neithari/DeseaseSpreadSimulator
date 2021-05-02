@@ -8,7 +8,6 @@ namespace DeseaseSpreadSimulation
 	public:
 		virtual std::string GetTypeName() const = 0;
 		const std::vector<Person>& GetPeople() const;
-		std::unique_ptr<std::vector<Person>> GetPeople();
 		unsigned int GetID() const;
 
 	protected:

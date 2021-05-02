@@ -13,11 +13,6 @@ const std::vector<DeseaseSpreadSimulation::Person>& DeseaseSpreadSimulation::Pla
 	return people;
 }
 
-std::unique_ptr<std::vector<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimulation::Place::GetPeople()
-{
-	return std::make_unique<std::vector<Person>>(people);
-}
-
 DeseaseSpreadSimulation::Place::Place(unsigned int id)
 	:
 	placeID(id)
