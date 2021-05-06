@@ -59,8 +59,8 @@ namespace DeseaseSpreadSimulation
 		std::vector<HumanDistribution> GetCurrentDistribution(Country country);
 
 	private:
-		size_t leftover = 0;
 		const size_t populationSize = 0;
+		size_t leftover = 0;
 		std::vector<HumanDistribution> currentAgeDistribution;
 		HumanDistribution currentHumanDistribution;
 		size_t currentHumanCount = 0;
