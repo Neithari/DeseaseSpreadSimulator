@@ -15,10 +15,8 @@ void System::Run()
 
 void System::Update()
 {
-	human.Update();
 }
 
 void System::SetupEverything()
 {
-	human.Contaminate(&deseases.CreateCorona());
 }

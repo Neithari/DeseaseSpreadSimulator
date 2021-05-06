@@ -261,6 +261,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\Person\PersonPopulator.cpp" />
+    <ClCompile Include="..\Places\CommunityBuilder.cpp" />
     <ClCompile Include="..\Places\Places.cpp" />
     <ClCompile Include="..\Simulation\Simulation.cpp" />
     <ClCompile Include="..\Simulation\System.cpp">
@@ -301,6 +302,7 @@
     <ClInclude Include="..\pch.h" />
     <ClInclude Include="..\Person\Person.h" />
     <ClInclude Include="..\Person\PersonPopulator.h" />
+    <ClInclude Include="..\Places\CommunityBuilder.h" />
     <ClInclude Include="..\Places\Places.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\System.h" />

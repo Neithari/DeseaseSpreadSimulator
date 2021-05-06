@@ -1,14 +1,16 @@
 #pragma once
+#include "Person/Person.h"
+
 namespace DeseaseSpreadSimulation
 {
-	class Person;
-
 	class Place
 	{
 	public:
 		virtual std::string GetTypeName() const = 0;
 		const std::vector<Person>& GetPeople() const;
 		unsigned int GetID() const;
+
+		virtual ~Place() = default;
 
 	protected:
 		Place(unsigned int id);

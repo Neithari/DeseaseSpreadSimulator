@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "Person/Person.h"
+#include "Places/Places.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, std::pair<float, float> position)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, std::shared_ptr<Home> home)
 	:
 	age(age),
 	sex(sex),
-	position(std::move(position))
+	home(home),
+	whereabouts(home)
 {
 }
 
@@ -104,6 +106,16 @@ DeseaseSpreadSimulation::Age_Group DeseaseSpreadSimulation::Person::GetAgeGroup(
 DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
 {
 	return sex;
+}
+
+auto DeseaseSpreadSimulation::Person::GetWhereabouts() const
+{
+	return whereabouts;
+}
+
+auto DeseaseSpreadSimulation::Person::GetHome() const
+{
+	return home;
 }
 
 void DeseaseSpreadSimulation::Person::DeseaseCheck()

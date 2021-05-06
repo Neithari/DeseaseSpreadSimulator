@@ -2,18 +2,21 @@
 
 namespace DeseaseSpreadSimulation
 {
-	
+	class Home;
+	class Place;
+
 	class Person
 	{
 	public:
-		Person(Age_Group age, Sex sex, std::pair<float, float> position);
+		// Create a Person with age, sex, set it's home and set whereabout to home
+		Person(Age_Group age, Sex sex, std::shared_ptr<Home> home);
 
 		void Update();
 
 		void Contact(Person& other);
 		std::string GetDeseaseName() const;
 		void Contaminate(const Desease* infection);
-		// advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
+		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
 
 		bool isSusceptible() const;
@@ -24,6 +27,8 @@ namespace DeseaseSpreadSimulation
 
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
+		auto GetWhereabouts() const;
+		auto GetHome() const;
 
 	private:
 		void Move();
@@ -32,7 +37,9 @@ namespace DeseaseSpreadSimulation
 	private:
 		Age_Group age;
 		Sex sex;
-		std::pair<float, float> position;
+		std::shared_ptr<Home> home;
+		std::shared_ptr<Place> whereabouts;
+		std::shared_ptr<Place> workplace;
 
 		Seir_State state = Seir_State::Susceptible;
 		bool quarantined = false;

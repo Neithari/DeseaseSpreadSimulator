@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Person/PersonPopulator.h"
-#include "Person/Person.h"
 
 // Value is in percent with 1.f = 100%
 const std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::defaultAgeDistributionUSA{
@@ -25,25 +24,44 @@ const std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> D
 	{ Age_Group::AboveEighty, Sex::Male,   0.031f }
 };
 
-std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetPopulation(size_t count, const std::vector<HumanDistribution>& distribution)
+const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdUSA{27.89f, 49.49f, 18.81f, 3.81f};
+const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdGermany{39.53f, 47.0f, 12.71f, 0.76f};
+
+DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, Country country)
+	:
+	populationSize(populationSize),
+	leftover(populationSize),
+	currentAgeDistribution(GetCurrentDistribution(country)),
+	currentHumanDistribution(currentAgeDistribution.back())
+{
+	// Pop the back because we used it already
+	currentAgeDistribution.pop_back();
+	// Set the currentHumanCount to a percent of the population and to 1 if this will return 0
+	currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
+	if (currentHumanCount == 0)
+	{
+		currentHumanCount = 1;
+	}
+}
+
+std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetPopulation(size_t count, std::shared_ptr<Home> home, const std::vector<HumanDistribution>& distribution)
 {
 	std::vector<Person> population;
 	population.reserve(count);
-	size_t leftover = count;
+	size_t left = count;
 
 	// As long as we don't have assigned the full population...
-	while (leftover > 0)
+	while (left > 0)
 	{
-		count = leftover;
+		count = left;
 		// ...create a new person with age and sex according to our distribution
 		for (auto const& human : distribution)
 		{
-			if (leftover == 0)
+			if (left == 0)
 			{
 				break;
 			}
 			/// TODO: Implement a positioning algorithm
-			std::pair<float, float> position{ 0.f,0.f };
 
 			size_t dist = DistributionToCountHelper(count, human.percent);
 			if (dist == 0 && count > 0)
@@ -52,17 +70,68 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 			}
 			for (size_t i = 0; i < dist; i++)
 			{
-				population.emplace_back(human.ageGroup, human.sex, position);
+				population.emplace_back(human.ageGroup, human.sex, home);
 			}
-			leftover -= dist;
+			left -= dist;
 		}
 	}
 
 	return population;
 }
 
+std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(std::shared_ptr<DeseaseSpreadSimulation::Home> home)
+{
+	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
+	if (leftover > 0)
+	{
+		// When the currentHumanCount is 0 we...
+		if (currentHumanCount == 0)
+		{
+			// ...check if we distributed all..
+			if (currentAgeDistribution.empty())
+			{
+				// ...return null if we did...
+				return nullptr;
+			}
+			// ...set the new current distribution and delete the last used...
+			currentHumanDistribution = currentAgeDistribution.back();
+			currentAgeDistribution.pop_back();
+			
+			// ...set the currentHumanCount to a percent of the population and to 1 if this will return 0
+			currentHumanCount = DistributionToCountHelper(leftover, currentHumanDistribution.percent);
+			if (currentHumanCount == 0)
+			{
+				currentHumanCount = 1;
+			}
+		}
+
+		leftover--;
+		currentHumanCount--;
+
+		return std::make_unique<Person>(currentHumanDistribution.ageGroup, currentHumanDistribution.sex, home);
+	}
+
+	return nullptr;
+}
+
 size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_t count, float percent)
 {
 	// scale count by percent and then omit the decimal
 	return static_cast<size_t>(count * static_cast<double>(percent));
+}
+
+std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCurrentDistribution(Country country)
+{
+	switch (country)
+	{
+	case DeseaseSpreadSimulation::Country::USA:
+		return defaultAgeDistributionUSA;
+		break;
+	case DeseaseSpreadSimulation::Country::Germany:
+		return defaultAgeDistributionUSA;
+		break;
+	default:
+		return defaultAgeDistributionUSA;
+		break;
+	}
 }

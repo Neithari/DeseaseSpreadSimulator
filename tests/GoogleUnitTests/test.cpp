@@ -1,13 +1,13 @@
 #include "pch.h"
 
 // Includes to be tested
-#include "src/Desease/Desease.h"
-#include "src/Desease/DeseaseBuilder.h"
-#include "src/Person/Person.h"
-#include "src/Simulation/TimeManager.h"
-#include "src/Person/PersonPopulator.h"
-#include "src/IDGenerator/IDGenerator.h"
-#include "src/Places/Places.h"
+#include "Desease/Desease.h"
+#include "Desease/DeseaseBuilder.h"
+#include "Person/Person.h"
+#include "Simulation/TimeManager.h"
+#include "Person/PersonPopulator.h"
+#include "IDGenerator/IDGenerator.h"
+#include "Places/Places.h"
 
 namespace UnitTests {
     class DeseaseTest : public ::testing::Test
@@ -309,22 +309,19 @@ namespace UnitTests {
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
+        std::shared_ptr<DeseaseSpreadSimulation::Home> home = std::make_shared<DeseaseSpreadSimulation::Home>();
         DeseaseSpreadSimulation::Desease desease{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
     };
     TEST_F(PersonTest, ContaminateAPerson)
     {
-        std::pair<float, float> position{ 10.f, 10.f };
-
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
         patient.Contaminate(&desease);
 
         ASSERT_EQ(patient.GetDeseaseName(), desease.GetDeseaseName());
     }
     TEST_F(PersonTest, PersonIsInfectiousAfterLatentPeriod)
     {
-        std::pair<float, float> position{ 10.f, 10.f };
-
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
         patient.Contaminate(&desease);
 
         // Patient is not contagious right after contamination
@@ -338,11 +335,10 @@ namespace UnitTests {
     }
     TEST_F(PersonTest, ContactWithOtherPersonWillInfect)
     {
-        std::pair<float, float> position{ 10.f, 10.f };
         // Create 3 patients
-        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
-        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
-        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, position);
+        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
+        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
+        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
         // Contaminate 1
         patient1.Contaminate(&desease);
         // Advance patient beyond latent period
@@ -364,6 +360,9 @@ namespace UnitTests {
     protected:
         size_t evenCount = 100;
         size_t unevenCount = 111;
+        std::shared_ptr<DeseaseSpreadSimulation::Home> home = std::make_shared<DeseaseSpreadSimulation::Home>();
+        DeseaseSpreadSimulation::PersonPopulator evenPopulator{ evenCount, DeseaseSpreadSimulation::Country::USA };
+        DeseaseSpreadSimulation::PersonPopulator unevenPopulator{ unevenCount, DeseaseSpreadSimulation::Country::USA };
 
         DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
         DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
@@ -378,11 +377,10 @@ namespace UnitTests {
         std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
         std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
 
-
-        std::vector<DeseaseSpreadSimulation::Person> population1 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(evenCount, evenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population2 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(unevenCount, evenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population3 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(evenCount, unevenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population4 = DeseaseSpreadSimulation::PersonPopulator::GetPopulation(unevenCount, unevenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population1 = evenPopulator.GetPopulation(evenCount, home, evenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population2 = unevenPopulator.GetPopulation(unevenCount, home, evenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population3 = evenPopulator.GetPopulation(evenCount, home, unevenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population4 = unevenPopulator.GetPopulation(unevenCount, home, unevenDistribution);
     };
     TEST_F(PersonPopulatorTest, SizeIsEqualEvenCount)
     {
@@ -611,32 +609,6 @@ namespace UnitTests {
             EXPECT_EQ(IDGenerator::IDGenerator<Derived>::GetNextID(), i);
         }
     }
-
-    TEST(PlacesTests, IDAdvancing)
-    {
-        DeseaseSpreadSimulation::Home home;
-        DeseaseSpreadSimulation::Supply market;
-        DeseaseSpreadSimulation::Work work;
-        DeseaseSpreadSimulation::HardwareStore hardware;
-            
-        EXPECT_EQ(home.GetID(), 0);
-        EXPECT_EQ(market.GetID(), 0);
-        EXPECT_EQ(work.GetID(), 0);
-        EXPECT_EQ(hardware.GetID(), 0);
-
-        for (size_t i = 1; i < 10; i++)
-        {
-            DeseaseSpreadSimulation::Home home1;
-            DeseaseSpreadSimulation::Supply market1;
-            DeseaseSpreadSimulation::Work work1;
-            DeseaseSpreadSimulation::HardwareStore hardware1;
-
-            EXPECT_EQ(home1.GetID(), i);
-            EXPECT_EQ(market1.GetID(), i);
-            EXPECT_EQ(work1.GetID(), i);
-            EXPECT_EQ(hardware1.GetID(), i);
-        }
-    }
     TEST(PlacesTests, GetTypeName)
     {
         DeseaseSpreadSimulation::Home home;
@@ -644,9 +616,10 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Work work;
         DeseaseSpreadSimulation::HardwareStore hardware;
 
-        EXPECT_EQ(home.GetTypeName(), "Home10");
-        EXPECT_EQ(market.GetTypeName(), "Supply10");
-        EXPECT_EQ(work.GetTypeName(), "Work10");
-        EXPECT_EQ(hardware.GetTypeName(), "HardwareStore10");
+        // No test for the ID because we can't guarantee the order of the tests and ID is already checked
+        EXPECT_EQ(home.GetTypeName().substr(0,4), "Home");
+        EXPECT_EQ(market.GetTypeName().substr(0, 6), "Supply");
+        EXPECT_EQ(work.GetTypeName().substr(0, 4), "Work");
+        EXPECT_EQ(hardware.GetTypeName().substr(0, 13), "HardwareStore");
     }
 }

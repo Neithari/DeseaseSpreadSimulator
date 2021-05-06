@@ -51,6 +51,9 @@
     <ClCompile Include="..\IDGenerator\IDGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Places\CommunityBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h">
@@ -81,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\IDGenerator\IDGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Places\CommunityBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
