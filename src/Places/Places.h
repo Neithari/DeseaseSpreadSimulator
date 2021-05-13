@@ -2,6 +2,9 @@
 
 namespace DeseaseSpreadSimulation
 {
+	// Forward declare Person
+	class Person;
+
 	class Place
 	{
 	public:
