@@ -1,5 +1,4 @@
 #pragma once
-#include "Person/Person.h"
 #include "Simulation/TimeManager.h"
 
 namespace DeseaseSpreadSimulation

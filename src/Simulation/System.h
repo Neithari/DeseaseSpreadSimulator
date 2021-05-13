@@ -1,5 +1,4 @@
 #pragma once
-#include "Person/Person.h"
 #include "Desease/DeseaseBuilder.h"
 
 class System
