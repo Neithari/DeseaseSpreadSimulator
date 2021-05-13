@@ -8,6 +8,18 @@ namespace DeseaseSpreadSimulation
 	public:
 		// Create a Person with age, sex, set it's home and set whereabout to home
 		Person(Age_Group age, Sex sex, std::shared_ptr<Home> home);
+		
+		// Should only be used in unit tests because it's expensive
+		inline bool operator==(const Person& rhs) const
+		{
+			return	age == rhs.age &&
+					sex == rhs.sex &&
+					home == rhs.home &&
+					whereabouts == rhs.whereabouts &&
+					workplace == rhs.workplace &&
+					state == rhs.state &&
+					alive == rhs.alive;
+		};
 
 		void Update();
 
