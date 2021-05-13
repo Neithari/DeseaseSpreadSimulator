@@ -27,15 +27,13 @@ const std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> D
 const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdUSA{27.89f, 49.49f, 18.81f, 3.81f};
 const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdGermany{39.53f, 47.0f, 12.71f, 0.76f};
 
-DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, Country country)
+DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<HumanDistribution> distribution)
 	:
 	populationSize(populationSize),
 	leftover(populationSize),
-	currentAgeDistribution(GetCurrentDistribution(country)),
-	currentHumanDistribution(currentAgeDistribution.back())
+	ageDistribution(std::move(distribution)),
+	currentHumanDistribution(ageDistribution.front())
 {
-	// Pop the back because we used it already
-	currentAgeDistribution.pop_back();
 	// Set the currentHumanCount to a percent of the population and to 1 if this will return 0
 	currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
 	if (currentHumanCount == 0)
@@ -84,21 +82,20 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
 	if (leftover > 0)
 	{
-		// When the currentHumanCount is 0 we...
+		// When the currentHumanCount is 0...
 		if (currentHumanCount == 0)
 		{
-			// ...check if we distributed all..
-			if (currentAgeDistribution.empty())
+			// ...we set the new current distribution...
+			currentHumanDistribution = ageDistribution.at(ageDistributionIndex);
+			// ...advance the index and check if we used all distributions...
+			if (++ageDistributionIndex >= ageDistribution.size())
 			{
-				// ...return null if we did...
-				return nullptr;
+				// ...if yes we start again at the beginning...
+				ageDistributionIndex = 0;
 			}
-			// ...set the new current distribution and delete the last used...
-			currentHumanDistribution = currentAgeDistribution.back();
-			currentAgeDistribution.pop_back();
 			
 			// ...set the currentHumanCount to a percent of the population and to 1 if this will return 0
-			currentHumanCount = DistributionToCountHelper(leftover, currentHumanDistribution.percent);
+			currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
 			if (currentHumanCount == 0)
 			{
 				currentHumanCount = 1;
@@ -116,7 +113,7 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 
 size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_t count, float percent)
 {
-	// scale count by percent and then omit the decimal
+	// Scale count by percent and then omit the decimal
 	return static_cast<size_t>(count * static_cast<double>(percent));
 }
 

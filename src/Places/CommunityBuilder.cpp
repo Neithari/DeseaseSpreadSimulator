@@ -3,7 +3,7 @@
 
 DeseaseSpreadSimulation::CommunityBuilder::CommunityBuilder(size_t populationSize, DeseaseSpreadSimulation::Country country)
 	:
-	personFactory(populationSize, country)
+	personFactory(populationSize, PersonPopulator::GetCurrentDistribution(country))
 {
 	population.reserve(populationSize);
 }

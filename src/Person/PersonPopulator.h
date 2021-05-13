@@ -45,22 +45,25 @@ namespace DeseaseSpreadSimulation
 			float sixPlusMembers = 0.f;
 		};
 		
-		PersonPopulator(size_t populationSize, Country country);
+		PersonPopulator(size_t populationSize, std::vector<HumanDistribution> distribution);
 
 		std::vector<Person> GetPopulation(size_t count, std::shared_ptr<Home> home, const std::vector<HumanDistribution>& distribution = defaultAgeDistributionUSA);
 		// Get a new person for the chosen distribution. Call should return a empty pointer when count = 0
 		std::unique_ptr<Person> GetNewPerson(std::shared_ptr<Home> home);
 
+		// Helper function to select the distribution inside the constructor initializer list
+		static std::vector<HumanDistribution> GetCurrentDistribution(Country country);
+
 	private:
 		// Returns a rounded down percentage of count
 		static size_t DistributionToCountHelper(size_t count, float percent);
-		// Helper function to select the distribution inside the constructor initializer list
-		std::vector<HumanDistribution> GetCurrentDistribution(Country country);
 
 	private:
 		const size_t populationSize = 0;
 		size_t leftover = 0;
-		std::vector<HumanDistribution> currentAgeDistribution;
+		const std::vector<HumanDistribution> ageDistribution;
+		// Set to 1 because we use the distribution on 0 inside the constructor
+		size_t ageDistributionIndex = 1;
 		HumanDistribution currentHumanDistribution;
 		size_t currentHumanCount = 0;
 

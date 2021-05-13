@@ -361,8 +361,6 @@ namespace UnitTests {
         size_t evenCount = 100;
         size_t unevenCount = 111;
         std::shared_ptr<DeseaseSpreadSimulation::Home> home = std::make_shared<DeseaseSpreadSimulation::Home>();
-        DeseaseSpreadSimulation::PersonPopulator evenPopulator{ evenCount, DeseaseSpreadSimulation::Country::USA };
-        DeseaseSpreadSimulation::PersonPopulator unevenPopulator{ unevenCount, DeseaseSpreadSimulation::Country::USA };
 
         DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
         DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
@@ -377,11 +375,46 @@ namespace UnitTests {
         std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
         std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
 
+        DeseaseSpreadSimulation::PersonPopulator evenPopulator{ evenCount, evenDistribution };
+        DeseaseSpreadSimulation::PersonPopulator unevenPopulator{ unevenCount, unevenDistribution };
+
         std::vector<DeseaseSpreadSimulation::Person> population1 = evenPopulator.GetPopulation(evenCount, home, evenDistribution);
         std::vector<DeseaseSpreadSimulation::Person> population2 = unevenPopulator.GetPopulation(unevenCount, home, evenDistribution);
         std::vector<DeseaseSpreadSimulation::Person> population3 = evenPopulator.GetPopulation(evenCount, home, unevenDistribution);
         std::vector<DeseaseSpreadSimulation::Person> population4 = unevenPopulator.GetPopulation(unevenCount, home, unevenDistribution);
     };
+    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulation)
+    {
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> evenPopulation;
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> unevenPopulation;
+       
+        auto person = evenPopulator.GetNewPerson(home);
+        while (person)
+        {
+            evenPopulation.push_back(std::move(person));
+            person = evenPopulator.GetNewPerson(home);
+        }
+        ASSERT_EQ(evenPopulation.size(), population1.size());
+        
+        person = unevenPopulator.GetNewPerson(home);
+        while (person)
+        {
+            unevenPopulation.push_back(std::move(person));
+            person = unevenPopulator.GetNewPerson(home);
+        }
+        ASSERT_EQ(unevenPopulation.size(), population4.size());
+
+        size_t index = 0;
+        for (auto&& person : evenPopulation)
+        {
+            EXPECT_EQ(*person, population1.at(index++));
+        }
+        index = 0;
+        for (auto&& person : unevenPopulation)
+        {
+            EXPECT_EQ(*person, population4.at(index++));
+        }
+    }
     TEST_F(PersonPopulatorTest, SizeIsEqualEvenCount)
     {
         ASSERT_EQ(population1.size(), evenCount);
@@ -549,29 +582,29 @@ namespace UnitTests {
     {
         for (size_t i = 0; i < 10; i++)
         {
-            EXPECT_EQ(IDGenerator::IDGenerator<char>::GetNextID(), i);
+            ASSERT_EQ(IDGenerator::IDGenerator<char>::GetNextID(), i);
         }
     }
     TEST(IDGeneratorTests, IndependentIDs)
     {
         for (size_t i = 0; i < 10; i++)
         {
-            EXPECT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), i);
+            ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), i);
         }
 
-        EXPECT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), 10);
-        EXPECT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), 0);
+        ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), 10);
+        ASSERT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), 0);
 
         for (size_t i = 1; i < 10; i++)
         {
-            EXPECT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), i);
+            ASSERT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), i);
         }
         
-        EXPECT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), 0);
+        ASSERT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), 0);
         
         for (size_t i = 1; i < 10; i++)
         {
-            EXPECT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), i);
+            ASSERT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), i);
         }
     }
     TEST(IDGeneratorTests, UserDefinedClasses)
