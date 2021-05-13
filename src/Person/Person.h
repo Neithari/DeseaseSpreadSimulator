@@ -1,10 +1,8 @@
 #pragma once
+#include "Places/Places.h"
 
 namespace DeseaseSpreadSimulation
 {
-	class Home;
-	class Place;
-
 	class Person
 	{
 	public:

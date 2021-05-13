@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Person/Person.h"
-#include "Places/Places.h"
 
 DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, std::shared_ptr<Home> home)
 	:
