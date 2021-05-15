@@ -375,42 +375,84 @@ namespace UnitTests {
         std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
         std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
 
-        DeseaseSpreadSimulation::PersonPopulator evenPopulator{ evenCount, evenDistribution };
-        DeseaseSpreadSimulation::PersonPopulator unevenPopulator{ unevenCount, unevenDistribution };
+        DeseaseSpreadSimulation::PersonPopulator populator1{ evenCount, evenDistribution };
+        DeseaseSpreadSimulation::PersonPopulator populator2{ unevenCount, evenDistribution };
+        DeseaseSpreadSimulation::PersonPopulator populator3{ evenCount, unevenDistribution };
+        DeseaseSpreadSimulation::PersonPopulator populator4{ unevenCount, unevenDistribution };
 
-        std::vector<DeseaseSpreadSimulation::Person> population1 = evenPopulator.GetPopulation(evenCount, home, evenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population2 = unevenPopulator.GetPopulation(unevenCount, home, evenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population3 = evenPopulator.GetPopulation(evenCount, home, unevenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population4 = unevenPopulator.GetPopulation(unevenCount, home, unevenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population1 = populator1.GetPopulation(evenCount, home, evenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population2 = populator2.GetPopulation(unevenCount, home, evenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population3 = populator3.GetPopulation(evenCount, home, unevenDistribution);
+        std::vector<DeseaseSpreadSimulation::Person> population4 = populator4.GetPopulation(unevenCount, home, unevenDistribution);
     };
-    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulation)
+    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationEvenEven)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> evenPopulation;
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> unevenPopulation;
-       
-        auto person = evenPopulator.GetNewPerson(home);
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop1;
+
+        auto person = populator1.GetNewPerson(home);
         while (person)
         {
-            evenPopulation.push_back(std::move(person));
-            person = evenPopulator.GetNewPerson(home);
+            pop1.push_back(std::move(person));
+            person = populator1.GetNewPerson(home);
         }
-        ASSERT_EQ(evenPopulation.size(), population1.size());
-        
-        person = unevenPopulator.GetNewPerson(home);
-        while (person)
-        {
-            unevenPopulation.push_back(std::move(person));
-            person = unevenPopulator.GetNewPerson(home);
-        }
-        ASSERT_EQ(unevenPopulation.size(), population4.size());
+        ASSERT_EQ(pop1.size(), population1.size());
 
         size_t index = 0;
-        for (auto&& person : evenPopulation)
+        for (auto&& person : pop1)
         {
             EXPECT_EQ(*person, population1.at(index++));
         }
-        index = 0;
-        for (auto&& person : unevenPopulation)
+    }
+    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationEvenUneven)
+    {
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop2;
+
+        auto person = populator2.GetNewPerson(home);
+        while (person)
+        {
+            pop2.push_back(std::move(person));
+            person = populator2.GetNewPerson(home);
+        }
+        ASSERT_EQ(pop2.size(), population2.size());
+
+        size_t index = 0;
+        for (auto&& person : pop2)
+        {
+            EXPECT_EQ(*person, population2.at(index++));
+        }
+    }
+    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationUnevenEven)
+    {
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop3;
+
+        auto person = populator3.GetNewPerson(home);
+        while (person)
+        {
+            pop3.push_back(std::move(person));
+            person = populator3.GetNewPerson(home);
+        }
+        ASSERT_EQ(pop3.size(), population3.size());
+
+        size_t index = 0;
+        for (auto&& person : pop3)
+        {
+            EXPECT_EQ(*person, population3.at(index++));
+        }
+    }
+    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationUnevenUneven)
+    {
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop4;
+
+        auto person = populator4.GetNewPerson(home);
+        while (person)
+        {
+            pop4.push_back(std::move(person));
+            person = populator4.GetNewPerson(home);
+        }
+        ASSERT_EQ(pop4.size(), population4.size());
+
+        size_t index = 0;
+        for (auto&& person : pop4)
         {
             EXPECT_EQ(*person, population4.at(index++));
         }

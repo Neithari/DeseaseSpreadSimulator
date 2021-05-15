@@ -48,7 +48,7 @@ namespace DeseaseSpreadSimulation
 		PersonPopulator(size_t populationSize, std::vector<HumanDistribution> distribution);
 
 		std::vector<Person> GetPopulation(size_t count, std::shared_ptr<Home> home, const std::vector<HumanDistribution>& distribution = defaultAgeDistributionUSA);
-		// Get a new person for the chosen distribution. Call should return a empty pointer when count = 0
+		// Get a new person for the chosen distribution. Call should return a empty pointer when population size is reached
 		std::unique_ptr<Person> GetNewPerson(std::shared_ptr<Home> home);
 
 		// Helper function to select the distribution inside the constructor initializer list
@@ -61,6 +61,7 @@ namespace DeseaseSpreadSimulation
 	private:
 		const size_t populationSize = 0;
 		size_t leftover = 0;
+		bool lastFew = false;
 		const std::vector<HumanDistribution> ageDistribution;
 		// Set to 1 because we use the distribution on 0 inside the constructor
 		size_t ageDistributionIndex = 1;

@@ -87,18 +87,25 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 		{
 			// ...we set the new current distribution...
 			currentHumanDistribution = ageDistribution.at(ageDistributionIndex);
+			
+			if (!lastFew)
+			{
+				// ...set the currentHumanCount to a percent of the population...
+				currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
+			}
+			// ...and to 1 if this will return 0...
+			if (currentHumanCount == 0)
+			{
+				currentHumanCount = 1;
+			}
+			
 			// ...advance the index and check if we used all distributions...
 			if (++ageDistributionIndex >= ageDistribution.size())
 			{
 				// ...if yes we start again at the beginning...
 				ageDistributionIndex = 0;
-			}
-			
-			// ...set the currentHumanCount to a percent of the population and to 1 if this will return 0
-			currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
-			if (currentHumanCount == 0)
-			{
-				currentHumanCount = 1;
+				// ...and distribute 1 to every human distribution untill no leftover
+				lastFew = true;
 			}
 		}
 
