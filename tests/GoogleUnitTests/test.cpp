@@ -379,105 +379,84 @@ namespace UnitTests {
         DeseaseSpreadSimulation::PersonPopulator populator2{ unevenCount, evenDistribution };
         DeseaseSpreadSimulation::PersonPopulator populator3{ evenCount, unevenDistribution };
         DeseaseSpreadSimulation::PersonPopulator populator4{ unevenCount, unevenDistribution };
-
-        std::vector<DeseaseSpreadSimulation::Person> population1 = populator1.GetPopulation(evenCount, home, evenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population2 = populator2.GetPopulation(unevenCount, home, evenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population3 = populator3.GetPopulation(evenCount, home, unevenDistribution);
-        std::vector<DeseaseSpreadSimulation::Person> population4 = populator4.GetPopulation(unevenCount, home, unevenDistribution);
     };
-    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationEvenEven)
+    TEST_F(PersonPopulatorTest, SizeIsEqualEvenDistributionEvenCount)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop1;
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population1;
 
+        // Setup population
         auto person = populator1.GetNewPerson(home);
         while (person)
         {
-            pop1.push_back(std::move(person));
+            population1.push_back(std::move(person));
             person = populator1.GetNewPerson(home);
         }
-        ASSERT_EQ(pop1.size(), population1.size());
 
-        size_t index = 0;
-        for (auto&& person : pop1)
-        {
-            EXPECT_EQ(*person, population1.at(index++));
-        }
+        ASSERT_EQ(population1.size(), evenCount);
     }
-    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationEvenUneven)
+    TEST_F(PersonPopulatorTest, SizeIsEqualEvenDistributionUnevenCount)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop2;
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population2;
 
+        // Setup population
         auto person = populator2.GetNewPerson(home);
         while (person)
         {
-            pop2.push_back(std::move(person));
+            population2.push_back(std::move(person));
             person = populator2.GetNewPerson(home);
         }
-        ASSERT_EQ(pop2.size(), population2.size());
 
-        size_t index = 0;
-        for (auto&& person : pop2)
-        {
-            EXPECT_EQ(*person, population2.at(index++));
-        }
+        ASSERT_EQ(population2.size(), unevenCount);
     }
-    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationUnevenEven)
+    TEST_F(PersonPopulatorTest, SizeIsEqualUnevenDistributionEvenCount)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop3;
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population3;
 
+        // Setup population
         auto person = populator3.GetNewPerson(home);
         while (person)
         {
-            pop3.push_back(std::move(person));
+            population3.push_back(std::move(person));
             person = populator3.GetNewPerson(home);
         }
-        ASSERT_EQ(pop3.size(), population3.size());
 
-        size_t index = 0;
-        for (auto&& person : pop3)
-        {
-            EXPECT_EQ(*person, population3.at(index++));
-        }
-    }
-    TEST_F(PersonPopulatorTest, GetNewPersonIsEqualToGetPopulationUnevenUneven)
-    {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> pop4;
-
-        auto person = populator4.GetNewPerson(home);
-        while (person)
-        {
-            pop4.push_back(std::move(person));
-            person = populator4.GetNewPerson(home);
-        }
-        ASSERT_EQ(pop4.size(), population4.size());
-
-        size_t index = 0;
-        for (auto&& person : pop4)
-        {
-            EXPECT_EQ(*person, population4.at(index++));
-        }
-    }
-    TEST_F(PersonPopulatorTest, SizeIsEqualEvenCount)
-    {
-        ASSERT_EQ(population1.size(), evenCount);
         ASSERT_EQ(population3.size(), evenCount);
     }
-    TEST_F(PersonPopulatorTest, SizeIsEqualUnevenCount)
+    TEST_F(PersonPopulatorTest, SizeIsEqualUnevenDistributionUnevenCount)
     {
-        ASSERT_EQ(population2.size(), unevenCount);
+    std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population4;
+
+    // Setup population
+    auto person = populator4.GetNewPerson(home);
+    while (person)
+    {
+        population4.push_back(std::move(person));
+        person = populator4.GetNewPerson(home);
+    }
+
         ASSERT_EQ(population4.size(), unevenCount);
     }
-    TEST_F(PersonPopulatorTest, EvenDistributionIsGood)
+    TEST_F(PersonPopulatorTest, EvenDistributionEvenCount)
     {
         float countHumanDistribution1 = 0.f;
         float countHumanDistribution2 = 0.f;
         float countHumanDistribution3 = 0.f;
         float countHumanDistribution4 = 0.f;
 
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population1;
+
+        // Setup population
+        auto person = populator1.GetNewPerson(home);
+        while (person)
+        {
+            population1.push_back(std::move(person));
+            person = populator1.GetNewPerson(home);
+        }
+
         for (const auto& person : population1)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
-            
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+
             if (h == human1)
             {
                 countHumanDistribution1 += 1.f;
@@ -505,15 +484,27 @@ namespace UnitTests {
         EXPECT_NEAR(countHumanDistribution2, human2.percent, 0.01f);
         EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01f);
         EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01f);
+    }
+    TEST_F(PersonPopulatorTest, EvenDistributionUnevenCount)
+    {
+        float countHumanDistribution1 = 0.f;
+        float countHumanDistribution2 = 0.f;
+        float countHumanDistribution3 = 0.f;
+        float countHumanDistribution4 = 0.f;
 
-        countHumanDistribution1 = 0.f;
-        countHumanDistribution2 = 0.f;
-        countHumanDistribution3 = 0.f;
-        countHumanDistribution4 = 0.f;
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population2;
+
+        // Setup population
+        auto person = populator2.GetNewPerson(home);
+        while (person)
+        {
+            population2.push_back(std::move(person));
+            person = populator2.GetNewPerson(home);
+        }
 
         for (const auto& person : population2)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
 
             if (h == human1)
             {
@@ -543,16 +534,26 @@ namespace UnitTests {
         EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01f);
         EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01f);
     }
-    TEST_F(PersonPopulatorTest, UnevenDistributionIsGood)
+    TEST_F(PersonPopulatorTest, UnevenDistributionEvenCount)
     {
         float countHumanDistribution1 = 0.f;
         float countHumanDistribution2 = 0.f;
         float countHumanDistribution3 = 0.f;
         float countHumanDistribution4 = 0.f;
 
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population3;
+
+        // Setup population
+        auto person = populator3.GetNewPerson(home);
+        while (person)
+        {
+            population3.push_back(std::move(person));
+            person = populator3.GetNewPerson(home);
+        }
+
         for (const auto& person : population3)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
 
             if (h == human5)
             {
@@ -581,15 +582,27 @@ namespace UnitTests {
         EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01f);
         EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01f);
         EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01f);
+    }
+    TEST_F(PersonPopulatorTest, UnevenDistributionUnevenCount)
+    {
+        float countHumanDistribution1 = 0.f;
+        float countHumanDistribution2 = 0.f;
+        float countHumanDistribution3 = 0.f;
+        float countHumanDistribution4 = 0.f;
 
-        countHumanDistribution1 = 0.f;
-        countHumanDistribution2 = 0.f;
-        countHumanDistribution3 = 0.f;
-        countHumanDistribution4 = 0.f;
+        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population4;
+
+        // Setup population
+        auto person = populator4.GetNewPerson(home);
+        while (person)
+        {
+            population4.push_back(std::move(person));
+            person = populator4.GetNewPerson(home);
+        }
 
         for (const auto& person : population4)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
 
             if (h == human5)
             {

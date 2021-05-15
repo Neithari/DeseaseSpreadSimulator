@@ -42,41 +42,6 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetPopulation(size_t count, std::shared_ptr<Home> home, const std::vector<HumanDistribution>& distribution)
-{
-	std::vector<Person> population;
-	population.reserve(count);
-	size_t left = count;
-
-	// As long as we don't have assigned the full population...
-	while (left > 0)
-	{
-		count = left;
-		// ...create a new person with age and sex according to our distribution
-		for (auto const& human : distribution)
-		{
-			if (left == 0)
-			{
-				break;
-			}
-			/// TODO: Implement a positioning algorithm
-
-			size_t dist = DistributionToCountHelper(count, human.percent);
-			if (dist == 0 && count > 0)
-			{
-				dist = 1;
-			}
-			for (size_t i = 0; i < dist; i++)
-			{
-				population.emplace_back(human.ageGroup, human.sex, home);
-			}
-			left -= dist;
-		}
-	}
-
-	return population;
-}
-
 std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(std::shared_ptr<DeseaseSpreadSimulation::Home> home)
 {
 	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
