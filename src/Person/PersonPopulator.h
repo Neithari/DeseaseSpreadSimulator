@@ -51,7 +51,7 @@ namespace DeseaseSpreadSimulation
 		std::unique_ptr<Person> GetNewPerson(std::shared_ptr<Home> home);
 
 		// Helper function to select the distribution inside the constructor initializer list
-		static std::vector<HumanDistribution> GetCurrentDistribution(Country country);
+		static std::vector<HumanDistribution> GetDistributionByCountry(Country country);
 
 	private:
 		// Returns a rounded down percentage of count

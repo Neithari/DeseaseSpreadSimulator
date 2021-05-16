@@ -89,7 +89,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 	return static_cast<size_t>(count * static_cast<double>(percent));
 }
 
-std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCurrentDistribution(Country country)
+std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetDistributionByCountry(Country country)
 {
 	switch (country)
 	{
