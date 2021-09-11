@@ -142,6 +142,11 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 	}
 }
 
+void DeseaseSpreadSimulation::Person::SetWorkplace(Place* newWorkplace)
+{
+	workplace = newWorkplace;
+}
+
 void DeseaseSpreadSimulation::Person::Move()
 {
 	/// TODO: implement move function

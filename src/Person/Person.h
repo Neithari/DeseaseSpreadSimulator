@@ -34,9 +34,11 @@ namespace DeseaseSpreadSimulation
 		auto GetWhereabouts() const;
 		auto GetHome() const;
 
+
 	private:
 		void Move();
 		void DeseaseCheck();
+		void SetWorkplace(Place* newWorkplace);
 
 	private:
 		uint32_t id;
@@ -45,7 +47,7 @@ namespace DeseaseSpreadSimulation
 
 		Home* home;
 		Place* whereabouts;
-		Place* workplace;
+		Place* workplace = nullptr;
 
 		Seir_State state = Seir_State::Susceptible;
 		bool quarantined = false;
