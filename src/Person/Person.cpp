@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "Person/Person.h"
+#include "IDGenerator/IDGenerator.h"
 
 DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, std::shared_ptr<Home> home)
 	:
+	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
 	sex(sex),
 	home(home),
@@ -95,6 +97,11 @@ bool DeseaseSpreadSimulation::Person::hasDesease(const std::string& deseaseName)
 	}
 	return desease->GetDeseaseName() == deseaseName;
 	
+}
+
+uint32_t DeseaseSpreadSimulation::Person::GetID() const
+{
+	return id;
 }
 
 DeseaseSpreadSimulation::Age_Group DeseaseSpreadSimulation::Person::GetAgeGroup() const

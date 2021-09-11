@@ -9,16 +9,9 @@ namespace DeseaseSpreadSimulation
 		// Create a Person with age, sex, set it's home and set whereabout to home
 		Person(Age_Group age, Sex sex, std::shared_ptr<Home> home = nullptr);
 		
-		// Should only be used in unit tests because it's expensive
 		inline bool operator==(const Person& rhs) const
 		{
-			return	age == rhs.age &&
-					sex == rhs.sex &&
-					home == rhs.home &&
-					whereabouts == rhs.whereabouts &&
-					workplace == rhs.workplace &&
-					state == rhs.state &&
-					alive == rhs.alive;
+			return	id == rhs.id;
 		};
 
 		void Update();
@@ -35,6 +28,7 @@ namespace DeseaseSpreadSimulation
 		bool isAlive() const;
 		bool hasDesease(const std::string& deseaseName) const;
 
+		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
 		auto GetWhereabouts() const;
@@ -45,8 +39,10 @@ namespace DeseaseSpreadSimulation
 		void DeseaseCheck();
 
 	private:
+		uint32_t id;
 		Age_Group age;
 		Sex sex;
+
 		std::shared_ptr<Home> home;
 		std::shared_ptr<Place> whereabouts;
 		std::shared_ptr<Place> workplace;
