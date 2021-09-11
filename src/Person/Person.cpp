@@ -2,7 +2,7 @@
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, std::shared_ptr<Home> home)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),

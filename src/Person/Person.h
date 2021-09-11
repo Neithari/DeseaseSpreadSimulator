@@ -7,7 +7,7 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		// Create a Person with age, sex, set it's home and set whereabout to home
-		Person(Age_Group age, Sex sex, std::shared_ptr<Home> home = nullptr);
+		Person(Age_Group age, Sex sex, Home* home = nullptr);
 		
 		inline bool operator==(const Person& rhs) const
 		{
@@ -43,9 +43,9 @@ namespace DeseaseSpreadSimulation
 		Age_Group age;
 		Sex sex;
 
-		std::shared_ptr<Home> home;
-		std::shared_ptr<Place> whereabouts;
-		std::shared_ptr<Place> workplace;
+		Home* home;
+		Place* whereabouts;
+		Place* workplace;
 
 		Seir_State state = Seir_State::Susceptible;
 		bool quarantined = false;
