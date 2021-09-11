@@ -18,9 +18,9 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Place:
 
 	if (it != people.end())
 	{
-		auto retval = std::move(*it);
+		auto person = std::move(*it);
 		people.erase(it);
-		return std::move(retval);
+		return std::move(person);
 	}
 
 	return nullptr;
