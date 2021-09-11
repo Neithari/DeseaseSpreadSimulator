@@ -6,9 +6,9 @@ namespace IDGenerator
 	class IDGenerator
 	{
 	public:
-		static unsigned int GetNextID()
+		static uint32_t GetNextID()
 		{
-			static std::atomic_uint id{ 0 };
+			static std::atomic<uint32_t> id{ 0 };
 			return id++;
 		}
 	};
