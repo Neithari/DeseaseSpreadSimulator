@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "Desease/Desease.h"
+#include "IDGenerator/IDGenerator.h"
 
-DeseaseSpreadSimulation::Desease::Desease(std::string name, const unsigned int id, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
+DeseaseSpreadSimulation::Desease::Desease(std::string name, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
 	:
+	id(IDGenerator::IDGenerator<Desease>::GetNextID()),
 	name(std::move(name)),
-	id(id),
 	incubationPeriod(incubationPeriod),
 	daysInfectious(daysInfectious),
 	durationRange(std::move(deseaseDurationRange)),
@@ -90,25 +91,19 @@ int DeseaseSpreadSimulation::Desease::DaysTillDeath() const
 	return deathDistribution(randomNumberGenerator);
 }
 
-unsigned int DeseaseSpreadSimulation::Desease::GetID() const
+uint32_t DeseaseSpreadSimulation::Desease::GetID() const
 {
 	return id;
 }
 
 bool DeseaseSpreadSimulation::Desease::isSame(const Desease& other) const
 {
-
-	bool same = true;
-
-	if (name != other.name) same = false;
-	if (id != other.id) same = false;
-	if (incubationPeriod != other.incubationPeriod) same = false;
-	if (daysInfectious != other.daysInfectious) same = false;
-	if (durationRange != other.durationRange) same = false;
-	if (!(mortalityByAge == other.mortalityByAge)) same = false;
-	if (daysTillDeathRange != other.daysTillDeathRange) same = false;
-
-	return same;
+	return	name == other.name &&
+			incubationPeriod == other.incubationPeriod &&
+			daysInfectious == other.daysInfectious &&
+			durationRange == other.durationRange &&
+			mortalityByAge == other.mortalityByAge &&
+			daysTillDeathRange == other.daysTillDeathRange;
 }
 
 bool DeseaseSpreadSimulation::Desease::hasSameID(const Desease& other) const

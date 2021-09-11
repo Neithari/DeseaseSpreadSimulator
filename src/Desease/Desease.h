@@ -11,7 +11,13 @@ namespace DeseaseSpreadSimulation
 	class Desease
 	{
 	public:
-		Desease(std::string name, const unsigned int id, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange);
+		Desease(std::string name, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange);
+
+		// Check with ID
+		inline bool operator==(const Desease& rhs) const
+		{
+			return	id == rhs.id;
+		};
 
 		const std::string& GetDeseaseName() const;
 		int IncubationPeriod() const;
@@ -21,14 +27,15 @@ namespace DeseaseSpreadSimulation
 		int GetDeseaseDuration() const;
 		int DaysTillDeath() const;
 
-		unsigned int GetID() const;
+		uint32_t GetID() const;
+		// Check without ID
 		bool isSame(const Desease& other) const;
 		bool hasSameID(const Desease& other) const;
 		bool isFatal(Age_Group age) const;
 
 	private:
+		const uint32_t id = 0;
 		const std::string name{};
-		const unsigned int id = 0;
 		// incubation period in days
 		const int incubationPeriod = 0;
 		// patient is contagious for x days after start of symptoms

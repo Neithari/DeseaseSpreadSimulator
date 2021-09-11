@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Desease/DeseaseBuilder.h"
-#include "IDGenerator/IDGenerator.h"
 
 const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder::CreateCorona()
 {
@@ -67,5 +66,5 @@ const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder:
 		}
 	}
 
-	return deseases.emplace_back(name, IDGenerator::IDGenerator<Desease>::GetNextID(), incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+	return deseases.emplace_back(name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
 }
