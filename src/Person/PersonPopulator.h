@@ -48,7 +48,7 @@ namespace DeseaseSpreadSimulation
 		PersonPopulator(size_t populationSize, std::vector<HumanDistribution> distribution);
 
 		// Get a new person for the chosen distribution. Call should return a empty pointer when population size is reached
-		std::unique_ptr<Person> GetNewPerson(std::shared_ptr<Home> home);
+		std::unique_ptr<Person> GetNewPerson(Home* home);
 
 		// Helper function to select the distribution inside the constructor initializer list
 		static std::vector<HumanDistribution> GetCountryDistribution(Country country);

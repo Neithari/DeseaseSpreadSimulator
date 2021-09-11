@@ -323,14 +323,14 @@ namespace UnitTests {
     };
     TEST_F(PersonTest, ContaminateAPerson)
     {
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home.get());
         patient.Contaminate(&desease);
 
         ASSERT_EQ(patient.GetDeseaseName(), desease.GetDeseaseName());
     }
     TEST_F(PersonTest, PersonIsInfectiousAfterLatentPeriod)
     {
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home.get());
         patient.Contaminate(&desease);
 
         // Patient is not contagious right after contamination
@@ -345,9 +345,9 @@ namespace UnitTests {
     TEST_F(PersonTest, ContactWithOtherPersonWillInfect)
     {
         // Create 3 patients
-        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
-        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
-        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home);
+        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home.get());
+        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home.get());
+        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, home.get());
         // Contaminate 1
         patient1.Contaminate(&desease);
         // Advance patient beyond latent period
@@ -394,11 +394,11 @@ namespace UnitTests {
         std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population1;
 
         // Setup population
-        auto person = populator1.GetNewPerson(home);
+        auto person = populator1.GetNewPerson(home.get());
         while (person)
         {
             population1.push_back(std::move(person));
-            person = populator1.GetNewPerson(home);
+            person = populator1.GetNewPerson(home.get());
         }
 
         ASSERT_EQ(population1.size(), evenCount);
@@ -408,11 +408,11 @@ namespace UnitTests {
         std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population2;
 
         // Setup population
-        auto person = populator2.GetNewPerson(home);
+        auto person = populator2.GetNewPerson(home.get());
         while (person)
         {
             population2.push_back(std::move(person));
-            person = populator2.GetNewPerson(home);
+            person = populator2.GetNewPerson(home.get());
         }
 
         ASSERT_EQ(population2.size(), unevenCount);
@@ -422,11 +422,11 @@ namespace UnitTests {
         std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population3;
 
         // Setup population
-        auto person = populator3.GetNewPerson(home);
+        auto person = populator3.GetNewPerson(home.get());
         while (person)
         {
             population3.push_back(std::move(person));
-            person = populator3.GetNewPerson(home);
+            person = populator3.GetNewPerson(home.get());
         }
 
         ASSERT_EQ(population3.size(), evenCount);
@@ -436,11 +436,11 @@ namespace UnitTests {
     std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population4;
 
     // Setup population
-    auto person = populator4.GetNewPerson(home);
+    auto person = populator4.GetNewPerson(home.get());
     while (person)
     {
         population4.push_back(std::move(person));
-        person = populator4.GetNewPerson(home);
+        person = populator4.GetNewPerson(home.get());
     }
 
         ASSERT_EQ(population4.size(), unevenCount);
@@ -455,11 +455,11 @@ namespace UnitTests {
         std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population1;
 
         // Setup population
-        auto person = populator1.GetNewPerson(home);
+        auto person = populator1.GetNewPerson(home.get());
         while (person)
         {
             population1.push_back(std::move(person));
-            person = populator1.GetNewPerson(home);
+            person = populator1.GetNewPerson(home.get());
         }
 
         for (const auto& person : population1)
@@ -504,11 +504,11 @@ namespace UnitTests {
         std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population2;
 
         // Setup population
-        auto person = populator2.GetNewPerson(home);
+        auto person = populator2.GetNewPerson(home.get());
         while (person)
         {
             population2.push_back(std::move(person));
-            person = populator2.GetNewPerson(home);
+            person = populator2.GetNewPerson(home.get());
         }
 
         for (const auto& person : population2)
@@ -553,11 +553,11 @@ namespace UnitTests {
         std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population3;
 
         // Setup population
-        auto person = populator3.GetNewPerson(home);
+        auto person = populator3.GetNewPerson(home.get());
         while (person)
         {
             population3.push_back(std::move(person));
-            person = populator3.GetNewPerson(home);
+            person = populator3.GetNewPerson(home.get());
         }
 
         for (const auto& person : population3)
@@ -602,11 +602,11 @@ namespace UnitTests {
         std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population4;
 
         // Setup population
-        auto person = populator4.GetNewPerson(home);
+        auto person = populator4.GetNewPerson(home.get());
         while (person)
         {
             population4.push_back(std::move(person));
-            person = populator4.GetNewPerson(home);
+            person = populator4.GetNewPerson(home.get());
         }
 
         for (const auto& person : population4)

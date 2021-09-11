@@ -42,7 +42,7 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(std::shared_ptr<DeseaseSpreadSimulation::Home> home)
+std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Home* home)
 {
 	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
 	if (leftover > 0)
