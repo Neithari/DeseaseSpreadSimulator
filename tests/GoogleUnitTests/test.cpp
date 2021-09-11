@@ -14,13 +14,12 @@ namespace UnitTests {
     {
     protected:
         std::string name = "a";
-        unsigned int id = 0;
         int incubationPeriod = 1;
         int daysInfectious = 1;
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
-        DeseaseSpreadSimulation::Desease desease{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
   
         // Helper function to check if the given x is within the range
         bool inRange(int x, std::pair<int, int> range)
@@ -34,7 +33,7 @@ namespace UnitTests {
         EXPECT_EQ(desease.GetDeseaseName(), name);
         EXPECT_EQ(desease.IncubationPeriod(), incubationPeriod);
         EXPECT_EQ(desease.DaysInfectious(), daysInfectious);
-        EXPECT_EQ(desease.GetID(), id);
+        EXPECT_EQ(desease.GetID(), 0);
     }
     TEST_F(DeseaseTest, DeseaseDurationRange)
     {
@@ -95,42 +94,44 @@ namespace UnitTests {
             EXPECT_FLOAT_EQ(desease.GetMortalityByAge(age), mortalityByAge.back());
         }
     }
+    TEST_F(DeseaseTest, EqualsOperator)
+    {
+        ASSERT_TRUE(desease == desease);
+
+        DeseaseSpreadSimulation::Desease desease1{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        ASSERT_FALSE(desease == desease1);
+    }
     TEST_F(DeseaseTest, IsSame)
     {
         ASSERT_TRUE(desease.isSame(desease));
         
         std::string name1 = "b";
-        DeseaseSpreadSimulation::Desease desease1{ name1, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease1{ name1, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease1.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease1));
         
-        unsigned int id1 = 1;
-        DeseaseSpreadSimulation::Desease desease2{ name, id1, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
-        EXPECT_FALSE(desease2.isSame(desease));
-        EXPECT_FALSE(desease.isSame(desease2));
-        
         int incubationPeriod1 = 2;
-        DeseaseSpreadSimulation::Desease desease3{ name, id, incubationPeriod1, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease3{ name, incubationPeriod1, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease3.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease3));
         
         int daysInfectious1 = 2;
-        DeseaseSpreadSimulation::Desease desease4{ name, id, incubationPeriod, daysInfectious1, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease4{ name, incubationPeriod, daysInfectious1, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease4.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease4));
         
         std::pair<int, int> deseaseDurationRange1{ 0, 11 };
-        DeseaseSpreadSimulation::Desease desease5{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange1, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease5{ name, incubationPeriod, daysInfectious, deseaseDurationRange1, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease5.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease5));
     
         std::vector<float> mortalityByAge1{ 0.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
-        DeseaseSpreadSimulation::Desease desease6{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge1, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease6{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge1, daysTillDeathRange };
         EXPECT_FALSE(desease6.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease6));
     
         std::pair<int, int> daysTillDeathRange1{ 0, 3 };
-        DeseaseSpreadSimulation::Desease desease7{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange1 };
+        DeseaseSpreadSimulation::Desease desease7{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange1 };
         EXPECT_FALSE(desease7.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease7));
     }
@@ -138,13 +139,12 @@ namespace UnitTests {
     TEST(DeseaseBuilderTests, DeseaseBuilderCreateCorona)
     {
         std::string name = "COVID-19";
-        unsigned int id = 0;
         int incubationPeriod = 6;
         int daysInfectious = 8;
         std::pair<int, int> deseaseDurationRange{ 14, 42 };
         std::vector<float> mortalityByAge{ 0.f, 0.14f, 0.12f, 0.2f, 0.38f, 0.98f, 2.98f, 7.94f, 17.34f };
         std::pair<int, int> daysTillDeathRange{ 14, 56 };
-        DeseaseSpreadSimulation::Desease corona{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease corona{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
 
         DeseaseSpreadSimulation::DeseaseBuilder builder;
         auto builtCorona = builder.CreateCorona();
@@ -156,13 +156,12 @@ namespace UnitTests {
     {
     protected:
         std::string name = "a";
-        unsigned int id = 1; // id is now 1 because the GetID function in DeseaseBuilder has advanced the id when we created corona inside DeseaseBuilderCreateCorona test
         int incubationPeriod = 1;
         int daysInfectious = 1;
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
-        DeseaseSpreadSimulation::Desease desease{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
     };
     // Tests that CreateDesease() asserts are working properly for every set function
     TEST_F(DeseaseBuilderTest, ThrowNameNotSet)
@@ -264,10 +263,21 @@ namespace UnitTests {
 
         auto builtDesease = builder.CreateDesease();
 
-        DeseaseSpreadSimulation::Desease desease1{ name, ++id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease1{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
 
-        ASSERT_FALSE(builtDesease.isSame(desease));
-        ASSERT_TRUE(builtDesease.isSame(desease1));
+        ASSERT_FALSE(builtDesease == desease);
+        ASSERT_TRUE(builtDesease.GetID() > desease.GetID());
+
+        builder.SetDeseaseName(name);
+        builder.SetIncubationPeriod(incubationPeriod);
+        builder.SetDaysInfectious(daysInfectious);
+        builder.SetDeseaseDuration(deseaseDurationRange.first, deseaseDurationRange.second);
+        builder.SetMortalityByAge(mortalityByAge);
+        builder.SetDaysTillDeath(daysTillDeathRange.first, daysTillDeathRange.second);
+
+        auto builtDesease2 = builder.CreateDesease();
+
+        ASSERT_TRUE(builtDesease2.GetID() > builtDesease.GetID());
     }
 
     TEST(TimeTests, FrameTimeAfterWait)
@@ -303,14 +313,13 @@ namespace UnitTests {
     {
     protected:
         std::string name = "a";
-        int id = 0;
         int incubationPeriod = 1;
         int daysInfectious = 1;
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
         std::shared_ptr<DeseaseSpreadSimulation::Home> home = std::make_shared<DeseaseSpreadSimulation::Home>();
-        DeseaseSpreadSimulation::Desease desease{ name, id, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
     };
     TEST_F(PersonTest, ContaminateAPerson)
     {
@@ -703,11 +712,66 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Supply market;
         DeseaseSpreadSimulation::Work work;
         DeseaseSpreadSimulation::HardwareStore hardware;
+        DeseaseSpreadSimulation::Morgue morgue;
 
         // No test for the ID because we can't guarantee the order of the tests and ID is already checked
         EXPECT_EQ(home.GetTypeName().substr(0,4), "Home");
         EXPECT_EQ(market.GetTypeName().substr(0, 6), "Supply");
         EXPECT_EQ(work.GetTypeName().substr(0, 4), "Work");
         EXPECT_EQ(hardware.GetTypeName().substr(0, 13), "HardwareStore");
+        EXPECT_EQ(morgue.GetTypeName().substr(0, 6), "Morgue");
+    }
+    TEST(PlacesTests, AddPerson)
+    {
+        DeseaseSpreadSimulation::Home home;
+        auto person = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto personID = person->GetID();
+        ASSERT_EQ(home.GetPersonCount(), 0);
+        home.AddPerson(std::move(person));
+        ASSERT_EQ(home.GetPersonCount(), 1);
+        ASSERT_EQ(home.GetPeople().back()->GetID(), personID);
+    }
+    TEST(PlacesTests, GetPersonCount)
+    {
+        DeseaseSpreadSimulation::Home home;
+        auto person = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto person1 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto person2 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+
+        EXPECT_EQ(home.GetPersonCount(), 0);
+        home.AddPerson(std::move(person));
+        EXPECT_EQ(home.GetPersonCount(), 1);
+        home.AddPerson(std::move(person1));
+        EXPECT_EQ(home.GetPersonCount(), 2);
+        home.AddPerson(std::move(person2));
+        ASSERT_EQ(home.GetPersonCount(), 3);
+    }
+    TEST(PlacesTests, TransferPerson)
+    {
+        DeseaseSpreadSimulation::Home home;
+        auto person = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto person1 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto person2 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto personID = person->GetID();
+        auto personID1 = person1->GetID();
+        auto personID2 = person2->GetID();
+
+        home.AddPerson(std::move(person));
+        home.AddPerson(std::move(person1));
+        home.AddPerson(std::move(person2));
+        ASSERT_EQ(home.GetPersonCount(), 3);
+
+        auto transferPerson = home.TransferPerson(personID);
+        ASSERT_TRUE(transferPerson);
+        ASSERT_EQ(transferPerson->GetID(), personID);
+        auto transferPerson1 = home.TransferPerson(personID1);
+        ASSERT_TRUE(transferPerson1);
+        ASSERT_EQ(transferPerson1->GetID(), personID1);
+        auto transferPerson2 = home.TransferPerson(personID2);
+        ASSERT_TRUE(transferPerson2);
+        ASSERT_EQ(transferPerson2->GetID(), personID2);
+
+        auto transferNull = home.TransferPerson(999);
+        ASSERT_FALSE(transferNull);
     }
 }

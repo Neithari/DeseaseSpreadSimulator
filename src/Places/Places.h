@@ -9,18 +9,22 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		virtual std::string GetTypeName() const = 0;
-		const std::vector<Person>& GetPeople() const;
-		unsigned int GetID() const;
+		const std::vector<std::unique_ptr<Person>>& GetPeople() const;
+		size_t GetPersonCount() const;
+		uint32_t GetID() const;
+		void AddPerson(std::unique_ptr<Person> person);
+		// Will return null when that person is not in that place
+		std::unique_ptr<Person> TransferPerson(uint32_t id);
 
 		virtual ~Place() = default;
 
 	protected:
-		Place(unsigned int id);
+		Place(uint32_t id);
 
 	protected:
-		unsigned int placeID = 0;
+		uint32_t placeID = 0;
 		// People inside the place
-		std::vector<Person> people;
+		std::vector<std::unique_ptr<Person>> people;
 	};
 
 	class Home : public Place
@@ -58,5 +62,14 @@ namespace DeseaseSpreadSimulation
 
 	public:
 		std::string GetTypeName() const override;
+	};
+	class Morgue : public Place
+	{
+	public:
+		Morgue();
+
+	public:
+		std::string GetTypeName() const override;
+	private:
 	};
 }
