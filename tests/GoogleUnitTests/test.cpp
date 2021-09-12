@@ -724,54 +724,62 @@ namespace UnitTests {
     TEST(PlacesTests, AddPerson)
     {
         DeseaseSpreadSimulation::Home home;
-        auto person = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        auto personID = person->GetID();
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto personID = person.GetID();
         ASSERT_EQ(home.GetPersonCount(), 0);
-        home.AddPerson(std::move(person));
+        home.AddPerson(person);
         ASSERT_EQ(home.GetPersonCount(), 1);
-        ASSERT_EQ(home.GetPeople().back()->GetID(), personID);
+        ASSERT_EQ(home.GetPeople().back().GetID(), personID);
     }
     TEST(PlacesTests, GetPersonCount)
     {
         DeseaseSpreadSimulation::Home home;
-        auto person = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        auto person1 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        auto person2 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
 
         EXPECT_EQ(home.GetPersonCount(), 0);
-        home.AddPerson(std::move(person));
+        home.AddPerson(person);
         EXPECT_EQ(home.GetPersonCount(), 1);
-        home.AddPerson(std::move(person1));
+        home.AddPerson(person1);
         EXPECT_EQ(home.GetPersonCount(), 2);
-        home.AddPerson(std::move(person2));
+        home.AddPerson(person2);
         ASSERT_EQ(home.GetPersonCount(), 3);
     }
-    TEST(PlacesTests, TransferPerson)
+    TEST(PlacesTests, RemovePerson)
     {
         DeseaseSpreadSimulation::Home home;
-        auto person = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        auto person1 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        auto person2 = std::make_unique<DeseaseSpreadSimulation::Person>(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        auto personID = person->GetID();
-        auto personID1 = person1->GetID();
-        auto personID2 = person2->GetID();
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        auto personID = person.GetID();
+        auto personID1 = person1.GetID();
+        auto personID2 = person2.GetID();
 
-        home.AddPerson(std::move(person));
-        home.AddPerson(std::move(person1));
-        home.AddPerson(std::move(person2));
+        home.AddPerson(person);
+        home.AddPerson(person1);
+        home.AddPerson(person2);
         ASSERT_EQ(home.GetPersonCount(), 3);
 
-        auto transferPerson = home.TransferPerson(personID);
-        ASSERT_TRUE(transferPerson);
-        ASSERT_EQ(transferPerson->GetID(), personID);
-        auto transferPerson1 = home.TransferPerson(personID1);
-        ASSERT_TRUE(transferPerson1);
-        ASSERT_EQ(transferPerson1->GetID(), personID1);
-        auto transferPerson2 = home.TransferPerson(personID2);
-        ASSERT_TRUE(transferPerson2);
-        ASSERT_EQ(transferPerson2->GetID(), personID2);
+        // Check that a wrong ID will not erase a valid person
+        home.RemovePerson(12345);
+        EXPECT_EQ(home.GetPersonCount(), 3);
 
-        auto transferNull = home.TransferPerson(999);
-        ASSERT_FALSE(transferNull);
+        home.RemovePerson(personID);
+        EXPECT_EQ(home.GetPersonCount(), 2);
+
+        home.RemovePerson(personID1);
+        EXPECT_EQ(home.GetPersonCount(), 1);
+
+        home.RemovePerson(personID2);
+        EXPECT_EQ(home.GetPersonCount(), 0);
+
+        // Check remove after no person is left
+        home.RemovePerson(personID);
+        ASSERT_EQ(home.GetPersonCount(), 0);
+        home.RemovePerson(personID1);
+        ASSERT_EQ(home.GetPersonCount(), 0);
+        home.RemovePerson(personID2);
+        ASSERT_EQ(home.GetPersonCount(), 0);
     }
 }

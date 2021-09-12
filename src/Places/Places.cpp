@@ -7,26 +7,20 @@ uint32_t DeseaseSpreadSimulation::Place::GetID() const
 	return placeID;
 }
 
-void DeseaseSpreadSimulation::Place::AddPerson(std::unique_ptr<Person> person)
+void DeseaseSpreadSimulation::Place::AddPerson(Person& person)
 {
-	people.push_back(std::move(person));
+	people.push_back(person);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Place::TransferPerson(uint32_t id)
+void DeseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
 {
-	auto it = std::find_if(people.begin(), people.end(), [&](std::unique_ptr<Person>& person) { return person->GetID() == id; });
-
-	if (it != people.end())
-	{
-		auto person = std::move(*it);
-		people.erase(it);
-		return std::move(person);
-	}
-
-	return nullptr;
+	people.erase(
+		std::remove_if(people.begin(), people.end(),
+			[&](Person& person) { return person.GetID() == id; })
+	);
 }
 
-const std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>>& DeseaseSpreadSimulation::Place::GetPeople() const
+const std::vector<DeseaseSpreadSimulation::Person&>& DeseaseSpreadSimulation::Place::GetPeople() const
 {
 	return people;
 }

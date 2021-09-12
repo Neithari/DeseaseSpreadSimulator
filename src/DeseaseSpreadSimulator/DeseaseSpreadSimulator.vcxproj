@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -261,6 +261,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\Person\PersonPopulator.cpp" />
+    <ClCompile Include="..\Places\Community.cpp" />
     <ClCompile Include="..\Places\CommunityBuilder.cpp" />
     <ClCompile Include="..\Places\Places.cpp" />
     <ClCompile Include="..\Simulation\Simulation.cpp" />
@@ -302,6 +303,7 @@
     <ClInclude Include="..\pch.h" />
     <ClInclude Include="..\Person\Person.h" />
     <ClInclude Include="..\Person\PersonPopulator.h" />
+    <ClInclude Include="..\Places\Community.h" />
     <ClInclude Include="..\Places\CommunityBuilder.h" />
     <ClInclude Include="..\Places\Places.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />

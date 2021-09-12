@@ -9,12 +9,11 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		virtual std::string GetTypeName() const = 0;
-		const std::vector<std::unique_ptr<Person>>& GetPeople() const;
+		const std::vector<Person&>& GetPeople() const;
 		size_t GetPersonCount() const;
 		uint32_t GetID() const;
-		void AddPerson(std::unique_ptr<Person> person);
-		// Will return null when that person is not in that place
-		std::unique_ptr<Person> TransferPerson(uint32_t id);
+		void AddPerson(Person& person);
+		void RemovePerson(uint32_t id);
 
 		virtual ~Place() = default;
 
@@ -24,7 +23,7 @@ namespace DeseaseSpreadSimulation
 	protected:
 		uint32_t placeID = 0;
 		// People inside the place
-		std::vector<std::unique_ptr<Person>> people;
+		std::vector<Person&> people;
 	};
 
 	class Home : public Place
