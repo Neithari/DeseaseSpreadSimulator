@@ -761,13 +761,28 @@ namespace UnitTests {
         home.AddPerson(&person2);
         ASSERT_EQ(home.GetPersonCount(), 3);
 
-        // Check that a wrong ID will not erase a valid person
+        // Check that a wrong ID will not remove a valid person
         home.RemovePerson(12345);
         EXPECT_EQ(home.GetPersonCount(), 3);
 
         home.RemovePerson(personID);
         EXPECT_EQ(home.GetPersonCount(), 2);
 
+        // Check that the right persons are inside home
+        bool peopleCorrect = true;
+        auto people = home.GetPeople();
+
+        if (*people.front() == person1)
+        {
+            peopleCorrect = false;
+        }
+        if (*people.back() == person2)
+        {
+            peopleCorrect = false;
+        }
+        ASSERT_TRUE(peopleCorrect);
+
+        // Remove the rest
         home.RemovePerson(personID1);
         EXPECT_EQ(home.GetPersonCount(), 1);
 
