@@ -727,9 +727,9 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
         auto personID = person.GetID();
         ASSERT_EQ(home.GetPersonCount(), 0);
-        home.AddPerson(person);
+        home.AddPerson(&person);
         ASSERT_EQ(home.GetPersonCount(), 1);
-        ASSERT_EQ(home.GetPeople().back().GetID(), personID);
+        ASSERT_EQ(home.GetPeople().back()->GetID(), personID);
     }
     TEST(PlacesTests, GetPersonCount)
     {
@@ -739,11 +739,11 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
 
         EXPECT_EQ(home.GetPersonCount(), 0);
-        home.AddPerson(person);
+        home.AddPerson(&person);
         EXPECT_EQ(home.GetPersonCount(), 1);
-        home.AddPerson(person1);
+        home.AddPerson(&person1);
         EXPECT_EQ(home.GetPersonCount(), 2);
-        home.AddPerson(person2);
+        home.AddPerson(&person2);
         ASSERT_EQ(home.GetPersonCount(), 3);
     }
     TEST(PlacesTests, RemovePerson)
@@ -756,9 +756,9 @@ namespace UnitTests {
         auto personID1 = person1.GetID();
         auto personID2 = person2.GetID();
 
-        home.AddPerson(person);
-        home.AddPerson(person1);
-        home.AddPerson(person2);
+        home.AddPerson(&person);
+        home.AddPerson(&person1);
+        home.AddPerson(&person2);
         ASSERT_EQ(home.GetPersonCount(), 3);
 
         // Check that a wrong ID will not erase a valid person

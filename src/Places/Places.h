@@ -9,10 +9,10 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		virtual std::string GetTypeName() const = 0;
-		const std::vector<Person&>& GetPeople() const;
+		const std::vector<Person*>& GetPeople() const;
 		size_t GetPersonCount() const;
 		uint32_t GetID() const;
-		void AddPerson(Person& person);
+		void AddPerson(Person* person);
 		void RemovePerson(uint32_t id);
 
 		virtual ~Place() = default;
@@ -22,8 +22,8 @@ namespace DeseaseSpreadSimulation
 
 	protected:
 		uint32_t placeID = 0;
-		// People inside the place
-		std::vector<Person&> people;
+		// People inside the place not owned by place
+		std::vector<Person*> people;
 	};
 
 	class Home : public Place

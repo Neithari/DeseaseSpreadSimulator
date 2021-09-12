@@ -14,8 +14,6 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		PersonPopulator personFactory;
-
-		std::vector<Person> population;
-		std::vector<Home> homes;
+		size_t populationSize;
 	};
 }

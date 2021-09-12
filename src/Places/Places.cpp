@@ -7,7 +7,7 @@ uint32_t DeseaseSpreadSimulation::Place::GetID() const
 	return placeID;
 }
 
-void DeseaseSpreadSimulation::Place::AddPerson(Person& person)
+void DeseaseSpreadSimulation::Place::AddPerson(Person* person)
 {
 	people.push_back(person);
 }
@@ -16,11 +16,11 @@ void DeseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
 {
 	people.erase(
 		std::remove_if(people.begin(), people.end(),
-			[&](Person& person) { return person.GetID() == id; })
+			[&](Person* person) { return person->GetID() == id; }), people.end()
 	);
 }
 
-const std::vector<DeseaseSpreadSimulation::Person&>& DeseaseSpreadSimulation::Place::GetPeople() const
+const std::vector<DeseaseSpreadSimulation::Person*>& DeseaseSpreadSimulation::Place::GetPeople() const
 {
 	return people;
 }
