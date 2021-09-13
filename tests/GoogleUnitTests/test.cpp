@@ -769,18 +769,9 @@ namespace UnitTests {
         EXPECT_EQ(home.GetPersonCount(), 2);
 
         // Check that the right persons are inside home
-        bool peopleCorrect = true;
         auto people = home.GetPeople();
 
-        if (*people.front() == person1)
-        {
-            peopleCorrect = false;
-        }
-        if (*people.back() == person2)
-        {
-            peopleCorrect = false;
-        }
-        ASSERT_TRUE(peopleCorrect);
+        ASSERT_TRUE(*people.front() == person1 && *people.back() == person2);
 
         // Remove the rest
         home.RemovePerson(personID1);

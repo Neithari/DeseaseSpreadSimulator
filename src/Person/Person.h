@@ -9,10 +9,16 @@ namespace DeseaseSpreadSimulation
 		// Create a Person with age, sex, set it's home and set whereabout to home
 		Person(Age_Group age, Sex sex, Home* home = nullptr);
 		
+		auto operator<=>(const Person& rhs) const
+		{
+			if (id < rhs.id) return -1;
+			if (id > rhs.id) return 1;
+			return 0;
+		};
 		inline bool operator==(const Person& rhs) const
 		{
-			return	id == rhs.id;
-		};
+			return id == rhs.id;
+		}
 
 		void Update();
 
@@ -41,7 +47,7 @@ namespace DeseaseSpreadSimulation
 		void SetWorkplace(Place* newWorkplace);
 
 	private:
-		uint32_t id;
+		const uint32_t id;
 		Age_Group age;
 		Sex sex;
 

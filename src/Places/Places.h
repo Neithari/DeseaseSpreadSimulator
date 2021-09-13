@@ -21,7 +21,7 @@ namespace DeseaseSpreadSimulation
 		Place(uint32_t id);
 
 	protected:
-		uint32_t placeID = 0;
+		const uint32_t placeID = 0;
 		// People inside the place not owned by place
 		std::vector<Person*> people;
 	};

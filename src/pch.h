@@ -13,10 +13,12 @@
 #include <chrono>
 #include <map>
 #include <atomic>
+#include <compare>
 
 // Data structures
 #include <string>
 #include <vector>
+#include <set>
 
 // GSL: Guidelines Support Library
 //#include <gsl/gsl>
