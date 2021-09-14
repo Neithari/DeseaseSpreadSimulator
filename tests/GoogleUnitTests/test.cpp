@@ -8,6 +8,7 @@
 #include "Person/PersonPopulator.h"
 #include "IDGenerator/IDGenerator.h"
 #include "Places/Places.h"
+#include "Places/Community.h"
 
 namespace UnitTests {
     class DeseaseTest : public ::testing::Test
@@ -787,5 +788,57 @@ namespace UnitTests {
         ASSERT_EQ(home.GetPersonCount(), 0);
         home.RemovePerson(personID2);
         ASSERT_EQ(home.GetPersonCount(), 0);
+    }
+    /// TODO: void RemovePlace(uint32_t placeID);
+    /// TODO: void RemovePerson(const Person& person);
+    /// TODO: Person TransferPerson(const Person& person);
+    class CommunityTest : public ::testing::Test
+    {
+    protected:
+        std::set<DeseaseSpreadSimulation::Person> population{ {DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female},{DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male} };
+        DeseaseSpreadSimulation::Community community{population};
+    };
+    TEST_F(CommunityTest, AddPlaceGetPlaces)
+    {
+        auto home1 = std::make_unique<DeseaseSpreadSimulation::Home>();
+        uint32_t home1ID = home1->GetID();
+
+        EXPECT_EQ(community.GetPlaces().size(), 0);
+
+        community.AddPlace(std::move(home1));
+        EXPECT_EQ(community.GetPlaces().size(), 1);
+        ASSERT_EQ(community.GetPlaces().back()->GetID(), home1ID);
+
+        auto home2 = std::make_unique<DeseaseSpreadSimulation::Home>();
+        uint32_t home2ID = home2->GetID();
+
+        community.AddPlace(std::move(home2));
+        EXPECT_EQ(community.GetPlaces().size(), 2);
+        ASSERT_EQ(community.GetPlaces().back()->GetID(), home2ID);
+    }
+    TEST_F(CommunityTest, AddPersonGetPopulation)
+    {
+        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+
+        EXPECT_EQ(community.GetPopulation().size(), 2);
+
+        community.AddPerson(person1);
+        EXPECT_EQ(community.GetPopulation().size(), 3);
+        ASSERT_TRUE(community.GetPopulation().contains(person1));
+
+        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male };
+        community.AddPerson(person2);
+        EXPECT_EQ(community.GetPopulation().size(), 4);
+        ASSERT_TRUE(community.GetPopulation().contains(person2));
+
+        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female };
+        community.AddPerson(person3);
+        EXPECT_EQ(community.GetPopulation().size(), 5);
+        ASSERT_TRUE(community.GetPopulation().contains(person3));
+
+        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Male };
+        community.AddPerson(person4);
+        EXPECT_EQ(community.GetPopulation().size(), 6);
+        ASSERT_TRUE(community.GetPopulation().contains(person4));
     }
 }
