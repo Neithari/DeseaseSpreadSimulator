@@ -798,6 +798,15 @@ namespace UnitTests {
         std::set<DeseaseSpreadSimulation::Person> population{ {DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female},{DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male} };
         DeseaseSpreadSimulation::Community community{population};
     };
+    TEST_F(CommunityTest, GetPopulation)
+    {
+        EXPECT_EQ(community.GetPopulation().size(), 2);
+
+        for (const auto& person : population)
+        {
+            ASSERT_TRUE(community.GetPopulation().contains(person));
+        }
+    }
     TEST_F(CommunityTest, AddPlaceGetPlaces)
     {
         auto home1 = std::make_unique<DeseaseSpreadSimulation::Home>();
@@ -816,7 +825,7 @@ namespace UnitTests {
         EXPECT_EQ(community.GetPlaces().size(), 2);
         ASSERT_EQ(community.GetPlaces().back()->GetID(), home2ID);
     }
-    TEST_F(CommunityTest, AddPersonGetPopulation)
+    TEST_F(CommunityTest, AddPerson)
     {
         DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
 
