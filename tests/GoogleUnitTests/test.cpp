@@ -889,12 +889,62 @@ namespace UnitTests {
         community.RemovePlace(home3ID);
         EXPECT_EQ(community.GetPlaces().size(), 2);
     }
-    /// TODO: void RemovePerson(const Person& person);
     TEST_F(CommunityTest, RemovePerson)
     {
+        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+
+        ASSERT_EQ(community.GetPopulation().size(), 2);
+
+        community.AddPerson(person1);
+        EXPECT_EQ(community.GetPopulation().size(), 3);
+        community.RemovePerson(person1);
+        ASSERT_EQ(community.GetPopulation().size(), 2);
+
+        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+
+        community.AddPerson(person2);
+        community.AddPerson(person3);
+        EXPECT_EQ(community.GetPopulation().size(), 4);
+        community.RemovePerson(person2);
+        EXPECT_EQ(community.GetPopulation().size(), 3);
+        ASSERT_TRUE(community.GetPopulation().contains(person3));
+        community.RemovePerson(person3);
+        ASSERT_EQ(community.GetPopulation().size(), 2);
+        for (const auto& person : population)
+        {
+            ASSERT_TRUE(community.GetPopulation().contains(person));
+        }
+
+        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+        DeseaseSpreadSimulation::Person person5{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+        community.AddPerson(person4);
+        community.AddPerson(person5);
+        EXPECT_EQ(community.GetPopulation().size(), 4);
+        community.RemovePerson(person1);
+        EXPECT_EQ(community.GetPopulation().size(), 4);
+        community.RemovePerson(person1);
+        EXPECT_EQ(community.GetPopulation().size(), 4);
+        community.RemovePerson(person1);
+        EXPECT_EQ(community.GetPopulation().size(), 4);
     }
-    /// TODO: Person TransferPerson(const Person& person);
     TEST_F(CommunityTest, TransferPerson)
     {
+        auto transferPerson = community.TransferPerson(*population.begin());
+        EXPECT_EQ(transferPerson, *population.begin());
+
+        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female };
+        
+        community.AddPerson(person1);
+        community.AddPerson(person2);
+        community.AddPerson(person3);
+        auto transferPerson1 = community.TransferPerson(person1);
+        auto transferPerson2 = community.TransferPerson(person2);
+        auto transferPerson3 = community.TransferPerson(person3);
+        EXPECT_EQ(transferPerson1, person1);
+        EXPECT_EQ(transferPerson2, person2);
+        ASSERT_EQ(transferPerson3, person3);
     }
 }
