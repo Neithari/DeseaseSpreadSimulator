@@ -789,9 +789,7 @@ namespace UnitTests {
         home.RemovePerson(personID2);
         ASSERT_EQ(home.GetPersonCount(), 0);
     }
-    /// TODO: void RemovePlace(uint32_t placeID);
-    /// TODO: void RemovePerson(const Person& person);
-    /// TODO: Person TransferPerson(const Person& person);
+    
     class CommunityTest : public ::testing::Test
     {
     protected:
@@ -849,5 +847,54 @@ namespace UnitTests {
         community.AddPerson(person4);
         EXPECT_EQ(community.GetPopulation().size(), 6);
         ASSERT_TRUE(community.GetPopulation().contains(person4));
+    }
+    TEST_F(CommunityTest, RemovePlace)
+    {
+        auto home1 = std::make_unique<DeseaseSpreadSimulation::Home>();
+        uint32_t home1ID = home1->GetID();
+
+        ASSERT_EQ(community.GetPlaces().size(), 0);
+
+        community.AddPlace(std::move(home1));
+        EXPECT_EQ(community.GetPlaces().size(), 1);
+        community.RemovePlace(home1ID);
+        ASSERT_EQ(community.GetPlaces().size(), 0);
+
+        auto home2 = std::make_unique<DeseaseSpreadSimulation::Home>();
+        uint32_t home2ID = home2->GetID();
+        auto home3 = std::make_unique<DeseaseSpreadSimulation::Home>();
+        uint32_t home3ID = home3->GetID();
+
+        community.AddPlace(std::move(home2));
+        community.AddPlace(std::move(home3));
+        EXPECT_EQ(community.GetPlaces().size(), 2);
+        community.RemovePlace(home2ID);
+        EXPECT_EQ(community.GetPlaces().size(), 1);
+        ASSERT_EQ(community.GetPlaces().back()->GetID(), home3ID);
+        community.RemovePlace(home3ID);
+        ASSERT_EQ(community.GetPlaces().size(), 0);
+
+
+        auto home4 = std::make_unique<DeseaseSpreadSimulation::Home>();
+        uint32_t home4ID = home4->GetID();
+        auto home5 = std::make_unique<DeseaseSpreadSimulation::Home>();
+        uint32_t home5ID = home5->GetID();
+        community.AddPlace(std::move(home4));
+        community.AddPlace(std::move(home5));
+        EXPECT_EQ(community.GetPlaces().size(), 2);
+        community.RemovePlace(home1ID);
+        EXPECT_EQ(community.GetPlaces().size(), 2);
+        community.RemovePlace(home2ID);
+        EXPECT_EQ(community.GetPlaces().size(), 2);
+        community.RemovePlace(home3ID);
+        EXPECT_EQ(community.GetPlaces().size(), 2);
+    }
+    /// TODO: void RemovePerson(const Person& person);
+    TEST_F(CommunityTest, RemovePerson)
+    {
+    }
+    /// TODO: Person TransferPerson(const Person& person);
+    TEST_F(CommunityTest, TransferPerson)
+    {
     }
 }
