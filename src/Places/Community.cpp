@@ -2,20 +2,14 @@
 #include "Places/Community.h"
 #include <gsl/gsl>
 
-DeseaseSpreadSimulation::Community::Community(std::set<Person> population)
-	:
-	population(std::move(population))
-{
-}
-
 void DeseaseSpreadSimulation::Community::AddPlace(std::unique_ptr<Place> place)
 {
 	places.push_back(std::move(place));
 }
 
-void DeseaseSpreadSimulation::Community::AddPerson(Person person)
+void DeseaseSpreadSimulation::Community::AddPerson(std::unique_ptr<Person> person)
 {
-	population.insert(std::move(person));
+	population.push_back(std::move(person));
 }
 
 void DeseaseSpreadSimulation::Community::RemovePlace(uint32_t placeID)
@@ -26,18 +20,24 @@ void DeseaseSpreadSimulation::Community::RemovePlace(uint32_t placeID)
 	);
 }
 
-void DeseaseSpreadSimulation::Community::RemovePerson(const Person& person)
+void DeseaseSpreadSimulation::Community::RemovePerson(uint32_t personID)
 {
-	population.erase(person);
+	population.erase(
+		std::remove_if(population.begin(), population.end(),
+			[&](const std::unique_ptr<Person>& person) { return person->GetID() == personID; }), population.end()
+	);
 }
 
-DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPerson(const Person& person)
+std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Community::TransferPerson(uint32_t personID)
 {
-	auto toTransfer = population.extract(person);
+	auto toTransfer = std::find_if(population.begin(), population.end(),
+		[&](const std::unique_ptr<Person>& person) { return person->GetID() == personID; });
 
-	if (toTransfer)
+	if (toTransfer != population.end())
 	{
-		return std::move(toTransfer.value());
+		auto transferPerson = std::move(*toTransfer);
+		population.erase(toTransfer);
+		return std::move(transferPerson);
 	}
 	// This should never happen, because the person to transfer is calling it.
 	// So we throw and silence compiler warnings
@@ -45,12 +45,12 @@ DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPers
 	GSL_ASSUME(false);
 }
 
-const std::set<DeseaseSpreadSimulation::Person>& DeseaseSpreadSimulation::Community::GetPopulation() const
+const std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>>& DeseaseSpreadSimulation::Community::GetPopulation() const
 {
 	return population;
 }
 
-const std::vector <std::unique_ptr<DeseaseSpreadSimulation::Place>>& DeseaseSpreadSimulation::Community::GetPlaces() const
+const std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>>& DeseaseSpreadSimulation::Community::GetPlaces() const
 {
 	return places;
 }
