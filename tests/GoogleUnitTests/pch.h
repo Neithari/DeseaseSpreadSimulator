@@ -11,3 +11,13 @@
 #include <chrono>
 #include <thread>
 #include <set>
+
+// Includes to be tested
+#include "Desease/Desease.h"
+#include "Desease/DeseaseBuilder.h"
+#include "Person/Person.h"
+#include "Simulation/TimeManager.h"
+#include "Person/PersonPopulator.h"
+#include "IDGenerator/IDGenerator.h"
+#include "Places/Places.h"
+#include "Places/Community.h"
