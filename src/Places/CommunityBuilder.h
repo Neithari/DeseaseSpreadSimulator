@@ -4,16 +4,18 @@
 
 namespace DeseaseSpreadSimulation
 {
+	class Community;
+
 	class CommunityBuilder
 	{
 	public:
-		CommunityBuilder(size_t populationSize, Country country);
-	private:
-		std::shared_ptr<Home> AssignHomes() const;
-		std::shared_ptr<Place> AssignWorkplace() const;
+		CommunityBuilder() = default;
 
+		Community CreateCommunity(size_t populationSize, Country country) const;
 	private:
-		PersonPopulator personFactory;
-		size_t populationSize;
+		void CreatePlaces(size_t populationSize, Country country, Community& outCommunity) const;
+		void CreatePopulation(size_t populationSize, Country country, Community& outCommunity) const;
+		Home* AssignHome() const;
+		Place* AssignWorkplace() const;
 	};
 }

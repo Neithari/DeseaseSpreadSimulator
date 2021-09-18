@@ -18,7 +18,7 @@
 // Data structures
 #include <string>
 #include <vector>
-#include <set>
+#include <array>
 
 // GSL: Guidelines Support Library
 //#include <gsl/gsl>
@@ -26,3 +26,4 @@
 // My
 #include "Desease/Desease.h"
 #include "Person/Person.h"
+#include "Places/Places.h"
