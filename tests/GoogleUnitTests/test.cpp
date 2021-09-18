@@ -108,7 +108,7 @@ namespace UnitTests {
     {
         DeseaseSpreadSimulation::Home home;
         DeseaseSpreadSimulation::Supply market;
-        DeseaseSpreadSimulation::Work work;
+        DeseaseSpreadSimulation::Workplace work;
         DeseaseSpreadSimulation::HardwareStore hardware;
         DeseaseSpreadSimulation::Morgue morgue;
 
