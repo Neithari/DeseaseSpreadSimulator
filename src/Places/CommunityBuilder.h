@@ -17,5 +17,7 @@ namespace DeseaseSpreadSimulation
 		void CreatePopulation(size_t populationSize, Country country, Community& outCommunity) const;
 		Home* AssignHome() const;
 		Place* AssignWorkplace() const;
+		// Helper function for place and population creation
+		size_t WorkingPeopleNumber(size_t populationSize, Country country) const;
 	};
 }

@@ -28,16 +28,8 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePlaces(size_t populationSi
 
 
 	// Create workplaces for people between 20 and 69
-	auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
-	size_t workingPeople = 0;
 	// First get number of working people
-	for (const auto& distribution : countryDistribution)
-	{
-		if (distribution.ageGroup > Age_Group::UnderTwenty &&  distribution.ageGroup <= Age_Group::UnderSeventy)
-		{
-			workingPeople += static_cast<size_t>(populationSize / distribution.percent);
-		}
-	}
+	size_t workingPeople = WorkingPeopleNumber(populationSize, country);
 	// Workplace size estimates https://www.statista.com/statistics/944669/current-office-size-full-time-employees-usa/
 	std::array<float, 5> workplaceSize{ 0.2649f, 0.308f, 0.1908f, 0.0821f, 0.1542f };
 	float workplaceCount = 0.f;
@@ -54,12 +46,11 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePlaces(size_t populationSi
 		outCommunity.AddPlace(std::make_unique<Workplace>());
 	}
 
-
 	// Create one supply building and a morgue for every 5000 persons at least one of each
 	size_t supplyCount = populationSize / 5000;
 	if (supplyCount < 1)
 	{
-		supplyCount++;
+		supplyCount = 1;
 	}
 	for (size_t i = 0; i < supplyCount; i++)
 	{
@@ -86,15 +77,7 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePopulation(size_t populati
 	}
 
 	// First get number of working people
-	auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
-	size_t workingPeople = 0;
-	for (const auto& distribution : countryDistribution)
-	{
-		if (distribution.ageGroup > Age_Group::UnderTwenty && distribution.ageGroup <= Age_Group::UnderSeventy)
-		{
-			workingPeople += static_cast<size_t>(populationSize / distribution.percent);
-		}
-	}
+	size_t workingPeople = WorkingPeopleNumber(populationSize, country);
 
 	// Then get the workplace counts for the size groups and transfer the right amount into a vector inside the bySize array
 	// Workplace size estimates https://www.statista.com/statistics/944669/current-office-size-full-time-employees-usa/
@@ -144,5 +127,20 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePopulation(size_t populati
 
 DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::CommunityBuilder::AssignHome() const
 {
+	// TODO: Implement a home assigne function
 	return nullptr;
+}
+
+size_t DeseaseSpreadSimulation::CommunityBuilder::WorkingPeopleNumber(size_t populationSize, Country country) const
+{
+	auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
+	size_t workingPeople = 0;
+	for (const auto& distribution : countryDistribution)
+	{
+		if (distribution.ageGroup > Age_Group::UnderTwenty && distribution.ageGroup <= Age_Group::UnderSeventy)
+		{
+			workingPeople += static_cast<size_t>(populationSize / distribution.percent);
+		}
+	}
+	return workingPeople;
 }
