@@ -57,6 +57,11 @@ namespace DeseaseSpreadSimulation
 		// Returns a rounded down percentage of count
 		static size_t DistributionToCountHelper(size_t count, float percent);
 
+	public:
+		// United Nations - Household Size & Composition, 2019 -> https://population.un.org/Household/index.html#/countries/840
+		static const HouseholdComposition householdUSA;
+		static const HouseholdComposition householdGermany;
+
 	private:
 		const size_t populationSize = 0;
 		size_t leftover = 0;
@@ -71,9 +76,5 @@ namespace DeseaseSpreadSimulation
 		// United States Census Bureau - Population by Age and Sex:2018 -> https://www.census.gov/data/tables/2018/demo/age-and-sex/2018-age-sex-composition.html
 		// Male population is only 99.9% in that document. Added .1% to AboveEighty to get to 100% and prevent possible bugs
 		static const std::vector<HumanDistribution> defaultAgeDistributionUSA;
-
-		// United Nations - Household Size & Composition, 2019 -> https://population.un.org/Household/index.html#/countries/840
-		static const HouseholdComposition householdUSA;
-		static const HouseholdComposition householdGermany;
 	};
 }
