@@ -45,10 +45,10 @@ namespace DeseaseSpreadSimulation
 		std::string GetTypeName() const override;
 	};
 
-	class Work : public Place
+	class Workplace : public Place
 	{
 	public:
-		Work();
+		Workplace();
 
 	public:
 		std::string GetTypeName() const override;

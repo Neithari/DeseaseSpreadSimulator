@@ -59,15 +59,15 @@ std::string DeseaseSpreadSimulation::Supply::GetTypeName() const
 	return "Supply" + std::to_string(GetID());
 }
 
-DeseaseSpreadSimulation::Work::Work()
+DeseaseSpreadSimulation::Workplace::Workplace()
 	:
-	Place(IDGenerator::IDGenerator<Work>::GetNextID())
+	Place(IDGenerator::IDGenerator<Workplace>::GetNextID())
 {
 }
 
-std::string DeseaseSpreadSimulation::Work::GetTypeName() const
+std::string DeseaseSpreadSimulation::Workplace::GetTypeName() const
 {
-	return "Work" + std::to_string(GetID());
+	return "Workplace" + std::to_string(GetID());
 }
 
 DeseaseSpreadSimulation::HardwareStore::HardwareStore()
