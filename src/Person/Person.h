@@ -39,12 +39,12 @@ namespace DeseaseSpreadSimulation
 		Sex GetSex() const;
 		auto GetWhereabouts() const;
 		auto GetHome() const;
+		void SetWorkplace(Place* newWorkplace);
 
 
 	private:
 		void Move();
 		void DeseaseCheck();
-		void SetWorkplace(Place* newWorkplace);
 
 	private:
 		const uint32_t id;
