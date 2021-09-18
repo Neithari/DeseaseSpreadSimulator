@@ -104,7 +104,7 @@ namespace UnitTests {
             EXPECT_EQ(IDGenerator::IDGenerator<Derived>::GetNextID(), i);
         }
     }
-    TEST(PlacesTests, GetTypeName)
+    TEST(PlacesTests, GetType)
     {
         DeseaseSpreadSimulation::Home home;
         DeseaseSpreadSimulation::Supply market;
@@ -113,11 +113,11 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Morgue morgue;
 
         // No test for the ID because we can't guarantee the order of the tests and ID is already checked
-        EXPECT_EQ(home.GetTypeName().substr(0,4), "Home");
-        EXPECT_EQ(market.GetTypeName().substr(0, 6), "Supply");
-        EXPECT_EQ(work.GetTypeName().substr(0, 4), "Work");
-        EXPECT_EQ(hardware.GetTypeName().substr(0, 13), "HardwareStore");
-        EXPECT_EQ(morgue.GetTypeName().substr(0, 6), "Morgue");
+        EXPECT_EQ(home.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Home);
+        EXPECT_EQ(market.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Supply);
+        EXPECT_EQ(work.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Workplace);
+        EXPECT_EQ(hardware.GetType(), DeseaseSpreadSimulation::Place::Place_Type::HardwareStore);
+        EXPECT_EQ(morgue.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Morgue);
     }
     TEST(PlacesTests, AddPerson)
     {

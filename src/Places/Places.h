@@ -8,7 +8,9 @@ namespace DeseaseSpreadSimulation
 	class Place
 	{
 	public:
-		virtual std::string GetTypeName() const = 0;
+		enum class Place_Type { Home, Supply, Workplace, HardwareStore, Morgue };
+
+		virtual Place_Type GetType() const = 0;
 		const std::vector<Person*>& GetPeople() const;
 		size_t GetPersonCount() const;
 		uint32_t GetID() const;
@@ -32,7 +34,7 @@ namespace DeseaseSpreadSimulation
 		Home();
 
 	public:
-		std::string GetTypeName() const override;
+		Place_Type GetType() const override;
 	private:
 	};
 
@@ -42,7 +44,7 @@ namespace DeseaseSpreadSimulation
 		Supply();
 
 	public:
-		std::string GetTypeName() const override;
+		Place_Type GetType() const override;
 	};
 
 	class Workplace : public Place
@@ -51,7 +53,7 @@ namespace DeseaseSpreadSimulation
 		Workplace();
 
 	public:
-		std::string GetTypeName() const override;
+		Place_Type GetType() const override;
 	};
 
 	class HardwareStore : public Place
@@ -60,7 +62,7 @@ namespace DeseaseSpreadSimulation
 		HardwareStore();
 
 	public:
-		std::string GetTypeName() const override;
+		Place_Type GetType() const override;
 	};
 	class Morgue : public Place
 	{
@@ -68,7 +70,7 @@ namespace DeseaseSpreadSimulation
 		Morgue();
 
 	public:
-		std::string GetTypeName() const override;
+		Place_Type GetType() const override;
 	private:
 	};
 }

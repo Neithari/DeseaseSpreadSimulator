@@ -42,10 +42,9 @@ DeseaseSpreadSimulation::Home::Home()
 {
 }
 
-std::string DeseaseSpreadSimulation::Home::GetTypeName() const
+DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Home::GetType() const
 {
-	std::string name = "Home" + std::to_string(GetID());
-	return name;
+	return Place_Type::Home;
 }
 
 DeseaseSpreadSimulation::Supply::Supply()
@@ -54,9 +53,9 @@ DeseaseSpreadSimulation::Supply::Supply()
 {
 }
 
-std::string DeseaseSpreadSimulation::Supply::GetTypeName() const
+DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Supply::GetType() const
 {
-	return "Supply" + std::to_string(GetID());
+	return Place_Type::Supply;
 }
 
 DeseaseSpreadSimulation::Workplace::Workplace()
@@ -65,9 +64,9 @@ DeseaseSpreadSimulation::Workplace::Workplace()
 {
 }
 
-std::string DeseaseSpreadSimulation::Workplace::GetTypeName() const
+DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Workplace::GetType() const
 {
-	return "Workplace" + std::to_string(GetID());
+	return Place_Type::Workplace;
 }
 
 DeseaseSpreadSimulation::HardwareStore::HardwareStore()
@@ -76,9 +75,9 @@ DeseaseSpreadSimulation::HardwareStore::HardwareStore()
 {
 }
 
-std::string DeseaseSpreadSimulation::HardwareStore::GetTypeName() const
+DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::HardwareStore::GetType() const
 {
-	return "HardwareStore" + std::to_string(GetID());
+	return Place_Type::HardwareStore;
 }
 
 DeseaseSpreadSimulation::Morgue::Morgue()
@@ -87,7 +86,7 @@ DeseaseSpreadSimulation::Morgue::Morgue()
 {
 }
 
-std::string DeseaseSpreadSimulation::Morgue::GetTypeName() const
+DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Morgue::GetType() const
 {
-	return "Morgue" + std::to_string(GetID());
+	return Place_Type::Morgue;
 }
