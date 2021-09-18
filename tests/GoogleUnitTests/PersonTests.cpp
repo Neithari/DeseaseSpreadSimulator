@@ -10,7 +10,7 @@ namespace UnitTests {
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
-        std::shared_ptr<DeseaseSpreadSimulation::Home> home = std::make_shared<DeseaseSpreadSimulation::Home>();
+        std::unique_ptr<DeseaseSpreadSimulation::Home> home = std::make_unique<DeseaseSpreadSimulation::Home>();
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
     };
     TEST_F(PersonTest, ContaminateAPerson)
