@@ -10,28 +10,20 @@ DeseaseSpreadSimulation::Community DeseaseSpreadSimulation::CommunityBuilder::Cr
 	CreatePlaces(populationSize, country, community);
 	CreatePopulation(populationSize, country, community);
 
-	return std::move(community);
+	return community;
 }
 
 void DeseaseSpreadSimulation::CommunityBuilder::CreatePlaces(size_t populationSize, Country country, Community& outCommunity) const
 {
-	// Sum all home members and create enough homes
-	size_t oneMemberHomes = static_cast<size_t>(populationSize / PersonPopulator::householdUSA.oneMember);
-	size_t twoToThreeMemberHomes = static_cast<size_t>(populationSize / PersonPopulator::householdUSA.twoToThreeMembers);
-	size_t fourToFiveMemberHomes = static_cast<size_t>(populationSize / PersonPopulator::householdUSA.fourToFiveMembers);
-	size_t sixPlusMemberHomes = static_cast<size_t>(populationSize / PersonPopulator::householdUSA.sixPlusMembers);
-	size_t sum = oneMemberHomes + twoToThreeMemberHomes + fourToFiveMemberHomes + sixPlusMemberHomes;
-	for (size_t i = 0; i < sum; i++)
+	// Get the person count per household category and create the correct number of homes
+	for (size_t i = 0; i < GetHomeCount(populationSize, country); i++)
 	{
 		outCommunity.AddPlace(std::make_unique<Home>());
 	}
 
-
 	// Create workplaces for people between 20 and 69
 	// First get number of working people
 	size_t workingPeople = WorkingPeopleNumber(populationSize, country);
-	// Workplace size estimates https://www.statista.com/statistics/944669/current-office-size-full-time-employees-usa/
-	std::array<float, 5> workplaceSize{ 0.2649f, 0.308f, 0.1908f, 0.0821f, 0.1542f };
 	float workplaceCount = 0.f;
 
 	// Then get the workplace counts for the size groups and sum them
@@ -80,8 +72,6 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePopulation(size_t populati
 	size_t workingPeople = WorkingPeopleNumber(populationSize, country);
 
 	// Then get the workplace counts for the size groups and transfer the right amount into a vector inside the bySize array
-	// Workplace size estimates https://www.statista.com/statistics/944669/current-office-size-full-time-employees-usa/
-	std::array<float, 5> workplaceSize{ 0.2649f, 0.308f, 0.1908f, 0.0821f, 0.1542f };
 	std::array<std::vector<Place*>, 5> workplacesBySize;
 	for (size_t i = 0; i < workplaceSize.size(); i++)
 	{
@@ -158,4 +148,22 @@ size_t DeseaseSpreadSimulation::CommunityBuilder::WorkingPeopleNumber(size_t pop
 		}
 	}
 	return workingPeople;
+}
+
+size_t DeseaseSpreadSimulation::CommunityBuilder::GetHomeCount(size_t populationSize, Country country) const
+{
+	// Get the person count per household category
+	double oneMemberHomesPersonCount = populationSize * PersonPopulator::GetHouseholdDistribution(country).oneMember;
+	double twoToThreeMemberHomesPersonCount = populationSize * PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers;
+	double fourToFiveMemberHomesPersonCount = populationSize * PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers;
+	double sixPlusMemberHomesPersonCount = populationSize * PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers;
+
+	// The home count is equal to the person count living in such a home devided by the median person count in the category
+	size_t oneMemberHomes = static_cast<size_t>(oneMemberHomesPersonCount);
+	size_t twoToThreeMemberHomes = static_cast<size_t>(twoToThreeMemberHomesPersonCount / 2.5);
+	size_t fourToFiveMemberHomes = static_cast<size_t>(fourToFiveMemberHomesPersonCount / 4.5);
+	size_t sixPlusMemberHomes = static_cast<size_t>(sixPlusMemberHomesPersonCount / 6.5);
+
+	// Return the sum
+	return oneMemberHomes + twoToThreeMemberHomes + fourToFiveMemberHomes + sixPlusMemberHomes;
 }
