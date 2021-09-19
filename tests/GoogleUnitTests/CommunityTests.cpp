@@ -160,12 +160,16 @@ namespace UnitTests {
         auto c1 = cbuilder.CreateCommunity(populationSize1, DeseaseSpreadSimulation::Country::USA);
         ASSERT_EQ(c1.GetPopulation().size(), populationSize1);
 
-        size_t populationSize2 = 999;
+        size_t populationSize2 = 1000;
         auto c2 = cbuilder.CreateCommunity(populationSize2, DeseaseSpreadSimulation::Country::USA);
         ASSERT_EQ(c2.GetPopulation().size(), populationSize2);
 
         size_t populationSize3 = 11;
         auto c3 = cbuilder.CreateCommunity(populationSize3, DeseaseSpreadSimulation::Country::USA);
         ASSERT_EQ(c3.GetPopulation().size(), populationSize3);
+
+        size_t populationSize4 = 673;
+        auto c4 = cbuilder.CreateCommunity(populationSize4, DeseaseSpreadSimulation::Country::USA);
+        ASSERT_EQ(c4.GetPopulation().size(), populationSize4);
     }
 }
