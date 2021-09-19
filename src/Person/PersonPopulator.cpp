@@ -24,8 +24,8 @@ const std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> D
 	{ Age_Group::AboveEighty, Sex::Male,   0.0155f }
 };
 
-const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdUSA{27.89f, 49.49f, 18.81f, 3.81f};
-const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdGermany{39.53f, 47.0f, 12.71f, 0.76f};
+const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdUSA{0.2789f, 0.4949f, 0.1881f, 0.0381f};
+const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdGermany{0.3953f, 0.47f, 0.1271f, 0.0076f};
 
 DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<HumanDistribution> distribution)
 	:
@@ -102,6 +102,23 @@ std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> Desease
 		break;
 	default:
 		return defaultAgeDistributionUSA;
+		break;
+	}
+}
+
+DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(Country country)
+{
+	switch (country)
+	{
+	case DeseaseSpreadSimulation::Country::USA:
+		return householdUSA;
+		break;
+	case DeseaseSpreadSimulation::Country::Germany:
+		// TODO: Implement german distribution
+		return householdGermany;
+		break;
+	default:
+		return householdUSA;
 		break;
 	}
 }
