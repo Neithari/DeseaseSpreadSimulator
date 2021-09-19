@@ -109,15 +109,29 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePopulation(size_t populati
 			break;
 		}
 
-		// Assigne a workplace when the person is in working age
-		if (person->GetAgeGroup() > Age_Group::UnderTwenty && person->GetAgeGroup() <= Age_Group::UnderSeventy)
+		// Assigne a workplace when the person is in working age and there is a workplace
+		bool noWorkplace = true;
+		for (const auto& work : workplacesBySize)
+		{
+			if (work.size() > 0)
+			{
+				noWorkplace = false;
+				break;
+			}
+		}
+		if (!noWorkplace && person->GetAgeGroup() > Age_Group::UnderTwenty && person->GetAgeGroup() <= Age_Group::UnderSeventy)
 		{
 			// First choose a weighted workplace vector, then assigne uniform under the same size workplaces
 			std::random_device seed;
 			std::mt19937 generator(seed());
 			std::discrete_distribution<size_t> distribution({ 2649, 3080, 1908, 821, 1542 });
 			size_t distIndex = distribution(generator);
-			std::uniform_int_distribution<size_t> uniform(0, workplacesBySize.at(distIndex).size() - 1);
+			// Get a new index until the vector is not empty
+			while (workplacesBySize.at(distIndex).empty())
+			{
+				distIndex = distribution(generator);
+			}
+			std::uniform_int_distribution<size_t> uniform(0, (workplacesBySize.at(distIndex).size() - 1));
 			person->SetWorkplace(workplacesBySize.at(distIndex).at(uniform(generator)));
 		}
 		// Add the created person to the community
@@ -133,13 +147,14 @@ DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::CommunityBuilder::Assign
 
 size_t DeseaseSpreadSimulation::CommunityBuilder::WorkingPeopleNumber(size_t populationSize, Country country) const
 {
+	// TODO: Need a better way to get the working people. Not in sync with PersonPopulator::GetNewPerson()
 	auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
 	size_t workingPeople = 0;
 	for (const auto& distribution : countryDistribution)
 	{
 		if (distribution.ageGroup > Age_Group::UnderTwenty && distribution.ageGroup <= Age_Group::UnderSeventy)
 		{
-			workingPeople += static_cast<size_t>(populationSize / distribution.percent);
+			workingPeople += static_cast<size_t>(populationSize * distribution.percent);
 		}
 	}
 	return workingPeople;

@@ -21,3 +21,4 @@
 #include "IDGenerator/IDGenerator.h"
 #include "Places/Places.h"
 #include "Places/Community.h"
+#include "Places/CommunityBuilder.h"

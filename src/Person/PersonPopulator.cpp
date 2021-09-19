@@ -3,25 +3,25 @@
 
 // Value is in percent with 1.f = 100%
 const std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::defaultAgeDistributionUSA{
-	{ Age_Group::UnderTen,	  Sex::Female, 0.119f },
-	{ Age_Group::UnderTwenty, Sex::Female, 0.124f },
-	{ Age_Group::UnderThirty, Sex::Female, 0.134f },
-	{ Age_Group::UnderFourty, Sex::Female, 0.131f },
-	{ Age_Group::UnderFifty,  Sex::Female, 0.124f },
-	{ Age_Group::UnderSixty,  Sex::Female, 0.133f },
-	{ Age_Group::UnderSeventy,Sex::Female, 0.119f },
-	{ Age_Group::UnderEighty, Sex::Female, 0.073f },
-	{ Age_Group::AboveEighty, Sex::Female, 0.043f },
+	{ Age_Group::UnderTen,	  Sex::Female, 0.0595f },
+	{ Age_Group::UnderTwenty, Sex::Female, 0.062f },
+	{ Age_Group::UnderThirty, Sex::Female, 0.067f },
+	{ Age_Group::UnderFourty, Sex::Female, 0.0655f },
+	{ Age_Group::UnderFifty,  Sex::Female, 0.062f },
+	{ Age_Group::UnderSixty,  Sex::Female, 0.0665f },
+	{ Age_Group::UnderSeventy,Sex::Female, 0.0595f },
+	{ Age_Group::UnderEighty, Sex::Female, 0.0365f },
+	{ Age_Group::AboveEighty, Sex::Female, 0.0215f },
 
-	{ Age_Group::UnderTen,	  Sex::Male,   0.129f },
-	{ Age_Group::UnderTwenty, Sex::Male,   0.134f },
-	{ Age_Group::UnderThirty, Sex::Male,   0.142f },
-	{ Age_Group::UnderFourty, Sex::Male,   0.135f },
-	{ Age_Group::UnderFifty,  Sex::Male,   0.124f },
-	{ Age_Group::UnderSixty,  Sex::Male,   0.130f },
-	{ Age_Group::UnderSeventy,Sex::Male,   0.110f },
-	{ Age_Group::UnderEighty, Sex::Male,   0.065f },
-	{ Age_Group::AboveEighty, Sex::Male,   0.031f }
+	{ Age_Group::UnderTen,	  Sex::Male,   0.0645f },
+	{ Age_Group::UnderTwenty, Sex::Male,   0.067f },
+	{ Age_Group::UnderThirty, Sex::Male,   0.071f },
+	{ Age_Group::UnderFourty, Sex::Male,   0.0675f },
+	{ Age_Group::UnderFifty,  Sex::Male,   0.062f },
+	{ Age_Group::UnderSixty,  Sex::Male,   0.065f },
+	{ Age_Group::UnderSeventy,Sex::Male,   0.055f },
+	{ Age_Group::UnderEighty, Sex::Male,   0.0325f },
+	{ Age_Group::AboveEighty, Sex::Male,   0.0155f }
 };
 
 const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdUSA{27.89f, 49.49f, 18.81f, 3.81f};
@@ -69,7 +69,7 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 			{
 				// ...if yes we start again at the beginning...
 				ageDistributionIndex = 0;
-				// ...and distribute 1 to every human distribution untill no leftover
+				// ...and distribute 1 to every human distribution until no leftover
 				lastFew = true;
 			}
 		}
@@ -97,6 +97,7 @@ std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> Desease
 		return defaultAgeDistributionUSA;
 		break;
 	case DeseaseSpreadSimulation::Country::Germany:
+		// TODO: Implement german distribution
 		return defaultAgeDistributionUSA;
 		break;
 	default:

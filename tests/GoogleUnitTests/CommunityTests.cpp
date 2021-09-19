@@ -151,4 +151,21 @@ namespace UnitTests {
         ASSERT_EQ(*transferPerson3, person3);
         ASSERT_EQ(*transferPerson4, person4);
     }
+
+    TEST(CommunityBuilderTest, CreateCommunity)
+    {
+        DeseaseSpreadSimulation::CommunityBuilder cbuilder;
+
+        size_t populationSize1 = 100;
+        auto c1 = cbuilder.CreateCommunity(populationSize1, DeseaseSpreadSimulation::Country::USA);
+        ASSERT_EQ(c1.GetPopulation().size(), populationSize1);
+
+        size_t populationSize2 = 999;
+        auto c2 = cbuilder.CreateCommunity(populationSize2, DeseaseSpreadSimulation::Country::USA);
+        ASSERT_EQ(c2.GetPopulation().size(), populationSize2);
+
+        size_t populationSize3 = 11;
+        auto c3 = cbuilder.CreateCommunity(populationSize3, DeseaseSpreadSimulation::Country::USA);
+        ASSERT_EQ(c3.GetPopulation().size(), populationSize3);
+    }
 }
