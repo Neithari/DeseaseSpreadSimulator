@@ -147,6 +147,11 @@ void DeseaseSpreadSimulation::Person::SetWorkplace(Place* newWorkplace)
 	workplace = newWorkplace;
 }
 
+void DeseaseSpreadSimulation::Person::SetHome(Place* newHome)
+{
+	home = static_cast<Home*>(newHome);
+}
+
 void DeseaseSpreadSimulation::Person::Move()
 {
 	/// TODO: implement move function

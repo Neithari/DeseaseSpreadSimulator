@@ -40,6 +40,7 @@ namespace DeseaseSpreadSimulation
 		auto GetWhereabouts() const;
 		auto GetHome() const;
 		void SetWorkplace(Place* newWorkplace);
+		void SetHome(Place* newHome);
 
 
 	private:
