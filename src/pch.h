@@ -14,6 +14,7 @@
 #include <map>
 #include <atomic>
 #include <compare>
+#include <cmath>
 
 // Data structures
 #include <string>
