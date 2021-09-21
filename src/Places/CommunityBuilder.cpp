@@ -86,67 +86,68 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePopulation(const size_t po
 			break;
 		}
 	}
+	// This bool will ensure that a workplace is only assigned if there are workplaces
+	bool noWorkplace = workplaces.empty();
 
 	// Create an array containing all workplaces sorted by size
 	auto workplacesBySize(WorkplacesBySize(populationSize, country, std::move(workplaces)));
-	
+	auto homesByMemberCount = HomesByMemberCount(populationSize, country, homes);
+	// Clear homes because we don't need it anymore
+	homes.clear();
+
 	// Create the population
 	while (true)
 	{
-		auto person = personCreator.GetNewPerson(AssignHome(populationSize, country));
-
+		// Get a new person
+		auto person = personCreator.GetNewPerson();
 		// Break the loop when we got the whole population
 		if (!person)
 		{
 			break;
 		}
 
-		// Assigne a workplace when the person is in working age and there is a workplace
-		bool noWorkplace = true;
-		for (const auto& work : workplacesBySize)
-		{
-			if (work.size() > 0)
-			{
-				noWorkplace = false;
-				break;
-			}
-		}
+		// Assigne a home to the person
+		person->SetHome(AssignHome(country, person->GetAgeGroup(), homesByMemberCount));
+
+		// Assigne a workplace when the person is in working age and there are workplaces
 		if (!noWorkplace && person->GetAgeGroup() > Age_Group::UnderTwenty && person->GetAgeGroup() <= Age_Group::UnderSeventy)
 		{
-			// First choose a weighted workplace vector, then assigne uniform under the same size workplaces
-			std::random_device seed;
-			std::mt19937 generator(seed());
-			// Create the distribution with the workplaceSize array as weights
-			std::discrete_distribution<size_t> distribution(workplaceSize.begin(), workplaceSize.end());
-			size_t distIndex = distribution(generator);
-			// Get a new index until the vector is not empty
-			while (workplacesBySize.at(distIndex).empty())
-			{
-				distIndex = distribution(generator);
-			}
-			std::uniform_int_distribution<size_t> uniform(0, (workplacesBySize.at(distIndex).size() - 1));
-			person->SetWorkplace(workplacesBySize.at(distIndex).at(uniform(generator)));
+			person->SetWorkplace(AssignWorkplace(workplacesBySize));
 		}
 		// Add the created person to the community
 		outCommunity.AddPerson(std::move(person));
 	}
 }
 
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::CommunityBuilder::AssignHome(const size_t populationSize, const Country country) const
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::CommunityBuilder::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Place*>, 4>& homesByMemberCount) const
 {
-	std::random_device seed;
-	std::mt19937 generator(seed());
-	std::discrete_distribution<size_t> distribution({	PersonPopulator::GetHouseholdDistribution(country).oneMember,
-														PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
-														PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers, 
-														PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers
-													});
-	// to silence warning
-	if (populationSize)
-	{
+	// Create the distribution
+	std::array<float, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
+											PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
+											PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
+											PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
 
+	size_t distIndex = GetDistributedArrayIndex(distributionArray);
+	// Get a new index until the vector is not empty or the person is under twenty and the index is for one member homes
+	while (homesByMemberCount.at(distIndex).empty() || (ageGroup <= Age_Group::UnderTwenty && distIndex == 0))
+	{
+		distIndex = GetDistributedArrayIndex(distributionArray);
 	}
-	return nullptr;
+	// Return a random home of the chosen size
+	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(GetUniformRandomIndex(homesByMemberCount.at(distIndex).size() - 1)));
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::CommunityBuilder::AssignWorkplace(const std::array<std::vector<Place*>, 5>& workplacesBySize) const
+{
+	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
+	size_t distIndex = GetDistributedArrayIndex(workplaceSize);
+	// Get a new index until the vector is not empty
+	while (workplacesBySize.at(distIndex).empty())
+	{
+		distIndex = GetDistributedArrayIndex(workplaceSize);
+	}
+	// Return a random workplace at the chosen size
+	return workplacesBySize.at(distIndex).at(GetUniformRandomIndex(workplacesBySize.at(distIndex).size() - 1));
 }
 
 size_t DeseaseSpreadSimulation::CommunityBuilder::WorkingPeopleNumber(const size_t populationSize, const Country country) const
@@ -154,11 +155,14 @@ size_t DeseaseSpreadSimulation::CommunityBuilder::WorkingPeopleNumber(const size
 	// TODO: Need a better way to get the working people. Not in sync with PersonPopulator::GetNewPerson()
 	auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
 	size_t workingPeople = 0;
-	for (const auto& distribution : countryDistribution)
+	// For every human distribution in country distribution...
+	for (const auto& humanDistribution : countryDistribution)
 	{
-		if (distribution.ageGroup > Age_Group::UnderTwenty && distribution.ageGroup <= Age_Group::UnderSeventy)
+		// ...check if the distribution is inside working age...
+		if (humanDistribution.ageGroup > Age_Group::UnderTwenty && humanDistribution.ageGroup <= Age_Group::UnderSeventy)
 		{
-			workingPeople += llround(populationSize * (double)distribution.percent);
+			// ...and if it is, sum the rounded population size with the distribution applied
+			workingPeople += llround(populationSize * static_cast<double>(humanDistribution.percent));
 		}
 	}
 	return workingPeople;
@@ -176,13 +180,15 @@ std::array<size_t, 4> DeseaseSpreadSimulation::CommunityBuilder::GetHomeCounts(c
 	};
 }
 
-std::array<std::vector<DeseaseSpreadSimulation::Place*>, 4> DeseaseSpreadSimulation::CommunityBuilder::HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Place*> homes) const
+std::array<std::vector<DeseaseSpreadSimulation::Place*>, 4> DeseaseSpreadSimulation::CommunityBuilder::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Place*>& homes) const
 {
 	auto homeCounts(GetHomeCounts(populationSize, country));
 
-	auto from = homes.begin();
-	auto to = homes.begin() + homeCounts.at(0);
+	// Set iterators to copy a part of the homes vector into the new vectores separated by size
+	auto from = homes.cbegin();
+	auto to = homes.cbegin() + homeCounts.at(0);
 	std::vector<Place*> oneMember(from, to);
+	// Change the iterators for the next size and do the same for every size
 	from = to;
 	to += homeCounts.at(1);
 	std::vector<Place*> twoToThreeMembers(from, to);
@@ -190,8 +196,9 @@ std::array<std::vector<DeseaseSpreadSimulation::Place*>, 4> DeseaseSpreadSimulat
 	to += homeCounts.at(2);
 	std::vector<Place*> fourToFiveMembers(from, to);
 	from = to;
-	std::vector<Place*> sixPlusMembers(from, homes.end());
+	std::vector<Place*> sixPlusMembers(from, homes.cend());
 
+	// Return an array with all size vectors
 	return { oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers };
 }
 
@@ -217,4 +224,13 @@ std::array<std::vector<DeseaseSpreadSimulation::Place*>, 5> DeseaseSpreadSimulat
 		workplaces.pop_back();
 	}
 	return workplacesBySize;
+}
+
+size_t DeseaseSpreadSimulation::CommunityBuilder::GetUniformRandomIndex(size_t maxIndex) const
+{
+	std::random_device seed;
+	std::mt19937 generator(seed());
+	std::uniform_int_distribution<size_t> uniform(0, maxIndex);
+
+	return uniform(generator);
 }
