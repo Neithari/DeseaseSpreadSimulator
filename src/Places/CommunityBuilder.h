@@ -1,6 +1,7 @@
 #pragma once
 #include "Places/Places.h"
 #include "Person/PersonPopulator.h"
+#include <random>
 
 namespace DeseaseSpreadSimulation
 {
