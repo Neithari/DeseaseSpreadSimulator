@@ -37,8 +37,8 @@ namespace DeseaseSpreadSimulation
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
-		auto GetWhereabouts() const;
-		auto GetHome() const;
+		Place* GetWhereabouts() const;
+		Home* GetHome() const;
 		void SetWorkplace(Place* newWorkplace);
 		void SetHome(Place* newHome);
 

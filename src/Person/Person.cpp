@@ -114,12 +114,12 @@ DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
 	return sex;
 }
 
-auto DeseaseSpreadSimulation::Person::GetWhereabouts() const
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
 {
 	return whereabouts;
 }
 
-auto DeseaseSpreadSimulation::Person::GetHome() const
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
 {
 	return home;
 }
