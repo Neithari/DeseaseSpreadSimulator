@@ -150,6 +150,14 @@ void DeseaseSpreadSimulation::Person::SetWorkplace(Place* newWorkplace)
 void DeseaseSpreadSimulation::Person::SetHome(Place* newHome)
 {
 	home = static_cast<Home*>(newHome);
+	// Check if the person is already somewhere.
+	if (whereabouts == nullptr)
+	{
+		// If not set it's whereabouts...
+		whereabouts = newHome;
+		// ...and put the person in it's home
+		newHome->AddPerson(this);
+	}
 }
 
 void DeseaseSpreadSimulation::Person::Move()
