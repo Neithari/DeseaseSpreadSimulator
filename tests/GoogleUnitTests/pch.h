@@ -10,6 +10,8 @@
 // Used during testing
 #include <chrono>
 #include <thread>
+#include <map>
+#include <algorithm>
 
 // Includes to be tested
 #include "Desease/Desease.h"

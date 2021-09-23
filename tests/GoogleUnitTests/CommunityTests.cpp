@@ -172,4 +172,91 @@ namespace UnitTests {
         auto c4 = cbuilder.CreateCommunity(populationSize4, DeseaseSpreadSimulation::Country::USA);
         ASSERT_EQ(c4.GetPopulation().size(), populationSize4);
     }
+    // Helper function to get the percentages per category form a population so it can be compared to the distribution weights
+    std::array<float, 4> GetHomePercentFromPopulation(const std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>>& population, DeseaseSpreadSimulation::Country country)
+    {
+        std::map<uint32_t, DeseaseSpreadSimulation::Home*> homesByID;
+
+        // Get the homes of every person in the population and put it into a map to filter multiples
+        for (const auto& person : population)
+        {
+            auto home = person->GetHome();
+            homesByID.try_emplace(home->GetID(), home);
+        }
+
+        // Put the person count in every home into a vector
+        std::vector<size_t> peopleCount;
+        for (const auto& [id, home] : homesByID)
+        {
+            peopleCount.emplace_back(home->GetPeople().size());
+        }
+
+        // Count the homes separated by category
+        std::array<size_t, 4> homeCount{};
+        for (const auto& count : peopleCount)
+        {
+            // One person homes
+            if (count < 2)
+            {
+                homeCount.at(0)++;
+            }
+            // 2-3 person homes
+            else if (count < 4)
+            {
+                homeCount.at(1)++;
+            }
+            // 4-5 person homes
+            else if (count < 6)
+            {
+                homeCount.at(2)++;
+            }
+            // over 6 person homes
+            else
+            {
+                homeCount.at(3)++;
+            }
+        }
+        size_t sum = homeCount.at(0) + homeCount.at(1) + homeCount.at(2) + homeCount.at(3);
+
+        // Get the percent of the count by dividing it by the sum of all homes and check if it is near our distribution
+
+        std::array<float, 4> percent{};
+        for (size_t i = 0; i < homeCount.size(); i++)
+        {
+            percent.at(i) = static_cast<float>(homeCount.at(i)) / sum;
+        }
+
+        return percent;
+    }
+    TEST(CommunityBuilderTest, CheckHomes)
+    {
+        DeseaseSpreadSimulation::CommunityBuilder cbuilder;
+
+        constexpr auto country = DeseaseSpreadSimulation::Country::USA;
+        std::array<float, 4> distributionArray{ DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).oneMember,
+                                                DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
+                                                DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
+                                                DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
+
+        // TODO: Thread this test for better performance. Creating communities takes time.
+        for (size_t i = 0; i < 100; i++)
+        {
+            size_t populationSize1 = 1000;
+            auto c1 = cbuilder.CreateCommunity(populationSize1, country);
+
+            auto homePercent1 = GetHomePercentFromPopulation(c1.GetPopulation(), country);
+            for (size_t i = 0; i < homePercent1.size(); i++)
+            {
+                EXPECT_NEAR(homePercent1.at(i), distributionArray.at(i), 0.18f);
+            }
+        }
+
+        size_t populationSize2 = 10000;
+        auto c2 = cbuilder.CreateCommunity(populationSize2, country);
+        auto homePercent2 = GetHomePercentFromPopulation(c2.GetPopulation(), country);
+        for (size_t i = 0; i < homePercent2.size(); i++)
+        {
+            EXPECT_NEAR(homePercent2.at(i), distributionArray.at(i), 0.13f);
+        }
+    }
 }

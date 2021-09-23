@@ -122,7 +122,7 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePopulation(const size_t po
 DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::CommunityBuilder::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Place*>, 4>& homesByMemberCount) const
 {
 	// Create the distribution
-	std::array<float, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
+	std::array<double, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
 											PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
 											PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
 											PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
