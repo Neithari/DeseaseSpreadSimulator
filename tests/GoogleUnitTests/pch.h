@@ -10,6 +10,8 @@
 // Used during testing
 #include <chrono>
 #include <thread>
+#include <mutex>
+#include <shared_mutex>
 #include <map>
 #include <algorithm>
 

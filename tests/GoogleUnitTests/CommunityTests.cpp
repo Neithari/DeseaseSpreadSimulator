@@ -233,22 +233,34 @@ namespace UnitTests {
         DeseaseSpreadSimulation::CommunityBuilder cbuilder;
 
         constexpr auto country = DeseaseSpreadSimulation::Country::USA;
-        std::array<float, 4> distributionArray{ DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).oneMember,
-                                                DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
-                                                DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
-                                                DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
+        const std::array<float, 4> distributionArray{   DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).oneMember,
+                                                        DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
+                                                        DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
+                                                        DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
+        std::shared_mutex distributionArrayMutex;
 
         // TODO: Thread this test for better performance. Creating communities takes time.
-        for (size_t i = 0; i < 100; i++)
+        constexpr size_t populationSize1 = 1000;
+        constexpr size_t count = 100;
+        std::vector<std::thread> threads;
+        threads.reserve(count);
+        for (size_t j = 0; j < count; j++)
         {
-            size_t populationSize1 = 1000;
-            auto c1 = cbuilder.CreateCommunity(populationSize1, country);
+            threads.emplace_back([&]() {
+                auto c1 = cbuilder.CreateCommunity(populationSize1, country);
 
-            auto homePercent1 = GetHomePercentFromPopulation(c1.GetPopulation(), country);
-            for (size_t i = 0; i < homePercent1.size(); i++)
-            {
-                EXPECT_NEAR(homePercent1.at(i), distributionArray.at(i), 0.18f);
-            }
+                auto homePercent1 = GetHomePercentFromPopulation(c1.GetPopulation(), country);
+                for (size_t i = 0; i < homePercent1.size(); i++)
+                {
+                    std::shared_lock lock(distributionArrayMutex, std::defer_lock); // Do not lock it first.
+                    lock.lock(); // Lock it here.
+                    EXPECT_NEAR(homePercent1.at(i), distributionArray.at(i), 0.18f);
+                }
+                });
+        }
+        for (auto& thread : threads)
+        {
+            thread.join();
         }
 
         size_t populationSize2 = 10000;
