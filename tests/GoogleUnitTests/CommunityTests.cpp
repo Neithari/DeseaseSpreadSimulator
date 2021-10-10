@@ -239,12 +239,11 @@ namespace UnitTests {
                                                         DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
         std::shared_mutex distributionArrayMutex;
 
-        // TODO: Thread this test for better performance. Creating communities takes time.
         constexpr size_t populationSize1 = 1000;
-        constexpr size_t count = 100;
+        constexpr size_t testSize = 100;
         std::vector<std::thread> threads;
-        threads.reserve(count);
-        for (size_t j = 0; j < count; j++)
+        threads.reserve(testSize);
+        for (size_t j = 0; j < testSize; j++)
         {
             threads.emplace_back([&]() {
                 auto c1 = cbuilder.CreateCommunity(populationSize1, country);
@@ -252,8 +251,8 @@ namespace UnitTests {
                 auto homePercent1 = GetHomePercentFromPopulation(c1.GetPopulation(), country);
                 for (size_t i = 0; i < homePercent1.size(); i++)
                 {
-                    std::shared_lock lock(distributionArrayMutex, std::defer_lock); // Do not lock it first.
-                    lock.lock(); // Lock it here.
+                    std::shared_lock lock(distributionArrayMutex, std::defer_lock);
+                    lock.lock();
                     EXPECT_NEAR(homePercent1.at(i), distributionArray.at(i), 0.18f);
                 }
                 });
