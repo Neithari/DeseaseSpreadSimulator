@@ -16,6 +16,7 @@
 #include <algorithm>
 
 // Includes to be tested
+#include "DeseaseSpreadSimulator/Enums.h"
 #include "Desease/Desease.h"
 #include "Desease/DeseaseBuilder.h"
 #include "Person/Person.h"

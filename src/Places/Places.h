@@ -8,8 +8,6 @@ namespace DeseaseSpreadSimulation
 	class Place
 	{
 	public:
-		enum class Place_Type { Home, Supply, Workplace, HardwareStore, Morgue };
-
 		virtual Place_Type GetType() const = 0;
 		const std::vector<Person*>& GetPeople() const;
 		size_t GetPersonCount() const;

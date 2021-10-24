@@ -70,17 +70,17 @@ void DeseaseSpreadSimulation::CommunityBuilder::CreatePopulation(const size_t po
 	{
 		switch (place->GetType())
 		{
-		case Place::Place_Type::Home:
+		case Place_Type::Home:
 			homes.push_back(place.get());
 			break;
-		case Place::Place_Type::Workplace:
+		case Place_Type::Workplace:
 			workplaces.push_back(place.get());
 			break;
-		case Place::Place_Type::Supply:
+		case Place_Type::Supply:
 			break;
-		case Place::Place_Type::HardwareStore:
+		case Place_Type::HardwareStore:
 			break;
-		case Place::Place_Type::Morgue:
+		case Place_Type::Morgue:
 			break;
 		default:
 			break;

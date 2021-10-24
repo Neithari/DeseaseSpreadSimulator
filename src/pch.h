@@ -25,6 +25,7 @@
 //#include <gsl/gsl>
 
 // My
+#include "DeseaseSpreadSimulator/Enums.h"
 #include "Desease/Desease.h"
 #include "Person/Person.h"
 #include "Places/Places.h"

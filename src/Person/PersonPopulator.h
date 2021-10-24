@@ -1,10 +1,7 @@
 #pragma once
-#include "Places/Places.h"
 
 namespace DeseaseSpreadSimulation
-{
-	enum class Country {USA,Germany};
-	
+{	
 	class PersonPopulator
 	{
 	public:

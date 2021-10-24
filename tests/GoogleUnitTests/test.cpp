@@ -113,11 +113,11 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Morgue morgue;
 
         // No test for the ID because we can't guarantee the order of the tests and ID is already checked
-        EXPECT_EQ(home.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Home);
-        EXPECT_EQ(market.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Supply);
-        EXPECT_EQ(work.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Workplace);
-        EXPECT_EQ(hardware.GetType(), DeseaseSpreadSimulation::Place::Place_Type::HardwareStore);
-        EXPECT_EQ(morgue.GetType(), DeseaseSpreadSimulation::Place::Place_Type::Morgue);
+        EXPECT_EQ(home.GetType(), DeseaseSpreadSimulation::Place_Type::Home);
+        EXPECT_EQ(market.GetType(), DeseaseSpreadSimulation::Place_Type::Supply);
+        EXPECT_EQ(work.GetType(), DeseaseSpreadSimulation::Place_Type::Workplace);
+        EXPECT_EQ(hardware.GetType(), DeseaseSpreadSimulation::Place_Type::HardwareStore);
+        EXPECT_EQ(morgue.GetType(), DeseaseSpreadSimulation::Place_Type::Morgue);
     }
     TEST(PlacesTests, AddPerson)
     {

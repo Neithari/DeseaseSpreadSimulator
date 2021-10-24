@@ -42,7 +42,7 @@ DeseaseSpreadSimulation::Home::Home()
 {
 }
 
-DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Home::GetType() const
+DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Home::GetType() const
 {
 	return Place_Type::Home;
 }
@@ -53,7 +53,7 @@ DeseaseSpreadSimulation::Supply::Supply()
 {
 }
 
-DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Supply::GetType() const
+DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Supply::GetType() const
 {
 	return Place_Type::Supply;
 }
@@ -64,7 +64,7 @@ DeseaseSpreadSimulation::Workplace::Workplace()
 {
 }
 
-DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Workplace::GetType() const
+DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Workplace::GetType() const
 {
 	return Place_Type::Workplace;
 }
@@ -75,7 +75,7 @@ DeseaseSpreadSimulation::HardwareStore::HardwareStore()
 {
 }
 
-DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::HardwareStore::GetType() const
+DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::HardwareStore::GetType() const
 {
 	return Place_Type::HardwareStore;
 }
@@ -86,7 +86,7 @@ DeseaseSpreadSimulation::Morgue::Morgue()
 {
 }
 
-DeseaseSpreadSimulation::Place::Place_Type DeseaseSpreadSimulation::Morgue::GetType() const
+DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Morgue::GetType() const
 {
 	return Place_Type::Morgue;
 }
