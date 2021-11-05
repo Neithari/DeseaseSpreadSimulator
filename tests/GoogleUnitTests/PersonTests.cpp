@@ -63,18 +63,18 @@ namespace UnitTests {
         size_t unevenCount = 111;
         std::shared_ptr<DeseaseSpreadSimulation::Home> home = std::make_shared<DeseaseSpreadSimulation::Home>();
 
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.25f };
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.25f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
 
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human5{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.10f };
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human6{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.20f };
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human7{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.30f };
-        DeseaseSpreadSimulation::PersonPopulator::HumanDistribution human8{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.40f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human5{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.10f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human6{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.20f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human7{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.30f };
+        DeseaseSpreadSimulation::Statistics::HumanDistribution human8{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.40f };
 
-        std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
-        std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
+        std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
+        std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
 
         DeseaseSpreadSimulation::PersonPopulator populator1{ evenCount, evenDistribution };
         DeseaseSpreadSimulation::PersonPopulator populator2{ unevenCount, evenDistribution };
@@ -156,7 +156,7 @@ namespace UnitTests {
 
         for (const auto& person : population1)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
 
             if (h == human1)
             {
@@ -205,7 +205,7 @@ namespace UnitTests {
 
         for (const auto& person : population2)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
 
             if (h == human1)
             {
@@ -254,7 +254,7 @@ namespace UnitTests {
 
         for (const auto& person : population3)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
 
             if (h == human5)
             {
@@ -303,7 +303,7 @@ namespace UnitTests {
 
         for (const auto& person : population4)
         {
-            DeseaseSpreadSimulation::PersonPopulator::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
 
             if (h == human5)
             {

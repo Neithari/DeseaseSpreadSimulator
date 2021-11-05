@@ -26,3 +26,4 @@
 #include "Places/Places.h"
 #include "Places/Community.h"
 #include "Places/CommunityBuilder.h"
+#include "DeseaseSpreadSimulator/Statistics.h"

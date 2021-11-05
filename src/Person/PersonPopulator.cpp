@@ -1,37 +1,12 @@
 #include "pch.h"
 #include "Person/PersonPopulator.h"
+#include "Places/PlaceBuilder.h"
 
-// Value is in percent with 1.f = 100%
-const std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::defaultAgeDistributionUSA{
-	{ Age_Group::UnderTen,	  Sex::Female, 0.0595f },
-	{ Age_Group::UnderTwenty, Sex::Female, 0.062f },
-	{ Age_Group::UnderThirty, Sex::Female, 0.067f },
-	{ Age_Group::UnderFourty, Sex::Female, 0.0655f },
-	{ Age_Group::UnderFifty,  Sex::Female, 0.062f },
-	{ Age_Group::UnderSixty,  Sex::Female, 0.0665f },
-	{ Age_Group::UnderSeventy,Sex::Female, 0.0595f },
-	{ Age_Group::UnderEighty, Sex::Female, 0.0365f },
-	{ Age_Group::AboveEighty, Sex::Female, 0.0215f },
-
-	{ Age_Group::UnderTen,	  Sex::Male,   0.0645f },
-	{ Age_Group::UnderTwenty, Sex::Male,   0.067f },
-	{ Age_Group::UnderThirty, Sex::Male,   0.071f },
-	{ Age_Group::UnderFourty, Sex::Male,   0.0675f },
-	{ Age_Group::UnderFifty,  Sex::Male,   0.062f },
-	{ Age_Group::UnderSixty,  Sex::Male,   0.065f },
-	{ Age_Group::UnderSeventy,Sex::Male,   0.055f },
-	{ Age_Group::UnderEighty, Sex::Male,   0.0325f },
-	{ Age_Group::AboveEighty, Sex::Male,   0.0155f }
-};
-
-const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdUSA{0.2789f, 0.4949f, 0.1881f, 0.0381f};
-const DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::householdGermany{0.3953f, 0.47f, 0.1271f, 0.0076f};
-
-DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<HumanDistribution> distribution)
+DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
 	:
-	populationSize(populationSize),
+	m_populationSize(populationSize),
 	leftover(populationSize),
-	ageDistribution(std::move(distribution)),
+	ageDistribution(std::move(humanDistribution)),
 	currentHumanDistribution(ageDistribution.front())
 {
 	// Set the currentHumanCount to a percent of the population and to 1 if this will return 0
@@ -40,6 +15,69 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	{
 		currentHumanCount = 1;
 	}
+}
+
+std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, const std::vector<std::unique_ptr<Place>>& places)
+{
+	std::vector<std::unique_ptr<Person>> population;
+
+	// Create a vector with all homes and a vector with all workplaces to assigne them later
+	std::vector<Place*> homes;
+	std::vector<Place*> workplaces;
+
+	for (const auto& place : places)
+	{
+		switch (place->GetType())
+		{
+		case Place_Type::Home:
+			homes.push_back(place.get());
+			break;
+		case Place_Type::Workplace:
+			workplaces.push_back(place.get());
+			break;
+		case Place_Type::Supply:
+			break;
+		case Place_Type::HardwareStore:
+			break;
+		case Place_Type::Morgue:
+			break;
+		default:
+			break;
+		}
+	}
+	// This bool will ensure that a workplace is only assigned if there are workplaces
+	bool noWorkplace = workplaces.empty();
+
+	// Create an array containing all workplaces sorted by size
+	auto workplacesBySize(PlaceBuilder::WorkplacesBySize(populationSize, country, std::move(workplaces)));
+	auto homesByMemberCount = HomesByMemberCount(populationSize, country, homes);
+	// Clear homes because we don't need it anymore
+	homes.clear();
+
+	// Create the population
+	while (true)
+	{
+		// Get a new person
+		auto person = GetNewPerson();
+		// Break the loop when we got the whole population
+		if (!person)
+		{
+			break;
+		}
+
+		// Assigne a home to the person
+		person->SetHome(AssignHome(country, person->GetAgeGroup(), homesByMemberCount));
+
+		// Assigne a workplace when the person is in working age and there are workplaces
+		if (!noWorkplace && person->GetAgeGroup() > Age_Group::UnderTwenty && person->GetAgeGroup() <= Age_Group::UnderSeventy)
+		{
+			person->SetWorkplace(AssignWorkplace(workplacesBySize));
+		}
+		// Add the created person to the community
+		population.push_back(std::move(person));
+	}
+
+	return std::move(population);
 }
 
 std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Home* home)
@@ -56,7 +94,7 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 			if (!lastFew)
 			{
 				// ...set the currentHumanCount to a percent of the population...
-				currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
+				currentHumanCount = DistributionToCountHelper(m_populationSize, currentHumanDistribution.percent);
 			}
 			// ...and to 1 if this will return 0...
 			if (currentHumanCount == 0)
@@ -83,42 +121,121 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 	return nullptr;
 }
 
+size_t DeseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t populationSize, const Country country)
+{
+	// TODO: Need a better way to get the working people. Not in sync with PersonPopulator::GetNewPerson()
+	auto countryDistribution = std::move(GetCountryDistribution(country));
+	size_t workingPeople = 0;
+	// For every human distribution in country distribution...
+	for (const auto& humanDistribution : countryDistribution)
+	{
+		// ...check if the distribution is inside working age...
+		if (humanDistribution.ageGroup > Age_Group::UnderTwenty && humanDistribution.ageGroup <= Age_Group::UnderSeventy)
+		{
+			// ...and if it is, sum the rounded population size with the distribution applied
+			workingPeople += llround(populationSize * static_cast<double>(humanDistribution.percent));
+		}
+	}
+
+	return workingPeople;
+}
+
+std::array<std::vector<DeseaseSpreadSimulation::Place*>, 4> DeseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Place*>& homes)
+{
+	auto homeCounts(PlaceBuilder::GetHomeCounts(populationSize, country));
+
+	// Set iterators to copy a part of the homes vector into the new vectores separated by size
+	auto from = homes.cbegin();
+	auto to = homes.cbegin() + homeCounts.at(0);
+	std::vector<Place*> oneMember(from, to);
+	// Change the iterators for the next size and do the same for every size
+	from = to;
+	to += homeCounts.at(1);
+	std::vector<Place*> twoToThreeMembers(from, to);
+	from = to;
+	to += homeCounts.at(2);
+	std::vector<Place*> fourToFiveMembers(from, to);
+	from = to;
+	std::vector<Place*> sixPlusMembers(from, homes.cend());
+
+	// Return an array with all size vectors
+	return { oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers };
+}
+
 size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_t count, float percent)
 {
 	// Scale count by percent and then omit the decimal
 	return static_cast<size_t>(count * static_cast<double>(percent));
 }
+size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex) const
+{
+	std::random_device seed;
+	std::mt19937 generator(seed());
+	std::uniform_int_distribution<size_t> uniform(0, maxIndex);
 
-std::vector<DeseaseSpreadSimulation::PersonPopulator::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)
+	return uniform(generator);
+}
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Place*>, 4>& homesByMemberCount) const
+{
+	// Create the distribution
+	std::array<double, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
+											PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
+											PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
+											PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
+
+	size_t distIndex = GetDistributedArrayIndex(distributionArray);
+	// Get a new index until the vector is not empty or the person is under twenty and the index is for one member homes
+	while (homesByMemberCount.at(distIndex).empty() || (ageGroup <= Age_Group::UnderTwenty && distIndex == 0))
+	{
+		distIndex = GetDistributedArrayIndex(distributionArray);
+	}
+	// Return a random home of the chosen size
+	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(GetUniformRandomIndex(homesByMemberCount.at(distIndex).size() - 1)));
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Place*>, 5>& workplacesBySize) const
+{
+	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
+	size_t distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
+	// Get a new index until the vector is not empty
+	while (workplacesBySize.at(distIndex).empty())
+	{
+		distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
+	}
+	// Return a random workplace at the chosen size
+	return workplacesBySize.at(distIndex).at(GetUniformRandomIndex(workplacesBySize.at(distIndex).size() - 1));
+}
+
+std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)
 {
 	switch (country)
 	{
 	case DeseaseSpreadSimulation::Country::USA:
-		return defaultAgeDistributionUSA;
+		return Statistics::defaultAgeDistributionUSA;
 		break;
 	case DeseaseSpreadSimulation::Country::Germany:
 		// TODO: Implement german distribution
-		return defaultAgeDistributionUSA;
+		return Statistics::defaultAgeDistributionUSA;
 		break;
 	default:
-		return defaultAgeDistributionUSA;
+		return Statistics::defaultAgeDistributionUSA;
 		break;
 	}
 }
 
-DeseaseSpreadSimulation::PersonPopulator::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(Country country)
+DeseaseSpreadSimulation::Statistics::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(Country country)
 {
 	switch (country)
 	{
 	case DeseaseSpreadSimulation::Country::USA:
-		return householdUSA;
+		return Statistics::householdUSA;
 		break;
 	case DeseaseSpreadSimulation::Country::Germany:
 		// TODO: Implement german distribution
-		return householdGermany;
+		return Statistics::householdGermany;
 		break;
 	default:
-		return householdUSA;
+		return Statistics::householdUSA;
 		break;
 	}
 }

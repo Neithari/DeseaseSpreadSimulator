@@ -312,6 +312,7 @@
     <ClInclude Include="..\Simulation\System.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />
     <ClInclude Include="Enums.h" />
+    <ClInclude Include="Statistics.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

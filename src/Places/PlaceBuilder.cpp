@@ -19,13 +19,13 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>> DeseaseSpreadSimula
 
 	// Create workplaces for people between 20 and 69
 	// First get number of working people
-	size_t workingPeople = WorkingPeopleNumber(populationSize, country);
-	float workplaceCount = 0.f;
+	size_t workingPeople = PersonPopulator::WorkingPeopleCount(populationSize, country);
 
 	// Then get the workplace counts for the size groups and sum them
-	for (size_t i = 0; i < workplaceSize.size(); i++)
+	float workplaceCount = 0.f;
+	for (size_t i = 0; i < Statistics::workplaceSize.size(); i++)
 	{
-		workplaceCount += (workingPeople * workplaceSize.at(i)) / (25 + 50 * i);
+		workplaceCount += (workingPeople * Statistics::workplaceSize.at(i)) / (25 + 50 * i);
 	}
 
 	// Add the calculated amount of workplaces to the community
@@ -50,25 +50,31 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>> DeseaseSpreadSimula
 	return places;
 }
 
-size_t DeseaseSpreadSimulation::PlaceBuilder::WorkingPeopleNumber(const size_t populationSize, const Country country) const
+std::array<std::vector<DeseaseSpreadSimulation::Place*>, 5> DeseaseSpreadSimulation::PlaceBuilder::WorkplacesBySize(const size_t populationSize, const Country country, std::vector<Place*> workplaces)
 {
-	// TODO: Need a better way to get the working people. Not in sync with PersonPopulator::GetNewPerson()
-	auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
-	size_t workingPeople = 0;
-	// For every human distribution in country distribution...
-	for (const auto& humanDistribution : countryDistribution)
+	// First get number of working people
+	size_t workingPeople = PersonPopulator::WorkingPeopleCount(populationSize, country);
+
+	// Then get the workplace counts for the size groups and transfer the right amount into a vector inside the bySize array
+	std::array<std::vector<Place*>, 5> workplacesBySize;
+	for (size_t i = 0; i < Statistics::workplaceSize.size(); i++)
 	{
-		// ...check if the distribution is inside working age...
-		if (humanDistribution.ageGroup > Age_Group::UnderTwenty && humanDistribution.ageGroup <= Age_Group::UnderSeventy)
+		for (size_t j = 0; j < static_cast<size_t>((workingPeople * Statistics::workplaceSize.at(i)) / (25 + 50 * i)); j++)
 		{
-			// ...and if it is, sum the rounded population size with the distribution applied
-			workingPeople += llround(populationSize * static_cast<double>(humanDistribution.percent));
+			workplacesBySize.at(i).push_back(workplaces.back());
+			workplaces.pop_back();
 		}
 	}
-	return workingPeople;
+	// Assigne leftovers to under 20 people workplaces
+	while (workplaces.size() > 0)
+	{
+		workplacesBySize.at(0).push_back(workplaces.back());
+		workplaces.pop_back();
+	}
+	return workplacesBySize;
 }
 
-std::array<size_t, 4> DeseaseSpreadSimulation::PlaceBuilder::GetHomeCounts(const size_t populationSize, const Country country) const
+std::array<size_t, 4> DeseaseSpreadSimulation::PlaceBuilder::GetHomeCounts(const size_t populationSize, const Country country)
 {
 	// The home count is equal to the person count living in such a home devided by the median person count in the category
 	// To get the person count we multiply the population size with the percentage of the distribution
