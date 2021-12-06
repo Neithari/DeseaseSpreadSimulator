@@ -19,8 +19,8 @@ namespace DeseaseSpreadSimulation
 		
 		std::unique_ptr<Person> TransferPerson(uint32_t personID);
 		
-		const std::vector<std::unique_ptr<Person>>& GetPopulation() const;
-		const std::vector<std::unique_ptr<Place>>& GetPlaces() const;
+		std::vector<std::unique_ptr<Person>>& GetPopulation();
+		std::vector<std::unique_ptr<Place>>& GetPlaces();
 
 	private:
 		// Transfer the contends from source to target.

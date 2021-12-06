@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "Systems/MoveSystem.h"
-#include "Places/Community.h"
 
-void DeseaseSpreadSimulation::MoveSystem::AddCommunity(Community& community)
+void DeseaseSpreadSimulation::MoveSystem::AddCommunity(Community* community)
 {
 	m_communities.emplace_back(community);
 }
@@ -14,15 +13,15 @@ void DeseaseSpreadSimulation::MoveSystem::Update()
 
 void DeseaseSpreadSimulation::MoveSystem::MovePersons()
 {
-	for (auto& community : m_communities)
+	for (auto community : m_communities)
 	{
-		auto population = community.GetPopulation();
+		auto& population = community->GetPopulation();
 
 		for (auto& person : population)
 		{
 			// TODO: Check if it is already time to make a new move
 			
-			//person->Move(GetDestination(person.get()));
+			person->Move(GetDestination(person.get()));
 		}
 	}
 }
@@ -31,5 +30,6 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::MoveSystem::GetDestinat
 {
 	// TODO: Implement different behaviors
 	// TODO: Get behavior and last visited places and decide where to move next
+	person->GetHome(); //temporary
 	return nullptr;
 }

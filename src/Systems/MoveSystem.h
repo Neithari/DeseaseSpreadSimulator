@@ -1,4 +1,5 @@
 #pragma once
+#include "Places/Community.h"
 
 namespace DeseaseSpreadSimulation
 {
@@ -7,7 +8,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		MoveSystem() = default;
 
-		void AddCommunity(Community& community);
+		void AddCommunity(Community* community);
 		void Update();
 
 	private:
@@ -15,6 +16,6 @@ namespace DeseaseSpreadSimulation
 		Place* GetDestination(Person* person);
 
 	private:
-		std::vector<Community&> m_communities;
+		std::vector<Community*> m_communities;
 	};
 }
