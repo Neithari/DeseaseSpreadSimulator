@@ -286,6 +286,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Systems\MoveSystem.cpp" />
     <ClCompile Include="DeseaseSpreadSimulator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -311,6 +312,7 @@
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\System.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />
+    <ClInclude Include="..\Systems\MoveSystem.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Statistics.h" />
   </ItemGroup>
