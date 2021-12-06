@@ -14,8 +14,6 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, Home* home)
 
 void DeseaseSpreadSimulation::Person::Update()
 {
-	// move person
-	Move();
 	//  if we have a desease...
 	if (desease != nullptr)
 	{
@@ -124,6 +122,11 @@ DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
 	return home;
 }
 
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWorkplace() const
+{
+	return workplace;
+}
+
 void DeseaseSpreadSimulation::Person::DeseaseCheck()
 {
 	// A person is infectious when it was exposed to a desease and 
@@ -160,9 +163,9 @@ void DeseaseSpreadSimulation::Person::SetHome(Place* newHome)
 	}
 }
 
-void DeseaseSpreadSimulation::Person::Move()
+void DeseaseSpreadSimulation::Person::Move(Place* destination)
 {
-	/// TODO: implement move function
+	whereabouts = destination;
 }
 
 void DeseaseSpreadSimulation::Person::AdvanceDay()
