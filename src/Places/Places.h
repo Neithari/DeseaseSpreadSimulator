@@ -54,6 +54,15 @@ namespace DeseaseSpreadSimulation
 		Place_Type GetType() const override;
 	};
 
+	class School : public Place
+	{
+	public:
+		School();
+
+	public:
+		Place_Type GetType() const override;
+	};
+
 	class HardwareStore : public Place
 	{
 	public:
