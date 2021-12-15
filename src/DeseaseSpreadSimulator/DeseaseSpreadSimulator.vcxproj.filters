@@ -63,6 +63,9 @@
     <ClCompile Include="..\Systems\MoveSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Systems\PersonStates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Systems\MoveSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Systems\PersonStates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
