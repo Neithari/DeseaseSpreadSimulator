@@ -6,8 +6,8 @@ namespace DeseaseSpreadSimulation
 	class Person
 	{
 	public:
-		// Create a Person with age, sex, set it's home and set whereabout to home
-		Person(Age_Group age, Sex sex, Home* home = nullptr);
+		// Create a Person with age, sex, community and set it's home and whereabout to home
+		Person(Age_Group age, Sex sex, const Community& community, Home* home = nullptr);
 		
 		auto operator<=>(const Person& rhs) const
 		{
@@ -37,12 +37,16 @@ namespace DeseaseSpreadSimulation
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
-		Place* GetWhereabouts() const;
-		Home* GetHome() const;
-		Place* GetWorkplace() const;
+		const Community& GetCommunity() const;
+		const Place* GetWhereabouts() const;
+		// TODO: Check if all can be Place* or all can be the derived pointers
+		const Home* GetHome() const;
+		const Place* GetWorkplace() const;
+		const Place* GetSchool() const;
 		
-		void SetWorkplace(Place* newWorkplace);
-		void SetHome(Place* newHome);
+		void SetWhereabouts(const Place* newWhereabouts);
+		void SetWorkplace(const Place* newWorkplace);
+		void SetHome(const Place* newHome);
 		
 		void Move(Place* destination);
 
@@ -54,9 +58,11 @@ namespace DeseaseSpreadSimulation
 		Age_Group age;
 		Sex sex;
 
-		Home* home;
-		Place* whereabouts;
-		Place* workplace = nullptr;
+		const Community& community;
+		const Home* home;
+		const Place* whereabouts;
+		const Place* workplace = nullptr;
+		const Place* school = nullptr;
 
 		Seir_State state = Seir_State::Susceptible;
 		bool quarantined = false;

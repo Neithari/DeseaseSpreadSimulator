@@ -9,10 +9,10 @@ namespace DeseaseSpreadSimulation
 	public:		
 		PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
-		std::vector<std::unique_ptr<Person>> CreatePopulation(size_t populationSize, Country country, const std::vector<std::unique_ptr<Place>>& places);
+		std::vector<std::unique_ptr<Person>> CreatePopulation(size_t populationSize, Country country, const Community& community, const std::vector<std::unique_ptr<Place>>& places);
 
 		// Get a new person for the chosen distribution. Call should return a empty pointer when population size is reached
-		std::unique_ptr<Person> GetNewPerson(Home* home = nullptr);
+		std::unique_ptr<Person> GetNewPerson(const Community& community, Home* home = nullptr);
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
 		static std::array<std::vector<Place*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Place*>& homes);

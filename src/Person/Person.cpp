@@ -2,11 +2,12 @@
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, Home* home)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, Community& community, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
 	sex(sex),
+	community(community),
 	home(home),
 	whereabouts(home)
 {
@@ -112,19 +113,29 @@ DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
 	return sex;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
+const DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Person::GetCommunity() const
+{
+	return community;
+}
+
+const DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
 {
 	return whereabouts;
 }
 
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
+const DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
 {
 	return home;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWorkplace() const
+const DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWorkplace() const
 {
 	return workplace;
+}
+
+const DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetSchool() const
+{
+	return school;
 }
 
 void DeseaseSpreadSimulation::Person::DeseaseCheck()
@@ -143,6 +154,11 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 	{
 		desease = nullptr;
 	}
+}
+
+void DeseaseSpreadSimulation::Person::SetWhereabouts(Place* newWhereabouts)
+{
+	whereabouts = whereabouts;
 }
 
 void DeseaseSpreadSimulation::Person::SetWorkplace(Place* newWorkplace)

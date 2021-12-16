@@ -28,4 +28,5 @@
 #include "DeseaseSpreadSimulator/Enums.h"
 #include "Desease/Desease.h"
 #include "Person/Person.h"
+#include "Places/Community.h"
 #include "Places/Places.h"
