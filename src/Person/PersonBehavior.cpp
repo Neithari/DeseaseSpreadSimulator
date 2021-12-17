@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "Person/PersonBehavior.h"
 
-DeseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint16_t foodBuyInterval, uint16_t hardwareBuyInterval)
+constexpr DeseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint16_t foodBuyInterval, uint16_t hardwareBuyInterval, float acceptanceFactor)
 	:
 	foodBuyInterval(foodBuyInterval),
-	hardwareBuyInterval(hardwareBuyInterval)
+	hardwareBuyInterval(hardwareBuyInterval),
+	acceptanceFactor(acceptanceFactor)
 {
 }

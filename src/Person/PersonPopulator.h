@@ -4,6 +4,8 @@
 
 namespace DeseaseSpreadSimulation
 {	
+	class PersonBehavior;
+
 	class PersonPopulator
 	{
 	public:		
@@ -40,6 +42,19 @@ namespace DeseaseSpreadSimulation
 
 		Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount) const;
 		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
+
+		// Returns an random index from 0 to size
+		template <typename T>
+		T RandomIndex(T size) const
+		{
+			std::random_device seed;
+			std::mt19937 generator(seed());
+			std::uniform_int_distribution distribution((T)0, size - 1);
+
+			return distribution(generator);
+		};
+
+		PersonBehavior CreatePersonBehavior() const;
 
 	private:
 		const size_t m_populationSize = 0;

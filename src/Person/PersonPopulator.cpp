@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Person/PersonPopulator.h"
+#include "Person/PersonBehavior.h"
 #include "Places/PlaceBuilder.h"
 
 DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
@@ -114,8 +115,8 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 
 		leftover--;
 		currentHumanCount--;
-
-		return std::make_unique<Person>(currentHumanDistribution.ageGroup, currentHumanDistribution.sex,community, home);
+		// TODO: Add behavior to the constructor call
+		return std::make_unique<Person>(currentHumanDistribution.ageGroup, currentHumanDistribution.sex, CreatePersonBehavior(), community, home);
 	}
 
 	return nullptr;
@@ -204,6 +205,12 @@ DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::As
 	}
 	// Return a random workplace at the chosen size
 	return workplacesBySize.at(distIndex).at(GetUniformRandomIndex(workplacesBySize.at(distIndex).size() - 1));
+}
+
+DeseaseSpreadSimulation::PersonBehavior DeseaseSpreadSimulation::PersonPopulator::CreatePersonBehavior() const
+{
+	// TODO: Implement full randomized behaviors
+	return personBehaviors.at(RandomIndex(personBehaviors.size()));
 }
 
 std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)

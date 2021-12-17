@@ -4,7 +4,6 @@
 namespace DeseaseSpreadSimulation
 {
 	class Community;
-	class PersonBehavior;
 
 	class Person
 	{

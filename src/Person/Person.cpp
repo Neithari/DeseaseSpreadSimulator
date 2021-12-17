@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Person/Person.h"
-#include "IDGenerator/IDGenerator.h"
 #include "Person/PersonBehavior.h"
+#include "IDGenerator/IDGenerator.h"
 
 DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home)
 	:
