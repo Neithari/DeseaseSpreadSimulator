@@ -1,12 +1,14 @@
 #include "pch.h"
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
+#include "Person/PersonBehavior.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, Community& community, Home* home)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
 	sex(sex),
+	behavior(behavior),
 	community(community),
 	home(home),
 	whereabouts(home)
@@ -113,6 +115,11 @@ DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
 	return sex;
 }
 
+const DeseaseSpreadSimulation::PersonBehavior& DeseaseSpreadSimulation::Person::GetBehavior() const
+{
+	return behavior;
+}
+
 const DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Person::GetCommunity() const
 {
 	return community;
@@ -128,12 +135,12 @@ const DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() 
 	return home;
 }
 
-const DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWorkplace() const
+const DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplace() const
 {
 	return workplace;
 }
 
-const DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetSchool() const
+const DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool() const
 {
 	return school;
 }
@@ -156,27 +163,32 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 	}
 }
 
-void DeseaseSpreadSimulation::Person::SetWhereabouts(Place* newWhereabouts)
+void DeseaseSpreadSimulation::Person::SetWhereabouts(const Place* newWhereabouts)
 {
 	whereabouts = whereabouts;
 }
 
-void DeseaseSpreadSimulation::Person::SetWorkplace(Place* newWorkplace)
+void DeseaseSpreadSimulation::Person::SetWorkplace(const Workplace* newWorkplace)
 {
 	workplace = newWorkplace;
 }
 
-void DeseaseSpreadSimulation::Person::SetHome(Place* newHome)
+void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
 {
-	home = static_cast<Home*>(newHome);
+	home = newHome;
 	// Check if the person is already somewhere.
-	if (whereabouts == nullptr)
+	if (!whereabouts)
 	{
-		// If not set it's whereabouts...
-		whereabouts = newHome;
+		// If not set it's whereabouts to home...
+		whereabouts = home;
 		// ...and put the person in it's home
-		newHome->AddPerson(this);
+		home->AddPerson(this);
 	}
+}
+
+void DeseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
+{
+	behavior = newBehavior;
 }
 
 void DeseaseSpreadSimulation::Person::Move(Place* destination)

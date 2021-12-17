@@ -3,11 +3,14 @@
 
 namespace DeseaseSpreadSimulation
 {
+	class Community;
+	class PersonBehavior;
+
 	class Person
 	{
 	public:
 		// Create a Person with age, sex, community and set it's home and whereabout to home
-		Person(Age_Group age, Sex sex, const Community& community, Home* home = nullptr);
+		Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home = nullptr);
 		
 		auto operator<=>(const Person& rhs) const
 		{
@@ -37,17 +40,19 @@ namespace DeseaseSpreadSimulation
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
+		const PersonBehavior& GetBehavior() const;
 		const Community& GetCommunity() const;
+
 		const Place* GetWhereabouts() const;
-		// TODO: Check if all can be Place* or all can be the derived pointers
 		const Home* GetHome() const;
-		const Place* GetWorkplace() const;
-		const Place* GetSchool() const;
+		const Workplace* GetWorkplace() const;
+		const School* GetSchool() const;
 		
 		void SetWhereabouts(const Place* newWhereabouts);
-		void SetWorkplace(const Place* newWorkplace);
-		void SetHome(const Place* newHome);
+		void SetHome(Home* newHome);
+		void SetWorkplace(const Workplace* newWorkplace);
 		
+		void ChangeBehavior(PersonBehavior newBehavior);
 		void Move(Place* destination);
 
 	private:
@@ -57,25 +62,29 @@ namespace DeseaseSpreadSimulation
 		const uint32_t id;
 		Age_Group age;
 		Sex sex;
+		PersonBehavior behavior;
+		bool alive = true;
 
 		const Community& community;
-		const Home* home;
+		// Not const because we will add ourself to the home
+		Home* home;
 		const Place* whereabouts;
-		const Place* workplace = nullptr;
-		const Place* school = nullptr;
+		const Workplace* workplace = nullptr;
+		const School* school = nullptr;
 
+		// Desease Stuff
+		//-----------------------------------------
 		Seir_State state = Seir_State::Susceptible;
 		bool quarantined = false;
 		unsigned int spreadCount = 0;
 
-		// Desease Stuff
 		const Desease* desease = nullptr;
 		unsigned int latentPeriod = 0;
 		unsigned int daysInfectious = 0;
 		unsigned int daysTillCured = 0;
-
-		bool alive = true;
 		unsigned int daysToLive = 0;
 		bool willDie = false;
+		//-----------------------------------------
+
 	};
 }

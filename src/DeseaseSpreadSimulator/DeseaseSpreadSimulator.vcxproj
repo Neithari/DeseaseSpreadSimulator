@@ -260,6 +260,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Person\PersonBehavior.cpp" />
     <ClCompile Include="..\Person\PersonPopulator.cpp" />
     <ClCompile Include="..\Places\Community.cpp" />
     <ClCompile Include="..\Places\CommunityBuilder.cpp" />
@@ -305,6 +306,7 @@
     <ClInclude Include="..\IDGenerator\IDGenerator.h" />
     <ClInclude Include="..\pch.h" />
     <ClInclude Include="..\Person\Person.h" />
+    <ClInclude Include="..\Person\PersonBehavior.h" />
     <ClInclude Include="..\Person\PersonPopulator.h" />
     <ClInclude Include="..\Places\Community.h" />
     <ClInclude Include="..\Places\CommunityBuilder.h" />

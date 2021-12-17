@@ -66,6 +66,9 @@
     <ClCompile Include="..\Systems\PersonStates.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Person\PersonBehavior.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h">
@@ -117,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Systems\PersonStates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Person\PersonBehavior.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
