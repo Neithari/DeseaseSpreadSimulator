@@ -11,11 +11,21 @@ DeseaseSpreadSimulation::Community::Community(std::vector<std::unique_ptr<Person
 
 void DeseaseSpreadSimulation::Community::AddPlace(std::unique_ptr<Place> place)
 {
+	// Add the place to the matching vector for easier lookup
+	AddPlaceToLookupVector(place.get());
+
+	// Append the new place to our vector of places
 	m_places.push_back(std::move(place));
 }
 
 void DeseaseSpreadSimulation::Community::AddPlaces(std::vector<std::unique_ptr<Place>> places)
 {
+	// Add the places to the matching vectors for easier lookup
+	for (auto& place: places)
+	{
+		AddPlaceToLookupVector(place.get());
+	}
+	// Append the new places to our vector of places
 	TransferUniquePtrVector<Place>(std::move(places), m_places);
 }
 
@@ -70,4 +80,50 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>>& DeseaseSpreadSimu
 std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>>& DeseaseSpreadSimulation::Community::GetPlaces()
 {
 	return m_places;
+}
+
+const std::vector<DeseaseSpreadSimulation::Home*>& DeseaseSpreadSimulation::Community::GetHomes() const
+{
+	return homes;
+}
+
+const DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplyStore() const
+{
+	return supplyStores.at(RandomIndex(supplyStores.size()));
+}
+
+const DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetHardwareStore() const
+{
+	return hardwareStores.at(RandomIndex(hardwareStores.size()));
+}
+
+const DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue() const
+{
+	return morgues.at(RandomIndex(morgues.size()));
+}
+
+void DeseaseSpreadSimulation::Community::AddPlaceToLookupVector(Place* place)
+{
+	// Add a pointer to home, supply, hardware stor and morgue to the vectors for easier lookup
+	switch (place->GetType())
+	{
+	case Place_Type::Home:
+		homes.push_back(static_cast<Home*>(place));
+		break;
+	case Place_Type::Supply:
+		supplyStores.push_back(static_cast<Supply*>(place));
+		break;
+	case Place_Type::HardwareStore:
+		hardwareStores.push_back(static_cast<HardwareStore*>(place));
+		break;
+	case Place_Type::Morgue:
+		morgues.push_back(static_cast<Morgue*>(place));
+		break;
+	case Place_Type::Workplace:
+		break;
+	case Place_Type::School:
+		break;
+	default:
+		break;
+	}
 }
