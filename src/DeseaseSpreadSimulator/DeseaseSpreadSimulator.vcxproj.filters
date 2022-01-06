@@ -125,5 +125,8 @@
     <ClInclude Include="..\Person\PersonBehavior.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Simulation\TimeObserver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -18,10 +18,12 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 
 	// sum the time the simulation is running and scale it with the multiplier
 	frameSum += static_cast<uint32_t>(frameTime.count()) * simulationTimeMultiplier;
-	// while the sum > tick advance the sumulationTime
+	// while the sum > tick advance the simulationTime
 	while (frameSum >= tick)
 	{
 		simulationTime++;
+		currentDay = GetNextDay();
+		NotifyDayChange();
 		frameSum -= tick;
 	}
 }
@@ -38,4 +40,40 @@ uint64_t DeseaseSpreadSimulation::TimeManager::GetElapsedDays() const
 void DeseaseSpreadSimulation::TimeManager::SetSimulationTimeMultiplier(uint16_t multiplier)
 {
 	simulationTimeMultiplier = multiplier;
+}
+
+DeseaseSpreadSimulation::Day DeseaseSpreadSimulation::TimeManager::GetCurrentDay() const
+{
+	return currentDay;
+}
+
+void DeseaseSpreadSimulation::TimeManager::AddObserver(TimeObserver* observer)
+{
+	observers.push_back(observer);
+}
+
+void DeseaseSpreadSimulation::TimeManager::RemoveObserver(TimeObserver* observer)
+{
+	auto itToRemove = std::find(observers.begin(), observers.end(), observer);
+	if (itToRemove != observers.end())
+	{
+		observers.erase(itToRemove);
+	}
+}
+
+void DeseaseSpreadSimulation::TimeManager::NotifyDayChange()
+{
+	for (auto observer : observers)
+	{
+		observer->OnNewDay();
+	}
+}
+
+DeseaseSpreadSimulation::Day DeseaseSpreadSimulation::TimeManager::GetNextDay() const
+{
+	if (currentDay == Day::Sunday)
+	{
+		return Day::Monday;
+	}
+	return static_cast<Day>(static_cast<int>(currentDay) + 1);
 }

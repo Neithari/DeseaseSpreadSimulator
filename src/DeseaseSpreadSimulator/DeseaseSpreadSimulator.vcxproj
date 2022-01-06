@@ -312,6 +312,7 @@
     <ClInclude Include="..\Places\CommunityBuilder.h" />
     <ClInclude Include="..\Places\PlaceBuilder.h" />
     <ClInclude Include="..\Places\Places.h" />
+    <ClInclude Include="..\Simulation\TimeObserver.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\System.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />
