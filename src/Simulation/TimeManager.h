@@ -6,7 +6,9 @@ namespace DeseaseSpreadSimulation
 	class TimeManager
 	{
 	public:
-		TimeManager();
+		// Singleton instance
+		static TimeManager& Instance();
+
 		// call once every frame
 		void Update();
 		// in milliseconds
@@ -17,6 +19,9 @@ namespace DeseaseSpreadSimulation
 		void SetSimulationTimeMultiplier(uint16_t multiplier = 1u);
 
 		Day GetCurrentDay() const;
+		// Get the time in 24h format
+		uint16_t GetClock() const;
+		bool IsWorkday() const;
 
 		// Observer pattern functions
 		void AddObserver(TimeObserver* observer);
@@ -24,6 +29,7 @@ namespace DeseaseSpreadSimulation
 		void NotifyDayChange();
 
 	private:
+		TimeManager();
 		Day GetNextDay() const;
 
 	private:
@@ -38,6 +44,7 @@ namespace DeseaseSpreadSimulation
 		uint64_t simulationTime = 0u;
 		uint32_t simulationTimeMultiplier = 1u;
 		Day currentDay = Day::Monday;
+		uint16_t dayTime = 0u;
 		
 		std::vector<TimeObserver*> observers;
 	};

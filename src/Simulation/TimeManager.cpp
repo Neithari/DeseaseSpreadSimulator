@@ -8,6 +8,13 @@ DeseaseSpreadSimulation::TimeManager::TimeManager()
 {
 }
 
+DeseaseSpreadSimulation::TimeManager& DeseaseSpreadSimulation::TimeManager::Instance()
+{
+	static auto instance = std::make_unique<TimeManager>();
+	
+	return *instance;
+}
+
 void DeseaseSpreadSimulation::TimeManager::Update()
 {
 	// update the frame times...
@@ -21,6 +28,7 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 	// while the sum > tick advance the simulationTime
 	while (frameSum >= tick)
 	{
+		// TODO: Change tick to hour not day 
 		simulationTime++;
 		currentDay = GetNextDay();
 		NotifyDayChange();
@@ -45,6 +53,16 @@ void DeseaseSpreadSimulation::TimeManager::SetSimulationTimeMultiplier(uint16_t 
 DeseaseSpreadSimulation::Day DeseaseSpreadSimulation::TimeManager::GetCurrentDay() const
 {
 	return currentDay;
+}
+
+uint16_t DeseaseSpreadSimulation::TimeManager::GetClock() const
+{
+	return dayTime;
+}
+
+bool DeseaseSpreadSimulation::TimeManager::IsWorkday() const
+{
+	return !(currentDay == Day::Saturday || currentDay == Day::Sunday);
 }
 
 void DeseaseSpreadSimulation::TimeManager::AddObserver(TimeObserver* observer)
