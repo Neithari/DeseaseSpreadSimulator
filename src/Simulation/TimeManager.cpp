@@ -83,7 +83,7 @@ void DeseaseSpreadSimulation::TimeManager::NotifyDayChange()
 {
 	for (auto observer : observers)
 	{
-		observer->OnNewDay();
+		observer->OnNewDay(currentDay);
 	}
 }
 
