@@ -41,7 +41,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 		return std::make_unique<MorgueState>();
 	}
 
-	auto time = TimeManager::Instance().GetClock();
+	auto time = TimeManager::Instance().GetTime();
 
 	// If it's after 8 o'clock check if we need to get supplies or hardware, then check if we need to go to work or school
 	if (time >= 8)
@@ -81,7 +81,7 @@ DeseaseSpreadSimulation::FoodBuyState::FoodBuyState(uint16_t lastFoodBuy, uint16
 	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
 {
 	// Set the finish time to be 1h in the future
-	buyFinishTime = TimeManager::Instance().GetClock() + 1;
+	buyFinishTime = TimeManager::Instance().GetTime() + 1;
 }
 
 std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::FoodBuyState::HandleStateChange(Person& person)
@@ -92,7 +92,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 	}
 
 	// When the buy time is over go to the hardware store if we need to, else go home
-	if (TimeManager::Instance().GetClock() >= buyFinishTime)
+	if (TimeManager::Instance().GetTime() >= buyFinishTime)
 	{
 		if (m_lastHardwareBuy >= person.GetBehavior().hardwareBuyInterval)
 		{
@@ -120,7 +120,7 @@ DeseaseSpreadSimulation::HardwareBuyState::HardwareBuyState(uint16_t lastFoodBuy
 	PersonStates(lastFoodBuy, 0, currentDay) // reset last hardware buy
 {
 	// Set the finish time to be 1h in the future
-	buyFinishTime = TimeManager::Instance().GetClock() + 1;
+	buyFinishTime = TimeManager::Instance().GetTime() + 1;
 }
 
 std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HardwareBuyState::HandleStateChange(Person& person)
@@ -131,7 +131,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 	}
 
 	// When the buy time is over go to the supply store if we need to, else go home
-	if (TimeManager::Instance().GetClock() >= buyFinishTime)
+	if (TimeManager::Instance().GetTime() >= buyFinishTime)
 	{
 		if (m_lastFoodBuy >= person.GetBehavior().foodBuyInterval)
 		{
@@ -167,7 +167,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 		return std::make_unique<MorgueState>();
 	}
 
-	if (TimeManager::Instance().GetClock() >= workFinishTime)
+	if (TimeManager::Instance().GetTime() >= workFinishTime)
 	{
 		return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
@@ -194,7 +194,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 		return std::make_unique<MorgueState>();
 	}
 
-	if (TimeManager::Instance().GetClock() >= schoolFinishTime)
+	if (TimeManager::Instance().GetTime() >= schoolFinishTime)
 	{
 		return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
