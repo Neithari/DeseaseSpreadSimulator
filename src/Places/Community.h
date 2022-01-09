@@ -47,7 +47,7 @@ namespace DeseaseSpreadSimulation
 		{
 			std::random_device seed;
 			std::mt19937 generator(seed());
-			std::uniform_int_distribution distribution((T)0, size);
+			std::uniform_int_distribution distribution((T)0, size - (T)1);
 
 			return distribution(generator);
 		};
