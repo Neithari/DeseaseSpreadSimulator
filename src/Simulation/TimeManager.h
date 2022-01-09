@@ -9,19 +9,21 @@ namespace DeseaseSpreadSimulation
 		// Singleton instance
 		static TimeManager& Instance();
 
-		// call once every frame
+		// Call once every frame
 		void Update();
-		// in milliseconds
+		// In milliseconds
 		int64_t GetFrameTime() const;
-		// returns the simulation days elapsed since the start of the simulation. Rounded down to full days.
-		unsigned long long GetElapsedDays() const;
-		// calling without a argument will default to 1x speed
+		// Returns elapsed hours since the start of the simulation.
+		uint64_t GetElapsedHours() const;
+		// Returns elapsed days since the start of the simulation. Rounded down.
+		uint64_t GetElapsedDays() const;
+		// Calling without a argument will default to 1x speed
 		void SetSimulationTimeMultiplier(uint16_t multiplier = 1u);
 
 		Day GetCurrentDay() const;
-		// Get the time in 24h format
-		uint16_t GetClock() const;
 		bool IsWorkday() const;
+		// Get the time in 24h format
+		uint16_t GetTime() const;
 
 		// Observer pattern functions
 		void AddObserver(TimeObserver* observer);
@@ -35,14 +37,14 @@ namespace DeseaseSpreadSimulation
 	private:
 		std::chrono::time_point<std::chrono::steady_clock> currentFrameTime;
 		std::chrono::time_point<std::chrono::steady_clock> lastFrameTime;
-		// milliseconds
 		std::chrono::milliseconds frameTime = {};
+		// Tick in ms
+		uint32_t tick = 50u;
 		uint32_t frameSum = 0u;
-		// tick in ms
-		uint32_t tick = 1000u;
-		// in simulation days. 1 day per tick
+		// In simulation hours. 1 hour per tick
 		uint64_t simulationTime = 0u;
 		uint32_t simulationTimeMultiplier = 1u;
+
 		Day currentDay = Day::Monday;
 		uint16_t dayTime = 0u;
 		
