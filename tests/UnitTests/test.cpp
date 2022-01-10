@@ -13,7 +13,7 @@
 namespace UnitTests {
     TEST(TimeTests, FrameTimeAfterWait)
     {
-        DeseaseSpreadSimulation::TimeManager time;
+        auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
         time.Update();
         using namespace std::chrono_literals;
         // Sleep for 1ms to ensure a > 1ms frametime
@@ -24,7 +24,7 @@ namespace UnitTests {
     }
     TEST(TimeTests, SimulationDayProgress)
     {
-        DeseaseSpreadSimulation::TimeManager time;
+        auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
         // Ensure that a frametime of > 50ms with a multiplier of 20 results in a simulation day
         time.SetSimulationTimeMultiplier(20);
 
@@ -122,7 +122,9 @@ namespace UnitTests {
     TEST(PlacesTests, AddPerson)
     {
         DeseaseSpreadSimulation::Home home;
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Community community;
+        DeseaseSpreadSimulation::PersonBehavior behavior;
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
         auto personID = person.GetID();
         ASSERT_EQ(home.GetPersonCount(), 0);
         home.AddPerson(&person);
@@ -132,9 +134,11 @@ namespace UnitTests {
     TEST(PlacesTests, GetPersonCount)
     {
         DeseaseSpreadSimulation::Home home;
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Community community;
+        DeseaseSpreadSimulation::PersonBehavior behavior;
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
+        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
+        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
 
         EXPECT_EQ(home.GetPersonCount(), 0);
         home.AddPerson(&person);
@@ -147,9 +151,11 @@ namespace UnitTests {
     TEST(PlacesTests, RemovePerson)
     {
         DeseaseSpreadSimulation::Home home;
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
-        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male);
+        DeseaseSpreadSimulation::Community community;
+        DeseaseSpreadSimulation::PersonBehavior behavior;
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
+        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
+        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
         auto personID = person.GetID();
         auto personID1 = person1.GetID();
         auto personID2 = person2.GetID();
