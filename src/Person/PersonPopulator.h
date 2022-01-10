@@ -43,7 +43,7 @@ namespace DeseaseSpreadSimulation
 		Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount) const;
 		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
 
-		// Returns an random index from 0 to size
+		// Returns an random index from 0 to size - 1
 		template <typename T>
 		T RandomIndex(T size) const
 		{
