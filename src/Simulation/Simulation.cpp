@@ -40,12 +40,12 @@ void DeseaseSpreadSimulation::Simulation::Resume()
 
 void DeseaseSpreadSimulation::Simulation::SetSimulationSpeedMultiplier(uint16_t multiplier)
 {
-	simulationTime.SetSimulationTimeMultiplier(multiplier);
+	TimeManager::Instance().SetSimulationTimeMultiplier(multiplier);
 }
 
 void DeseaseSpreadSimulation::Simulation::Update()
 {
-	simulationTime.Update();
+	TimeManager::Instance().Update();
 
 	if (withPrint)
 	{

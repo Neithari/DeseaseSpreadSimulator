@@ -1,4 +1,5 @@
 #pragma once
+#include "Simulation/TimeObserver.h"
 
 namespace DeseaseSpreadSimulation
 {

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Person/Person.h"
-#include "Person/PersonBehavior.h"
 #include "IDGenerator/IDGenerator.h"
 
 DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home)
@@ -165,7 +164,7 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 
 void DeseaseSpreadSimulation::Person::SetWhereabouts(const Place* newWhereabouts)
 {
-	whereabouts = whereabouts;
+	whereabouts = newWhereabouts;
 }
 
 void DeseaseSpreadSimulation::Person::SetWorkplace(const Workplace* newWorkplace)

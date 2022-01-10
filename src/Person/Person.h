@@ -1,5 +1,6 @@
 #pragma once
 #include "Places/Places.h"
+#include "Person/PersonBehavior.h"
 
 namespace DeseaseSpreadSimulation
 {

@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Systems/PersonStates.h"
 #include "Simulation/TimeManager.h"
-#include "Simulation/TimeObserver.h"
 
 void DeseaseSpreadSimulation::PersonStates::Update()
 {
@@ -115,7 +114,8 @@ void DeseaseSpreadSimulation::FoodBuyState::Enter(Person& person)
 	m_lastFoodBuy = 0;
 }
 
-DeseaseSpreadSimulation::HardwareBuyState::HardwareBuyState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
+// We override lastHardwareBuy to 0 so we comment out the name to silence compiler warning
+DeseaseSpreadSimulation::HardwareBuyState::HardwareBuyState(uint16_t lastFoodBuy, uint16_t /*lastHardwareBuy*/, Day currentDay)
 	:
 	PersonStates(lastFoodBuy, 0, currentDay) // reset last hardware buy
 {
@@ -208,7 +208,8 @@ void DeseaseSpreadSimulation::SchoolState::Enter(Person& person)
 	person.SetWhereabouts(person.GetSchool());
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::MorgueState::HandleStateChange(Person& person)
+// Commenting out person to silence compiler warning C4100
+std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::MorgueState::HandleStateChange(Person& /*person*/)
 {
 	// There is no return to another place from a morgue right now
 	return nullptr;
