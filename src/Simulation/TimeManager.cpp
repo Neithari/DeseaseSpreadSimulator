@@ -10,9 +10,9 @@ DeseaseSpreadSimulation::TimeManager::TimeManager()
 
 DeseaseSpreadSimulation::TimeManager& DeseaseSpreadSimulation::TimeManager::Instance()
 {
-	static auto instance = std::make_unique<TimeManager>();
+	static TimeManager instance;
 	
-	return *instance;
+	return instance;
 }
 
 void DeseaseSpreadSimulation::TimeManager::Update()
