@@ -29,14 +29,12 @@ DeseaseSpreadSimulation::HomeState::HomeState(uint16_t lastFoodBuy, uint16_t las
 {
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HomeState::HandleStateChange(Person& person)
+std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HomeState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
 		return std::make_unique<MorgueState>();
 	}
-
-	auto time = TimeManager::Instance().GetTime();
 
 	// If it's after 8 o'clock check if we need to get supplies or hardware, then check if we need to go to work or school
 	if (time >= 8)
@@ -51,12 +49,12 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 			return std::make_unique<HardwareBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 
-		if (person.GetWorkplace() && time < WorkState::workFinishTime && TimeManager::Instance().IsWorkday())
+		if (person.GetWorkplace() && time < WorkState::workFinishTime && TimeManager::IsWorkday(m_currentDay))
 		{
 			return std::make_unique<WorkState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 
-		if (person.GetSchool() && time < SchoolState::schoolFinishTime && TimeManager::Instance().IsWorkday())
+		if (person.GetSchool() && time < SchoolState::schoolFinishTime && TimeManager::IsWorkday(m_currentDay))
 		{
 			return std::make_unique<SchoolState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
@@ -79,7 +77,7 @@ DeseaseSpreadSimulation::FoodBuyState::FoodBuyState(uint16_t lastFoodBuy, uint16
 	buyFinishTime = TimeManager::Instance().GetTime() + 1;
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::FoodBuyState::HandleStateChange(Person& person)
+std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::FoodBuyState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
@@ -87,7 +85,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 	}
 
 	// When the buy time is over go to the hardware store if we need to, else go home
-	if (TimeManager::Instance().GetTime() >= buyFinishTime)
+	if (time >= buyFinishTime)
 	{
 		if (m_lastHardwareBuy >= person.GetBehavior().hardwareBuyInterval)
 		{
@@ -110,16 +108,15 @@ void DeseaseSpreadSimulation::FoodBuyState::Enter(Person& person)
 	m_lastFoodBuy = 0;
 }
 
-// We override lastHardwareBuy to 0 so we comment out the name to silence compiler warning
-DeseaseSpreadSimulation::HardwareBuyState::HardwareBuyState(uint16_t lastFoodBuy, uint16_t /*lastHardwareBuy*/, Day currentDay)
+DeseaseSpreadSimulation::HardwareBuyState::HardwareBuyState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
 	:
-	PersonStates(lastFoodBuy, 0, currentDay) // reset last hardware buy
+	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
 {
 	// Set the finish time to be 1h in the future
 	buyFinishTime = TimeManager::Instance().GetTime() + 1;
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HardwareBuyState::HandleStateChange(Person& person)
+std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HardwareBuyState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
@@ -127,7 +124,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 	}
 
 	// When the buy time is over go to the supply store if we need to, else go home
-	if (TimeManager::Instance().GetTime() >= buyFinishTime)
+	if (time >= buyFinishTime)
 	{
 		if (m_lastFoodBuy >= person.GetBehavior().foodBuyInterval)
 		{
@@ -156,14 +153,14 @@ DeseaseSpreadSimulation::WorkState::WorkState(uint16_t lastFoodBuy, uint16_t las
 {
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::WorkState::HandleStateChange(Person& person)
+std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::WorkState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
 		return std::make_unique<MorgueState>();
 	}
 
-	if (TimeManager::Instance().GetTime() >= workFinishTime)
+	if (time >= workFinishTime)
 	{
 		return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
@@ -183,14 +180,14 @@ DeseaseSpreadSimulation::SchoolState::SchoolState(uint16_t lastFoodBuy, uint16_t
 {
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::SchoolState::HandleStateChange(Person& person)
+std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::SchoolState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
 		return std::make_unique<MorgueState>();
 	}
 
-	if (TimeManager::Instance().GetTime() >= schoolFinishTime)
+	if (time >= schoolFinishTime)
 	{
 		return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
@@ -204,8 +201,8 @@ void DeseaseSpreadSimulation::SchoolState::Enter(Person& person)
 	person.SetWhereabouts(person.GetSchool());
 }
 
-// Commenting out person to silence compiler warning C4100
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::MorgueState::HandleStateChange(Person& /*person*/)
+// Commenting out person and time to silence compiler warning C4100
+std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::MorgueState::HandleStateChange(Person& /*person*/, uint16_t /*time*/)
 {
 	// There is no return to another place from a morgue right now
 	return nullptr;

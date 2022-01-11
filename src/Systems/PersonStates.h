@@ -6,7 +6,7 @@ namespace DeseaseSpreadSimulation
 	class PersonStates : public TimeObserver
 	{
 	public:
-		virtual std::unique_ptr<PersonStates> HandleStateChange(Person& person) = 0;
+		virtual std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) = 0;
 		virtual void Enter(Person& person) = 0;
 		void OnNewDay(Day currentDay) override;
 
@@ -31,7 +31,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		HomeState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person) override;
+		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	};
 	
@@ -40,7 +40,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		FoodBuyState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person) override;
+		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	private:
 		// Time in hours
@@ -52,7 +52,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		HardwareBuyState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person) override;
+		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	private:
 		// Time in hours
@@ -64,7 +64,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		WorkState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person) override;
+		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	public:
 		// Time in x/24h
@@ -76,7 +76,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		SchoolState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person) override;
+		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	public:
 		// Time in x/24h
@@ -86,7 +86,7 @@ namespace DeseaseSpreadSimulation
 	class MorgueState : public PersonStates
 	{
 	public:
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person) override;
+		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	};
 }
