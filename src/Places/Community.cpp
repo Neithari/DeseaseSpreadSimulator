@@ -99,6 +99,11 @@ const DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community
 
 const DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue() const
 {
+	if (morgues.empty())
+	{
+		return nullptr;
+	}
+
 	return morgues.at(RandomIndex(morgues.size()));
 }
 

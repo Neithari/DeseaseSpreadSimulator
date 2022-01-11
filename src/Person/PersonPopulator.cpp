@@ -170,6 +170,11 @@ size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 }
 size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex) const
 {
+	if (maxIndex <= 0)
+	{
+		return 0;
+	}
+
 	std::random_device seed;
 	std::mt19937 generator(seed());
 	std::uniform_int_distribution<size_t> uniform(0, maxIndex);

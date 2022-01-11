@@ -45,6 +45,12 @@ namespace DeseaseSpreadSimulation
 		template <typename T>
 		T RandomIndex(T size) const
 		{
+			// Prevent return of a negative index
+			if (size <= (T)0)
+			{
+				return (T)0;
+			}
+
 			std::random_device seed;
 			std::mt19937 generator(seed());
 			std::uniform_int_distribution distribution((T)0, size - (T)1);
