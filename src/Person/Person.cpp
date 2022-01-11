@@ -146,19 +146,33 @@ const DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchoo
 
 void DeseaseSpreadSimulation::Person::DeseaseCheck()
 {
-	// A person is infectious when it was exposed to a desease and 
-	if (state == Seir_State::Exposed && latentPeriod <= 0)
+	switch (state)
 	{
-		state = Seir_State::Infectious;
-	}
-	// it is recovered when it is 
-	else if (state == Seir_State::Infectious && daysInfectious <= 0)
-	{
-		state = Seir_State::Recovered;
-	}
-	else if (state == Seir_State::Recovered && daysTillCured == 0)
-	{
-		desease = nullptr;
+	case DeseaseSpreadSimulation::Seir_State::Susceptible:
+		break;
+	case DeseaseSpreadSimulation::Seir_State::Exposed:
+		// Person is infectious when it was exposed to a desease and latent period is over
+		if (latentPeriod <= 0)
+		{
+			state = Seir_State::Infectious;
+		}
+		break;
+	case DeseaseSpreadSimulation::Seir_State::Infectious:
+		// Person is recovered when daysInfectious reached 0
+		if (daysInfectious <= 0)
+		{
+			state = Seir_State::Recovered;
+		}
+		break;
+	case DeseaseSpreadSimulation::Seir_State::Recovered:
+		if (daysTillCured == 0)
+		{
+			desease = nullptr;
+		}
+		// TODO: Implement that a person can be susceptible again.
+		break;
+	default:
+		break;
 	}
 }
 
