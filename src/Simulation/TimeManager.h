@@ -22,6 +22,7 @@ namespace DeseaseSpreadSimulation
 
 		Day GetCurrentDay() const;
 		bool IsWorkday() const;
+		static bool IsWorkday(const Day day);
 		// Get the time in 24h format
 		uint16_t GetTime() const;
 

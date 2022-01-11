@@ -71,7 +71,12 @@ uint16_t DeseaseSpreadSimulation::TimeManager::GetTime() const
 
 bool DeseaseSpreadSimulation::TimeManager::IsWorkday() const
 {
-	return !(currentDay == Day::Saturday || currentDay == Day::Sunday);
+	return IsWorkday(currentDay);
+}
+
+bool DeseaseSpreadSimulation::TimeManager::IsWorkday(const Day day)
+{
+	return !(day == Day::Saturday || day == Day::Sunday);
 }
 
 void DeseaseSpreadSimulation::TimeManager::AddObserver(TimeObserver* observer)
