@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
+#include "Simulation/TimeManager.h"
 
 DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home)
 	:
@@ -10,18 +11,23 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	behavior(behavior),
 	community(community),
 	home(home),
-	whereabouts(home)
+	whereabouts(home),
+	personState(std::make_unique<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay()))
 {
 }
 
 void DeseaseSpreadSimulation::Person::Update()
 {
-	//  if we have a desease...
-	if (desease != nullptr)
+	auto newPersonState = personState->HandleStateChange(*this, TimeManager::Instance().GetTime());
+	if (newPersonState)
 	{
-		// ...advance day
+		personState = std::move(newPersonState);
+		personState->Enter(*this);
+	}
+
+	if (desease)
+	{
 		AdvanceDay();
-		// ...desease check
 		DeseaseCheck();
 	}
 }
@@ -56,7 +62,7 @@ std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 {
 	desease = infection;
-	state = Seir_State::Exposed;
+	seirState = Seir_State::Exposed;
 	
 	latentPeriod = desease->IncubationPeriod();
 	daysInfectious = desease->DaysInfectious();
@@ -71,12 +77,12 @@ void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 
 bool DeseaseSpreadSimulation::Person::isSusceptible() const
 {
-	return state == Seir_State::Susceptible;
+	return seirState == Seir_State::Susceptible;
 }
 
 bool DeseaseSpreadSimulation::Person::isInfectious() const
 {
-	return state == Seir_State::Infectious;
+	return seirState == Seir_State::Infectious;
 }
 
 bool DeseaseSpreadSimulation::Person::isQuarantined() const
@@ -146,7 +152,7 @@ const DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchoo
 
 void DeseaseSpreadSimulation::Person::DeseaseCheck()
 {
-	switch (state)
+	switch (seirState)
 	{
 	case DeseaseSpreadSimulation::Seir_State::Susceptible:
 		break;
@@ -154,14 +160,14 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 		// Person is infectious when it was exposed to a desease and latent period is over
 		if (latentPeriod <= 0)
 		{
-			state = Seir_State::Infectious;
+			seirState = Seir_State::Infectious;
 		}
 		break;
 	case DeseaseSpreadSimulation::Seir_State::Infectious:
 		// Person is recovered when daysInfectious reached 0
 		if (daysInfectious <= 0)
 		{
-			state = Seir_State::Recovered;
+			seirState = Seir_State::Recovered;
 		}
 		break;
 	case DeseaseSpreadSimulation::Seir_State::Recovered:
@@ -212,7 +218,7 @@ void DeseaseSpreadSimulation::Person::Move(Place* destination)
 void DeseaseSpreadSimulation::Person::AdvanceDay()
 {
 	// If the person has no desease, has recovered, is immune or dead do nothing (recovered/immune/dead are all Seir_State::Recovered)
-	if (state == Seir_State::Susceptible || state == Seir_State::Recovered)
+	if (seirState == Seir_State::Susceptible || seirState == Seir_State::Recovered)
 	{
 		return;
 	}

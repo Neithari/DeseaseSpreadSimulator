@@ -1,6 +1,7 @@
 #pragma once
 #include "Places/Places.h"
 #include "Person/PersonBehavior.h"
+#include "Systems/PersonStates.h"
 
 namespace DeseaseSpreadSimulation
 {
@@ -72,9 +73,11 @@ namespace DeseaseSpreadSimulation
 		const Workplace* workplace = nullptr;
 		const School* school = nullptr;
 
+		std::unique_ptr<PersonStates> personState = nullptr;
+
 		// Desease Stuff
 		//-----------------------------------------
-		Seir_State state = Seir_State::Susceptible;
+		Seir_State seirState = Seir_State::Susceptible;
 		bool quarantined = false;
 		unsigned int spreadCount = 0;
 
