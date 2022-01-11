@@ -13,7 +13,7 @@ namespace DeseaseSpreadSimulation
 		virtual ~PersonStates() = default;
 	
 	protected:
-		PersonStates(uint16_t lastFoodBuy = 0u, uint16_t lastHardwareBuy = 0u, Day currentDay = Day::Monday);
+		PersonStates(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
 
 		// Has to be called in every override OnNewDay function
 		void UpdateInEveryState(Day currenDay);
@@ -86,6 +86,8 @@ namespace DeseaseSpreadSimulation
 	class MorgueState : public PersonStates
 	{
 	public:
+		MorgueState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
+
 		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	};

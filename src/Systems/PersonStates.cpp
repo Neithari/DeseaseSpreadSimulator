@@ -33,7 +33,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>();
+		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	// If it's after 8 o'clock check if we need to get supplies or hardware, then check if we need to go to work or school
@@ -81,7 +81,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>();
+		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	// When the buy time is over go to the hardware store if we need to, else go home
@@ -120,7 +120,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>();
+		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	// When the buy time is over go to the supply store if we need to, else go home
@@ -157,7 +157,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>();
+		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	if (time >= workFinishTime)
@@ -184,7 +184,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>();
+		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	if (time >= schoolFinishTime)
@@ -199,6 +199,12 @@ void DeseaseSpreadSimulation::SchoolState::Enter(Person& person)
 {
 	// Send the person to school
 	person.SetWhereabouts(person.GetSchool());
+}
+
+DeseaseSpreadSimulation::MorgueState::MorgueState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
+	:
+	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
+{
 }
 
 // Commenting out person and time to silence compiler warning C4100
