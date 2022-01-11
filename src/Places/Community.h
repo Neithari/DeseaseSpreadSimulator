@@ -41,7 +41,7 @@ namespace DeseaseSpreadSimulation
 		// Add a pointer of type home, supply, hardware store and morgue to matching vectors for easier lookup
 		void AddPlaceToLookupVector(Place* place);
 
-		// Returns an random index from 0 to size
+		// Returns an random index from 0 to size - 1
 		template <typename T>
 		T RandomIndex(T size) const
 		{
