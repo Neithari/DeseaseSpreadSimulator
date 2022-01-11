@@ -8,7 +8,6 @@ namespace DeseaseSpreadSimulation
 	public:
 		virtual std::unique_ptr<PersonStates> HandleStateChange(Person& person) = 0;
 		virtual void Enter(Person& person) = 0;
-		virtual void Update();
 		void OnNewDay(Day currentDay) override;
 
 		virtual ~PersonStates() = default;

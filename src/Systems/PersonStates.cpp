@@ -2,10 +2,6 @@
 #include "Systems/PersonStates.h"
 #include "Simulation/TimeManager.h"
 
-void DeseaseSpreadSimulation::PersonStates::Update()
-{
-}
-
 void DeseaseSpreadSimulation::PersonStates::OnNewDay(Day currentDay)
 {
 	UpdateInEveryState(currentDay);
