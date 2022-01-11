@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "Person/PersonBehavior.h"
 
 namespace UnitTests {
     class PersonTest : public ::testing::Test
@@ -13,7 +12,7 @@ namespace UnitTests {
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
         std::unique_ptr<DeseaseSpreadSimulation::Home> home = std::make_unique<DeseaseSpreadSimulation::Home>();
         DeseaseSpreadSimulation::Community community;
-        DeseaseSpreadSimulation::PersonBehavior behavior;
+        DeseaseSpreadSimulation::PersonBehavior behavior{ 0u,0u,1.f };
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
     };
     TEST_F(PersonTest, ContaminateAPerson)
