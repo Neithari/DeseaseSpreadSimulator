@@ -4,6 +4,8 @@ namespace UnitTests {
     TEST(TimeTests, FrameTimeAfterWait)
     {
         auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
+        time.Start();
+
         time.Update();
         using namespace std::chrono_literals;
         // Sleep for 1ms to ensure a > 1ms frametime
@@ -15,6 +17,8 @@ namespace UnitTests {
     TEST(TimeTests, SimulationTimeProgress)
     {
         auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
+        time.Start();
+
         time.Update();
         auto elapsedHours = time.GetElapsedHours();
 

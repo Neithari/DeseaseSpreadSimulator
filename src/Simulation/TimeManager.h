@@ -9,6 +9,9 @@ namespace DeseaseSpreadSimulation
 		// Singleton instance
 		static TimeManager& Instance();
 
+		void Start();
+		void Pause();
+
 		// Call once every frame
 		void Update();
 		// In milliseconds
@@ -36,6 +39,8 @@ namespace DeseaseSpreadSimulation
 		Day GetNextDay() const;
 
 	private:
+		bool pauseTime = true;
+
 		std::chrono::time_point<std::chrono::steady_clock> currentFrameTime;
 		std::chrono::time_point<std::chrono::steady_clock> lastFrameTime;
 		std::chrono::milliseconds frameTime = {};
