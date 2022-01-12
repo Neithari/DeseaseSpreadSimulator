@@ -12,25 +12,23 @@ namespace UnitTests {
         // Check if frametime is > 1ms
         ASSERT_GE(time.GetFrameTime(), 1LL);
     }
-    TEST(TimeTests, SimulationDayProgress)
+    TEST(TimeTests, SimulationTimeProgress)
     {
         auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
-        auto elapsedDays = time.GetElapsedDays();
-
-        // Ensure that a frametime of > 50ms with a multiplier of 24 results in a simulation day
-        time.SetSimulationTimeMultiplier(24);
-
         time.Update();
+        auto elapsedHours = time.GetElapsedHours();
+
         using namespace std::chrono_literals;
-        // Sleep for 50ms to ensure a > 50ms frametime
-        std::this_thread::sleep_for(50ms);
+        std::this_thread::sleep_for(49ms);
         time.Update();
-        EXPECT_EQ(time.GetElapsedDays(), elapsedDays + 1ULL);
-        // Sleep for 50ms to ensure a > 50ms frametime
-        std::this_thread::sleep_for(50ms);
+        EXPECT_EQ(time.GetElapsedHours(), elapsedHours + 1ULL);
+
+        time.Update();
+        elapsedHours = time.GetElapsedHours();
+        std::this_thread::sleep_for(49ms);
         time.Update();
         // Greater or equal because of small timeframe and easy errors
-        EXPECT_GE(time.GetElapsedDays(), elapsedDays + 2ULL);
+        EXPECT_EQ(time.GetElapsedHours(), elapsedHours + 1ULL);
     }
     TEST(TimeTests, TimeObserver)
     {
