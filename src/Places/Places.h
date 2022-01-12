@@ -14,6 +14,7 @@ namespace DeseaseSpreadSimulation
 		uint32_t GetID() const;
 		void AddPerson(Person* person);
 		void RemovePerson(uint32_t id);
+		void RemovePerson(Person* person);
 
 		virtual ~Place() = default;
 
