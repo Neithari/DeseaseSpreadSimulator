@@ -81,6 +81,7 @@ bool DeseaseSpreadSimulation::TimeManager::IsWorkday(const Day day)
 
 void DeseaseSpreadSimulation::TimeManager::AddObserver(TimeObserver* observer)
 {
+	std::lock_guard<std::mutex> lockGuard(observersMutex);
 	observers.push_back(observer);
 }
 

@@ -1,17 +1,19 @@
 #pragma once
 #include "Places/Places.h"
 #include "Person/PersonBehavior.h"
+#include "Simulation/TimeObserver.h"
 #include "Systems/PersonStates.h"
 
 namespace DeseaseSpreadSimulation
 {
 	class Community;
 
-	class Person
+	class Person : public TimeObserver
 	{
 	public:
 		// Create a Person with age, sex, community and set it's home and whereabout to home
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home = nullptr);
+		~Person();
 		
 		auto operator<=>(const Person& rhs) const
 		{
@@ -31,6 +33,7 @@ namespace DeseaseSpreadSimulation
 		void Contaminate(const Desease* infection);
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
+		void OnNewDay(Day currentDay) override;
 
 		bool isSusceptible() const;
 		bool isInfectious() const;

@@ -15,6 +15,7 @@
 #include <atomic>
 #include <compare>
 #include <cmath>
+#include <mutex>
 
 // Data structures
 #include <string>

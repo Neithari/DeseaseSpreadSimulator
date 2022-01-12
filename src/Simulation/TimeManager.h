@@ -50,5 +50,6 @@ namespace DeseaseSpreadSimulation
 		uint16_t dayTime = 0u;
 		
 		std::vector<TimeObserver*> observers;
+		std::mutex observersMutex;
 	};
 }

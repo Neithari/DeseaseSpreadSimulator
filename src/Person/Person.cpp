@@ -14,6 +14,12 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	whereabouts(home),
 	personState(std::make_unique<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay()))
 {
+	TimeManager::Instance().AddObserver(this);
+}
+
+DeseaseSpreadSimulation::Person::~Person()
+{
+	TimeManager::Instance().RemoveObserver(this);
 }
 
 void DeseaseSpreadSimulation::Person::Update()
@@ -27,7 +33,6 @@ void DeseaseSpreadSimulation::Person::Update()
 
 	if (desease)
 	{
-		AdvanceDay();
 		DeseaseCheck();
 	}
 }
@@ -247,4 +252,10 @@ void DeseaseSpreadSimulation::Person::AdvanceDay()
 			alive = false;
 		}
 	}
+}
+
+// Comment out currentDay to silence compiler warning C4100
+void DeseaseSpreadSimulation::Person::OnNewDay(Day /*currentDay*/)
+{
+	AdvanceDay();
 }
