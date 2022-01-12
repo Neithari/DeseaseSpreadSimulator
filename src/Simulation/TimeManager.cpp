@@ -32,7 +32,7 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 		dayTime++;
 		if (dayTime >= 24)
 		{
-			auto addTime = dayTime - 24;
+			uint16_t addTime = dayTime - 24;
 			dayTime = 0 + addTime;
 			currentDay = GetNextDay();
 			NotifyDayChange();
