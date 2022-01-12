@@ -5,7 +5,7 @@ int main()
 {	
 	DeseaseSpreadSimulation::Simulation simulation{false};
 
-	simulation.Start();
+	simulation.Run();
 
 	return 0;
 }
