@@ -23,6 +23,20 @@ void DeseaseSpreadSimulation::PersonStates::UpdateInEveryState(Day currentDay)
 	m_lastHardwareBuy++;
 }
 
+void DeseaseSpreadSimulation::PersonStates::SetNewWhereabouts(Person& person, Place* newWhereabouts)
+{
+	auto whereabouts = person.GetWhereabouts();
+	if (whereabouts && newWhereabouts)
+	{
+		// Remove the person from current whereabout
+		whereabouts->RemovePerson(&person);
+
+		// Send the person to the new place
+		person.SetWhereabouts(newWhereabouts);
+		person.GetWhereabouts()->AddPerson(&person);
+	}
+}
+
 DeseaseSpreadSimulation::HomeState::HomeState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
 	:
 	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
@@ -71,11 +85,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::HomeState::Enter(Person& person)
 {
-	// Remove the person from current whereabout
-	person.GetWhereabouts()->RemovePerson(&person);
-	// Send the person home
-	person.SetWhereabouts(person.GetHome());
-	person.GetWhereabouts()->AddPerson(&person);
+	SetNewWhereabouts(person, person.GetHome());
 }
 
 DeseaseSpreadSimulation::FoodBuyState::FoodBuyState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
@@ -117,11 +127,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::FoodBuyState::Enter(Person& person)
 {
-	// Remove the person from current whereabout
-	person.GetWhereabouts()->RemovePerson(&person);
-	// Send the person to a supply store
-	person.SetWhereabouts(person.GetCommunity().GetSupplyStore());
-	person.GetWhereabouts()->AddPerson(&person);
+	SetNewWhereabouts(person, person.GetCommunity().GetSupplyStore());
 
 	// Reset the last food buy
 	m_lastFoodBuy = 0;
@@ -165,11 +171,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::HardwareBuyState::Enter(Person& person)
 {
-	// Remove the person from current whereabout
-	person.GetWhereabouts()->RemovePerson(&person);
-	// Send the person to a hardware store
-	person.SetWhereabouts(person.GetCommunity().GetHardwareStore());
-	person.GetWhereabouts()->AddPerson(&person);
+	SetNewWhereabouts(person, person.GetCommunity().GetHardwareStore());
 
 	// Reset the last hardware buy
 	m_lastHardwareBuy = 0;
@@ -204,11 +206,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::WorkState::Enter(Person& person)
 {
-	// Remove the person from current whereabout
-	person.GetWhereabouts()->RemovePerson(&person);
-	// Send the person to work
-	person.SetWhereabouts(person.GetWorkplace());
-	person.GetWhereabouts()->AddPerson(&person);
+	SetNewWhereabouts(person, person.GetWorkplace());
 }
 
 DeseaseSpreadSimulation::SchoolState::SchoolState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
@@ -240,11 +238,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::SchoolState::Enter(Person& person)
 {
-	// Remove the person from current whereabout
-	person.GetWhereabouts()->RemovePerson(&person);
-	// Send the person to school
-	person.SetWhereabouts(person.GetSchool());
-	person.GetWhereabouts()->AddPerson(&person);
+	SetNewWhereabouts(person, person.GetSchool());
 }
 
 DeseaseSpreadSimulation::MorgueState::MorgueState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
@@ -268,9 +262,5 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::MorgueState::Enter(Person& person)
 {
-	// Remove the person from current whereabout
-	person.GetWhereabouts()->RemovePerson(&person);
-	// Send the person to a morgue
-	person.SetWhereabouts(person.GetCommunity().GetMorgue());
-	person.GetWhereabouts()->AddPerson(&person);
+	SetNewWhereabouts(person, person.GetCommunity().GetMorgue());
 }
