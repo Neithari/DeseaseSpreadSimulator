@@ -87,6 +87,7 @@ void DeseaseSpreadSimulation::TimeManager::AddObserver(TimeObserver* observer)
 
 void DeseaseSpreadSimulation::TimeManager::RemoveObserver(TimeObserver* observer)
 {
+	std::lock_guard<std::mutex> lockGuard(observersMutex);
 	auto itToRemove = std::find(observers.begin(), observers.end(), observer);
 	if (itToRemove != observers.end())
 	{
