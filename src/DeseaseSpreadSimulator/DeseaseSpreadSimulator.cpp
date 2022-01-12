@@ -1,13 +1,11 @@
-/// AlgorithmVisualization is used to visualize different programming algorithms like pathfinding or sorting.
-
 #include "pch.h"
-#include "Simulation/System.h"
+#include "Simulation/Simulation.h"
 
 int main()
 {	
-	System simulation;
+	DeseaseSpreadSimulation::Simulation simulation{false};
 
-	simulation.Run();
+	simulation.Start();
 
 	return 0;
 }

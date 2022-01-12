@@ -1,12 +1,10 @@
 #include "pch.h"
 #include "Simulation/Simulation.h"
 
-DeseaseSpreadSimulation::Simulation::Simulation(Desease desease, bool withPrint)
+DeseaseSpreadSimulation::Simulation::Simulation(bool withPrint)
 	:
-	desease(std::move(desease)),
 	withPrint(withPrint)
 {
-	persons.reserve(personCount);
 }
 
 void DeseaseSpreadSimulation::Simulation::Start()

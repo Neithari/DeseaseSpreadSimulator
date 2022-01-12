@@ -6,7 +6,7 @@ namespace DeseaseSpreadSimulation
 	class Simulation
 	{
 	public:
-		Simulation(Desease desease, bool withPrint = false);
+		Simulation(bool withPrint = false);
 
 		void Start();
 		void Stop();
@@ -20,12 +20,10 @@ namespace DeseaseSpreadSimulation
 		void Print();
 
 	private:
-		Desease desease;
 		bool withPrint = false;
 		bool stop = true;
 		bool pause = false;
 
 		unsigned int personCount = 1000;
-		std::vector<Person> persons;
 	};
 }
