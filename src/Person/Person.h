@@ -52,6 +52,7 @@ namespace DeseaseSpreadSimulation
 		void SetWhereabouts(const Place* newWhereabouts);
 		void SetHome(Home* newHome);
 		void SetWorkplace(const Workplace* newWorkplace);
+		void SetSchool(const School* newSchool);
 		
 		void ChangeBehavior(PersonBehavior newBehavior);
 		void Move(Place* destination);

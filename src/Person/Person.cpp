@@ -192,6 +192,11 @@ void DeseaseSpreadSimulation::Person::SetWorkplace(const Workplace* newWorkplace
 	workplace = newWorkplace;
 }
 
+void DeseaseSpreadSimulation::Person::SetSchool(const School* newSchool)
+{
+	school = newSchool;
+}
+
 void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
 {
 	home = newHome;
