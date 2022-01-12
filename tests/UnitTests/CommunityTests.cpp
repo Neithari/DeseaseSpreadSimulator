@@ -256,7 +256,7 @@ namespace UnitTests {
         std::shared_mutex distributionArrayMutex;
 
         constexpr size_t populationSize1 = 1000;
-        constexpr size_t testSize = 100;
+        constexpr size_t testSize = 20;
         std::vector<std::thread> threads;
         threads.reserve(testSize);
         for (size_t j = 0; j < testSize; j++)
