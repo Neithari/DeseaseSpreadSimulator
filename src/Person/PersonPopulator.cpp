@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Person/PersonPopulator.h"
+#include "Person/PersonBehavior.h"
 #include "Places/PlaceBuilder.h"
 
 DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
@@ -17,23 +18,23 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, const std::vector<std::unique_ptr<Place>>& places)
+std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, const Community& community, const std::vector<std::unique_ptr<Place>>& places)
 {
 	std::vector<std::unique_ptr<Person>> population;
 
 	// Create a vector with all homes and a vector with all workplaces to assigne them later
-	std::vector<Place*> homes;
-	std::vector<Place*> workplaces;
+	std::vector<Home*> homes;
+	std::vector<Workplace*> workplaces;
 
 	for (const auto& place : places)
 	{
 		switch (place->GetType())
 		{
 		case Place_Type::Home:
-			homes.push_back(place.get());
+			homes.push_back(static_cast<Home*>(place.get()));
 			break;
 		case Place_Type::Workplace:
-			workplaces.push_back(place.get());
+			workplaces.push_back(static_cast<Workplace*>(place.get()));
 			break;
 		case Place_Type::Supply:
 			break;
@@ -58,7 +59,7 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimul
 	while (true)
 	{
 		// Get a new person
-		auto person = GetNewPerson();
+		auto person = GetNewPerson(community);
 		// Break the loop when we got the whole population
 		if (!person)
 		{
@@ -80,7 +81,7 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimul
 	return std::move(population);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Home* home)
+std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(const Community& community, Home* home)
 {
 	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
 	if (leftover > 0)
@@ -114,8 +115,8 @@ std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Person
 
 		leftover--;
 		currentHumanCount--;
-
-		return std::make_unique<Person>(currentHumanDistribution.ageGroup, currentHumanDistribution.sex, home);
+		// TODO: Add behavior to the constructor call
+		return std::make_unique<Person>(currentHumanDistribution.ageGroup, currentHumanDistribution.sex, PersonBehavior(), community, home);
 	}
 
 	return nullptr;
@@ -140,23 +141,23 @@ size_t DeseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t
 	return workingPeople;
 }
 
-std::array<std::vector<DeseaseSpreadSimulation::Place*>, 4> DeseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Place*>& homes)
+std::array<std::vector<DeseaseSpreadSimulation::Home*>, 4> DeseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes)
 {
 	auto homeCounts(PlaceBuilder::GetHomeCounts(populationSize, country));
 
 	// Set iterators to copy a part of the homes vector into the new vectores separated by size
 	auto from = homes.cbegin();
 	auto to = homes.cbegin() + homeCounts.at(0);
-	std::vector<Place*> oneMember(from, to);
+	std::vector<Home*> oneMember(from, to);
 	// Change the iterators for the next size and do the same for every size
 	from = to;
 	to += homeCounts.at(1);
-	std::vector<Place*> twoToThreeMembers(from, to);
+	std::vector<Home*> twoToThreeMembers(from, to);
 	from = to;
 	to += homeCounts.at(2);
-	std::vector<Place*> fourToFiveMembers(from, to);
+	std::vector<Home*> fourToFiveMembers(from, to);
 	from = to;
-	std::vector<Place*> sixPlusMembers(from, homes.cend());
+	std::vector<Home*> sixPlusMembers(from, homes.cend());
 
 	// Return an array with all size vectors
 	return { oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers };
@@ -169,13 +170,18 @@ size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 }
 size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex) const
 {
+	if (maxIndex <= 0)
+	{
+		return 0;
+	}
+
 	std::random_device seed;
 	std::mt19937 generator(seed());
 	std::uniform_int_distribution<size_t> uniform(0, maxIndex);
 
 	return uniform(generator);
 }
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Place*>, 4>& homesByMemberCount) const
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount) const
 {
 	// Create the distribution
 	std::array<double, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
@@ -193,7 +199,7 @@ DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignH
 	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(GetUniformRandomIndex(homesByMemberCount.at(distIndex).size() - 1)));
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Place*>, 5>& workplacesBySize) const
+DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const
 {
 	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
 	size_t distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);

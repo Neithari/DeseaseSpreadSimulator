@@ -1,31 +1,55 @@
 #pragma once
+#include "Simulation/TimeObserver.h"
 
 namespace DeseaseSpreadSimulation
 {
 	class TimeManager
 	{
 	public:
-		TimeManager();
-		// call once every frame
+		// Singleton instance
+		static TimeManager& Instance();
+
+		// Call once every frame
 		void Update();
-		// in milliseconds
+		// In milliseconds
 		int64_t GetFrameTime() const;
-		// returns the simulation days elapsed since the start of the simulation. Rounded down to full days.
-		unsigned long long GetElapsedDays() const;
-		// calling without a argument will default to 1x speed
-		void SetSimulationTimeMultiplier(uint16_t multiplier = 1);
+		// Returns elapsed hours since the start of the simulation.
+		uint64_t GetElapsedHours() const;
+		// Returns elapsed days since the start of the simulation. Rounded down.
+		uint64_t GetElapsedDays() const;
+		// Calling without a argument will default to 1x speed
+		void SetSimulationTimeMultiplier(uint16_t multiplier = 1u);
+
+		Day GetCurrentDay() const;
+		bool IsWorkday() const;
+		static bool IsWorkday(const Day day);
+		// Get the time in 24h format
+		uint16_t GetTime() const;
+
+		// Observer pattern functions
+		void AddObserver(TimeObserver* observer);
+		void RemoveObserver(TimeObserver* observer);
+		void NotifyDayChange();
+
+	private:
+		TimeManager();
+		Day GetNextDay() const;
 
 	private:
 		std::chrono::time_point<std::chrono::steady_clock> currentFrameTime;
 		std::chrono::time_point<std::chrono::steady_clock> lastFrameTime;
-		// milliseconds
 		std::chrono::milliseconds frameTime = {};
-		uint32_t frameSum = 0;
-		// tick in ms
-		uint32_t tick = 1000u;
-		// in sumulation days. 1 day per tick
+		// Tick in ms
+		uint32_t tick = 50u;
+		uint32_t frameSum = 0u;
+		// In simulation hours. 1 hour per tick
 		uint64_t simulationTime = 0u;
+		uint32_t simulationTimeMultiplier = 1u;
 
-		uint32_t simulationTimeMultiplier = 1;
+		Day currentDay = Day::Monday;
+		uint16_t dayTime = 0u;
+		
+		std::vector<TimeObserver*> observers;
+		std::mutex observersMutex;
 	};
 }

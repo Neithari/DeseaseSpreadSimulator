@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Places/CommunityBuilder.h"
-#include "Places/Community.h"
 #include "Person/PersonPopulator.h"
 #include "Places/PlaceBuilder.h"
 
@@ -10,9 +9,9 @@ DeseaseSpreadSimulation::Community DeseaseSpreadSimulation::CommunityBuilder::Cr
 	PlaceBuilder placeFactory;
 	PersonPopulator populationFactory(populationSize, PersonPopulator::GetCountryDistribution(country));
 
-	community.AddPlaces(std::move(placeFactory.CreatePlaces(populationSize, country)));
+	community.AddPlaces(placeFactory.CreatePlaces(populationSize, country));
 
-	community.AddPopulation(std::move(populationFactory.CreatePopulation(populationSize, country, community.GetPlaces())));
+	community.AddPopulation(populationFactory.CreatePopulation(populationSize, country, community, community.GetPlaces()));
 
 	return community;
 }

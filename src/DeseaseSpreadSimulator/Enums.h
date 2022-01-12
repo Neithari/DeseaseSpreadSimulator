@@ -4,9 +4,10 @@ namespace DeseaseSpreadSimulation
 {
 	// Common
 	enum class Country { USA, Germany };
-	
+	enum class Day { Monday = 0, Tuesday,Wednesday, Thursday, Friday, Saturday, Sunday};
+
 	// Place related
-	enum class Place_Type { Home, Supply, Workplace, HardwareStore, Morgue };
+	enum class Place_Type { Home, Supply, Workplace, School, HardwareStore, Morgue };
 	
 	// Person related
 	enum class Seir_State { Susceptible, Exposed, Infectious, Recovered };

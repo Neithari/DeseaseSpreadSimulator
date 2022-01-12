@@ -9,13 +9,13 @@ namespace DeseaseSpreadSimulation
 	public:		
 		PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
-		std::vector<std::unique_ptr<Person>> CreatePopulation(size_t populationSize, Country country, const std::vector<std::unique_ptr<Place>>& places);
+		std::vector<std::unique_ptr<Person>> CreatePopulation(size_t populationSize, Country country, const Community& community, const std::vector<std::unique_ptr<Place>>& places);
 
 		// Get a new person for the chosen distribution. Call should return a empty pointer when population size is reached
-		std::unique_ptr<Person> GetNewPerson(Home* home = nullptr);
+		std::unique_ptr<Person> GetNewPerson(const Community& community, Home* home = nullptr);
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
-		static std::array<std::vector<Place*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Place*>& homes);
+		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes);
 
 		// Helper function to select the distribution inside the constructor initializer list
 		static Statistics::HouseholdComposition GetHouseholdDistribution(Country country);
@@ -38,8 +38,8 @@ namespace DeseaseSpreadSimulation
 			return distribution(generator);
 		};
 
-		Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Place*>, 4>& homesByMemberCount) const;
-		Place* AssignWorkplace(const std::array<std::vector<Place*>, 5>& workplacesBySize) const;
+		Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount) const;
+		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
 
 	private:
 		const size_t m_populationSize = 0;

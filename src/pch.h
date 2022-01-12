@@ -15,6 +15,7 @@
 #include <atomic>
 #include <compare>
 #include <cmath>
+#include <mutex>
 
 // Data structures
 #include <string>
@@ -28,4 +29,5 @@
 #include "DeseaseSpreadSimulator/Enums.h"
 #include "Desease/Desease.h"
 #include "Person/Person.h"
+#include "Places/Community.h"
 #include "Places/Places.h"

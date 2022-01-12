@@ -1,27 +1,38 @@
 #include "pch.h"
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
+#include "Simulation/TimeManager.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, Home* home)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
 	sex(sex),
+	behavior(behavior),
+	community(community),
 	home(home),
-	whereabouts(home)
+	whereabouts(home),
+	personState(std::make_unique<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay()))
 {
+	TimeManager::Instance().AddObserver(this);
+}
+
+DeseaseSpreadSimulation::Person::~Person()
+{
+	TimeManager::Instance().RemoveObserver(this);
 }
 
 void DeseaseSpreadSimulation::Person::Update()
 {
-	// move person
-	Move();
-	//  if we have a desease...
-	if (desease != nullptr)
+	auto newPersonState = personState->HandleStateChange(*this, TimeManager::Instance().GetTime());
+	if (newPersonState)
 	{
-		// ...advance day
-		AdvanceDay();
-		// ...desease check
+		personState = std::move(newPersonState);
+		personState->Enter(*this);
+	}
+
+	if (desease)
+	{
 		DeseaseCheck();
 	}
 }
@@ -56,7 +67,7 @@ std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 {
 	desease = infection;
-	state = Seir_State::Exposed;
+	seirState = Seir_State::Exposed;
 	
 	latentPeriod = desease->IncubationPeriod();
 	daysInfectious = desease->DaysInfectious();
@@ -71,12 +82,12 @@ void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 
 bool DeseaseSpreadSimulation::Person::isSusceptible() const
 {
-	return state == Seir_State::Susceptible;
+	return seirState == Seir_State::Susceptible;
 }
 
 bool DeseaseSpreadSimulation::Person::isInfectious() const
 {
-	return state == Seir_State::Infectious;
+	return seirState == Seir_State::Infectious;
 }
 
 bool DeseaseSpreadSimulation::Person::isQuarantined() const
@@ -114,61 +125,110 @@ DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
 	return sex;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
+const DeseaseSpreadSimulation::PersonBehavior& DeseaseSpreadSimulation::Person::GetBehavior() const
+{
+	return behavior;
+}
+
+const DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Person::GetCommunity() const
+{
+	return community;
+}
+
+const DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
 {
 	return whereabouts;
 }
 
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
+const DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
 {
 	return home;
 }
 
+const DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplace() const
+{
+	return workplace;
+}
+
+const DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool() const
+{
+	return school;
+}
+
 void DeseaseSpreadSimulation::Person::DeseaseCheck()
 {
-	// A person is infectious when it was exposed to a desease and 
-	if (state == Seir_State::Exposed && latentPeriod <= 0)
+	switch (seirState)
 	{
-		state = Seir_State::Infectious;
-	}
-	// it is recovered when it is 
-	else if (state == Seir_State::Infectious && daysInfectious <= 0)
-	{
-		state = Seir_State::Recovered;
-	}
-	else if (state == Seir_State::Recovered && daysTillCured == 0)
-	{
-		desease = nullptr;
+	case DeseaseSpreadSimulation::Seir_State::Susceptible:
+		break;
+	case DeseaseSpreadSimulation::Seir_State::Exposed:
+		// Person is infectious when it was exposed to a desease and latent period is over
+		if (latentPeriod <= 0)
+		{
+			seirState = Seir_State::Infectious;
+		}
+		break;
+	case DeseaseSpreadSimulation::Seir_State::Infectious:
+		// Person is recovered when daysInfectious reached 0
+		if (daysInfectious <= 0)
+		{
+			seirState = Seir_State::Recovered;
+		}
+		break;
+	case DeseaseSpreadSimulation::Seir_State::Recovered:
+		if (daysTillCured == 0)
+		{
+			desease = nullptr;
+		}
+		// TODO: Implement that a person can be susceptible again.
+		break;
+	default:
+		break;
 	}
 }
 
-void DeseaseSpreadSimulation::Person::SetWorkplace(Place* newWorkplace)
+void DeseaseSpreadSimulation::Person::SetWhereabouts(const Place* newWhereabouts)
+{
+	whereabouts = newWhereabouts;
+}
+
+void DeseaseSpreadSimulation::Person::SetWorkplace(const Workplace* newWorkplace)
 {
 	workplace = newWorkplace;
 }
 
-void DeseaseSpreadSimulation::Person::SetHome(Place* newHome)
+void DeseaseSpreadSimulation::Person::SetSchool(const School* newSchool)
 {
-	home = static_cast<Home*>(newHome);
+	school = newSchool;
+}
+
+void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
+{
+	home = newHome;
 	// Check if the person is already somewhere.
-	if (whereabouts == nullptr)
+	if (!whereabouts)
 	{
-		// If not set it's whereabouts...
-		whereabouts = newHome;
+		// If not set it's whereabouts to home...
+		whereabouts = home;
 		// ...and put the person in it's home
-		newHome->AddPerson(this);
+		home->AddPerson(this);
 	}
 }
 
-void DeseaseSpreadSimulation::Person::Move()
+void DeseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 {
-	/// TODO: implement move function
+	behavior = newBehavior;
+}
+
+void DeseaseSpreadSimulation::Person::Move(Place* destination)
+{
+	whereabouts = destination;
 }
 
 void DeseaseSpreadSimulation::Person::AdvanceDay()
 {
 	// If the person has no desease, has recovered, is immune or dead do nothing (recovered/immune/dead are all Seir_State::Recovered)
-	if (state == Seir_State::Susceptible || state == Seir_State::Recovered)
+	if (seirState == Seir_State::Susceptible || seirState == Seir_State::Recovered)
 	{
 		return;
 	}
@@ -192,4 +252,10 @@ void DeseaseSpreadSimulation::Person::AdvanceDay()
 			alive = false;
 		}
 	}
+}
+
+// Comment out currentDay to silence compiler warning C4100
+void DeseaseSpreadSimulation::Person::OnNewDay(Day /*currentDay*/)
+{
+	AdvanceDay();
 }

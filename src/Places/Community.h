@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <random>
 
 namespace DeseaseSpreadSimulation
 {
@@ -19,8 +20,16 @@ namespace DeseaseSpreadSimulation
 		
 		std::unique_ptr<Person> TransferPerson(uint32_t personID);
 		
-		const std::vector<std::unique_ptr<Person>>& GetPopulation() const;
-		const std::vector<std::unique_ptr<Place>>& GetPlaces() const;
+		std::vector<std::unique_ptr<Person>>& GetPopulation();
+		std::vector<std::unique_ptr<Place>>& GetPlaces();
+
+		const std::vector<Home*>& GetHomes() const;
+		// Returns a random store
+		const Supply* GetSupplyStore() const;
+		// Returns a random store
+		const HardwareStore* GetHardwareStore() const;
+		// Returns a random morgue
+		const Morgue* GetMorgue() const;
 
 	private:
 		// Transfer the contends from source to target.
@@ -29,9 +38,36 @@ namespace DeseaseSpreadSimulation
 		{
 			std::move(source.begin(), source.end(), std::back_inserter(target));
 		};
+		// Add a pointer of type home, supply, hardware store and morgue to matching vectors for easier lookup
+		void AddPlaceToLookupVector(Place* place);
+
+		// Returns an random index from 0 to size - 1
+		template <typename T>
+		T RandomIndex(T size) const
+		{
+			// Prevent return of a negative index
+			if (size <= (T)0)
+			{
+				return (T)0;
+			}
+
+			std::random_device seed;
+			std::mt19937 generator(seed());
+			std::uniform_int_distribution distribution((T)0, size - (T)1);
+
+			return distribution(generator);
+		};
 
 	private:
+		// TODO: Refactor the vectors from pointers/unique_ptrs to different vectors for every place
+		// -----------------------------------------------------------------------------------------
 		std::vector<std::unique_ptr<Person>> m_population;
 		std::vector<std::unique_ptr<Place>> m_places;
+
+		std::vector<Home*> homes;
+		std::vector<Supply*> supplyStores;
+		std::vector<HardwareStore*> hardwareStores;
+		std::vector<Morgue*> morgues;
+		// -----------------------------------------------------------------------------------------
 	};
 }

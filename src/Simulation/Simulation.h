@@ -24,8 +24,6 @@ namespace DeseaseSpreadSimulation
 		bool withPrint = false;
 		bool stop = true;
 		bool pause = false;
-		
-		TimeManager simulationTime;
 
 		unsigned int personCount = 1000;
 		std::vector<Person> persons;

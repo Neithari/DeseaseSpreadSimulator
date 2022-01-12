@@ -50,13 +50,13 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>> DeseaseSpreadSimula
 	return places;
 }
 
-std::array<std::vector<DeseaseSpreadSimulation::Place*>, 5> DeseaseSpreadSimulation::PlaceBuilder::WorkplacesBySize(const size_t populationSize, const Country country, std::vector<Place*> workplaces)
+std::array<std::vector<DeseaseSpreadSimulation::Workplace*>, 5> DeseaseSpreadSimulation::PlaceBuilder::WorkplacesBySize(const size_t populationSize, const Country country, std::vector<Workplace*> workplaces)
 {
 	// First get number of working people
 	size_t workingPeople = PersonPopulator::WorkingPeopleCount(populationSize, country);
 
 	// Then get the workplace counts for the size groups and transfer the right amount into a vector inside the bySize array
-	std::array<std::vector<Place*>, 5> workplacesBySize;
+	std::array<std::vector<Workplace*>, 5> workplacesBySize;
 	for (size_t i = 0; i < Statistics::workplaceSize.size(); i++)
 	{
 		for (size_t j = 0; j < static_cast<size_t>((workingPeople * Statistics::workplaceSize.at(i)) / (25 + 50 * i)); j++)

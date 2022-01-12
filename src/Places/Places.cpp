@@ -90,3 +90,14 @@ DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Morgue::GetType() c
 {
 	return Place_Type::Morgue;
 }
+
+DeseaseSpreadSimulation::School::School()
+	:
+	Place(IDGenerator::IDGenerator<School>::GetNextID())
+{
+}
+
+DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::School::GetType() const
+{
+	return Place_Type::School;
+}

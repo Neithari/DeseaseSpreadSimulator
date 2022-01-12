@@ -1,13 +1,23 @@
 #pragma once
 #include "Places/Places.h"
+#include "Person/PersonBehavior.h"
+#include "Simulation/TimeObserver.h"
+#include "Systems/PersonStates.h"
 
 namespace DeseaseSpreadSimulation
 {
-	class Person
+	class Community;
+
+	class Person : public TimeObserver
 	{
 	public:
-		// Create a Person with age, sex, set it's home and set whereabout to home
-		Person(Age_Group age, Sex sex, Home* home = nullptr);
+		// Create a Person with age, sex, community and set it's home and whereabout to home
+		Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home = nullptr);
+		~Person();
+		Person(const Person& other) = default;
+		Person(Person&& other) noexcept = default;
+		Person& operator=(const Person& other) = default;
+		Person& operator=(Person&& other) noexcept = default;
 		
 		auto operator<=>(const Person& rhs) const
 		{
@@ -27,6 +37,7 @@ namespace DeseaseSpreadSimulation
 		void Contaminate(const Desease* infection);
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
+		void OnNewDay(Day currentDay) override;
 
 		bool isSusceptible() const;
 		bool isInfectious() const;
@@ -37,37 +48,54 @@ namespace DeseaseSpreadSimulation
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
-		Place* GetWhereabouts() const;
-		Home* GetHome() const;
-		void SetWorkplace(Place* newWorkplace);
-		void SetHome(Place* newHome);
+		const PersonBehavior& GetBehavior() const;
+		const Community& GetCommunity() const;
 
+		const Place* GetWhereabouts() const;
+		const Home* GetHome() const;
+		const Workplace* GetWorkplace() const;
+		const School* GetSchool() const;
+		
+		void SetWhereabouts(const Place* newWhereabouts);
+		void SetHome(Home* newHome);
+		void SetWorkplace(const Workplace* newWorkplace);
+		void SetSchool(const School* newSchool);
+		
+		void ChangeBehavior(PersonBehavior newBehavior);
+		void Move(Place* destination);
 
 	private:
-		void Move();
 		void DeseaseCheck();
 
 	private:
 		const uint32_t id;
 		Age_Group age;
 		Sex sex;
+		PersonBehavior behavior;
+		bool alive = true;
 
+		const Community& community;
+		// Not const because we will add ourself to the home
 		Home* home;
-		Place* whereabouts;
-		Place* workplace = nullptr;
+		const Place* whereabouts;
+		const Workplace* workplace = nullptr;
+		const School* school = nullptr;
 
-		Seir_State state = Seir_State::Susceptible;
+		std::unique_ptr<PersonStates> personState = nullptr;
+
+		// Desease Stuff
+		//-----------------------------------------
+		Seir_State seirState = Seir_State::Susceptible;
 		bool quarantined = false;
 		unsigned int spreadCount = 0;
 
-		// Desease Stuff
 		const Desease* desease = nullptr;
 		unsigned int latentPeriod = 0;
 		unsigned int daysInfectious = 0;
 		unsigned int daysTillCured = 0;
-
-		bool alive = true;
 		unsigned int daysToLive = 0;
 		bool willDie = false;
+		//-----------------------------------------
+
 	};
 }
