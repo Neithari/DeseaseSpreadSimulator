@@ -27,6 +27,12 @@ DeseaseSpreadSimulation::HomeState::HomeState(uint16_t lastFoodBuy, uint16_t las
 	:
 	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
 {
+	TimeManager::Instance().AddObserver(this);
+}
+
+DeseaseSpreadSimulation::HomeState::~HomeState()
+{
+	TimeManager::Instance().RemoveObserver(this);
 }
 
 std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HomeState::HandleStateChange(Person& person, uint16_t time)
@@ -73,8 +79,14 @@ DeseaseSpreadSimulation::FoodBuyState::FoodBuyState(uint16_t lastFoodBuy, uint16
 	:
 	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
 {
+	TimeManager::Instance().AddObserver(this);
 	// Set the finish time to be 1h in the future
 	buyFinishTime = TimeManager::Instance().GetTime() + 1;
+}
+
+DeseaseSpreadSimulation::FoodBuyState::~FoodBuyState()
+{
+	TimeManager::Instance().RemoveObserver(this);
 }
 
 std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::FoodBuyState::HandleStateChange(Person& person, uint16_t time)
@@ -116,6 +128,11 @@ DeseaseSpreadSimulation::HardwareBuyState::HardwareBuyState(uint16_t lastFoodBuy
 	buyFinishTime = TimeManager::Instance().GetTime() + 1;
 }
 
+DeseaseSpreadSimulation::HardwareBuyState::~HardwareBuyState()
+{
+	TimeManager::Instance().RemoveObserver(this);
+}
+
 std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HardwareBuyState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
@@ -151,6 +168,12 @@ DeseaseSpreadSimulation::WorkState::WorkState(uint16_t lastFoodBuy, uint16_t las
 	:
 	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
 {
+	TimeManager::Instance().AddObserver(this);
+}
+
+DeseaseSpreadSimulation::WorkState::~WorkState()
+{
+	TimeManager::Instance().RemoveObserver(this);
 }
 
 std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::WorkState::HandleStateChange(Person& person, uint16_t time)
@@ -178,6 +201,12 @@ DeseaseSpreadSimulation::SchoolState::SchoolState(uint16_t lastFoodBuy, uint16_t
 	:
 	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
 {
+	TimeManager::Instance().AddObserver(this);
+}
+
+DeseaseSpreadSimulation::SchoolState::~SchoolState()
+{
+	TimeManager::Instance().RemoveObserver(this);
 }
 
 std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::SchoolState::HandleStateChange(Person& person, uint16_t time)
@@ -205,6 +234,12 @@ DeseaseSpreadSimulation::MorgueState::MorgueState(uint16_t lastFoodBuy, uint16_t
 	:
 	PersonStates(lastFoodBuy, lastHardwareBuy, currentDay)
 {
+	TimeManager::Instance().AddObserver(this);
+}
+
+DeseaseSpreadSimulation::MorgueState::~MorgueState()
+{
+	TimeManager::Instance().RemoveObserver(this);
 }
 
 // Commenting out person and time to silence compiler warning C4100
