@@ -23,13 +23,13 @@ namespace DeseaseSpreadSimulation
 		std::vector<std::unique_ptr<Person>>& GetPopulation();
 		std::vector<std::unique_ptr<Place>>& GetPlaces();
 
-		const std::vector<Home*>& GetHomes() const;
+		const std::vector<Home*>& GetHomes();
 		// Returns a random store
-		Supply* GetSupplyStore() const;
+		Supply* GetSupplyStore();
 		// Returns a random store
-		HardwareStore* GetHardwareStore() const;
+		HardwareStore* GetHardwareStore();
 		// Returns a random morgue
-		Morgue* GetMorgue() const;
+		Morgue* GetMorgue();
 
 	private:
 		// Transfer the contends from source to target.

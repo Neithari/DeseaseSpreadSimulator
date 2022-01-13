@@ -9,7 +9,7 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		virtual Place_Type GetType() const = 0;
-		const std::vector<Person*>& GetPeople() const;
+		std::vector<Person*>& GetPeople();
 		size_t GetPersonCount() const;
 		uint32_t GetID() const;
 		void AddPerson(Person* person);

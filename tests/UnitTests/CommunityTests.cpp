@@ -191,10 +191,10 @@ namespace UnitTests {
     // Helper function to get the percentages per category form a population so it can be compared to the distribution weights
     std::array<float, 4> GetHomePercentFromPopulation(const std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>>& population, DeseaseSpreadSimulation::Country country)
     {
-        std::map<uint32_t, const DeseaseSpreadSimulation::Home*> homesByID;
+        std::map<uint32_t, DeseaseSpreadSimulation::Home*> homesByID;
 
         // Get the homes of every person in the population and put it into a map to filter multiples
-        for (const auto& person : population)
+        for (auto& person : population)
         {
             auto home = person->GetHome();
             homesByID.try_emplace(home->GetID(), home);
@@ -202,14 +202,14 @@ namespace UnitTests {
 
         // Put the person count in every home into a vector
         std::vector<size_t> peopleCount;
-        for (const auto& [id, home] : homesByID)
+        for (auto& [id, home] : homesByID)
         {
             peopleCount.emplace_back(home->GetPeople().size());
         }
 
         // Count the homes separated by category
         std::array<size_t, 4> homeCount{};
-        for (const auto& count : peopleCount)
+        for (auto& count : peopleCount)
         {
             // One person homes
             if (count < 2)

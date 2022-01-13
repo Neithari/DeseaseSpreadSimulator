@@ -25,7 +25,7 @@ void DeseaseSpreadSimulation::Place::RemovePerson(Person* person)
 	RemovePerson(person->GetID());
 }
 
-const std::vector<DeseaseSpreadSimulation::Person*>& DeseaseSpreadSimulation::Place::GetPeople() const
+std::vector<DeseaseSpreadSimulation::Person*>& DeseaseSpreadSimulation::Place::GetPeople()
 {
 	return people;
 }

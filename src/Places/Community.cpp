@@ -82,22 +82,22 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>>& DeseaseSpreadSimul
 	return m_places;
 }
 
-const std::vector<DeseaseSpreadSimulation::Home*>& DeseaseSpreadSimulation::Community::GetHomes() const
+const std::vector<DeseaseSpreadSimulation::Home*>& DeseaseSpreadSimulation::Community::GetHomes()
 {
 	return homes;
 }
 
-DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplyStore() const
+DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplyStore()
 {
 	return supplyStores.at(RandomIndex(supplyStores.size()));
 }
 
-DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetHardwareStore() const
+DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetHardwareStore()
 {
 	return hardwareStores.at(RandomIndex(hardwareStores.size()));
 }
 
-DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue() const
+DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
 {
 	if (morgues.empty())
 	{
