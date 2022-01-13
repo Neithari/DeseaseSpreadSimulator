@@ -6,9 +6,9 @@ namespace DeseaseSpreadSimulation
 	class Simulation
 	{
 	public:
-		Simulation(Desease desease, bool withPrint = false);
+		Simulation(uint16_t populationSize, bool withPrint = false);
 
-		void Start();
+		void Run();
 		void Stop();
 		void Pause();
 		void Resume();
@@ -16,16 +16,20 @@ namespace DeseaseSpreadSimulation
 		void SetSimulationSpeedMultiplier(uint16_t multiplier);
 
 	private:
+		void SetupEverything();
+		
 		void Update();
 		void Print();
 
+		void Contacts(Community community);
+
 	private:
-		Desease desease;
 		bool withPrint = false;
 		bool stop = true;
 		bool pause = false;
 
-		unsigned int personCount = 1000;
-		std::vector<Person> persons;
+		static constexpr Country country = Country::USA;
+		uint16_t populationSize = 0;
+		std::vector<Community> communities;
 	};
 }

@@ -12,7 +12,7 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		// Create a Person with age, sex, community and set it's home and whereabout to home
-		Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home = nullptr);
+		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community& community, Home* home = nullptr);
 		~Person();
 		Person(const Person& other) = default;
 		Person(Person&& other) noexcept = default;
@@ -49,17 +49,17 @@ namespace DeseaseSpreadSimulation
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
 		const PersonBehavior& GetBehavior() const;
-		const Community& GetCommunity() const;
+		Community& GetCommunity() const;
 
-		const Place* GetWhereabouts() const;
-		const Home* GetHome() const;
-		const Workplace* GetWorkplace() const;
-		const School* GetSchool() const;
+		Place* GetWhereabouts() const;
+		Home* GetHome() const;
+		Workplace* GetWorkplace() const;
+		School* GetSchool() const;
 		
-		void SetWhereabouts(const Place* newWhereabouts);
+		void SetWhereabouts(Place* newWhereabouts);
 		void SetHome(Home* newHome);
-		void SetWorkplace(const Workplace* newWorkplace);
-		void SetSchool(const School* newSchool);
+		void SetWorkplace(Workplace* newWorkplace);
+		void SetSchool(School* newSchool);
 		
 		void ChangeBehavior(PersonBehavior newBehavior);
 		void Move(Place* destination);
@@ -74,12 +74,12 @@ namespace DeseaseSpreadSimulation
 		PersonBehavior behavior;
 		bool alive = true;
 
-		const Community& community;
-		// Not const because we will add ourself to the home
+		// Not const because we will add ourself to the places
+		Community& community;
 		Home* home;
-		const Place* whereabouts;
-		const Workplace* workplace = nullptr;
-		const School* school = nullptr;
+		Place* whereabouts;
+		Workplace* workplace = nullptr;
+		School* school = nullptr;
 
 		std::unique_ptr<PersonStates> personState = nullptr;
 

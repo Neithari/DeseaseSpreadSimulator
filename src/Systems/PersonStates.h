@@ -18,6 +18,8 @@ namespace DeseaseSpreadSimulation
 		// Has to be called in every override OnNewDay function
 		void UpdateInEveryState(Day currenDay);
 
+		void SetNewWhereabouts(Person& person, Place* newWhereabouts);
+
 	protected:
 		// In days
 		uint16_t m_lastFoodBuy = 0u;

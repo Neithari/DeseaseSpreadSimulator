@@ -3,7 +3,7 @@
 #include "IDGenerator/IDGenerator.h"
 #include "Simulation/TimeManager.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, const Community& community, Home* home)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community& community, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
@@ -130,27 +130,27 @@ const DeseaseSpreadSimulation::PersonBehavior& DeseaseSpreadSimulation::Person::
 	return behavior;
 }
 
-const DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Person::GetCommunity() const
+DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Person::GetCommunity() const
 {
 	return community;
 }
 
-const DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
 {
 	return whereabouts;
 }
 
-const DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
 {
 	return home;
 }
 
-const DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplace() const
+DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplace() const
 {
 	return workplace;
 }
 
-const DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool() const
+DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool() const
 {
 	return school;
 }
@@ -187,17 +187,17 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 	}
 }
 
-void DeseaseSpreadSimulation::Person::SetWhereabouts(const Place* newWhereabouts)
+void DeseaseSpreadSimulation::Person::SetWhereabouts(Place* newWhereabouts)
 {
 	whereabouts = newWhereabouts;
 }
 
-void DeseaseSpreadSimulation::Person::SetWorkplace(const Workplace* newWorkplace)
+void DeseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
 {
 	workplace = newWorkplace;
 }
 
-void DeseaseSpreadSimulation::Person::SetSchool(const School* newSchool)
+void DeseaseSpreadSimulation::Person::SetSchool(School* newSchool)
 {
 	school = newSchool;
 }

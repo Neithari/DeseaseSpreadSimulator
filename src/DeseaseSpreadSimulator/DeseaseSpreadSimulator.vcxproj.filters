@@ -30,9 +30,6 @@
     <ClCompile Include="..\Person\Person.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Simulation\System.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Simulation\TimeManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,9 +75,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Person\Person.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Simulation\System.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Simulation\TimeManager.h">

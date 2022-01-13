@@ -25,11 +25,11 @@ namespace DeseaseSpreadSimulation
 
 		const std::vector<Home*>& GetHomes() const;
 		// Returns a random store
-		const Supply* GetSupplyStore() const;
+		Supply* GetSupplyStore() const;
 		// Returns a random store
-		const HardwareStore* GetHardwareStore() const;
+		HardwareStore* GetHardwareStore() const;
 		// Returns a random morgue
-		const Morgue* GetMorgue() const;
+		Morgue* GetMorgue() const;
 
 	private:
 		// Transfer the contends from source to target.
