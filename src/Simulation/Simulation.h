@@ -16,12 +16,12 @@ namespace DeseaseSpreadSimulation
 		void SetSimulationSpeedMultiplier(uint16_t multiplier);
 
 	private:
-		void SetupEverything();
+		void SetupEverything(uint16_t communityCount);
 		
 		void Update();
 		void Print();
 
-		void Contacts(Community community);
+		void Contacts(Community& community);
 
 	private:
 		bool withPrint = false;

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Simulation/Simulation.h"
 #include "Places/CommunityBuilder.h"
+#include "Desease/DeseaseBuilder.h"
 
 DeseaseSpreadSimulation::Simulation::Simulation(uint16_t populationSize, bool withPrint)
 	:
@@ -10,7 +11,7 @@ DeseaseSpreadSimulation::Simulation::Simulation(uint16_t populationSize, bool wi
 }
 void DeseaseSpreadSimulation::Simulation::Run()
 {
-	//SetupEverything();
+	SetupEverything(1);
 
 	while (!stop)
 	{
@@ -45,18 +46,18 @@ void DeseaseSpreadSimulation::Simulation::SetSimulationSpeedMultiplier(uint16_t 
 	TimeManager::Instance().SetSimulationTimeMultiplier(multiplier);
 }
 
-/*
 void DeseaseSpreadSimulation::Simulation::Update()
 {
 	TimeManager::Instance().Update();
 
 	for (auto& community : communities)
 	{
-		for (auto& person : community.GetPopulation())
+		auto& population = community.GetPopulation();
+		for (auto& person : population)
 		{
 			person->Update();
 		}
-
+	
 		Contacts(community);
 	}
 
@@ -70,16 +71,14 @@ void DeseaseSpreadSimulation::Simulation::Print()
 {
 }
 
-void DeseaseSpreadSimulation::Simulation::Contacts(Community community)
+void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 {
 	for (auto& place : community.GetPlaces())
 	{
-		auto people = place->GetPeople();
-
 		// Get all susceptible and infectious people
 		std::vector<Person*> susceptible;
 		std::vector<Person*> infectious;
-		for (auto person : people)
+		for (auto person : place->GetPeople())
 		{
 			if (person->isSusceptible())
 			{
@@ -90,7 +89,7 @@ void DeseaseSpreadSimulation::Simulation::Contacts(Community community)
 				infectious.push_back(person);
 			}
 		}
-
+		
 		// Every infectious person has a chance to infect a susceptible person
 		for (auto infectiousPerson : infectious)
 		{
@@ -102,12 +101,14 @@ void DeseaseSpreadSimulation::Simulation::Contacts(Community community)
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::SetupEverything()
+void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
 {
 	CommunityBuilder cbuilder;
-	communities.push_back(cbuilder.CreateCommunity(populationSize, country));
+	for (size_t i = 0; i < communityCount; i++)
+	{
+		communities.push_back(cbuilder.CreateCommunity(populationSize, country));
+	}
 
 	TimeManager::Instance().Start();
 	stop = false;
 }
-*/
