@@ -20,7 +20,7 @@ void DeseaseSpreadSimulation::Simulation::Run()
 			// Idle when pause is called until resumed
 		}
 
-		//Update();
+		Update();
 	}
 }
 
@@ -69,6 +69,38 @@ void DeseaseSpreadSimulation::Simulation::Update()
 
 void DeseaseSpreadSimulation::Simulation::Print()
 {
+	for (auto& community : communities)
+	{
+		std::cout << "Community #" << "\n";
+		uint16_t population = 0;
+		uint16_t susceptible = 0;
+		uint16_t infectious = 0;
+
+		for (auto& person : community.GetPopulation())
+		{
+			if (person->isAlive())
+			{
+				population++;
+			}
+			if (person->isSusceptible())
+			{
+				susceptible++;
+			}
+			if (person->isInfectious())
+			{
+				infectious++;
+			}
+		}
+
+		std::cout << "Population:  " << population << "\n";
+		std::cout << "Susceptible: " << susceptible << "\n";
+		std::cout << "Infectious:  " << infectious << "\n";
+
+		for (auto& place : community.GetPlaces())
+		{
+			std::cout << Place::TypeToString(place->GetType()) << " #" << place->GetID() << ": " << place->GetPersonCount() << " persons\n";
+		}
+	}
 }
 
 void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
