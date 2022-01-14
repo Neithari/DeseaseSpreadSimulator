@@ -12,7 +12,7 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		// Create a Person with age, sex, community and set it's home and whereabout to home
-		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community& community, Home* home = nullptr);
+		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
 		~Person();
 		Person(const Person& other) = default;
 		Person(Person&& other) noexcept = default;
@@ -49,17 +49,18 @@ namespace DeseaseSpreadSimulation
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
 		const PersonBehavior& GetBehavior() const;
-		Community& GetCommunity() const;
+		Community* GetCommunity();
 
-		Place* GetWhereabouts() const;
-		Home* GetHome() const;
-		Workplace* GetWorkplace() const;
-		School* GetSchool() const;
+		Place* GetWhereabouts();
+		Home* GetHome() ;
+		Workplace* GetWorkplace();
+		School* GetSchool();
 		
 		void SetWhereabouts(Place* newWhereabouts);
 		void SetHome(Home* newHome);
 		void SetWorkplace(Workplace* newWorkplace);
 		void SetSchool(School* newSchool);
+		void SetCommunity(Community* newCommunity);
 		
 		void ChangeBehavior(PersonBehavior newBehavior);
 		void Move(Place* destination);
@@ -75,7 +76,7 @@ namespace DeseaseSpreadSimulation
 		bool alive = true;
 
 		// Not const because we will add ourself to the places
-		Community& community;
+		Community* community;
 		Home* home;
 		Place* whereabouts;
 		Workplace* workplace = nullptr;

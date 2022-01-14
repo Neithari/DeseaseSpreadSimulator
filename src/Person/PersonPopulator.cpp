@@ -18,7 +18,7 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, Community& community, const std::vector<std::unique_ptr<Place>>& places)
+std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, Community* community, const std::vector<std::unique_ptr<Place>>& places)
 {
 	std::vector<std::unique_ptr<Person>> population;
 
@@ -81,7 +81,7 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimul
 	return std::move(population);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Community& community, Home* home)
+std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Community* community, Home* home)
 {
 	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
 	if (leftover > 0)

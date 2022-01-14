@@ -27,7 +27,7 @@ namespace UnitTests {
     }
     TEST_F(CommunityTest, AddPersonGetPopulation)
     {
-        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
+        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
         auto person1ID = person1.GetID();
 
         EXPECT_EQ(community.GetPopulation().size(), 0);
@@ -36,19 +36,19 @@ namespace UnitTests {
         EXPECT_EQ(community.GetPopulation().size(), 1);
         ASSERT_EQ(community.GetPopulation().back()->GetID(), person1ID);
 
-        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, behavior, community };
+        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, behavior, &community };
         auto person2ID = person2.GetID();
         community.AddPerson(std::make_unique<DeseaseSpreadSimulation::Person>(std::move(person2)));
         EXPECT_EQ(community.GetPopulation().size(), 2);
         ASSERT_EQ(community.GetPopulation().back()->GetID(), person2ID);
 
-        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
+        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
         auto person3ID = person3.GetID();
         community.AddPerson(std::make_unique<DeseaseSpreadSimulation::Person>(std::move(person3)));
         EXPECT_EQ(community.GetPopulation().size(), 3);
         ASSERT_EQ(community.GetPopulation().back()->GetID(), person3ID);
 
-        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Male, behavior, community };
+        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Male, behavior, &community };
         auto person4ID = person4.GetID();
         community.AddPerson(std::make_unique<DeseaseSpreadSimulation::Person>(std::move(person4)));
         EXPECT_EQ(community.GetPopulation().size(), 4);
@@ -97,7 +97,7 @@ namespace UnitTests {
     }
     TEST_F(CommunityTest, RemovePerson)
     {
-        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
+        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
         auto person1ID = person1.GetID();
 
         ASSERT_EQ(community.GetPopulation().size(), 0);
@@ -107,8 +107,8 @@ namespace UnitTests {
         community.RemovePerson(person1ID);
         ASSERT_EQ(community.GetPopulation().size(), 0);
 
-        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
-        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
+        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
+        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
 
         auto person2ID = person2.GetID();
         auto person3ID = person3.GetID();
@@ -122,8 +122,8 @@ namespace UnitTests {
         community.RemovePerson(person3ID);
         ASSERT_EQ(community.GetPopulation().size(), 0);
 
-        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
-        DeseaseSpreadSimulation::Person person5{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
+        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
+        DeseaseSpreadSimulation::Person person5{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
         auto person4ID = person4.GetID();
         auto person5ID = person5.GetID();
 
@@ -139,7 +139,7 @@ namespace UnitTests {
     }
     TEST_F(CommunityTest, TransferPerson)
     {
-        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
+        DeseaseSpreadSimulation::Person person1{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
         auto person1ID = person1.GetID();
 
         ASSERT_EQ(community.GetPopulation().size(), 0);
@@ -150,9 +150,9 @@ namespace UnitTests {
         EXPECT_EQ(community.GetPopulation().size(), 0);
         ASSERT_EQ(transferPerson->GetID(), person1ID);
 
-        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
-        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
-        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, community };
+        DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
+        DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
+        DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
         auto person2ID = person2.GetID();
         auto person3ID = person3.GetID();
         auto person4ID = person4.GetID();

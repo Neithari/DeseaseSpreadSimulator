@@ -3,7 +3,7 @@
 #include "IDGenerator/IDGenerator.h"
 #include "Simulation/TimeManager.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community& community, Home* home)
+DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
@@ -130,27 +130,27 @@ const DeseaseSpreadSimulation::PersonBehavior& DeseaseSpreadSimulation::Person::
 	return behavior;
 }
 
-DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Person::GetCommunity() const
+DeseaseSpreadSimulation::Community* DeseaseSpreadSimulation::Person::GetCommunity()
 {
 	return community;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts() const
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts()
 {
 	return whereabouts;
 }
 
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome() const
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome()
 {
 	return home;
 }
 
-DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplace() const
+DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplace()
 {
 	return workplace;
 }
 
-DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool() const
+DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool()
 {
 	return school;
 }
@@ -200,6 +200,11 @@ void DeseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
 void DeseaseSpreadSimulation::Person::SetSchool(School* newSchool)
 {
 	school = newSchool;
+}
+
+void DeseaseSpreadSimulation::Person::SetCommunity(Community* newCommunity)
+{
+	community = newCommunity;
 }
 
 void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)

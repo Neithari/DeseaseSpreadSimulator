@@ -139,6 +139,12 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 	for (size_t i = 0; i < communityCount; i++)
 	{
 		communities.push_back(cbuilder.CreateCommunity(populationSize, country));
+		
+		// Set the community untill we have a better solution
+		for (auto& person : communities.back().GetPopulation())
+		{
+			person->SetCommunity(&communities.back());
+		}
 	}
 
 	TimeManager::Instance().Start();

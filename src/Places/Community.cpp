@@ -31,6 +31,7 @@ void DeseaseSpreadSimulation::Community::AddPlaces(std::vector<std::unique_ptr<P
 
 void DeseaseSpreadSimulation::Community::AddPerson(std::unique_ptr<Person> person)
 {
+	person->SetCommunity(this);
 	m_population.push_back(std::move(person));
 }
 

@@ -127,7 +127,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::FoodBuyState::Enter(Person& person)
 {
-	SetNewWhereabouts(person, person.GetCommunity().GetSupplyStore());
+	SetNewWhereabouts(person, person.GetCommunity()->GetSupplyStore());
 
 	// Reset the last food buy
 	m_lastFoodBuy = 0;
@@ -171,7 +171,7 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::HardwareBuyState::Enter(Person& person)
 {
-	SetNewWhereabouts(person, person.GetCommunity().GetHardwareStore());
+	SetNewWhereabouts(person, person.GetCommunity()->GetHardwareStore());
 
 	// Reset the last hardware buy
 	m_lastHardwareBuy = 0;
@@ -262,5 +262,5 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 
 void DeseaseSpreadSimulation::MorgueState::Enter(Person& person)
 {
-	SetNewWhereabouts(person, person.GetCommunity().GetMorgue());
+	SetNewWhereabouts(person, person.GetCommunity()->GetMorgue());
 }

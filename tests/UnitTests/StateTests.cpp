@@ -36,7 +36,7 @@ namespace UnitTests {
         auto storeID = store->GetID();
         community.AddPlace(std::move(store));
         behavior.foodBuyInterval = 0;
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
         
         std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
@@ -59,7 +59,7 @@ namespace UnitTests {
         EXPECT_TRUE(isDerived);
         behavior.foodBuyInterval = 1;
         behavior.hardwareBuyInterval = 0;
-        Person hardwarePerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person hardwarePerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
         testState = newState->HandleStateChange(hardwarePerson, 0);
         ASSERT_EQ(testState.get(), nullptr);
         testState = newState->HandleStateChange(hardwarePerson, TimeManager::Instance().GetTime() + 1);
@@ -86,7 +86,7 @@ namespace UnitTests {
         auto storeID = store->GetID();
         community.AddPlace(std::move(store));
         behavior.hardwareBuyInterval = 0;
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
 
         std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
@@ -109,7 +109,7 @@ namespace UnitTests {
         EXPECT_TRUE(isDerived);
         behavior.foodBuyInterval = 0;
         behavior.hardwareBuyInterval = 1;
-        Person foodPerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person foodPerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
         testState = newState->HandleStateChange(foodPerson, 0);
         ASSERT_EQ(testState.get(), nullptr);
         testState = newState->HandleStateChange(foodPerson, TimeManager::Instance().GetTime() + 1);
@@ -134,7 +134,7 @@ namespace UnitTests {
 
         auto work = std::make_unique<Workplace>();
         auto workID = work->GetID();
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
         person.SetWorkplace(work.get());
         community.AddPlace(std::move(work));
 
@@ -174,7 +174,7 @@ namespace UnitTests {
 
         auto school = std::make_unique<School>();
         auto schoolID = school->GetID();
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
         person.SetSchool(school.get());
         community.AddPlace(std::move(school));
 
@@ -212,7 +212,7 @@ namespace UnitTests {
     {
         using namespace DeseaseSpreadSimulation;
 
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
 
         std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
@@ -240,7 +240,7 @@ namespace UnitTests {
         auto morgue = std::make_unique<Morgue>();
         auto morgueID = morgue->GetID();
         community.AddPlace(std::move(morgue));
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
 
         std::unique_ptr<PersonStates> state = std::make_unique<MorgueState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.

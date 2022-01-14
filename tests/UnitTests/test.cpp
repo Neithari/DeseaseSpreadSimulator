@@ -95,7 +95,7 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Home home;
         DeseaseSpreadSimulation::Community community;
         DeseaseSpreadSimulation::PersonBehavior behavior;
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
         auto personID = person.GetID();
         ASSERT_EQ(home.GetPersonCount(), 0);
         home.AddPerson(&person);
@@ -107,9 +107,9 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Home home;
         DeseaseSpreadSimulation::Community community;
         DeseaseSpreadSimulation::PersonBehavior behavior;
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
-        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
-        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
 
         EXPECT_EQ(home.GetPersonCount(), 0);
         home.AddPerson(&person);
@@ -124,9 +124,9 @@ namespace UnitTests {
         DeseaseSpreadSimulation::Home home;
         DeseaseSpreadSimulation::Community community;
         DeseaseSpreadSimulation::PersonBehavior behavior;
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
-        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
-        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, community);
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
         auto personID = person.GetID();
         auto personID1 = person1.GetID();
         auto personID2 = person2.GetID();
