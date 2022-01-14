@@ -3,7 +3,7 @@
 
 int main()
 {	
-	DeseaseSpreadSimulation::Simulation simulation{false};
+	DeseaseSpreadSimulation::Simulation simulation{1000, true};
 
 	simulation.Run();
 
