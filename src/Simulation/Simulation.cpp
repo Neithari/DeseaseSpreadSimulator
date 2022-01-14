@@ -69,9 +69,16 @@ void DeseaseSpreadSimulation::Simulation::Update()
 
 void DeseaseSpreadSimulation::Simulation::Print()
 {
+	// Only print once per hour
+	if (TimeManager::Instance().GetElapsedHours() <= elapsedHours)
+	{
+		return;
+	}
+	elapsedHours = TimeManager::Instance().GetElapsedHours();
+
 	for (auto& community : communities)
 	{
-		std::cout << "Community #" << "\n";
+		std::cout << "\nCommunity #1 Time: " << TimeManager::Instance().GetTime() << "\n";
 		uint16_t population = 0;
 		uint16_t susceptible = 0;
 		uint16_t infectious = 0;
@@ -95,9 +102,14 @@ void DeseaseSpreadSimulation::Simulation::Print()
 		std::cout << "Population:  " << population << "\n";
 		std::cout << "Susceptible: " << susceptible << "\n";
 		std::cout << "Infectious:  " << infectious << "\n";
-
+		
+		// Print public places
 		for (auto& place : community.GetPlaces())
 		{
+			if (place->GetType() == Place_Type::Home)
+			{
+				continue;
+			}
 			std::cout << Place::TypeToString(place->GetType()) << " #" << place->GetID() << ": " << place->GetPersonCount() << " persons\n";
 		}
 	}

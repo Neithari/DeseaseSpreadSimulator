@@ -31,5 +31,7 @@ namespace DeseaseSpreadSimulation
 		static constexpr Country country = Country::USA;
 		uint16_t populationSize = 0;
 		std::vector<Community> communities;
+
+		uint64_t elapsedHours = 0;
 	};
 }
