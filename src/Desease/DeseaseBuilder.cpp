@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Desease/DeseaseBuilder.h"
 
-const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder::CreateCorona()
+DeseaseSpreadSimulation::Desease DeseaseSpreadSimulation::DeseaseBuilder::CreateCorona()
 {
 	SetDeseaseName("COVID-19");
 	SetIncubationPeriod(6);
@@ -55,7 +55,7 @@ void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysTillDeath(const int min, co
 	daysTillDeathRange = { min, max };
 }
 
-const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder::CreateDesease()
+DeseaseSpreadSimulation::Desease DeseaseSpreadSimulation::DeseaseBuilder::CreateDesease()
 {
 	for (bool& setup : setupDone)
 	{
@@ -66,5 +66,5 @@ const DeseaseSpreadSimulation::Desease& DeseaseSpreadSimulation::DeseaseBuilder:
 		}
 	}
 
-	return deseases.emplace_back(name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+	return Desease(name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
 }

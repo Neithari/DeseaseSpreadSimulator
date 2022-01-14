@@ -127,22 +127,6 @@ namespace UnitTests {
         EXPECT_FALSE(desease.isSame(desease7));
     }
 
-    TEST(DeseaseBuilderTests, DeseaseBuilderCreateCorona)
-    {
-        std::string name = "COVID-19";
-        int incubationPeriod = 6;
-        int daysInfectious = 8;
-        std::pair<int, int> deseaseDurationRange{ 14, 42 };
-        std::vector<float> mortalityByAge{ 0.f, 0.14f, 0.12f, 0.2f, 0.38f, 0.98f, 2.98f, 7.94f, 17.34f };
-        std::pair<int, int> daysTillDeathRange{ 14, 56 };
-        DeseaseSpreadSimulation::Desease corona{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
-
-        DeseaseSpreadSimulation::DeseaseBuilder builder;
-        auto builtCorona = builder.CreateCorona();
-
-        EXPECT_TRUE(builtCorona.isSame(corona));
-    }
-
     class DeseaseBuilderTest : public ::testing::Test
     {
     protected:
@@ -269,5 +253,20 @@ namespace UnitTests {
         auto builtDesease2 = builder.CreateDesease();
 
         ASSERT_TRUE(builtDesease2.GetID() > builtDesease.GetID());
+    }
+    TEST_F(DeseaseBuilderTest, CreateCorona)
+    {
+        std::string name = "COVID-19";
+        int incubationPeriod = 6;
+        int daysInfectious = 8;
+        std::pair<int, int> deseaseDurationRange{ 14, 42 };
+        std::vector<float> mortalityByAge{ 0.f, 0.14f, 0.12f, 0.2f, 0.38f, 0.98f, 2.98f, 7.94f, 17.34f };
+        std::pair<int, int> daysTillDeathRange{ 14, 56 };
+        DeseaseSpreadSimulation::Desease corona{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+
+        DeseaseSpreadSimulation::DeseaseBuilder builder;
+        auto builtCorona = builder.CreateCorona();
+
+        EXPECT_TRUE(builtCorona.isSame(corona));
     }
 }

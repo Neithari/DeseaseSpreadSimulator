@@ -8,7 +8,7 @@ namespace DeseaseSpreadSimulation
 		DeseaseBuilder() = default;
 
 		// will initialize and create the desease for you
-		const Desease& CreateCorona();
+		Desease CreateCorona();
 
 		// desease setup functions
 		void SetDeseaseName(std::string name);
@@ -19,9 +19,9 @@ namespace DeseaseSpreadSimulation
 		void SetMortalityByAge(std::vector<float> mortality);
 		void SetDaysTillDeath(const int min, const int max);
 
-		const Desease& CreateDeseaseFromFile(std::string fileName);
+		Desease CreateDeseaseFromFile(std::string fileName);
 		// call only after you called all setup functions
-		const Desease& CreateDesease();
+		Desease CreateDesease();
 
 		void SaveDeseaseToFile(std::string fileName) const;
 
@@ -34,7 +34,5 @@ namespace DeseaseSpreadSimulation
 		std::pair<int, int> daysTillDeathRange{ 0,0 };
 		// for setup
 		bool setupDone[6] = {};
-
-		std::vector<Desease> deseases;
 	};
 }
