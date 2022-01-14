@@ -16,6 +16,8 @@ namespace DeseaseSpreadSimulation
 		void RemovePerson(uint32_t id);
 		void RemovePerson(Person* person);
 
+		static std::string TypeToString(Place_Type type);
+
 		virtual ~Place() = default;
 
 	protected:

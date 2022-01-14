@@ -25,6 +25,34 @@ void DeseaseSpreadSimulation::Place::RemovePerson(Person* person)
 	RemovePerson(person->GetID());
 }
 
+std::string DeseaseSpreadSimulation::Place::TypeToString(Place_Type type)
+{
+	switch (type)
+	{
+	case DeseaseSpreadSimulation::Place_Type::Home:
+		return "Home";
+		break;
+	case DeseaseSpreadSimulation::Place_Type::Supply:
+		return "Supply Store";
+		break;
+	case DeseaseSpreadSimulation::Place_Type::Workplace:
+		return "Workplace";
+		break;
+	case DeseaseSpreadSimulation::Place_Type::School:
+		return "School";
+		break;
+	case DeseaseSpreadSimulation::Place_Type::HardwareStore:
+		return "Hardware Store";
+		break;
+	case DeseaseSpreadSimulation::Place_Type::Morgue:
+		return "Morgue";
+		break;
+	default:
+		break;
+	}
+	return std::string();
+}
+
 std::vector<DeseaseSpreadSimulation::Person*>& DeseaseSpreadSimulation::Place::GetPeople()
 {
 	return people;
