@@ -78,9 +78,10 @@ void DeseaseSpreadSimulation::Simulation::Print()
 
 	for (auto& community : communities)
 	{
-		std::cout << "\nCommunity #1 Time: " << TimeManager::Instance().GetTime() << "\n";
+		std::cout << "\nCommunity #1 Days: " << TimeManager::Instance().GetElapsedDays() << " Time: " << TimeManager::Instance().GetTime() << "\n";
 		uint16_t population = 0;
 		uint16_t susceptible = 0;
+		uint16_t withDesease = 0;
 		uint16_t infectious = 0;
 
 		for (auto& person : community.GetPopulation())
@@ -97,11 +98,16 @@ void DeseaseSpreadSimulation::Simulation::Print()
 			{
 				infectious++;
 			}
+			if (person->hasDesease(deseases.back().GetDeseaseName()))
+			{
+				withDesease++;
+			}
 		}
 
-		std::cout << "Population:  " << population << "\n";
-		std::cout << "Susceptible: " << susceptible << "\n";
-		std::cout << "Infectious:  " << infectious << "\n";
+		std::cout << "Population:   " << population << "\n";
+		std::cout << "Susceptible:  " << susceptible << "\n";
+		std::cout << "With Desease: " << withDesease << "\n";
+		std::cout << "Infectious:   " << infectious << "\n";
 		
 		// Print public places
 		for (auto& place : community.GetPlaces())
@@ -147,18 +153,33 @@ void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 
 void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
 {
+	DeseaseBuilder dbuilder;
+	deseases.push_back(dbuilder.CreateCorona());
+
 	CommunityBuilder cbuilder;
 	for (size_t i = 0; i < communityCount; i++)
 	{
 		communities.push_back(cbuilder.CreateCommunity(populationSize, country));
 		
-		// Set the community untill we have a better solution
-		for (auto& person : communities.back().GetPopulation())
+		auto& population = communities.back().GetPopulation();
+		// Set the community until we have a better solution
+		for (auto& person : population)
 		{
 			person->SetCommunity(&communities.back());
 		}
+
+		InfectRandomPerson(&deseases.back(), population);
 	}
 
 	TimeManager::Instance().Start();
 	stop = false;
+}
+
+void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<std::unique_ptr<Person>>& population)
+{
+	std::random_device seed;
+	std::mt19937 generator(seed());
+	std::uniform_int_distribution<size_t> distribution(0, population.size() - 1);
+
+	population.at(distribution(generator))->Contaminate(desease);
 }
