@@ -48,7 +48,7 @@ namespace DeseaseSpreadSimulation
 			// Prevent return of a negative index
 			if (size <= (T)0)
 			{
-				return (T)0;
+				throw(std::out_of_range("Size = 0. Container possibly empty!"));
 			}
 
 			std::random_device seed;
