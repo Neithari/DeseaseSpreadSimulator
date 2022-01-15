@@ -259,8 +259,8 @@ void DeseaseSpreadSimulation::Person::AdvanceDay()
 	}
 }
 
-// Comment out currentDay to silence compiler warning C4100
-void DeseaseSpreadSimulation::Person::OnNewDay(Day /*currentDay*/)
+// Comment out newDay to silence compiler warning C4100
+void DeseaseSpreadSimulation::Person::OnNewDay(Day /*newDay*/)
 {
 	AdvanceDay();
 }

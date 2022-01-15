@@ -37,7 +37,7 @@ namespace DeseaseSpreadSimulation
 		void Contaminate(const Desease* infection);
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
-		void OnNewDay(Day currentDay) override;
+		void OnNewDay(Day newDay) override;
 
 		bool isSusceptible() const;
 		bool isInfectious() const;
