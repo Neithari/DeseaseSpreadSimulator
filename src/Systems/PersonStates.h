@@ -8,7 +8,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		virtual std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) = 0;
 		virtual void Enter(Person& person) = 0;
-		void OnNewDay(Day currentDay) override;
+		void OnNewDay(Day newDay) override;
 
 		virtual ~PersonStates() = default;
 	
@@ -16,7 +16,7 @@ namespace DeseaseSpreadSimulation
 		PersonStates(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay);
 
 		// Has to be called in every override OnNewDay function
-		void UpdateInEveryState(Day currenDay);
+		void UpdateInEveryState(Day newDay);
 
 		void SetNewWhereabouts(Person& person, Place* newWhereabouts);
 
@@ -40,6 +40,9 @@ namespace DeseaseSpreadSimulation
 
 		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
+	private:
+		// Time in hours
+		uint16_t buyTime = 0u;
 	};
 	
 	class FoodBuyState : public PersonStates
@@ -90,6 +93,7 @@ namespace DeseaseSpreadSimulation
 		void Enter(Person& person) override;
 	public:
 		// Time in x/24h
+		static constexpr uint16_t workStartTime = 8u;
 		static constexpr uint16_t workFinishTime = 17u;
 	};
 	
@@ -107,6 +111,7 @@ namespace DeseaseSpreadSimulation
 		void Enter(Person& person) override;
 	public:
 		// Time in x/24h
+		static constexpr uint16_t schoolStartTime = 8u;
 		static constexpr uint16_t schoolFinishTime = 15u;
 	};
 	

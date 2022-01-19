@@ -2,9 +2,9 @@
 #include "Systems/PersonStates.h"
 #include "Simulation/TimeManager.h"
 
-void DeseaseSpreadSimulation::PersonStates::OnNewDay(Day currentDay)
+void DeseaseSpreadSimulation::PersonStates::OnNewDay(Day newDay)
 {
-	UpdateInEveryState(currentDay);
+	UpdateInEveryState(newDay);
 }
 
 DeseaseSpreadSimulation::PersonStates::PersonStates(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)
@@ -15,9 +15,9 @@ DeseaseSpreadSimulation::PersonStates::PersonStates(uint16_t lastFoodBuy, uint16
 {
 }
 
-void DeseaseSpreadSimulation::PersonStates::UpdateInEveryState(Day currentDay)
+void DeseaseSpreadSimulation::PersonStates::UpdateInEveryState(Day newDay)
 {
-	m_currentDay = currentDay;
+	m_currentDay = newDay;
 
 	m_lastFoodBuy++;
 	m_lastHardwareBuy++;
@@ -56,25 +56,29 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
-	// If it's after 8 o'clock check if we need to get supplies or hardware, then check if we need to go to work or school
-	if (time >= 8)
+	bool needFood = m_lastFoodBuy >= person.GetBehavior().foodBuyInterval;
+	bool needHardware = m_lastHardwareBuy >= person.GetBehavior().hardwareBuyInterval;
+
+	if (needFood || needHardware)
 	{
-		if (m_lastFoodBuy >= person.GetBehavior().foodBuyInterval)
+		if (needFood && time >= buyTime)
 		{
 			return std::make_unique<FoodBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 
-		if (m_lastHardwareBuy >= person.GetBehavior().hardwareBuyInterval)
+		if (needHardware && time >= buyTime)
 		{
 			return std::make_unique<HardwareBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
-
-		if (person.GetWorkplace() && time < WorkState::workFinishTime && TimeManager::IsWorkday(m_currentDay))
+	}
+	else
+	{
+		if (person.GetWorkplace() && time >= WorkState::workStartTime && time <= WorkState::workFinishTime && TimeManager::IsWorkday(m_currentDay))
 		{
 			return std::make_unique<WorkState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 
-		if (person.GetSchool() && time < SchoolState::schoolFinishTime && TimeManager::IsWorkday(m_currentDay))
+		if (person.GetSchool() && time >= SchoolState::schoolStartTime && time <= SchoolState::schoolFinishTime && TimeManager::IsWorkday(m_currentDay))
 		{
 			return std::make_unique<SchoolState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
@@ -86,6 +90,12 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 void DeseaseSpreadSimulation::HomeState::Enter(Person& person)
 {
 	SetNewWhereabouts(person, person.GetHome());
+
+	// Set random buy time
+	std::random_device seed;
+	std::mt19937 generator(seed());
+	std::uniform_int_distribution<uint16_t> distribution(8, 19);
+	buyTime = distribution(generator);
 }
 
 DeseaseSpreadSimulation::FoodBuyState::FoodBuyState(uint16_t lastFoodBuy, uint16_t lastHardwareBuy, Day currentDay)

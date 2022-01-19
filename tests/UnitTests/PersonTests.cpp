@@ -11,9 +11,19 @@ namespace UnitTests {
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
         std::unique_ptr<DeseaseSpreadSimulation::Home> home = std::make_unique<DeseaseSpreadSimulation::Home>();
+        std::unique_ptr<DeseaseSpreadSimulation::HardwareStore> hwStore = std::make_unique<DeseaseSpreadSimulation::HardwareStore>();
+        std::unique_ptr<DeseaseSpreadSimulation::Supply> supplyStore = std::make_unique<DeseaseSpreadSimulation::Supply>();
+        std::unique_ptr<DeseaseSpreadSimulation::Morgue> morgue = std::make_unique<DeseaseSpreadSimulation::Morgue>();
         DeseaseSpreadSimulation::Community community;
-        DeseaseSpreadSimulation::PersonBehavior behavior{ 0u,0u,1.f };
+        DeseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,1.f };
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
+        
+        void InitCommunity()
+        {
+            community.AddPlace(std::move(hwStore));
+            community.AddPlace(std::move(supplyStore));
+            community.AddPlace(std::move(morgue));
+        }
     };
     TEST_F(PersonTest, ContaminateAPerson)
     {
@@ -24,6 +34,8 @@ namespace UnitTests {
     }
     TEST_F(PersonTest, PersonIsInfectiousAfterLatentPeriod)
     {
+        InitCommunity();
+
         DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
         patient.Contaminate(&desease);
 
@@ -38,6 +50,8 @@ namespace UnitTests {
     }
     TEST_F(PersonTest, ContactWithOtherPersonWillInfect)
     {
+        InitCommunity();
+
         // Create 3 patients
         DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
         DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
