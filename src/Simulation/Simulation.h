@@ -21,6 +21,8 @@ namespace DeseaseSpreadSimulation
 		
 		void Update();
 		void Print();
+		void PrintEveryHour();
+		void PrintOncePerDay();
 
 		void Contacts(Community& community);
 
@@ -34,6 +36,6 @@ namespace DeseaseSpreadSimulation
 		std::vector<Community> communities;
 		std::vector<Desease> deseases;
 
-		uint64_t elapsedHours = 0;
+		uint64_t elapsedTime = 0;
 	};
 }

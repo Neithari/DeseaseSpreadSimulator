@@ -3,6 +3,7 @@
 #include "Person/PersonBehavior.h"
 #include "Simulation/TimeObserver.h"
 #include "Systems/PersonStates.h"
+#include <type_traits>
 
 namespace DeseaseSpreadSimulation
 {
@@ -34,6 +35,7 @@ namespace DeseaseSpreadSimulation
 
 		void Contact(Person& other);
 		std::string GetDeseaseName() const;
+		bool WillInfect(const Desease* exposed) const;
 		void Contaminate(const Desease* infection);
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
@@ -67,6 +69,12 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		void DeseaseCheck();
+
+		template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
+		T MapOneRangeToAnother(T value, T fromRangeMin, T fromRangeMax, T toRangeMin, T toRangeMax) const
+		{
+			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
+		}
 
 	private:
 		const uint32_t id;

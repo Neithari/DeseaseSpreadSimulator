@@ -5,7 +5,7 @@ namespace DeseaseSpreadSimulation
 	class Desease
 	{
 	public:
-		Desease(std::string name, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange);
+		Desease(std::string name, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange, float spreadFactor = 1.0f);
 
 		// Check with ID
 		inline bool operator==(const Desease& rhs) const
@@ -20,6 +20,7 @@ namespace DeseaseSpreadSimulation
 		float GetMortalityByAgeGroup(Age_Group age) const;
 		int GetDeseaseDuration() const;
 		int DaysTillDeath() const;
+		float GetSpreadFactor() const;
 
 		uint32_t GetID() const;
 		// Check without ID
@@ -39,5 +40,7 @@ namespace DeseaseSpreadSimulation
 		// mortality in percent from 0-1, age from 0-9, 10-19, 20-29,...., >80 years
 		const std::vector<float> mortalityByAge;
 		const std::pair<int, int> daysTillDeathRange{};
+		// In percent from 0-1 how likely it is to get infected at exposure
+		float spreadFactor = 1.0f;
 	};
 }

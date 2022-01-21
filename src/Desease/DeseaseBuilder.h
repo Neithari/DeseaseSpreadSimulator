@@ -7,20 +7,21 @@ namespace DeseaseSpreadSimulation
 	public:
 		DeseaseBuilder() = default;
 
-		// will initialize and create the desease for you
+		// Will initialize and create the desease for you
 		Desease CreateCorona();
+		Desease CreateDeadlyTestDesease();
 
-		// desease setup functions
+		// Desease setup functions
 		void SetDeseaseName(std::string name);
 		void SetIncubationPeriod(const int period);
 		void SetDaysInfectious(const int days);
 		void SetDeseaseDuration(const int min, const int max);
-		// data in % between 0-1 and for age groups of 10 years, eg. 0-9,10-19,...,80+
+		// Data in % between 0-1 and for age groups of 10 years, eg. 0-9,10-19,...,80+
 		void SetMortalityByAge(std::vector<float> mortality);
 		void SetDaysTillDeath(const int min, const int max);
 
 		Desease CreateDeseaseFromFile(std::string fileName);
-		// call only after you called all setup functions
+		// Call only after you called all setup functions
 		Desease CreateDesease();
 
 		void SaveDeseaseToFile(std::string fileName) const;
@@ -32,7 +33,7 @@ namespace DeseaseSpreadSimulation
 		std::pair<int, int> deseaseDurationRange{ 0,0 };
 		std::vector<float> mortalityByAge = {};
 		std::pair<int, int> daysTillDeathRange{ 0,0 };
-		// for setup
+		// For setup
 		bool setupDone[6] = {};
 	};
 }

@@ -70,11 +70,18 @@ void DeseaseSpreadSimulation::Simulation::Update()
 void DeseaseSpreadSimulation::Simulation::Print()
 {
 	// Only print once per hour
-	if (TimeManager::Instance().GetElapsedHours() <= elapsedHours)
+	//PrintEveryHour();
+	// Only print once per day
+	PrintOncePerDay();
+}
+
+void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
+{
+	if (TimeManager::Instance().GetElapsedHours() <= elapsedTime)
 	{
 		return;
 	}
-	elapsedHours = TimeManager::Instance().GetElapsedHours();
+	elapsedTime = TimeManager::Instance().GetElapsedHours();
 
 	for (auto& community : communities)
 	{
@@ -108,7 +115,7 @@ void DeseaseSpreadSimulation::Simulation::Print()
 		std::cout << "Susceptible:  " << susceptible << "\n";
 		std::cout << "With Desease: " << withDesease << "\n";
 		std::cout << "Infectious:   " << infectious << "\n";
-		
+
 		// Print public places
 		for (auto& place : community.GetPlaces())
 		{
@@ -118,6 +125,60 @@ void DeseaseSpreadSimulation::Simulation::Print()
 			}
 			std::cout << Place::TypeToString(place->GetType()) << " #" << place->GetID() << ": " << place->GetPersonCount() << " persons\n";
 		}
+	}
+}
+
+void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
+{
+	if (TimeManager::Instance().GetElapsedDays() <= elapsedTime)
+	{
+		return;
+	}
+	elapsedTime = TimeManager::Instance().GetElapsedDays();
+
+	for (auto& community : communities)
+	{
+		std::cout << "\nCommunity #1 Days: " << TimeManager::Instance().GetElapsedDays() << " Time: " << TimeManager::Instance().GetTime() << "\n";
+		uint16_t population = 0;
+		uint16_t susceptible = 0;
+		uint16_t withDesease = 0;
+		uint16_t infectious = 0;
+
+		for (auto& person : community.GetPopulation())
+		{
+			if (person->isAlive())
+			{
+				population++;
+			}
+			if (person->isSusceptible())
+			{
+				susceptible++;
+			}
+			if (person->isInfectious())
+			{
+				infectious++;
+			}
+			if (person->hasDesease(deseases.back().GetDeseaseName()))
+			{
+				withDesease++;
+			}
+		}
+
+		// Check morgues for dead people
+		size_t deadPeople = 0;
+		for (auto& place : community.GetPlaces())
+		{
+			if (place->GetType() == Place_Type::Morgue)
+			{
+				deadPeople += place->GetPersonCount();
+			}
+		}
+
+		std::cout << "Population:   " << population << "\n";
+		std::cout << "Susceptible:  " << susceptible << "\n";
+		std::cout << "With Desease: " << withDesease << "\n";
+		std::cout << "Infectious:   " << infectious << "\n";
+		std::cout << "Have died:    " << deadPeople << "\n";
 	}
 }
 
@@ -154,7 +215,8 @@ void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
 {
 	DeseaseBuilder dbuilder;
-	deseases.push_back(dbuilder.CreateCorona());
+	//deseases.push_back(dbuilder.CreateCorona());
+	deseases.push_back(dbuilder.CreateDeadlyTestDesease());
 
 	CommunityBuilder cbuilder;
 	for (size_t i = 0; i < communityCount; i++)

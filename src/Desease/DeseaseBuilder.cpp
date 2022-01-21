@@ -7,8 +7,20 @@ DeseaseSpreadSimulation::Desease DeseaseSpreadSimulation::DeseaseBuilder::Create
 	SetIncubationPeriod(6);
 	SetDaysInfectious(8);
 	SetDeseaseDuration(14, 42);
-	SetMortalityByAge({ 0.0f, 0.14f, 0.12f, 0.2f, 0.38f, 0.98f, 2.98f, 7.94f, 17.34f });
+	SetMortalityByAge({ 0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f });
 	SetDaysTillDeath(14, 56);
+
+	return CreateDesease();
+}
+
+DeseaseSpreadSimulation::Desease DeseaseSpreadSimulation::DeseaseBuilder::CreateDeadlyTestDesease()
+{
+	SetDeseaseName("DeadlyTestDesease");
+	SetIncubationPeriod(1);
+	SetDaysInfectious(10);
+	SetDeseaseDuration(10, 10);
+	SetMortalityByAge({ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f });
+	SetDaysTillDeath(10, 10);
 
 	return CreateDesease();
 }

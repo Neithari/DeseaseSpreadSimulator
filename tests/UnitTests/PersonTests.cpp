@@ -15,7 +15,7 @@ namespace UnitTests {
         std::unique_ptr<DeseaseSpreadSimulation::Supply> supplyStore = std::make_unique<DeseaseSpreadSimulation::Supply>();
         std::unique_ptr<DeseaseSpreadSimulation::Morgue> morgue = std::make_unique<DeseaseSpreadSimulation::Morgue>();
         DeseaseSpreadSimulation::Community community;
-        DeseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,1.f };
+        DeseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,0.f };
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         
         void InitCommunity()

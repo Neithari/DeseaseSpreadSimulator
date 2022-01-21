@@ -44,14 +44,20 @@ void DeseaseSpreadSimulation::Person::Contact(Person& other)
 	// if the other person is infectious and I have no desease, now I have
 	if (other.isInfectious() && isSusceptible())
 	{
-		Contaminate(other.desease);
-		other.spreadCount++;
+		if (WillInfect(other.desease))
+		{
+			Contaminate(other.desease);
+			other.spreadCount++;
+		}
 	}
 	// if I am infectious and the other person has no desease, now he has
 	else if (isInfectious() && other.isSusceptible())
 	{
-		other.Contaminate(desease);
-		spreadCount++;
+		if (other.WillInfect(desease))
+		{
+			other.Contaminate(desease);
+			spreadCount++;
+		}
 	}
 }
 
@@ -62,6 +68,20 @@ std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 		return desease->GetDeseaseName();
 	}
 	return "";
+}
+
+bool DeseaseSpreadSimulation::Person::WillInfect(const Desease* exposed) const
+{
+	// Map the acceptance factor to the inverse of the desease spread factor
+	// Acceptance factor range is always 0 to 1
+	// Desease spread factor range is spreadFactor to 1/10th of spreadFactor
+	float probability = MapOneRangeToAnother(behavior.acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
+
+	std::random_device seed;
+	std::mt19937 generator(seed());
+	std::bernoulli_distribution distribution(probability);
+
+	return distribution(generator);
 }
 
 void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)

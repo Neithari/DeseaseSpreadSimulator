@@ -2,7 +2,7 @@
 #include "Desease/Desease.h"
 #include "IDGenerator/IDGenerator.h"
 
-DeseaseSpreadSimulation::Desease::Desease(std::string name, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange)
+DeseaseSpreadSimulation::Desease::Desease(std::string name, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange, float spreadFactor)
 	:
 	id(IDGenerator::IDGenerator<Desease>::GetNextID()),
 	name(std::move(name)),
@@ -10,7 +10,8 @@ DeseaseSpreadSimulation::Desease::Desease(std::string name, const int incubation
 	daysInfectious(daysInfectious),
 	durationRange(std::move(deseaseDurationRange)),
 	mortalityByAge(std::move(mortalityByAge)),
-	daysTillDeathRange(std::move(daysTillDeathRange))
+	daysTillDeathRange(std::move(daysTillDeathRange)),
+	spreadFactor(spreadFactor)
 {
 }
 
@@ -89,6 +90,11 @@ int DeseaseSpreadSimulation::Desease::DaysTillDeath() const
 
 	// return a random death time out of the range
 	return deathDistribution(randomNumberGenerator);
+}
+
+float DeseaseSpreadSimulation::Desease::GetSpreadFactor() const
+{
+	return spreadFactor;
 }
 
 uint32_t DeseaseSpreadSimulation::Desease::GetID() const
