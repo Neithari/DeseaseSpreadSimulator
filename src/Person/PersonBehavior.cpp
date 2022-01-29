@@ -20,7 +20,8 @@ DeseaseSpreadSimulation::PersonBehavior::PersonBehavior()
 	std::uniform_int_distribution hardwareBuyDistribution(minDaysToNextHardwareBuy, maxDaysToNextHardwareBuy);
 	hardwareBuyInterval = hardwareBuyDistribution(generator);
 
-	// Low percentage of people that don't accept the rules (0-20%), some that are sloppy (60-80%) and the mass that follows rules (>80%)
+	// Low percentage of people that don't accept the rules (0-20%), some that are not fully commited (60-80%)
+	// and the mass that follows rules more or less sloppy (>80%)
 	std::array<float, 7> intervals{ 0.f, .2f, .6f, .7f, .8f, .9f, 1.f };
 	std::array<float, 6> weights{ 1.f, 0.f, 10.f, 10.f, 29.f, 50.f };
 	std::piecewise_constant_distribution<float> acceptanceDistribution(intervals.begin(), intervals.end(), weights.begin());

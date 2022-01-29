@@ -3,8 +3,7 @@
 
 DeseaseSpreadSimulation::TimeManager::TimeManager()
 	:
-	currentFrameTime(std::chrono::steady_clock::now()),
-	lastFrameTime(currentFrameTime)
+	lastTime(std::chrono::steady_clock::now())
 {
 }
 
@@ -17,7 +16,7 @@ DeseaseSpreadSimulation::TimeManager& DeseaseSpreadSimulation::TimeManager::Inst
 
 void DeseaseSpreadSimulation::TimeManager::Start()
 {
-	currentFrameTime = std::chrono::steady_clock::now();
+	lastTime = std::chrono::steady_clock::now();
 	pauseTime = false;
 }
 
@@ -31,32 +30,28 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 	if (!pauseTime)
 	{
 		// Update the frame times...
-		lastFrameTime = currentFrameTime;
-		currentFrameTime = std::chrono::steady_clock::now();
+		auto currentTime = std::chrono::steady_clock::now();
 		// ...save the duration of the last frame
-		frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - lastFrameTime);
+		auto frameTime = currentTime - lastTime;
+		lastTime = currentTime;
 
-		// Sum the time the simulation is running and scale it with the multiplier
-		frameSum += static_cast<uint32_t>(frameTime.count()) * simulationTimeMultiplier;
-		// while the sum > tick advance the simulationTime
-		while (frameSum >= tick)
+		// Scale the frame time with the multiplier and sum it
+		frameSum += frameTime * simulationTimeMultiplier;
+
+		// Advance the simulation time in fixed time steps
+		while (frameSum >= timeStep)
 		{
 			simulationTime++;
 			dayTime++;
 			if (dayTime >= 24)
 			{
-				uint16_t addTime = dayTime - 24;
-				dayTime = 0 + addTime;
+				dayTime = 0 + dayTime - 24;
 				currentDay = GetNextDay();
 				NotifyDayChange();
 			}
-			frameSum -= tick;
+			frameSum -= timeStep;
 		}
 	}
-}
-int64_t DeseaseSpreadSimulation::TimeManager::GetFrameTime() const
-{
-	return frameTime.count();
 }
 
 uint64_t DeseaseSpreadSimulation::TimeManager::GetElapsedHours() const

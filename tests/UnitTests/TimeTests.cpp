@@ -1,19 +1,6 @@
 #include "pch.h"
 
 namespace UnitTests {
-    TEST(TimeTests, FrameTimeAfterWait)
-    {
-        auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
-        time.Start();
-
-        time.Update();
-        using namespace std::chrono_literals;
-        // Sleep for 1ms to ensure a > 1ms frametime
-        std::this_thread::sleep_for(1ms);
-        time.Update();
-        // Check if frametime is > 1ms
-        ASSERT_GE(time.GetFrameTime(), 1LL);
-    }
     TEST(TimeTests, SimulationTimeProgress)
     {
         auto& time = DeseaseSpreadSimulation::TimeManager::Instance();

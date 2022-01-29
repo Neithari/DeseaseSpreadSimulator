@@ -3,7 +3,9 @@
 
 int main()
 {	
-	DeseaseSpreadSimulation::Simulation simulation{1000, true};
+	constexpr uint64_t populationSize = 1000u;
+
+	DeseaseSpreadSimulation::Simulation simulation{populationSize, true};
 
 	simulation.SetSimulationSpeedMultiplier(2);
 	simulation.Run();

@@ -260,7 +260,7 @@ namespace UnitTests {
         int incubationPeriod = 6;
         int daysInfectious = 8;
         std::pair<int, int> deseaseDurationRange{ 14, 42 };
-        std::vector<float> mortalityByAge{ 0.f, 0.14f, 0.12f, 0.2f, 0.38f, 0.98f, 2.98f, 7.94f, 17.34f };
+        std::vector<float> mortalityByAge{ 0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f };
         std::pair<int, int> daysTillDeathRange{ 14, 56 };
         DeseaseSpreadSimulation::Desease corona{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
 

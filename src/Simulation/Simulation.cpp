@@ -3,7 +3,7 @@
 #include "Places/CommunityBuilder.h"
 #include "Desease/DeseaseBuilder.h"
 
-DeseaseSpreadSimulation::Simulation::Simulation(uint16_t populationSize, bool withPrint)
+DeseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	:
 	withPrint(withPrint),
 	populationSize(populationSize)
@@ -83,48 +83,29 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 	}
 	elapsedTime = TimeManager::Instance().GetElapsedHours();
 
-	for (auto& community : communities)
+	for (size_t i = 0; i < communities.size(); i++)
 	{
-		std::cout << "\nCommunity #1 Days: " << TimeManager::Instance().GetElapsedDays() << " Time: " << TimeManager::Instance().GetTime() << "\n";
-		uint16_t population = 0;
-		uint16_t susceptible = 0;
-		uint16_t withDesease = 0;
-		uint16_t infectious = 0;
+		auto& community = communities.at(i);
 
-		for (auto& person : community.GetPopulation())
-		{
-			if (person->isAlive())
-			{
-				population++;
-			}
-			if (person->isSusceptible())
-			{
-				susceptible++;
-			}
-			if (person->isInfectious())
-			{
-				infectious++;
-			}
-			if (person->hasDesease(deseases.back().GetDeseaseName()))
-			{
-				withDesease++;
-			}
-		}
+		std::cout << "\nCommunity #" << i + 1 << " Day: " << TimeManager::Instance().GetElapsedDays() << " Time : " << TimeManager::Instance().GetTime() << " o'clock\n";
 
-		std::cout << "Population:   " << population << "\n";
-		std::cout << "Susceptible:  " << susceptible << "\n";
-		std::cout << "With Desease: " << withDesease << "\n";
-		std::cout << "Infectious:   " << infectious << "\n";
+		PrintPopulation(community.GetPopulation());
 
 		// Print public places
+		size_t deadPeople = 0;
 		for (auto& place : community.GetPlaces())
 		{
 			if (place->GetType() == Place_Type::Home)
 			{
 				continue;
 			}
+			if (place->GetType() == Place_Type::Morgue)
+			{
+				deadPeople += place->GetPersonCount();
+			}
 			std::cout << Place::TypeToString(place->GetType()) << " #" << place->GetID() << ": " << place->GetPersonCount() << " persons\n";
 		}
+		std::cout << "Have died:    " << deadPeople << "\n";
 	}
 }
 
@@ -136,33 +117,13 @@ void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
 	}
 	elapsedTime = TimeManager::Instance().GetElapsedDays();
 
-	for (auto& community : communities)
+	for (size_t i = 0; i < communities.size(); i++)
 	{
-		std::cout << "\nCommunity #1 Days: " << TimeManager::Instance().GetElapsedDays() << " Time: " << TimeManager::Instance().GetTime() << "\n";
-		uint16_t population = 0;
-		uint16_t susceptible = 0;
-		uint16_t withDesease = 0;
-		uint16_t infectious = 0;
+		auto& community = communities.at(i);
 
-		for (auto& person : community.GetPopulation())
-		{
-			if (person->isAlive())
-			{
-				population++;
-			}
-			if (person->isSusceptible())
-			{
-				susceptible++;
-			}
-			if (person->isInfectious())
-			{
-				infectious++;
-			}
-			if (person->hasDesease(deseases.back().GetDeseaseName()))
-			{
-				withDesease++;
-			}
-		}
+		std::cout << "\nCommunity #" << i + 1 << " Day: " << TimeManager::Instance().GetElapsedDays() << " Time : " << TimeManager::Instance().GetTime() << " o'clock\n";
+		
+		PrintPopulation(community.GetPopulation());
 
 		// Check morgues for dead people
 		size_t deadPeople = 0;
@@ -173,13 +134,41 @@ void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
 				deadPeople += place->GetPersonCount();
 			}
 		}
-
-		std::cout << "Population:   " << population << "\n";
-		std::cout << "Susceptible:  " << susceptible << "\n";
-		std::cout << "With Desease: " << withDesease << "\n";
-		std::cout << "Infectious:   " << infectious << "\n";
-		std::cout << "Have died:    " << deadPeople << "\n";
+		std::cout << "Have died:    " << deadPeople  << "\n";
 	}
+}
+
+void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<std::unique_ptr<Person>>& population) const
+{
+	size_t populationCount = 0;
+	size_t susceptible = 0;
+	size_t withDesease = 0;
+	size_t infectious = 0;
+
+	for (auto& person : population)
+	{
+		if (person->isAlive())
+		{
+			populationCount++;
+		}
+		if (person->isSusceptible())
+		{
+			susceptible++;
+		}
+		if (person->isInfectious())
+		{
+			infectious++;
+		}
+		if (person->hasDesease(deseases.back().GetDeseaseName()))
+		{
+			withDesease++;
+		}
+	}
+
+	std::cout << "Population:   " << populationCount << "\n";
+	std::cout << "Susceptible:  " << susceptible << "\n";
+	std::cout << "With Desease: " << withDesease << "\n";
+	std::cout << "Infectious:   " << infectious << "\n";
 }
 
 void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)

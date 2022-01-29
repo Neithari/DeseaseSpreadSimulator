@@ -14,8 +14,6 @@ namespace DeseaseSpreadSimulation
 
 		// Call once every frame
 		void Update();
-		// In milliseconds
-		int64_t GetFrameTime() const;
 		// Returns elapsed hours since the start of the simulation.
 		uint64_t GetElapsedHours() const;
 		// Returns elapsed days since the start of the simulation. Rounded down.
@@ -41,13 +39,13 @@ namespace DeseaseSpreadSimulation
 	private:
 		bool pauseTime = true;
 
-		std::chrono::time_point<std::chrono::steady_clock> currentFrameTime;
-		std::chrono::time_point<std::chrono::steady_clock> lastFrameTime;
-		std::chrono::milliseconds frameTime = {};
+		std::chrono::steady_clock::time_point lastTime;
 		// Tick in ms
-		uint32_t tick = 50u;
-		uint32_t frameSum = 0u;
-		// In simulation hours. 1 hour per tick
+		static constexpr uint16_t timeStepTick = 41u;
+		static constexpr auto timeStep = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(timeStepTick));
+		std::chrono::nanoseconds frameSum{};
+		
+		// In simulation hours. 1 hour per time step
 		uint64_t simulationTime = 0u;
 		uint32_t simulationTimeMultiplier = 1u;
 

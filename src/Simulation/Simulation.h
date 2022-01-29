@@ -6,7 +6,7 @@ namespace DeseaseSpreadSimulation
 	class Simulation
 	{
 	public:
-		Simulation(uint16_t populationSize, bool withPrint = false);
+		Simulation(uint64_t populationSize, bool withPrint = false);
 
 		void Run();
 		void Stop();
@@ -23,6 +23,8 @@ namespace DeseaseSpreadSimulation
 		void Print();
 		void PrintEveryHour();
 		void PrintOncePerDay();
+		void PrintPopulation(const std::vector<std::unique_ptr<Person>>& population) const;
+
 
 		void Contacts(Community& community);
 
@@ -32,10 +34,10 @@ namespace DeseaseSpreadSimulation
 		bool pause = false;
 
 		static constexpr Country country = Country::USA;
-		uint16_t populationSize = 0;
+		uint64_t populationSize = 0u;
 		std::vector<Community> communities;
 		std::vector<Desease> deseases;
 
-		uint64_t elapsedTime = 0;
+		uint64_t elapsedTime = 0u;
 	};
 }
