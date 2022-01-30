@@ -39,54 +39,6 @@ void DeseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 	m_places.morgues.push_back(morgue);
 }
 
-void DeseaseSpreadSimulation::Community::RemovePlace(const Home& home)
-{
-	m_places.homes.erase(
-		std::remove_if(m_places.homes.begin(), m_places.homes.end(),
-			[&](const Home& place) { return place.GetID() == home.GetID(); }), m_places.homes.end()
-	);
-}
-
-void DeseaseSpreadSimulation::Community::RemovePlace(const Supply& store)
-{
-	m_places.supplyStores.erase(
-		std::remove_if(m_places.supplyStores.begin(), m_places.supplyStores.end(),
-			[&](const Supply& place) { return place.GetID() == store.GetID(); }), m_places.supplyStores.end()
-	);
-}
-
-void DeseaseSpreadSimulation::Community::RemovePlace(const Workplace& workplace)
-{
-	m_places.workplaces.erase(
-		std::remove_if(m_places.workplaces.begin(), m_places.workplaces.end(),
-			[&](const Workplace& place) { return place.GetID() == workplace.GetID(); }), m_places.workplaces.end()
-	);
-}
-
-void DeseaseSpreadSimulation::Community::RemovePlace(const School& school)
-{
-	m_places.schools.erase(
-		std::remove_if(m_places.schools.begin(), m_places.schools.end(),
-			[&](const School& place) { return place.GetID() == school.GetID(); }), m_places.schools.end()
-	);
-}
-
-void DeseaseSpreadSimulation::Community::RemovePlace(const HardwareStore& store)
-{
-	m_places.hardwareStores.erase(
-		std::remove_if(m_places.hardwareStores.begin(), m_places.hardwareStores.end(),
-			[&](const HardwareStore& place) { return place.GetID() == store.GetID(); }), m_places.hardwareStores.end()
-	);
-}
-
-void DeseaseSpreadSimulation::Community::RemovePlace(const Morgue& morgue)
-{
-	m_places.morgues.erase(
-		std::remove_if(m_places.morgues.begin(), m_places.morgues.end(),
-			[&](const Morgue& place) { return place.GetID() == morgue.GetID(); }), m_places.morgues.end()
-	);
-}
-
 void DeseaseSpreadSimulation::Community::AddPlaces(Places places)
 {
 	m_places.Insert(places);
@@ -121,7 +73,7 @@ DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPers
 	{
 		auto transferPerson = std::move(*toTransfer);
 		m_population.erase(toTransfer);
-		return std::move(transferPerson);
+		return transferPerson;
 	}
 	// This should never happen, because the person to transfer is calling it.
 	// So we throw and silence compiler warnings

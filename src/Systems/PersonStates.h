@@ -6,7 +6,7 @@ namespace DeseaseSpreadSimulation
 	class PersonStates : public TimeObserver
 	{
 	public:
-		virtual std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) = 0;
+		virtual std::shared_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) = 0;
 		virtual void Enter(Person& person) = 0;
 		void OnNewDay(Day newDay) override;
 
@@ -38,7 +38,7 @@ namespace DeseaseSpreadSimulation
 		HomeState& operator=(const HomeState& other) = default;
 		HomeState& operator=(HomeState&& other) noexcept = default;
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
+		std::shared_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	private:
 		// Time in hours
@@ -55,7 +55,7 @@ namespace DeseaseSpreadSimulation
 		FoodBuyState& operator=(const FoodBuyState& other) = default;
 		FoodBuyState& operator=(FoodBuyState&& other) noexcept = default;
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
+		std::shared_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	private:
 		// Time in hours
@@ -72,7 +72,7 @@ namespace DeseaseSpreadSimulation
 		HardwareBuyState& operator=(const HardwareBuyState& other) = default;
 		HardwareBuyState& operator=(HardwareBuyState&& other) noexcept = default;
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
+		std::shared_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	private:
 		// Time in hours
@@ -89,7 +89,7 @@ namespace DeseaseSpreadSimulation
 		WorkState& operator=(const WorkState& other) = default;
 		WorkState& operator=(WorkState&& other) noexcept = default;
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
+		std::shared_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	public:
 		// Time in x/24h
@@ -107,7 +107,7 @@ namespace DeseaseSpreadSimulation
 		SchoolState& operator=(const SchoolState& other) = default;
 		SchoolState& operator=(SchoolState&& other) noexcept = default;
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
+		std::shared_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	public:
 		// Time in x/24h
@@ -125,7 +125,7 @@ namespace DeseaseSpreadSimulation
 		MorgueState& operator=(const MorgueState& other) = default;
 		MorgueState& operator=(MorgueState&& other) noexcept = default;
 
-		std::unique_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
+		std::shared_ptr<PersonStates> HandleStateChange(Person& person, uint16_t time) override;
 		void Enter(Person& person) override;
 	};
 }

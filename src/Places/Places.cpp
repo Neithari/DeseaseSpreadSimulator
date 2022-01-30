@@ -138,20 +138,20 @@ DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::School::GetType() c
 void DeseaseSpreadSimulation::Places::Insert(Places other)
 {
 	homes.reserve(homes.size() + other.homes.size());
-	homes.insert(homes.end(), other.homes.begin(), other.homes.end());
-
+	AppendVectorAtEnd(homes, other.homes);
+	
 	supplyStores.reserve(supplyStores.size() + other.supplyStores.size());
-	supplyStores.insert(supplyStores.end(), other.supplyStores.begin(), other.supplyStores.end());
-
+	AppendVectorAtEnd(supplyStores, other.supplyStores);
+	
 	workplaces.reserve(workplaces.size() + other.workplaces.size());
-	workplaces.insert(workplaces.end(), other.workplaces.begin(), other.workplaces.end());
-
+	AppendVectorAtEnd(workplaces, other.workplaces);
+	
 	schools.reserve(schools.size() + other.schools.size());
-	schools.insert(schools.end(), other.schools.begin(), other.schools.end());
-
+	AppendVectorAtEnd(schools, other.schools);
+	
 	hardwareStores.reserve(hardwareStores.size() + other.hardwareStores.size());
-	hardwareStores.insert(hardwareStores.end(), other.hardwareStores.begin(), other.hardwareStores.end());
-
+	AppendVectorAtEnd(hardwareStores, other.hardwareStores);
+	
 	morgues.reserve(morgues.size() + other.morgues.size());
-	morgues.insert(morgues.end(), other.morgues.begin(), other.morgues.end());
+	AppendVectorAtEnd(morgues, other.morgues);
 }

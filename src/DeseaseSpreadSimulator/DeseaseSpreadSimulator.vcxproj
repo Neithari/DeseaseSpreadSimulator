@@ -42,14 +42,14 @@
     <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -279,7 +279,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="..\Systems\MoveSystem.cpp" />
     <ClCompile Include="..\Systems\PersonStates.cpp" />
     <ClCompile Include="DeseaseSpreadSimulator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -307,7 +306,6 @@
     <ClInclude Include="..\Simulation\TimeObserver.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />
-    <ClInclude Include="..\Systems\MoveSystem.h" />
     <ClInclude Include="..\Systems\PersonStates.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Statistics.h" />

@@ -15,7 +15,7 @@ namespace DeseaseSpreadSimulation
 		// Create a Person with age, sex, community and set it's home and whereabout to home
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
 		~Person();
-		Person(const Person& other) = default;
+		Person(const Person& other);
 		Person(Person&& other) noexcept = default;
 		Person& operator=(const Person& other) = default;
 		Person& operator=(Person&& other) noexcept = default;
@@ -77,7 +77,7 @@ namespace DeseaseSpreadSimulation
 		}
 
 	private:
-		const uint32_t id;
+		uint32_t id;
 		Age_Group age;
 		Sex sex;
 		PersonBehavior behavior;
@@ -90,7 +90,7 @@ namespace DeseaseSpreadSimulation
 		Workplace* workplace = nullptr;
 		School* school = nullptr;
 
-		std::unique_ptr<PersonStates> personState = nullptr;
+		std::shared_ptr<PersonStates> personState = nullptr;
 
 		// Desease Stuff
 		//-----------------------------------------

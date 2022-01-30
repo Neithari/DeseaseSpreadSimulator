@@ -15,7 +15,7 @@ namespace UnitTests {
     class PersonStatesTest : public ::testing::Test
     {
     protected:
-        std::unique_ptr<DeseaseSpreadSimulation::Home> home = std::make_unique<DeseaseSpreadSimulation::Home>();
+        DeseaseSpreadSimulation::Home home;
         DeseaseSpreadSimulation::Community community;
         DeseaseSpreadSimulation::PersonBehavior behavior{ 1u,2u,1.f };
         uint16_t time{ 8 };
@@ -32,13 +32,13 @@ namespace UnitTests {
     {
         using namespace DeseaseSpreadSimulation;
 
-        auto store = std::make_unique<Supply>();
-        auto storeID = store->GetID();
-        community.AddPlace(std::move(store));
+        Supply store;
+        auto storeID = store.GetID();
+        community.AddPlace(store);
         behavior.foodBuyInterval = 0;
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
         
-        std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
+        std::shared_ptr<PersonStates> state = std::make_shared<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
         bool isDerived = IsDerived<HomeState, PersonStates>(state.get());
         ASSERT_TRUE(isDerived);
@@ -59,7 +59,7 @@ namespace UnitTests {
         EXPECT_TRUE(isDerived);
         behavior.foodBuyInterval = 1;
         behavior.hardwareBuyInterval = 0;
-        Person hardwarePerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
+        Person hardwarePerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
         testState = newState->HandleStateChange(hardwarePerson, 0);
         ASSERT_EQ(testState.get(), nullptr);
         testState = newState->HandleStateChange(hardwarePerson, TimeManager::Instance().GetTime() + 1);
@@ -82,13 +82,13 @@ namespace UnitTests {
     {
         using namespace DeseaseSpreadSimulation;
 
-        auto store = std::make_unique<HardwareStore>();
-        auto storeID = store->GetID();
-        community.AddPlace(std::move(store));
+        HardwareStore store;
+        auto storeID = store.GetID();
+        community.AddPlace(store);
         behavior.hardwareBuyInterval = 0;
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
 
-        std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
+        std::shared_ptr<PersonStates> state = std::make_shared<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
         bool isDerived = IsDerived<HomeState, PersonStates>(state.get());
         ASSERT_TRUE(isDerived);
@@ -109,7 +109,7 @@ namespace UnitTests {
         EXPECT_TRUE(isDerived);
         behavior.foodBuyInterval = 0;
         behavior.hardwareBuyInterval = 1;
-        Person foodPerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
+        Person foodPerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
         testState = newState->HandleStateChange(foodPerson, 0);
         ASSERT_EQ(testState.get(), nullptr);
         testState = newState->HandleStateChange(foodPerson, TimeManager::Instance().GetTime() + 1);
@@ -132,13 +132,13 @@ namespace UnitTests {
     {
         using namespace DeseaseSpreadSimulation;
 
-        auto work = std::make_unique<Workplace>();
-        auto workID = work->GetID();
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
-        person.SetWorkplace(work.get());
-        community.AddPlace(std::move(work));
+        Workplace work;
+        auto workID = work.GetID();
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
+        person.SetWorkplace(&work);
+        community.AddPlace(work);
 
-        std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
+        std::shared_ptr<PersonStates> state = std::make_shared<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
         bool isDerived = IsDerived<HomeState, PersonStates>(state.get());
         ASSERT_TRUE(isDerived);
@@ -172,13 +172,13 @@ namespace UnitTests {
     {
         using namespace DeseaseSpreadSimulation;
 
-        auto school = std::make_unique<School>();
-        auto schoolID = school->GetID();
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
-        person.SetSchool(school.get());
-        community.AddPlace(std::move(school));
+        School school;
+        auto schoolID = school.GetID();
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
+        person.SetSchool(&school);
+        community.AddPlace(school);
 
-        std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
+        std::shared_ptr<PersonStates> state = std::make_shared<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
         bool isDerived = IsDerived<HomeState, PersonStates>(state.get());
         ASSERT_TRUE(isDerived);
@@ -212,7 +212,7 @@ namespace UnitTests {
     {
         using namespace DeseaseSpreadSimulation;
 
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
 
         std::unique_ptr<PersonStates> state = std::make_unique<HomeState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
@@ -223,7 +223,7 @@ namespace UnitTests {
         ASSERT_EQ(testState.get(), nullptr);
 
         state->Enter(person);
-        ASSERT_EQ(person.GetWhereabouts()->GetID(), home->GetID());
+        ASSERT_EQ(person.GetWhereabouts()->GetID(), home.GetID());
 
         person.Contaminate(&desease);
         while (person.isAlive())
@@ -237,12 +237,12 @@ namespace UnitTests {
     TEST_F(PersonStatesTest, MorgueTest)
     {
         using namespace DeseaseSpreadSimulation;
-        auto morgue = std::make_unique<Morgue>();
-        auto morgueID = morgue->GetID();
-        community.AddPlace(std::move(morgue));
-        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, home.get());
+        Morgue morgue;
+        auto morgueID = morgue.GetID();
+        community.AddPlace(morgue);
+        Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
 
-        std::unique_ptr<PersonStates> state = std::make_unique<MorgueState>(0, 0, Day::Monday);
+        std::shared_ptr<PersonStates> state = std::make_shared<MorgueState>(0, 0, Day::Monday);
         // Can't insert function call direct. There seems to be a bug.
         bool isDerived = IsDerived<MorgueState, PersonStates>(state.get());
         ASSERT_TRUE(isDerived);

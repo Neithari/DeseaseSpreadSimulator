@@ -49,11 +49,11 @@ DeseaseSpreadSimulation::HomeState::~HomeState()
 	TimeManager::Instance().RemoveObserver(this);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HomeState::HandleStateChange(Person& person, uint16_t time)
+std::shared_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HomeState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+		return std::make_shared<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	bool needFood = m_lastFoodBuy >= person.GetBehavior().foodBuyInterval;
@@ -63,24 +63,24 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 	{
 		if (needFood && time >= buyTime)
 		{
-			return std::make_unique<FoodBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<FoodBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 
 		if (needHardware && time >= buyTime)
 		{
-			return std::make_unique<HardwareBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<HardwareBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 	}
 	else
 	{
 		if (person.GetWorkplace() && time >= WorkState::workStartTime && time <= WorkState::workFinishTime && TimeManager::IsWorkday(m_currentDay))
 		{
-			return std::make_unique<WorkState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<WorkState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 
 		if (person.GetSchool() && time >= SchoolState::schoolStartTime && time <= SchoolState::schoolFinishTime && TimeManager::IsWorkday(m_currentDay))
 		{
-			return std::make_unique<SchoolState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<SchoolState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 	}
 
@@ -112,11 +112,11 @@ DeseaseSpreadSimulation::FoodBuyState::~FoodBuyState()
 	TimeManager::Instance().RemoveObserver(this);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::FoodBuyState::HandleStateChange(Person& person, uint16_t time)
+std::shared_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::FoodBuyState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+		return std::make_shared<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	// When the buy time is over go to the hardware store if we need to, else go home
@@ -124,11 +124,11 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 	{
 		if (m_lastHardwareBuy >= person.GetBehavior().hardwareBuyInterval)
 		{
-			return std::make_unique<HardwareBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<HardwareBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 		else
 		{
-			return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 	}
 
@@ -156,11 +156,11 @@ DeseaseSpreadSimulation::HardwareBuyState::~HardwareBuyState()
 	TimeManager::Instance().RemoveObserver(this);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HardwareBuyState::HandleStateChange(Person& person, uint16_t time)
+std::shared_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::HardwareBuyState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+		return std::make_shared<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	// When the buy time is over go to the supply store if we need to, else go home
@@ -168,11 +168,11 @@ std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::
 	{
 		if (m_lastFoodBuy >= person.GetBehavior().foodBuyInterval)
 		{
-			return std::make_unique<FoodBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<FoodBuyState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 		else
 		{
-			return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+			return std::make_shared<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 		}
 	}
 
@@ -199,16 +199,16 @@ DeseaseSpreadSimulation::WorkState::~WorkState()
 	TimeManager::Instance().RemoveObserver(this);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::WorkState::HandleStateChange(Person& person, uint16_t time)
+std::shared_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::WorkState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+		return std::make_shared<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	if (time >= workFinishTime)
 	{
-		return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+		return std::make_shared<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	return nullptr;
@@ -231,16 +231,16 @@ DeseaseSpreadSimulation::SchoolState::~SchoolState()
 	TimeManager::Instance().RemoveObserver(this);
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::SchoolState::HandleStateChange(Person& person, uint16_t time)
+std::shared_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::SchoolState::HandleStateChange(Person& person, uint16_t time)
 {
 	if (!person.isAlive())
 	{
-		return std::make_unique<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+		return std::make_shared<MorgueState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	if (time >= schoolFinishTime)
 	{
-		return std::make_unique<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
+		return std::make_shared<HomeState>(m_lastFoodBuy, m_lastHardwareBuy, m_currentDay);
 	}
 
 	return nullptr;
@@ -264,7 +264,7 @@ DeseaseSpreadSimulation::MorgueState::~MorgueState()
 }
 
 // Commenting out person and time to silence compiler warning C4100
-std::unique_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::MorgueState::HandleStateChange(Person& /*person*/, uint16_t /*time*/)
+std::shared_ptr<DeseaseSpreadSimulation::PersonStates> DeseaseSpreadSimulation::MorgueState::HandleStateChange(Person& /*person*/, uint16_t /*time*/)
 {
 	// There is no return to another place from a morgue right now
 	return nullptr;

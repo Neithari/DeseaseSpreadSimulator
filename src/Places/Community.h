@@ -16,12 +16,6 @@ namespace DeseaseSpreadSimulation
 		void AddPlace(School school);
 		void AddPlace(HardwareStore store);
 		void AddPlace(Morgue morgue);
-		void RemovePlace(const Home& home);
-		void RemovePlace(const Supply& store);
-		void RemovePlace(const Workplace& workplace);
-		void RemovePlace(const School& school);
-		void RemovePlace(const HardwareStore& store);
-		void RemovePlace(const Morgue& morgue);
 
 		void AddPerson(Person person);
 		void RemovePerson(uint32_t personID);
