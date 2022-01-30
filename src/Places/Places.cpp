@@ -134,3 +134,24 @@ DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::School::GetType() c
 {
 	return Place_Type::School;
 }
+
+void DeseaseSpreadSimulation::Places::Insert(Places other)
+{
+	homes.reserve(homes.size() + other.homes.size());
+	homes.insert(homes.end(), other.homes.begin(), other.homes.end());
+
+	supplyStores.reserve(supplyStores.size() + other.supplyStores.size());
+	supplyStores.insert(supplyStores.end(), other.supplyStores.begin(), other.supplyStores.end());
+
+	workplaces.reserve(workplaces.size() + other.workplaces.size());
+	workplaces.insert(workplaces.end(), other.workplaces.begin(), other.workplaces.end());
+
+	schools.reserve(schools.size() + other.schools.size());
+	schools.insert(schools.end(), other.schools.begin(), other.schools.end());
+
+	hardwareStores.reserve(hardwareStores.size() + other.hardwareStores.size());
+	hardwareStores.insert(hardwareStores.end(), other.hardwareStores.begin(), other.hardwareStores.end());
+
+	morgues.reserve(morgues.size() + other.morgues.size());
+	morgues.insert(morgues.end(), other.morgues.begin(), other.morgues.end());
+}

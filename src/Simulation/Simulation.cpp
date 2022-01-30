@@ -55,7 +55,7 @@ void DeseaseSpreadSimulation::Simulation::Update()
 		auto& population = community.GetPopulation();
 		for (auto& person : population)
 		{
-			person->Update();
+			person.Update();
 		}
 	
 		Contacts(community);
@@ -92,20 +92,23 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 		PrintPopulation(community.GetPopulation());
 
 		// Print public places
-		size_t deadPeople = 0;
-		for (auto& place : community.GetPlaces())
+		auto& places = community.GetPlaces();
+		for (auto& place : places.workplaces)
 		{
-			if (place->GetType() == Place_Type::Home)
-			{
-				continue;
-			}
-			if (place->GetType() == Place_Type::Morgue)
-			{
-				deadPeople += place->GetPersonCount();
-			}
-			std::cout << Place::TypeToString(place->GetType()) << " #" << place->GetID() << ": " << place->GetPersonCount() << " persons\n";
+			std::cout << Place::TypeToString(place.GetType()) << " #" << place.GetID() << ": " << place.GetPersonCount() << " persons\n";
 		}
-		std::cout << "Have died:    " << deadPeople << "\n";
+		for (auto& place : places.schools)
+		{
+			std::cout << Place::TypeToString(place.GetType()) << " #" << place.GetID() << ": " << place.GetPersonCount() << " persons\n";
+		}
+		for (auto& place : places.supplyStores)
+		{
+			std::cout << Place::TypeToString(place.GetType()) << " #" << place.GetID() << ": " << place.GetPersonCount() << " persons\n";
+		}
+		for (auto& place : places.hardwareStores)
+		{
+			std::cout << Place::TypeToString(place.GetType()) << " #" << place.GetID() << ": " << place.GetPersonCount() << " persons\n";
+		}
 	}
 }
 
@@ -127,41 +130,44 @@ void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
 
 		// Check morgues for dead people
 		size_t deadPeople = 0;
-		for (auto& place : community.GetPlaces())
+		for (auto& place : community.GetPlaces().morgues)
 		{
-			if (place->GetType() == Place_Type::Morgue)
-			{
-				deadPeople += place->GetPersonCount();
-			}
+			deadPeople += place.GetPersonCount();
 		}
 		std::cout << "Have died:    " << deadPeople  << "\n";
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<std::unique_ptr<Person>>& population) const
+void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population) const
 {
 	size_t populationCount = 0;
 	size_t susceptible = 0;
 	size_t withDesease = 0;
 	size_t infectious = 0;
+	size_t deadPeople = 0;
 
 	for (auto& person : population)
 	{
-		if (person->isAlive())
+		if (person.isAlive())
 		{
 			populationCount++;
+
+			if (person.isSusceptible())
+			{
+				susceptible++;
+			}
+			if (person.isInfectious())
+			{
+				infectious++;
+			}
+			if (person.hasDesease(deseases.back().GetDeseaseName()))
+			{
+				withDesease++;
+			}
 		}
-		if (person->isSusceptible())
+		else
 		{
-			susceptible++;
-		}
-		if (person->isInfectious())
-		{
-			infectious++;
-		}
-		if (person->hasDesease(deseases.back().GetDeseaseName()))
-		{
-			withDesease++;
+			deadPeople++;
 		}
 	}
 
@@ -169,34 +175,57 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<std:
 	std::cout << "Susceptible:  " << susceptible << "\n";
 	std::cout << "With Desease: " << withDesease << "\n";
 	std::cout << "Infectious:   " << infectious << "\n";
+	std::cout << "Have died:    " << deadPeople << "\n";
 }
 
 void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 {
-	for (auto& place : community.GetPlaces())
+	auto& places = community.GetPlaces();
+	for (auto& place : places.homes)
 	{
-		// Get all susceptible and infectious people
-		std::vector<Person*> susceptible;
-		std::vector<Person*> infectious;
-		for (auto person : place->GetPeople())
+		ContactForPlace(place);
+	}
+	for (auto& place : places.supplyStores)
+	{
+		ContactForPlace(place);
+	}
+	for (auto& place : places.workplaces)
+	{
+		ContactForPlace(place);
+	}
+	for (auto& place : places.schools)
+	{
+		ContactForPlace(place);
+	}
+	for (auto& place : places.hardwareStores)
+	{
+		ContactForPlace(place);
+	}
+}
+
+void DeseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
+{
+	// Get all susceptible and infectious people
+	std::vector<Person*> susceptible;
+	std::vector<Person*> infectious;
+	for (auto person : place.GetPeople())
+	{
+		if (person->isSusceptible())
 		{
-			if (person->isSusceptible())
-			{
-				susceptible.push_back(person);
-			}
-			else if (person->isInfectious())
-			{
-				infectious.push_back(person);
-			}
+			susceptible.push_back(person);
 		}
-		
-		// Every infectious person has a chance to infect a susceptible person
-		for (auto infectiousPerson : infectious)
+		else if (person->isInfectious())
 		{
-			for (auto susceptiblePerson : susceptible)
-			{
-				infectiousPerson->Contact(*susceptiblePerson);
-			}
+			infectious.push_back(person);
+		}
+	}
+
+	// Every infectious person has a chance to infect a susceptible person
+	for (auto infectiousPerson : infectious)
+	{
+		for (auto susceptiblePerson : susceptible)
+		{
+			infectiousPerson->Contact(*susceptiblePerson);
 		}
 	}
 }
@@ -216,7 +245,7 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		// Set the community until we have a better solution
 		for (auto& person : population)
 		{
-			person->SetCommunity(&communities.back());
+			person.SetCommunity(&communities.back());
 		}
 
 		InfectRandomPerson(&deseases.back(), population);
@@ -226,11 +255,11 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 	stop = false;
 }
 
-void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<std::unique_ptr<Person>>& population)
+void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<Person>& population)
 {
 	std::random_device seed;
 	std::mt19937 generator(seed());
 	std::uniform_int_distribution<size_t> distribution(0, population.size() - 1);
 
-	population.at(distribution(generator))->Contaminate(desease);
+	population.at(distribution(generator)).Contaminate(desease);
 }

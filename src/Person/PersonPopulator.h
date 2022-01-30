@@ -9,13 +9,13 @@ namespace DeseaseSpreadSimulation
 	public:		
 		PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
-		std::vector<std::unique_ptr<Person>> CreatePopulation(size_t populationSize, Country country, Community* community, const std::vector<std::unique_ptr<Place>>& places);
+		std::vector<Person> CreatePopulation(size_t populationSize, Country country, Community& community);
 
 		// Get a new person for the chosen distribution. Call should return a empty pointer when population size is reached
-		std::unique_ptr<Person> GetNewPerson(Community* community, Home* home = nullptr);
+		Person GetNewPerson(Community* community, Home* home = nullptr);
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
-		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes);
+		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes);
 
 		// Helper function to select the distribution inside the constructor initializer list
 		static Statistics::HouseholdComposition GetHouseholdDistribution(Country country);
@@ -43,6 +43,7 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		const size_t m_populationSize = 0;
+		bool allAssigned = false;
 		size_t leftover = 0;
 		bool lastFew = false;
 		const std::vector<Statistics::HumanDistribution> ageDistribution;

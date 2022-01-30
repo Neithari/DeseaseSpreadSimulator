@@ -17,16 +17,17 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		void SetupEverything(uint16_t communityCount);
-		void InfectRandomPerson(const Desease* desease, std::vector<std::unique_ptr<Person>>& population);
+		void InfectRandomPerson(const Desease* desease, std::vector<Person>& population);
 		
 		void Update();
 		void Print();
 		void PrintEveryHour();
 		void PrintOncePerDay();
-		void PrintPopulation(const std::vector<std::unique_ptr<Person>>& population) const;
+		void PrintPopulation(const std::vector<Person>& population) const;
 
 
 		void Contacts(Community& community);
+		void ContactForPlace(Place& place);
 
 	private:
 		bool withPrint = false;

@@ -36,7 +36,6 @@ namespace DeseaseSpreadSimulation
 
 	public:
 		Place_Type GetType() const override;
-	private:
 	};
 
 	class Supply : public Place
@@ -82,5 +81,18 @@ namespace DeseaseSpreadSimulation
 	public:
 		Place_Type GetType() const override;
 	private:
+	};
+
+	struct Places
+	{
+		// Insert the other places at the end of each vector
+		void Insert(Places other);
+
+		std::vector<Home> homes;
+		std::vector<Supply> supplyStores;
+		std::vector<Workplace> workplaces;
+		std::vector<School> schools;
+		std::vector<HardwareStore> hardwareStores;
+		std::vector<Morgue> morgues;
 	};
 }

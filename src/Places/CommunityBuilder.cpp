@@ -11,7 +11,7 @@ DeseaseSpreadSimulation::Community DeseaseSpreadSimulation::CommunityBuilder::Cr
 
 	community.AddPlaces(placeFactory.CreatePlaces(populationSize, country));
 
-	community.AddPopulation(populationFactory.CreatePopulation(populationSize, country, &community, community.GetPlaces()));
+	community.AddPopulation(populationFactory.CreatePopulation(populationSize, country, community));
 
 	return community;
 }
