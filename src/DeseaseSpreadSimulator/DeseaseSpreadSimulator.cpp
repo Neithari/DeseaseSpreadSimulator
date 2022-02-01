@@ -3,7 +3,7 @@
 
 int main()
 {	
-	constexpr uint64_t populationSize = 1000u;
+	constexpr uint64_t populationSize = 10000u;
 
 	DeseaseSpreadSimulation::Simulation simulation{populationSize, true};
 

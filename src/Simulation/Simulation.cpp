@@ -49,35 +49,43 @@ void DeseaseSpreadSimulation::Simulation::SetSimulationSpeedMultiplier(uint16_t 
 void DeseaseSpreadSimulation::Simulation::Update()
 {
 	TimeManager::Instance().Update();
+	auto currentHour = TimeManager::Instance().GetElapsedHours();
+	auto currentDay = TimeManager::Instance().GetElapsedDays();
+	auto currentTime = TimeManager::Instance().GetTime();
 
-	for (auto& community : communities)
+	while (elapsedHours <= currentHour)
 	{
-		auto& population = community->GetPopulation();
-		for (auto& person : population)
+		for (auto& community : communities)
 		{
-			person.Update();
-		}
-	
-		Contacts(*community);
-	}
+			auto& population = community->GetPopulation();
+			for (auto& person : population)
+			{
+				person.Update(currentTime, currentDay);
+			}
 
-	if (withPrint)
-	{
-		Print();
+			Contacts(*community);
+		}
+
+		if (withPrint)
+		{
+			Print(currentHour, currentDay);
+		}
+
+		elapsedHours++;
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::Print()
+void DeseaseSpreadSimulation::Simulation::Print(uint64_t /*currentHour*/, uint64_t currentDay)
 {
 	// Only print once per hour
-	//PrintEveryHour();
+	//PrintEveryHour(currentHour);
 	// Only print once per day
-	PrintOncePerDay();
+	PrintOncePerDay(currentDay);
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
+void DeseaseSpreadSimulation::Simulation::PrintEveryHour(uint64_t currentHour)
 {
-	if (TimeManager::Instance().GetElapsedHours() <= elapsedHours)
+	if (currentHour <= elapsedHours)
 	{
 		return;
 	}
@@ -112,13 +120,13 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
+void DeseaseSpreadSimulation::Simulation::PrintOncePerDay(uint64_t currentDay)
 {
-	if (TimeManager::Instance().GetElapsedDays() <= elapsedDays)
+	if (currentDay <= elapsedDays)
 	{
 		return;
 	}
-	elapsedDays = TimeManager::Instance().GetElapsedDays();
+	elapsedDays = currentDay;
 
 	for (size_t i = 0; i < communities.size(); i++)
 	{
@@ -180,13 +188,6 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 
 void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 {
-	// Check only once every hour for contacts
-	if (TimeManager::Instance().GetElapsedHours() <= elapsedHours)
-	{
-		return;
-	}
-	elapsedHours = TimeManager::Instance().GetElapsedHours();
-
 	auto& places = community.GetPlaces();
 	for (auto& place : places.homes)
 	{
@@ -250,7 +251,7 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		
 		auto& population = communities.back()->GetPopulation();
 
-		// Assigne homes to our population and add them as time observers at this place until we find a better solution
+		// Assigne homes to our population at this place until we find a better solution
 		//-------------------------------------------------------------------------------------------------------------
 		std::vector<Home*> homes;
 		for (auto& home : communities.back()->GetPlaces().homes)
@@ -262,12 +263,12 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		for (auto& person : population)
 		{
 			person.SetHome(PersonPopulator::AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
-			TimeManager::Instance().AddObserver(&person);
 		}
 		//-------------------------------------------------------------------------------------------------------------
 		InfectRandomPerson(&deseases.back(), population);
 	}
 
+	std::cout << "Setup complete\n";
 	TimeManager::Instance().Start();
 	stop = false;
 }

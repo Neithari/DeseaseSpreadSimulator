@@ -12,13 +12,14 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	community(community),
 	home(home),
 	whereabouts(home),
-	personState(std::make_shared<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay()))
+	personState(std::make_shared<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay())),
+	elapsedDay(TimeManager::Instance().GetElapsedDays())
 {
 }
 
-void DeseaseSpreadSimulation::Person::Update()
+void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, uint64_t currentDay)
 {
-	auto newPersonState = personState->HandleStateChange(*this, TimeManager::Instance().GetTime());
+	auto newPersonState = personState->HandleStateChange(*this, currentTime);
 	if (newPersonState)
 	{
 		personState = std::move(newPersonState);
@@ -27,6 +28,11 @@ void DeseaseSpreadSimulation::Person::Update()
 
 	if (desease)
 	{
+		if (currentDay > elapsedDay)
+		{
+			AdvanceDay();
+			elapsedDay = currentDay;
+		}
 		DeseaseCheck();
 	}
 }
@@ -271,10 +277,4 @@ void DeseaseSpreadSimulation::Person::AdvanceDay()
 			alive = false;
 		}
 	}
-}
-
-// Comment out newDay to silence compiler warning C4100
-void DeseaseSpreadSimulation::Person::OnNewDay(Day /*newDay*/)
-{
-	AdvanceDay();
 }

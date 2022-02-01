@@ -9,7 +9,7 @@ namespace DeseaseSpreadSimulation
 {
 	class Community;
 
-	class Person : public TimeObserver
+	class Person
 	{
 	public:
 		// Create a Person with age, sex, community and set it's home and whereabout to home
@@ -26,7 +26,7 @@ namespace DeseaseSpreadSimulation
 			return id == rhs.id;
 		}
 
-		void Update();
+		void Update(uint16_t currentTime, uint64_t currentDay);
 
 		void Contact(Person& other);
 		std::string GetDeseaseName() const;
@@ -34,7 +34,6 @@ namespace DeseaseSpreadSimulation
 		void Contaminate(const Desease* infection);
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
-		void OnNewDay(Day newDay) override;
 
 		bool isSusceptible() const;
 		bool isInfectious() const;
@@ -86,6 +85,8 @@ namespace DeseaseSpreadSimulation
 		School* school = nullptr;
 
 		std::shared_ptr<PersonStates> personState = nullptr;
+
+		uint64_t elapsedDay = 0u;
 
 		// Desease Stuff
 		//-----------------------------------------
