@@ -14,37 +14,6 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	whereabouts(home),
 	personState(std::make_shared<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay()))
 {
-	TimeManager::Instance().AddObserver(this);
-}
-
-DeseaseSpreadSimulation::Person::~Person()
-{
-	TimeManager::Instance().RemoveObserver(this);
-}
-
-DeseaseSpreadSimulation::Person::Person(const Person& other)
-	:
-	id(other.id),
-	age(other.age),
-	sex(other.sex),
-	behavior(other.behavior),
-	alive(other.alive),
-	community(other.community),
-	home(other.home),
-	whereabouts(other.whereabouts),
-	workplace(other.workplace),
-	school(other.school),
-	personState(other.personState),
-	seirState(other.seirState),
-	quarantined(other.quarantined),
-	spreadCount(other.spreadCount),
-	desease(other.desease),
-	latentPeriod(other.latentPeriod),
-	daysInfectious(other.daysInfectious),
-	daysTillCured(other.daysTillCured),
-	daysToLive(other.daysToLive),
-	willDie(other.willDie)
-{
 }
 
 void DeseaseSpreadSimulation::Person::Update()

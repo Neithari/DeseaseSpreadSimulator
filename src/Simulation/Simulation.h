@@ -20,11 +20,11 @@ namespace DeseaseSpreadSimulation
 		void InfectRandomPerson(const Desease* desease, std::vector<Person>& population);
 		
 		void Update();
+
 		void Print();
 		void PrintEveryHour();
 		void PrintOncePerDay();
 		void PrintPopulation(const std::vector<Person>& population) const;
-
 
 		void Contacts(Community& community);
 		void ContactForPlace(Place& place);
@@ -39,6 +39,7 @@ namespace DeseaseSpreadSimulation
 		std::vector<std::unique_ptr<Community>> communities;
 		std::vector<Desease> deseases;
 
-		uint64_t elapsedTime = 0u;
+		uint64_t elapsedDays = 0u;
+		uint64_t elapsedHours = 0u;
 	};
 }

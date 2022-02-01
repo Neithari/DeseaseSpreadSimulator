@@ -14,11 +14,6 @@ namespace DeseaseSpreadSimulation
 	public:
 		// Create a Person with age, sex, community and set it's home and whereabout to home
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
-		~Person();
-		Person(const Person& other);
-		Person(Person&& other) noexcept = default;
-		Person& operator=(const Person& other) = default;
-		Person& operator=(Person&& other) noexcept = default;
 		
 		auto operator<=>(const Person& rhs) const
 		{

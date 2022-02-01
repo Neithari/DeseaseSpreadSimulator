@@ -70,18 +70,18 @@ void DeseaseSpreadSimulation::Simulation::Update()
 void DeseaseSpreadSimulation::Simulation::Print()
 {
 	// Only print once per hour
-	PrintEveryHour();
+	//PrintEveryHour();
 	// Only print once per day
-	//PrintOncePerDay();
+	PrintOncePerDay();
 }
 
 void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 {
-	if (TimeManager::Instance().GetElapsedHours() <= elapsedTime)
+	if (TimeManager::Instance().GetElapsedHours() <= elapsedHours)
 	{
 		return;
 	}
-	elapsedTime = TimeManager::Instance().GetElapsedHours();
+	elapsedHours = TimeManager::Instance().GetElapsedHours();
 
 	for (size_t i = 0; i < communities.size(); i++)
 	{
@@ -114,11 +114,11 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 
 void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
 {
-	if (TimeManager::Instance().GetElapsedDays() <= elapsedTime)
+	if (TimeManager::Instance().GetElapsedDays() <= elapsedDays)
 	{
 		return;
 	}
-	elapsedTime = TimeManager::Instance().GetElapsedDays();
+	elapsedDays = TimeManager::Instance().GetElapsedDays();
 
 	for (size_t i = 0; i < communities.size(); i++)
 	{
@@ -242,7 +242,9 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		communities.push_back(cbuilder.CreateCommunity(populationSize, country));
 		
 		auto& population = communities.back()->GetPopulation();
-		// Assigne homes to our population at this place untill we find a better solution
+
+		// Assigne homes to our population and add them as time observers at this place until we find a better solution
+		//-------------------------------------------------------------------------------------------------------------
 		std::vector<Home*> homes;
 		for (auto& home : communities.back()->GetPlaces().homes)
 		{
@@ -253,8 +255,9 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		for (auto& person : population)
 		{
 			person.SetHome(PersonPopulator::AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
+			TimeManager::Instance().AddObserver(&person);
 		}
-
+		//-------------------------------------------------------------------------------------------------------------
 		InfectRandomPerson(&deseases.back(), population);
 	}
 
