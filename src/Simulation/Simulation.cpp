@@ -52,13 +52,13 @@ void DeseaseSpreadSimulation::Simulation::Update()
 
 	for (auto& community : communities)
 	{
-		auto& population = community.GetPopulation();
+		auto& population = community->GetPopulation();
 		for (auto& person : population)
 		{
 			person.Update();
 		}
 	
-		Contacts(community);
+		Contacts(*community);
 	}
 
 	if (withPrint)
@@ -70,9 +70,9 @@ void DeseaseSpreadSimulation::Simulation::Update()
 void DeseaseSpreadSimulation::Simulation::Print()
 {
 	// Only print once per hour
-	//PrintEveryHour();
+	PrintEveryHour();
 	// Only print once per day
-	PrintOncePerDay();
+	//PrintOncePerDay();
 }
 
 void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
@@ -89,10 +89,10 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 
 		std::cout << "\nCommunity #" << i + 1 << " Day: " << TimeManager::Instance().GetElapsedDays() << " Time : " << TimeManager::Instance().GetTime() << " o'clock\n";
 
-		PrintPopulation(community.GetPopulation());
+		PrintPopulation(community->GetPopulation());
 
 		// Print public places
-		auto& places = community.GetPlaces();
+		auto& places = community->GetPlaces();
 		for (auto& place : places.workplaces)
 		{
 			std::cout << Place::TypeToString(place.GetType()) << " #" << place.GetID() << ": " << place.GetPersonCount() << " persons\n";
@@ -126,11 +126,11 @@ void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
 
 		std::cout << "\nCommunity #" << i + 1 << " Day: " << TimeManager::Instance().GetElapsedDays() << " Time : " << TimeManager::Instance().GetTime() << " o'clock\n";
 		
-		PrintPopulation(community.GetPopulation());
+		PrintPopulation(community->GetPopulation());
 
 		// Check morgues for dead people
 		size_t deadPeople = 0;
-		for (auto& place : community.GetPlaces().morgues)
+		for (auto& place : community->GetPlaces().morgues)
 		{
 			deadPeople += place.GetPersonCount();
 		}
@@ -241,11 +241,18 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 	{
 		communities.push_back(cbuilder.CreateCommunity(populationSize, country));
 		
-		auto& population = communities.back().GetPopulation();
-		// Set the community until we have a better solution
+		auto& population = communities.back()->GetPopulation();
+		// Assigne homes to our population at this place untill we find a better solution
+		std::vector<Home*> homes;
+		for (auto& home : communities.back()->GetPlaces().homes)
+		{
+			homes.push_back(&home);
+		}
+		auto homesByMemberCount = PersonPopulator::HomesByMemberCount(populationSize, country, std::move(homes));
+
 		for (auto& person : population)
 		{
-			person.SetCommunity(&communities.back());
+			person.SetHome(PersonPopulator::AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
 		}
 
 		InfectRandomPerson(&deseases.back(), population);

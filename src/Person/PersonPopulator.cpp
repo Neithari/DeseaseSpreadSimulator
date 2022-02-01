@@ -48,19 +48,6 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 		population.push_back(std::move(person));
 	}
 
-	// Assigne homes to our population
-	std::vector<Home*> homes;
-	for (auto& home : community.GetPlaces().homes)
-	{
-		homes.push_back(&home);
-	}
-	auto homesByMemberCount = HomesByMemberCount(populationSize, country, std::move(homes));
-
-	for (auto& person : population)
-	{
-		person.SetHome(AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
-	}
-
 	return population;
 }
 
@@ -150,7 +137,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 	// Scale count by percent and then omit the decimal
 	return static_cast<size_t>(count * static_cast<double>(percent));
 }
-size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex) const
+size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex)
 {
 	if (maxIndex <= 0)
 	{
@@ -163,7 +150,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t ma
 
 	return uniform(generator);
 }
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount) const
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount)
 {
 	// Create the distribution
 	std::array<double, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,

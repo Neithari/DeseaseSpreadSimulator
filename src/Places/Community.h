@@ -21,7 +21,7 @@ namespace DeseaseSpreadSimulation
 		void RemovePerson(uint32_t personID);
 
 		void AddPlaces(Places places);
-		void AddPopulation(std::vector<Person> population);
+		void AddPopulation(std::vector<Person>& population);
 		
 		Person TransferPerson(uint32_t personID);
 		

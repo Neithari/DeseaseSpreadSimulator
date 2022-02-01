@@ -36,7 +36,7 @@ namespace DeseaseSpreadSimulation
 
 		static constexpr Country country = Country::USA;
 		uint64_t populationSize = 0u;
-		std::vector<Community> communities;
+		std::vector<std::unique_ptr<Community>> communities;
 		std::vector<Desease> deseases;
 
 		uint64_t elapsedTime = 0u;

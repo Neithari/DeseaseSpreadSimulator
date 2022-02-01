@@ -16,6 +16,7 @@ namespace DeseaseSpreadSimulation
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
 		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes);
+		static Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount);
 
 		// Helper function to select the distribution inside the constructor initializer list
 		static Statistics::HouseholdComposition GetHouseholdDistribution(Country country);
@@ -25,7 +26,7 @@ namespace DeseaseSpreadSimulation
 		// Returns a rounded down percentage of count
 		static size_t DistributionToCountHelper(size_t count, float percent);
 		// Get a random index between 0 and maxIndex
-		size_t GetUniformRandomIndex(size_t maxIndex) const;
+		static size_t GetUniformRandomIndex(size_t maxIndex);
 
 		// Returns an index weighted by the given distribution
 		template <typename T, size_t SIZE>
@@ -38,7 +39,6 @@ namespace DeseaseSpreadSimulation
 			return distribution(generator);
 		};
 
-		Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount) const;
 		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
 
 	private:

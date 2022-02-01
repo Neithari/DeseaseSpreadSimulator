@@ -50,7 +50,7 @@ void DeseaseSpreadSimulation::Community::AddPerson(Person person)
 	m_population.push_back(std::move(person));
 }
 
-void DeseaseSpreadSimulation::Community::AddPopulation(std::vector<Person> population)
+void DeseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
 {
 	m_population.reserve(m_population.size() + population.size());
 	m_population.insert(m_population.end(), population.begin(), population.end());
