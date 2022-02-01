@@ -33,21 +33,11 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 	}
 	auto workplacesBySize(PlaceBuilder::WorkplacesBySize(populationSize, country, std::move(workplaces)));
 
-	std::vector<Home*> homes;
-	for (auto& home : community.GetPlaces().homes)
-	{
-		homes.push_back(&home);
-	}
-	auto homesByMemberCount = HomesByMemberCount(populationSize, country, std::move(homes));
-
 	// Create the population
 	while (!allAssigned)
 	{
 		// Get a new person
 		auto person = GetNewPerson(&community);
-
-		// Assigne a home to the person
-		person.SetHome(AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
 
 		// Assigne a workplace when the person is in working age and there are workplaces
 		if (!noWorkplace && person.GetAgeGroup() > Age_Group::UnderTwenty && person.GetAgeGroup() <= Age_Group::UnderSeventy)
@@ -56,6 +46,19 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 		}
 		// Add the created person to the community
 		population.push_back(std::move(person));
+	}
+
+	// Assigne homes to our population
+	std::vector<Home*> homes;
+	for (auto& home : community.GetPlaces().homes)
+	{
+		homes.push_back(&home);
+	}
+	auto homesByMemberCount = HomesByMemberCount(populationSize, country, std::move(homes));
+
+	for (auto& person : population)
+	{
+		person.SetHome(AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
 	}
 
 	return population;
