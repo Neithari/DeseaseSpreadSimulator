@@ -81,7 +81,7 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 	{
 		return;
 	}
-	elapsedHours = TimeManager::Instance().GetElapsedHours();
+	// Don't update elapsed hours here because we update it in Contacts()
 
 	for (size_t i = 0; i < communities.size(); i++)
 	{
@@ -180,6 +180,13 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 
 void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 {
+	// Check only once every hour for contacts
+	if (TimeManager::Instance().GetElapsedHours() <= elapsedHours)
+	{
+		return;
+	}
+	elapsedHours = TimeManager::Instance().GetElapsedHours();
+
 	auto& places = community.GetPlaces();
 	for (auto& place : places.homes)
 	{
