@@ -135,14 +135,6 @@ void DeseaseSpreadSimulation::Simulation::PrintOncePerDay(uint64_t currentDay)
 		std::cout << "\nCommunity #" << i + 1 << " Day: " << TimeManager::Instance().GetElapsedDays() << " Time : " << TimeManager::Instance().GetTime() << " o'clock\n";
 		
 		PrintPopulation(community->GetPopulation());
-
-		// Check morgues for dead people
-		size_t deadPeople = 0;
-		for (auto& place : community->GetPlaces().morgues)
-		{
-			deadPeople += place.GetPersonCount();
-		}
-		std::cout << "Have died:    " << deadPeople  << "\n";
 	}
 }
 
