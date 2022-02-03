@@ -268,6 +268,7 @@
     <ClCompile Include="..\Places\CommunityBuilder.cpp" />
     <ClCompile Include="..\Places\PlaceBuilder.cpp" />
     <ClCompile Include="..\Places\Places.cpp" />
+    <ClCompile Include="..\Simulation\MeasureTime.cpp" />
     <ClCompile Include="..\Simulation\Simulation.cpp" />
     <ClCompile Include="..\Simulation\TimeManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -303,6 +304,7 @@
     <ClInclude Include="..\Places\CommunityBuilder.h" />
     <ClInclude Include="..\Places\PlaceBuilder.h" />
     <ClInclude Include="..\Places\Places.h" />
+    <ClInclude Include="..\Simulation\MeasureTime.h" />
     <ClInclude Include="..\Simulation\TimeObserver.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />

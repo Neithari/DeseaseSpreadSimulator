@@ -2,7 +2,6 @@
 #pragma once
 
 // Standard Library Header
-#include <iostream>
 #include <format>
 #include <fstream>
 #include <memory>
@@ -24,6 +23,9 @@
 
 // GSL: Guidelines Support Library
 //#include <gsl/gsl>
+ 
+// Extern libs
+#include "fmt/core.h"
 
 // My
 #include "DeseaseSpreadSimulator/Enums.h"
@@ -31,3 +33,4 @@
 #include "Person/Person.h"
 #include "Places/Community.h"
 #include "Places/Places.h"
+#include "Simulation/MeasureTime.h"

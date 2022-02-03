@@ -22,6 +22,9 @@ namespace DeseaseSpreadSimulation
 		static Statistics::HouseholdComposition GetHouseholdDistribution(Country country);
 		static std::vector<Statistics::HumanDistribution> GetCountryDistribution(Country country);
 
+		// Assigne homes to our population at this place until we find a better solution
+		static void AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country);
+
 	private:
 		// Returns a rounded down percentage of count
 		static size_t DistributionToCountHelper(size_t count, float percent);
@@ -40,6 +43,7 @@ namespace DeseaseSpreadSimulation
 		};
 
 		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
+
 
 	private:
 		const size_t m_populationSize = 0;

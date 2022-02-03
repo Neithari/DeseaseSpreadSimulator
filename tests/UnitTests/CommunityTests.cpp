@@ -133,19 +133,19 @@ namespace UnitTests {
 
         size_t populationSize1 = 100;
         auto c1 = cbuilder.CreateCommunity(populationSize1, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c1.GetPopulation().size(), populationSize1);
+        ASSERT_EQ(c1->GetPopulation().size(), populationSize1);
 
         size_t populationSize2 = 1000;
         auto c2 = cbuilder.CreateCommunity(populationSize2, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c2.GetPopulation().size(), populationSize2);
+        ASSERT_EQ(c2->GetPopulation().size(), populationSize2);
 
         size_t populationSize3 = 11;
         auto c3 = cbuilder.CreateCommunity(populationSize3, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c3.GetPopulation().size(), populationSize3);
+        ASSERT_EQ(c3->GetPopulation().size(), populationSize3);
 
         size_t populationSize4 = 673;
         auto c4 = cbuilder.CreateCommunity(populationSize4, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c4.GetPopulation().size(), populationSize4);
+        ASSERT_EQ(c4->GetPopulation().size(), populationSize4);
     }
     // Helper function to get the percentages per category form a population so it can be compared to the distribution weights
     std::array<float, 4> GetHomePercentFromPopulation(std::vector<DeseaseSpreadSimulation::Person>& population, DeseaseSpreadSimulation::Country country)
@@ -222,8 +222,9 @@ namespace UnitTests {
         {
             threads.emplace_back([&]() {
                 auto c1 = cbuilder.CreateCommunity(populationSize1, country);
+                DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(c1->GetPopulation(), c1->GetHomes(), DeseaseSpreadSimulation::Country::USA);
 
-                auto homePercent1 = GetHomePercentFromPopulation(c1.GetPopulation(), country);
+                auto homePercent1 = GetHomePercentFromPopulation(c1->GetPopulation(), country);
                 for (size_t i = 0; i < homePercent1.size(); i++)
                 {
                     std::shared_lock lock(distributionArrayMutex, std::defer_lock);
@@ -239,7 +240,7 @@ namespace UnitTests {
 
         size_t populationSize2 = 10000;
         auto c2 = cbuilder.CreateCommunity(populationSize2, country);
-        auto homePercent2 = GetHomePercentFromPopulation(c2.GetPopulation(), country);
+        auto homePercent2 = GetHomePercentFromPopulation(c2->GetPopulation(), country);
         for (size_t i = 0; i < homePercent2.size(); i++)
         {
             EXPECT_NEAR(homePercent2.at(i), distributionArray.at(i), 0.13f);

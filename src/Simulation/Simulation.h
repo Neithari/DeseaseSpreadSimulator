@@ -21,9 +21,9 @@ namespace DeseaseSpreadSimulation
 		
 		void Update();
 
-		void Print(uint64_t currentHour, uint64_t currentDay);
-		void PrintEveryHour(uint64_t currentHour);
-		void PrintOncePerDay(uint64_t currentDay);
+		void Print(uint64_t currentDay, uint16_t currentTime);
+		void PrintEveryHour(uint16_t currentTime);
+		void PrintOncePerDay(uint64_t currentDay, uint16_t currentTime);
 		void PrintPopulation(const std::vector<Person>& population) const;
 
 		void Contacts(Community& community);

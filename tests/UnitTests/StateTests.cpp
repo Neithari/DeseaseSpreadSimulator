@@ -50,7 +50,7 @@ namespace UnitTests {
         newState->Enter(person);
         ASSERT_EQ(person.GetWhereabouts()->GetID(), storeID);
 
-        auto testState = newState->HandleStateChange(person, TimeManager::Instance().GetTime() + 1);
+        auto testState = newState->HandleStateChange(person, time + 1);
         isDerived = IsDerived<HomeState, PersonStates>(testState.get());
         ASSERT_TRUE(isDerived);
 
@@ -62,7 +62,7 @@ namespace UnitTests {
         Person hardwarePerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
         testState = newState->HandleStateChange(hardwarePerson, 0);
         ASSERT_EQ(testState.get(), nullptr);
-        testState = newState->HandleStateChange(hardwarePerson, TimeManager::Instance().GetTime() + 1);
+        testState = newState->HandleStateChange(hardwarePerson, time + 1);
         isDerived = IsDerived<HardwareBuyState, PersonStates>(testState.get());
         ASSERT_TRUE(isDerived);
 
@@ -100,7 +100,7 @@ namespace UnitTests {
         newState->Enter(person);
         ASSERT_EQ(person.GetWhereabouts()->GetID(), storeID);
 
-        auto testState = newState->HandleStateChange(person, TimeManager::Instance().GetTime() + 1);
+        auto testState = newState->HandleStateChange(person, time + 1);
         isDerived = IsDerived<HomeState, PersonStates>(testState.get());
         ASSERT_TRUE(isDerived);
 
@@ -112,7 +112,7 @@ namespace UnitTests {
         Person foodPerson(DeseaseSpreadSimulation::Age_Group::UnderTwenty, Sex::Male, behavior, &community, &home);
         testState = newState->HandleStateChange(foodPerson, 0);
         ASSERT_EQ(testState.get(), nullptr);
-        testState = newState->HandleStateChange(foodPerson, TimeManager::Instance().GetTime() + 1);
+        testState = newState->HandleStateChange(foodPerson, time + 1);
         isDerived = IsDerived<FoodBuyState, PersonStates>(testState.get());
         ASSERT_TRUE(isDerived);
 

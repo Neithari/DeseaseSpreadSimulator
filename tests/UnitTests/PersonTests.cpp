@@ -44,7 +44,7 @@ namespace UnitTests {
         // Advance patient beyond incubation period
         patient.AdvanceDay();
 
-        patient.Update();
+        patient.Update(0, 1);
         // Patient is contagious after incubation period
         ASSERT_EQ(patient.isInfectious(), true);
     }
@@ -61,7 +61,7 @@ namespace UnitTests {
         // Advance patient beyond latent period
         patient1.AdvanceDay();
 
-        patient1.Update();
+        patient1.Update(0, 1);
 
         // Check non infected has contact with infected
         patient2.Contact(patient1);

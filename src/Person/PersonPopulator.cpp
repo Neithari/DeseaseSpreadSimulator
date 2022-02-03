@@ -181,6 +181,21 @@ DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::As
 	return workplacesBySize.at(distIndex).at(GetUniformRandomIndex(workplacesBySize.at(distIndex).size() - 1));
 }
 
+void DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
+{
+	std::vector<Home*> homes;
+	for (auto& home : homesToAssigne)
+	{
+		homes.push_back(&home);
+	}
+	auto homesByMemberCount = PersonPopulator::HomesByMemberCount(population.size(), country, std::move(homes));
+
+	for (auto& person : population)
+	{
+		person.SetHome(PersonPopulator::AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
+	}
+}
+
 std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)
 {
 	switch (country)
