@@ -81,6 +81,55 @@ DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPers
 	GSL_ASSUME(false);
 }
 
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
+{
+	person->GetWhereabouts()->RemovePerson(person);
+	place->AddPerson(person);
+	return place;
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHome(Person* person)
+{
+	auto home = person->GetHome();
+	TransferToPlace(person, home);
+	return home;
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSupplyStore(Person* person)
+{
+	auto store = GetSupplyStore();
+	TransferToPlace(person, store);
+	return store;
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHardwareStore(Person* person)
+{
+	auto store = GetHardwareStore();
+	TransferToPlace(person, store);
+	return store;
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToWork(Person* person)
+{
+	auto work = person->GetWorkplace();
+	TransferToPlace(person, work);
+	return work;
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSchool(Person* person)
+{
+	auto school = person->GetSchool();
+	TransferToPlace(person, school);
+	return school;
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToMorgue(Person* person)
+{
+	auto morgue = GetMorgue();
+	TransferToPlace(person, morgue);
+	return morgue;
+}
+
 std::vector<DeseaseSpreadSimulation::Person>& DeseaseSpreadSimulation::Community::GetPopulation()
 {
 	return m_population;

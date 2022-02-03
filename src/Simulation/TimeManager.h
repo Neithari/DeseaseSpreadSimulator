@@ -44,6 +44,7 @@ namespace DeseaseSpreadSimulation
 		uint16_t simulationTimeMultiplier = 1u;
 
 		Day currentDay = Day::Monday;
+		bool isWorkday = true;
 		uint16_t dayTime = 0u;
 		
 		std::vector<TimeObserver*> observers;

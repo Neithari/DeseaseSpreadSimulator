@@ -70,6 +70,10 @@ namespace DeseaseSpreadSimulation
 			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
 		}
 
+		void CheckNextMove(uint16_t currentTime);
+		void GoSupplyShopping(uint16_t currentTime);
+		void GoHardwareShopping(uint16_t currentTime);
+
 	private:
 		uint32_t id;
 		Age_Group age;
@@ -84,7 +88,7 @@ namespace DeseaseSpreadSimulation
 		Workplace* workplace = nullptr;
 		School* school = nullptr;
 
-		std::shared_ptr<PersonStates> personState = nullptr;
+		//std::shared_ptr<PersonStates> personState = nullptr;
 
 		uint64_t elapsedDay = 0u;
 
@@ -102,5 +106,17 @@ namespace DeseaseSpreadSimulation
 		bool willDie = false;
 		//-----------------------------------------
 
+		// State things
+
+		// In days
+		uint16_t m_lastFoodBuy = 0u;
+		uint16_t m_lastHardwareBuy = 0u;
+		uint16_t buyTime = 0u;
+		uint16_t buyFinishTime = 0u;
+		// Time in x/24h
+		static constexpr uint16_t workStartTime = 8u;
+		static constexpr uint16_t workFinishTime = 17u;
+		static constexpr uint16_t schoolStartTime = 8u;
+		static constexpr uint16_t schoolFinishTime = 15u;
 	};
 }
