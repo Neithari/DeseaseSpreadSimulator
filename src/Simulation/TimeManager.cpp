@@ -32,6 +32,14 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 		{
 			dayTime = 0 + dayTime - 24;
 			currentDay = GetNextDay();
+			if (currentDay == Day::Saturday || currentDay == Day::Sunday)
+			{
+				isWorkday = false;
+			}
+			else
+			{
+				isWorkday = true;
+			}
 			NotifyDayChange();
 		}
 	}
@@ -64,7 +72,7 @@ uint16_t DeseaseSpreadSimulation::TimeManager::GetTime() const
 
 bool DeseaseSpreadSimulation::TimeManager::IsWorkday() const
 {
-	return IsWorkday(currentDay);
+	return isWorkday;
 }
 
 bool DeseaseSpreadSimulation::TimeManager::IsWorkday(const Day day)
