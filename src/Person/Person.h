@@ -2,7 +2,6 @@
 #include "Places/Places.h"
 #include "Person/PersonBehavior.h"
 #include "Simulation/TimeObserver.h"
-#include "Systems/PersonStates.h"
 #include <type_traits>
 
 namespace DeseaseSpreadSimulation
