@@ -2,8 +2,6 @@
 #include "Simulation/TimeManager.h"
 
 DeseaseSpreadSimulation::TimeManager::TimeManager()
-	:
-	lastTime(std::chrono::steady_clock::now())
 {
 }
 
@@ -16,7 +14,6 @@ DeseaseSpreadSimulation::TimeManager& DeseaseSpreadSimulation::TimeManager::Inst
 
 void DeseaseSpreadSimulation::TimeManager::Start()
 {
-	lastTime = std::chrono::steady_clock::now();
 	pauseTime = false;
 }
 
@@ -29,27 +26,21 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 {
 	if (!pauseTime)
 	{
-		// Update the frame times...
-		auto currentTime = std::chrono::steady_clock::now();
-		// ...save the duration of the last frame
-		auto frameTime = currentTime - lastTime;
-		lastTime = currentTime;
-
-		// Scale the frame time with the multiplier and sum it
-		frameSum += frameTime * simulationTimeMultiplier;
-
-		// Advance the simulation time in fixed time steps
-		while (frameSum >= timeStep)
+		simulationTime++;
+		dayTime++;
+		if (dayTime >= 24)
 		{
-			simulationTime++;
-			dayTime++;
-			if (dayTime >= 24)
+			dayTime = 0 + dayTime - 24;
+			currentDay = GetNextDay();
+			if (currentDay == Day::Saturday || currentDay == Day::Sunday)
 			{
-				dayTime = 0 + dayTime - 24;
-				currentDay = GetNextDay();
-				NotifyDayChange();
+				isWorkday = false;
 			}
-			frameSum -= timeStep;
+			else
+			{
+				isWorkday = true;
+			}
+			NotifyDayChange();
 		}
 	}
 }
@@ -81,7 +72,7 @@ uint16_t DeseaseSpreadSimulation::TimeManager::GetTime() const
 
 bool DeseaseSpreadSimulation::TimeManager::IsWorkday() const
 {
-	return IsWorkday(currentDay);
+	return isWorkday;
 }
 
 bool DeseaseSpreadSimulation::TimeManager::IsWorkday(const Day day)

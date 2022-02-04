@@ -20,6 +20,8 @@ void DeseaseSpreadSimulation::Simulation::Run()
 			// Idle when pause is called until resumed
 		}
 
+		/// <measure>
+		Measure::MeasureTime measure("\t\t\t\t\t\t\tUpdate");
 		Update();
 	}
 }
@@ -49,154 +51,187 @@ void DeseaseSpreadSimulation::Simulation::SetSimulationSpeedMultiplier(uint16_t 
 void DeseaseSpreadSimulation::Simulation::Update()
 {
 	TimeManager::Instance().Update();
+	auto currentHour = TimeManager::Instance().GetElapsedHours();
+	auto currentDay = TimeManager::Instance().GetElapsedDays();
+	auto currentTime = TimeManager::Instance().GetTime();
 
-	for (auto& community : communities)
+	while (elapsedHours <= currentHour)
 	{
-		auto& population = community.GetPopulation();
-		for (auto& person : population)
+		for (auto& community : communities)
 		{
-			person->Update();
-		}
-	
-		Contacts(community);
-	}
+			auto& population = community->GetPopulation();
+			/// <measure>
+			{
+				Measure::MeasureTime measure("Person.Update");
+			for (auto& person : population)
+			{
+				person.Update(currentTime, currentDay);
+			}
+			}/// </measure>
 
-	if (withPrint)
-	{
-		Print();
+			Contacts(*community);
+		}
+
+		if (withPrint)
+		{
+			Print(currentDay, currentTime);
+		}
+
+		elapsedHours++;
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::Print()
+void DeseaseSpreadSimulation::Simulation::Print(uint64_t currentDay, uint16_t currentTime)
 {
 	// Only print once per hour
-	//PrintEveryHour();
+	//PrintEveryHour(currentTime);
 	// Only print once per day
-	PrintOncePerDay();
+	PrintOncePerDay(currentDay, currentTime);
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
+void DeseaseSpreadSimulation::Simulation::PrintEveryHour(uint16_t currentTime)
 {
-	if (TimeManager::Instance().GetElapsedHours() <= elapsedTime)
-	{
-		return;
-	}
-	elapsedTime = TimeManager::Instance().GetElapsedHours();
-
 	for (size_t i = 0; i < communities.size(); i++)
 	{
 		auto& community = communities.at(i);
 
-		std::cout << "\nCommunity #" << i + 1 << " Day: " << TimeManager::Instance().GetElapsedDays() << " Time : " << TimeManager::Instance().GetTime() << " o'clock\n";
+		fmt::print("\nCommunity #{} Day: {} Time : {} o'clock\n", i + 1, elapsedDays, currentTime);
 
-		PrintPopulation(community.GetPopulation());
+		PrintPopulation(community->GetPopulation());
 
 		// Print public places
-		size_t deadPeople = 0;
-		for (auto& place : community.GetPlaces())
+		auto& places = community->GetPlaces();
+		for (auto& place : places.workplaces)
 		{
-			if (place->GetType() == Place_Type::Home)
-			{
-				continue;
-			}
-			if (place->GetType() == Place_Type::Morgue)
-			{
-				deadPeople += place->GetPersonCount();
-			}
-			std::cout << Place::TypeToString(place->GetType()) << " #" << place->GetID() << ": " << place->GetPersonCount() << " persons\n";
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
 		}
-		std::cout << "Have died:    " << deadPeople << "\n";
+		for (auto& place : places.schools)
+		{
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
+		}
+		for (auto& place : places.supplyStores)
+		{
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
+		}
+		for (auto& place : places.hardwareStores)
+		{
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
+		}
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
+void DeseaseSpreadSimulation::Simulation::PrintOncePerDay(uint64_t currentDay, uint16_t currentTime)
 {
-	if (TimeManager::Instance().GetElapsedDays() <= elapsedTime)
+	if (currentDay <= elapsedDays)
 	{
 		return;
 	}
-	elapsedTime = TimeManager::Instance().GetElapsedDays();
+	/// <measure>
+	Measure::MeasureTime measure("Print");
+	elapsedDays = currentDay;
 
 	for (size_t i = 0; i < communities.size(); i++)
 	{
 		auto& community = communities.at(i);
 
-		std::cout << "\nCommunity #" << i + 1 << " Day: " << TimeManager::Instance().GetElapsedDays() << " Time : " << TimeManager::Instance().GetTime() << " o'clock\n";
+		fmt::print("\nCommunity #{} Day: {} Time : {} o'clock\n", i + 1, elapsedDays, currentTime);
 		
-		PrintPopulation(community.GetPopulation());
-
-		// Check morgues for dead people
-		size_t deadPeople = 0;
-		for (auto& place : community.GetPlaces())
-		{
-			if (place->GetType() == Place_Type::Morgue)
-			{
-				deadPeople += place->GetPersonCount();
-			}
-		}
-		std::cout << "Have died:    " << deadPeople  << "\n";
+		PrintPopulation(community->GetPopulation());
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<std::unique_ptr<Person>>& population) const
+void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population) const
 {
 	size_t populationCount = 0;
 	size_t susceptible = 0;
 	size_t withDesease = 0;
 	size_t infectious = 0;
+	size_t deadPeople = 0;
 
 	for (auto& person : population)
 	{
-		if (person->isAlive())
+		if (person.isAlive())
 		{
 			populationCount++;
+
+			if (person.isSusceptible())
+			{
+				susceptible++;
+			}
+			if (person.isInfectious())
+			{
+				infectious++;
+			}
+			if (person.hasDesease(deseases.back().GetDeseaseName()))
+			{
+				withDesease++;
+			}
 		}
-		if (person->isSusceptible())
+		else
 		{
-			susceptible++;
-		}
-		if (person->isInfectious())
-		{
-			infectious++;
-		}
-		if (person->hasDesease(deseases.back().GetDeseaseName()))
-		{
-			withDesease++;
+			deadPeople++;
 		}
 	}
 
-	std::cout << "Population:   " << populationCount << "\n";
-	std::cout << "Susceptible:  " << susceptible << "\n";
-	std::cout << "With Desease: " << withDesease << "\n";
-	std::cout << "Infectious:   " << infectious << "\n";
+	fmt::print("Population:   {}\n ", populationCount);
+	fmt::print("Susceptible:  {}\n ", susceptible);
+	fmt::print("With Desease: {}\n ", withDesease);
+	fmt::print("Infectious:   {}\n ", infectious);
+	fmt::print("Have died:    {}\n ", deadPeople);
 }
 
 void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 {
-	for (auto& place : community.GetPlaces())
+	/// <measure>
 	{
-		// Get all susceptible and infectious people
-		std::vector<Person*> susceptible;
-		std::vector<Person*> infectious;
-		for (auto person : place->GetPeople())
+		Measure::MeasureTime measure("\t\t\t\tContacts");
+	auto& places = community.GetPlaces();
+	for (auto& place : places.homes)
+	{
+		ContactForPlace(place);
+	}
+	for (auto& place : places.supplyStores)
+	{
+		ContactForPlace(place);
+	}
+	for (auto& place : places.workplaces)
+	{
+		ContactForPlace(place);
+	}
+	for (auto& place : places.schools)
+	{
+		ContactForPlace(place);
+	}
+	for (auto& place : places.hardwareStores)
+	{
+		ContactForPlace(place);
+	}
+	}/// </measure>
+}
+
+void DeseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
+{
+	// Get all susceptible and infectious people
+	std::vector<Person*> susceptible;
+	std::vector<Person*> infectious;
+	for (auto person : place.GetPeople())
+	{
+		if (person->isSusceptible())
 		{
-			if (person->isSusceptible())
-			{
-				susceptible.push_back(person);
-			}
-			else if (person->isInfectious())
-			{
-				infectious.push_back(person);
-			}
+			susceptible.push_back(person);
 		}
-		
-		// Every infectious person has a chance to infect a susceptible person
-		for (auto infectiousPerson : infectious)
+		else if (person->isInfectious())
 		{
-			for (auto susceptiblePerson : susceptible)
-			{
-				infectiousPerson->Contact(*susceptiblePerson);
-			}
+			infectious.push_back(person);
+		}
+	}
+
+	// Every infectious person has a chance to infect a susceptible person
+	for (auto infectiousPerson : infectious)
+	{
+		for (auto susceptiblePerson : susceptible)
+		{
+			infectiousPerson->Contact(*susceptiblePerson);
 		}
 	}
 }
@@ -208,29 +243,44 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 	deseases.push_back(dbuilder.CreateDeadlyTestDesease());
 
 	CommunityBuilder cbuilder;
+	/// <measure>
+	{
+	Measure::MeasureTime measure("Build communities");
 	for (size_t i = 0; i < communityCount; i++)
 	{
 		communities.push_back(cbuilder.CreateCommunity(populationSize, country));
 		
-		auto& population = communities.back().GetPopulation();
-		// Set the community until we have a better solution
-		for (auto& person : population)
-		{
-			person->SetCommunity(&communities.back());
-		}
+		auto& population = communities.back()->GetPopulation();
 
+		// Assigne homes to our population at this place until we find a better solution
+		//-------------------------------------------------------------------------------------------------------------
+		PersonPopulator::AssigneHomesToPopulation(population, communities.back()->GetHomes(), country);
+		//std::vector<Home*> homes;
+		//for (auto& home : communities.back()->GetPlaces().homes)
+		//{
+		//	homes.push_back(&home);
+		//}
+		//auto homesByMemberCount = PersonPopulator::HomesByMemberCount(populationSize, country, std::move(homes));
+		//
+		//for (auto& person : population)
+		//{
+		//	person.SetHome(PersonPopulator::AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
+		//}
+		//-------------------------------------------------------------------------------------------------------------
 		InfectRandomPerson(&deseases.back(), population);
 	}
+	}/// </measure>
 
 	TimeManager::Instance().Start();
 	stop = false;
+	fmt::print("Setup complete\n");
 }
 
-void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<std::unique_ptr<Person>>& population)
+void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<Person>& population)
 {
 	std::random_device seed;
 	std::mt19937 generator(seed());
 	std::uniform_int_distribution<size_t> distribution(0, population.size() - 1);
 
-	population.at(distribution(generator))->Contaminate(desease);
+	population.at(distribution(generator)).Contaminate(desease);
 }

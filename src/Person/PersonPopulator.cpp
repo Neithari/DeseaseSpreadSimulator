@@ -18,108 +18,77 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, Community* community, const std::vector<std::unique_ptr<Place>>& places)
+std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, Community& community)
 {
-	std::vector<std::unique_ptr<Person>> population;
+	std::vector<Person> population;
 
-	// Create a vector with all homes and a vector with all workplaces to assigne them later
-	std::vector<Home*> homes;
-	std::vector<Workplace*> workplaces;
-
-	for (const auto& place : places)
-	{
-		switch (place->GetType())
-		{
-		case Place_Type::Home:
-			homes.push_back(static_cast<Home*>(place.get()));
-			break;
-		case Place_Type::Workplace:
-			workplaces.push_back(static_cast<Workplace*>(place.get()));
-			break;
-		case Place_Type::Supply:
-			break;
-		case Place_Type::HardwareStore:
-			break;
-		case Place_Type::Morgue:
-			break;
-		default:
-			break;
-		}
-	}
 	// This bool will ensure that a workplace is only assigned if there are workplaces
-	bool noWorkplace = workplaces.empty();
+	bool noWorkplace = community.GetPlaces().workplaces.empty();
 
 	// Create an array containing all workplaces sorted by size
+	std::vector<Workplace*> workplaces;
+	for (auto& workplace : community.GetPlaces().workplaces)
+	{
+		workplaces.push_back(&workplace);
+	}
 	auto workplacesBySize(PlaceBuilder::WorkplacesBySize(populationSize, country, std::move(workplaces)));
-	auto homesByMemberCount = HomesByMemberCount(populationSize, country, homes);
-	// Clear homes because we don't need it anymore
-	homes.clear();
 
 	// Create the population
-	while (true)
+	while (!allAssigned)
 	{
 		// Get a new person
-		auto person = GetNewPerson(community);
-		// Break the loop when we got the whole population
-		if (!person)
-		{
-			break;
-		}
-
-		// Assigne a home to the person
-		person->SetHome(AssignHome(country, person->GetAgeGroup(), homesByMemberCount));
+		auto person = GetNewPerson(&community);
 
 		// Assigne a workplace when the person is in working age and there are workplaces
-		if (!noWorkplace && person->GetAgeGroup() > Age_Group::UnderTwenty && person->GetAgeGroup() <= Age_Group::UnderSeventy)
+		if (!noWorkplace && person.GetAgeGroup() > Age_Group::UnderTwenty && person.GetAgeGroup() <= Age_Group::UnderSeventy)
 		{
-			person->SetWorkplace(AssignWorkplace(workplacesBySize));
+			person.SetWorkplace(AssignWorkplace(workplacesBySize));
 		}
 		// Add the created person to the community
 		population.push_back(std::move(person));
 	}
 
-	return std::move(population);
+	return population;
 }
 
-std::unique_ptr<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Community* community, Home* home)
+DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Community* community, Home* home)
 {
 	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
-	if (leftover > 0)
+	// When the currentHumanCount is 0...
+	if (currentHumanCount == 0)
 	{
-		// When the currentHumanCount is 0...
+		// ...we set the new current distribution...
+		currentHumanDistribution = ageDistribution.at(ageDistributionIndex);
+		
+		if (!lastFew)
+		{
+			// ...set the currentHumanCount to a percent of the population...
+			currentHumanCount = DistributionToCountHelper(m_populationSize, currentHumanDistribution.percent);
+		}
+		// ...and to 1 if this will return 0...
 		if (currentHumanCount == 0)
 		{
-			// ...we set the new current distribution...
-			currentHumanDistribution = ageDistribution.at(ageDistributionIndex);
-			
-			if (!lastFew)
-			{
-				// ...set the currentHumanCount to a percent of the population...
-				currentHumanCount = DistributionToCountHelper(m_populationSize, currentHumanDistribution.percent);
-			}
-			// ...and to 1 if this will return 0...
-			if (currentHumanCount == 0)
-			{
-				currentHumanCount = 1;
-			}
-			
-			// ...advance the index and check if we used all distributions...
-			if (++ageDistributionIndex >= ageDistribution.size())
-			{
-				// ...if yes we start again at the beginning...
-				ageDistributionIndex = 0;
-				// ...and distribute 1 to every human distribution until no leftover
-				lastFew = true;
-			}
+			currentHumanCount = 1;
 		}
-
-		leftover--;
-		currentHumanCount--;
-		// TODO: Add behavior to the constructor call
-		return std::make_unique<Person>(currentHumanDistribution.ageGroup, currentHumanDistribution.sex, PersonBehavior(), community, home);
+		
+		// ...advance the index and check if we used all distributions...
+		if (++ageDistributionIndex >= ageDistribution.size())
+		{
+			// ...if yes we start again at the beginning...
+			ageDistributionIndex = 0;
+			// ...and distribute 1 to every human distribution until no leftover
+			lastFew = true;
+		}
 	}
 
-	return nullptr;
+	leftover--;
+	currentHumanCount--;
+	if (leftover <= 0)
+	{
+		allAssigned = true;
+	}
+
+	return Person(currentHumanDistribution.ageGroup, currentHumanDistribution.sex, PersonBehavior(), community, home);
 }
 
 size_t DeseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t populationSize, const Country country)
@@ -141,7 +110,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t
 	return workingPeople;
 }
 
-std::array<std::vector<DeseaseSpreadSimulation::Home*>, 4> DeseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes)
+std::array<std::vector<DeseaseSpreadSimulation::Home*>, 4> DeseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes)
 {
 	auto homeCounts(PlaceBuilder::GetHomeCounts(populationSize, country));
 
@@ -168,7 +137,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 	// Scale count by percent and then omit the decimal
 	return static_cast<size_t>(count * static_cast<double>(percent));
 }
-size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex) const
+size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex)
 {
 	if (maxIndex <= 0)
 	{
@@ -181,7 +150,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t ma
 
 	return uniform(generator);
 }
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount) const
+DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount)
 {
 	// Create the distribution
 	std::array<double, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
@@ -210,6 +179,21 @@ DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::As
 	}
 	// Return a random workplace at the chosen size
 	return workplacesBySize.at(distIndex).at(GetUniformRandomIndex(workplacesBySize.at(distIndex).size() - 1));
+}
+
+void DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
+{
+	std::vector<Home*> homes;
+	for (auto& home : homesToAssigne)
+	{
+		homes.push_back(&home);
+	}
+	auto homesByMemberCount = PersonPopulator::HomesByMemberCount(population.size(), country, std::move(homes));
+
+	for (auto& person : population)
+	{
+		person.SetHome(PersonPopulator::AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
+	}
 }
 
 std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)

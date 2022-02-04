@@ -268,6 +268,7 @@
     <ClCompile Include="..\Places\CommunityBuilder.cpp" />
     <ClCompile Include="..\Places\PlaceBuilder.cpp" />
     <ClCompile Include="..\Places\Places.cpp" />
+    <ClCompile Include="..\Simulation\MeasureTime.cpp" />
     <ClCompile Include="..\Simulation\Simulation.cpp" />
     <ClCompile Include="..\Simulation\TimeManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -279,8 +280,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="..\Systems\MoveSystem.cpp" />
-    <ClCompile Include="..\Systems\PersonStates.cpp" />
     <ClCompile Include="DeseaseSpreadSimulator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
@@ -304,11 +303,10 @@
     <ClInclude Include="..\Places\CommunityBuilder.h" />
     <ClInclude Include="..\Places\PlaceBuilder.h" />
     <ClInclude Include="..\Places\Places.h" />
+    <ClInclude Include="..\Simulation\MeasureTime.h" />
     <ClInclude Include="..\Simulation\TimeObserver.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />
-    <ClInclude Include="..\Systems\MoveSystem.h" />
-    <ClInclude Include="..\Systems\PersonStates.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Statistics.h" />
   </ItemGroup>

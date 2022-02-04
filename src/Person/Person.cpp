@@ -12,27 +12,28 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	community(community),
 	home(home),
 	whereabouts(home),
-	personState(std::make_unique<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay()))
+	//personState(std::make_shared<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay())),
+	elapsedDay(TimeManager::Instance().GetElapsedDays())
 {
-	TimeManager::Instance().AddObserver(this);
 }
 
-DeseaseSpreadSimulation::Person::~Person()
+void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, uint64_t currentDay)
 {
-	TimeManager::Instance().RemoveObserver(this);
-}
-
-void DeseaseSpreadSimulation::Person::Update()
-{
-	auto newPersonState = personState->HandleStateChange(*this, TimeManager::Instance().GetTime());
-	if (newPersonState)
-	{
-		personState = std::move(newPersonState);
-		personState->Enter(*this);
-	}
+	//auto newPersonState = personState->HandleStateChange(*this, currentTime);
+	//if (newPersonState)
+	//{
+	//	personState = std::move(newPersonState);
+	//	personState->Enter(*this);
+	//}
+	CheckNextMove(currentTime);
 
 	if (desease)
 	{
+		if (currentDay > elapsedDay)
+		{
+			AdvanceDay();
+			elapsedDay = currentDay;
+		}
 		DeseaseCheck();
 	}
 }
@@ -207,6 +208,113 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 	}
 }
 
+void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime)
+{
+	if (!alive)
+	{
+		// Maybe delete person and just increase a counter
+		if (whereabouts->GetType() == Place_Type::Morgue)
+		{
+			return;
+		}
+		whereabouts = community->TransferToMorgue(this);
+	}
+
+	bool needFood = m_lastFoodBuy >= behavior.foodBuyInterval;
+	bool needHardware = m_lastHardwareBuy >= behavior.hardwareBuyInterval;
+
+	auto currentPlace = whereabouts->GetType();
+	switch (currentPlace)
+	{
+	case DeseaseSpreadSimulation::Place_Type::Home:
+		if (needFood && currentTime >= buyTime)
+		{
+			GoSupplyShopping(currentTime);
+		}
+		else if (needHardware && currentTime >= buyTime)
+		{
+			GoHardwareShopping(currentTime);
+		}
+		else if (workplace
+			&& currentTime >= workStartTime
+			&& currentTime <= workFinishTime
+			&& TimeManager::Instance().IsWorkday())
+		{
+			whereabouts = community->TransferToWork(this);
+		}
+		else if (school != nullptr
+			&& currentTime >= schoolStartTime
+			&& currentTime <= schoolFinishTime
+			&& TimeManager::Instance().IsWorkday())
+		{
+			whereabouts = community->TransferToSchool(this);
+		}
+		break;
+	case DeseaseSpreadSimulation::Place_Type::Supply:
+		// When the buy time is over go to the hardware store if we need to, else go home
+		if (currentTime >= buyFinishTime)
+		{
+			if (m_lastHardwareBuy >= behavior.hardwareBuyInterval)
+			{
+				GoHardwareShopping(currentTime);
+			}
+			else
+			{
+				whereabouts = community->TransferToHome(this);
+			}
+		}
+		break;
+	case DeseaseSpreadSimulation::Place_Type::Workplace:
+		if (currentTime >= workFinishTime)
+		{
+			whereabouts = community->TransferToHome(this);
+		}
+		break;
+	case DeseaseSpreadSimulation::Place_Type::School:
+		if (currentTime >= schoolFinishTime)
+		{
+			whereabouts = community->TransferToHome(this);
+		}
+		break;
+	case DeseaseSpreadSimulation::Place_Type::HardwareStore:
+		if (currentTime >= buyFinishTime)
+		{
+			if (m_lastFoodBuy >= behavior.foodBuyInterval)
+			{
+				GoSupplyShopping(currentTime);
+			}
+			else
+			{
+				whereabouts = community->TransferToHome(this);
+			}
+		}
+		break;
+	case DeseaseSpreadSimulation::Place_Type::Morgue:
+		return;
+		break;
+	default:
+		break;
+	}
+}
+
+void DeseaseSpreadSimulation::Person::GoSupplyShopping(uint16_t currentTime)
+{
+	whereabouts = community->TransferToSupplyStore(this);
+
+	// Reset the last food buy
+	m_lastFoodBuy = 0;
+	buyFinishTime = currentTime + 1;
+}
+
+void DeseaseSpreadSimulation::Person::GoHardwareShopping(uint16_t currentTime)
+{
+	whereabouts = community->TransferToHardwareStore(this);
+
+	// Reset the last hardware buy
+	m_lastHardwareBuy = 0;
+	buyFinishTime = currentTime + 1;
+}
+
 void DeseaseSpreadSimulation::Person::SetWhereabouts(Place* newWhereabouts)
 {
 	whereabouts = newWhereabouts;
@@ -277,10 +385,4 @@ void DeseaseSpreadSimulation::Person::AdvanceDay()
 			alive = false;
 		}
 	}
-}
-
-// Comment out newDay to silence compiler warning C4100
-void DeseaseSpreadSimulation::Person::OnNewDay(Day /*newDay*/)
-{
-	AdvanceDay();
 }

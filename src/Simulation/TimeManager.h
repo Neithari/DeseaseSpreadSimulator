@@ -38,18 +38,13 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		bool pauseTime = true;
-
-		std::chrono::steady_clock::time_point lastTime;
-		// Tick in ms
-		static constexpr uint16_t timeStepTick = 41u;
-		static constexpr auto timeStep = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::milliseconds(timeStepTick));
-		std::chrono::nanoseconds frameSum{};
 		
 		// In simulation hours. 1 hour per time step
 		uint64_t simulationTime = 0u;
-		uint32_t simulationTimeMultiplier = 1u;
+		uint16_t simulationTimeMultiplier = 1u;
 
 		Day currentDay = Day::Monday;
+		bool isWorkday = true;
 		uint16_t dayTime = 0u;
 		
 		std::vector<TimeObserver*> observers;
