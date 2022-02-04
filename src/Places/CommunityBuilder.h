@@ -10,6 +10,6 @@ namespace DeseaseSpreadSimulation
 	public:
 		CommunityBuilder() = default;
 
-		Community CreateCommunity(const size_t populationSize, const Country country) const;
+		std::unique_ptr<Community> CreateCommunity(const size_t populationSize, const Country country) const;
 	};
 }

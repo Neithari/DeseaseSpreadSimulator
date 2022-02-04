@@ -2,23 +2,17 @@
 #include "Places/Places.h"
 #include "Person/PersonBehavior.h"
 #include "Simulation/TimeObserver.h"
-#include "Systems/PersonStates.h"
 #include <type_traits>
 
 namespace DeseaseSpreadSimulation
 {
 	class Community;
 
-	class Person : public TimeObserver
+	class Person
 	{
 	public:
 		// Create a Person with age, sex, community and set it's home and whereabout to home
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
-		~Person();
-		Person(const Person& other) = default;
-		Person(Person&& other) noexcept = default;
-		Person& operator=(const Person& other) = default;
-		Person& operator=(Person&& other) noexcept = default;
 		
 		auto operator<=>(const Person& rhs) const
 		{
@@ -31,7 +25,7 @@ namespace DeseaseSpreadSimulation
 			return id == rhs.id;
 		}
 
-		void Update();
+		void Update(uint16_t currentTime, uint64_t currentDay);
 
 		void Contact(Person& other);
 		std::string GetDeseaseName() const;
@@ -39,7 +33,6 @@ namespace DeseaseSpreadSimulation
 		void Contaminate(const Desease* infection);
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
-		void OnNewDay(Day newDay) override;
 
 		bool isSusceptible() const;
 		bool isInfectious() const;
@@ -76,8 +69,12 @@ namespace DeseaseSpreadSimulation
 			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
 		}
 
+		void CheckNextMove(uint16_t currentTime);
+		void GoSupplyShopping(uint16_t currentTime);
+		void GoHardwareShopping(uint16_t currentTime);
+
 	private:
-		const uint32_t id;
+		uint32_t id;
 		Age_Group age;
 		Sex sex;
 		PersonBehavior behavior;
@@ -90,7 +87,9 @@ namespace DeseaseSpreadSimulation
 		Workplace* workplace = nullptr;
 		School* school = nullptr;
 
-		std::unique_ptr<PersonStates> personState = nullptr;
+		//std::shared_ptr<PersonStates> personState = nullptr;
+
+		uint64_t elapsedDay = 0u;
 
 		// Desease Stuff
 		//-----------------------------------------
@@ -106,5 +105,17 @@ namespace DeseaseSpreadSimulation
 		bool willDie = false;
 		//-----------------------------------------
 
+		// State things
+
+		// In days
+		uint16_t m_lastFoodBuy = 0u;
+		uint16_t m_lastHardwareBuy = 0u;
+		uint16_t buyTime = 0u;
+		uint16_t buyFinishTime = 0u;
+		// Time in x/24h
+		static constexpr uint16_t workStartTime = 8u;
+		static constexpr uint16_t workFinishTime = 17u;
+		static constexpr uint16_t schoolStartTime = 8u;
+		static constexpr uint16_t schoolFinishTime = 15u;
 	};
 }

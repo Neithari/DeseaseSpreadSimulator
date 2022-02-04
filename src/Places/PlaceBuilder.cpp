@@ -2,9 +2,9 @@
 #include "Places/PlaceBuilder.h"
 #include "Person/PersonPopulator.h"
 
-std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>> DeseaseSpreadSimulation::PlaceBuilder::CreatePlaces(const size_t populationSize, const Country country) const
+DeseaseSpreadSimulation::Places DeseaseSpreadSimulation::PlaceBuilder::CreatePlaces(const size_t populationSize, const Country country) const
 {
-	std::vector<std::unique_ptr<Place>> places;
+	Places places;
 	// Get the person count per household category and create the correct number of homes
 	// Sum the home counts to create the needed number of homes
 	size_t sum = 0;
@@ -14,7 +14,7 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>> DeseaseSpreadSimula
 	}
 	for (size_t i = 0; i < sum; i++)
 	{
-		places.push_back(std::make_unique<Home>());
+		places.homes.emplace_back();
 	}
 
 	// Create workplaces for people between 20 and 69
@@ -28,13 +28,13 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>> DeseaseSpreadSimula
 		workplaceCount += (workingPeople * Statistics::workplaceSize.at(i)) / (25 + 50 * i);
 	}
 
-	// Add the calculated amount of workplaces to the community
+	// Add the calculated amount of workplaces
 	for (size_t i = 0; i < static_cast<size_t>(workplaceCount); i++)
 	{
-		places.emplace_back(std::make_unique<Workplace>());
+		places.workplaces.emplace_back();
 	}
 
-	// Create one supply building and a morgue for every 5000 persons at least one of each
+	// Create one supply building and a morgue for every 5000 persons. At least one of each
 	size_t supplyCount = populationSize / 5000;
 	if (supplyCount < 1)
 	{
@@ -42,9 +42,9 @@ std::vector<std::unique_ptr<DeseaseSpreadSimulation::Place>> DeseaseSpreadSimula
 	}
 	for (size_t i = 0; i < supplyCount; i++)
 	{
-		places.push_back(std::make_unique<Supply>());
-		places.push_back(std::make_unique<HardwareStore>());
-		places.push_back(std::make_unique<Morgue>());
+		places.supplyStores.emplace_back();
+		places.hardwareStores.emplace_back();
+		places.morgues.emplace_back();
 	}
 
 	return places;

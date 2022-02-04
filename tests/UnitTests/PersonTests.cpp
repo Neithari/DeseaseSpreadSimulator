@@ -10,24 +10,24 @@ namespace UnitTests {
         std::pair<int, int> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
         std::pair<int, int> daysTillDeathRange{ 1, 2 };
-        std::unique_ptr<DeseaseSpreadSimulation::Home> home = std::make_unique<DeseaseSpreadSimulation::Home>();
-        std::unique_ptr<DeseaseSpreadSimulation::HardwareStore> hwStore = std::make_unique<DeseaseSpreadSimulation::HardwareStore>();
-        std::unique_ptr<DeseaseSpreadSimulation::Supply> supplyStore = std::make_unique<DeseaseSpreadSimulation::Supply>();
-        std::unique_ptr<DeseaseSpreadSimulation::Morgue> morgue = std::make_unique<DeseaseSpreadSimulation::Morgue>();
+        DeseaseSpreadSimulation::Home home;
+        DeseaseSpreadSimulation::HardwareStore hwStore;
+        DeseaseSpreadSimulation::Supply supplyStore;
+        DeseaseSpreadSimulation::Morgue morgue;
         DeseaseSpreadSimulation::Community community;
         DeseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,0.f };
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         
         void InitCommunity()
         {
-            community.AddPlace(std::move(hwStore));
-            community.AddPlace(std::move(supplyStore));
-            community.AddPlace(std::move(morgue));
+            community.AddPlace(hwStore);
+            community.AddPlace(supplyStore);
+            community.AddPlace(morgue);
         }
     };
     TEST_F(PersonTest, ContaminateAPerson)
     {
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &home);
         patient.Contaminate(&desease);
 
         ASSERT_EQ(patient.GetDeseaseName(), desease.GetDeseaseName());
@@ -36,7 +36,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
+        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &home);
         patient.Contaminate(&desease);
 
         // Patient is not contagious right after contamination
@@ -44,7 +44,7 @@ namespace UnitTests {
         // Advance patient beyond incubation period
         patient.AdvanceDay();
 
-        patient.Update();
+        patient.Update(0, 1);
         // Patient is contagious after incubation period
         ASSERT_EQ(patient.isInfectious(), true);
     }
@@ -53,15 +53,15 @@ namespace UnitTests {
         InitCommunity();
 
         // Create 3 patients
-        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
-        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
-        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, home.get());
+        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &home);
+        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &home);
+        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &home);
         // Contaminate 1
         patient1.Contaminate(&desease);
         // Advance patient beyond latent period
         patient1.AdvanceDay();
 
-        patient1.Update();
+        patient1.Update(0, 1);
 
         // Check non infected has contact with infected
         patient2.Contact(patient1);
@@ -100,56 +100,60 @@ namespace UnitTests {
     };
     TEST_F(PersonPopulatorTest, SizeIsEqualEvenDistributionEvenCount)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population1;
+        std::vector<DeseaseSpreadSimulation::Person> population1;
 
         // Setup population
         auto person = populator1.GetNewPerson(&community, home.get());
-        while (person)
+        population1.push_back(person);
+        for (size_t i = 1; i < evenCount; i++)
         {
-            population1.push_back(std::move(person));
             person = populator1.GetNewPerson(&community, home.get());
+            population1.push_back(person);
         }
 
         ASSERT_EQ(population1.size(), evenCount);
     }
     TEST_F(PersonPopulatorTest, SizeIsEqualEvenDistributionUnevenCount)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population2;
+        std::vector<DeseaseSpreadSimulation::Person> population2;
 
         // Setup population
         auto person = populator2.GetNewPerson(&community, home.get());
-        while (person)
+        population2.push_back(person);
+        for (size_t i = 1; i < unevenCount; i++)
         {
-            population2.push_back(std::move(person));
             person = populator2.GetNewPerson(&community, home.get());
+            population2.push_back(person);
         }
 
         ASSERT_EQ(population2.size(), unevenCount);
     }
     TEST_F(PersonPopulatorTest, SizeIsEqualUnevenDistributionEvenCount)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population3;
+        std::vector<DeseaseSpreadSimulation::Person> population3;
 
         // Setup population
         auto person = populator3.GetNewPerson(&community, home.get());
-        while (person)
+        population3.push_back(person);
+        for (size_t i = 1; i < evenCount; i++)
         {
-            population3.push_back(std::move(person));
             person = populator3.GetNewPerson(&community, home.get());
+            population3.push_back(person);
         }
 
         ASSERT_EQ(population3.size(), evenCount);
     }
     TEST_F(PersonPopulatorTest, SizeIsEqualUnevenDistributionUnevenCount)
     {
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population4;
+        std::vector<DeseaseSpreadSimulation::Person> population4;
 
         // Setup population
         auto person = populator4.GetNewPerson(&community, home.get());
-        while (person)
+        population4.push_back(std::move(person));
+        for (size_t i = 1; i < unevenCount; i++)
         {
-            population4.push_back(std::move(person));
             person = populator4.GetNewPerson(&community, home.get());
+            population4.push_back(std::move(person));
         }
 
         ASSERT_EQ(population4.size(), unevenCount);
@@ -161,19 +165,20 @@ namespace UnitTests {
         float countHumanDistribution3 = 0.f;
         float countHumanDistribution4 = 0.f;
 
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population1;
+        std::vector<DeseaseSpreadSimulation::Person> population1;
 
         // Setup population
         auto person = populator1.GetNewPerson(&community, home.get());
-        while (person)
+        population1.push_back(std::move(person));
+        for (size_t i = 1; i < evenCount; i++)
         {
-            population1.push_back(std::move(person));
             person = populator1.GetNewPerson(&community, home.get());
+            population1.push_back(std::move(person));
         }
 
         for (const auto& person : population1)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human1)
             {
@@ -210,19 +215,20 @@ namespace UnitTests {
         float countHumanDistribution3 = 0.f;
         float countHumanDistribution4 = 0.f;
 
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population2;
+        std::vector<DeseaseSpreadSimulation::Person> population2;
 
         // Setup population
         auto person = populator2.GetNewPerson(&community, home.get());
-        while (person)
+        population2.push_back(std::move(person));
+        for (size_t i = 1; i < unevenCount; i++)
         {
-            population2.push_back(std::move(person));
             person = populator2.GetNewPerson(&community, home.get());
+            population2.push_back(std::move(person));
         }
 
         for (const auto& person : population2)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human1)
             {
@@ -259,19 +265,20 @@ namespace UnitTests {
         float countHumanDistribution3 = 0.f;
         float countHumanDistribution4 = 0.f;
 
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population3;
+        std::vector<DeseaseSpreadSimulation::Person> population3;
 
         // Setup population
         auto person = populator3.GetNewPerson(&community, home.get());
-        while (person)
+        population3.push_back(std::move(person));
+        for (size_t i = 1; i < evenCount; i++)
         {
-            population3.push_back(std::move(person));
             person = populator3.GetNewPerson(&community, home.get());
+            population3.push_back(std::move(person));
         }
 
         for (const auto& person : population3)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human5)
             {
@@ -308,19 +315,20 @@ namespace UnitTests {
         float countHumanDistribution3 = 0.f;
         float countHumanDistribution4 = 0.f;
 
-        std::vector<std::unique_ptr<DeseaseSpreadSimulation::Person>> population4;
+        std::vector<DeseaseSpreadSimulation::Person> population4;
 
         // Setup population
         auto person = populator4.GetNewPerson(&community, home.get());
-        while (person)
+        population4.push_back(std::move(person));
+        for (size_t i = 1; i < unevenCount; i++)
         {
-            population4.push_back(std::move(person));
             person = populator4.GetNewPerson(&community, home.get());
+            population4.push_back(std::move(person));
         }
 
         for (const auto& person : population4)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person->GetAgeGroup(), person->GetSex(), 0.f };
+            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human5)
             {

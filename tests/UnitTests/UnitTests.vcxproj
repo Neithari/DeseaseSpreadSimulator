@@ -55,7 +55,6 @@
     <ClCompile Include="CommunityTests.cpp" />
     <ClCompile Include="DeseaseTests.cpp" />
     <ClCompile Include="PersonTests.cpp" />
-    <ClCompile Include="StateTests.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

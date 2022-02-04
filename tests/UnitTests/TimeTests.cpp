@@ -6,20 +6,11 @@ namespace UnitTests {
         auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
         time.Start();
 
-        time.Update();
-        auto elapsedHours = time.GetElapsedHours();
-
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(49ms);
-        time.Update();
-        EXPECT_EQ(time.GetElapsedHours(), elapsedHours + 1ULL);
-
-        time.Update();
-        elapsedHours = time.GetElapsedHours();
-        std::this_thread::sleep_for(49ms);
-        time.Update();
-        // Greater or equal because of small timeframe and easy errors
-        EXPECT_EQ(time.GetElapsedHours(), elapsedHours + 1ULL);
+        for (size_t i = 0; i < 100; i++)
+        {
+            EXPECT_EQ(time.GetElapsedHours(), i);
+            time.Update();
+        }
     }
     TEST(TimeTests, TimeObserver)
     {
