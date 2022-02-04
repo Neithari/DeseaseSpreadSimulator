@@ -28,4 +28,3 @@
 #include "Places/Community.h"
 #include "Places/CommunityBuilder.h"
 #include "DeseaseSpreadSimulator/Statistics.h"
-#include "Systems/PersonStates.h"
