@@ -240,6 +240,7 @@ namespace UnitTests {
 
         size_t populationSize2 = 10000;
         auto c2 = cbuilder.CreateCommunity(populationSize2, country);
+        DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(c2->GetPopulation(), c2->GetHomes(), country);
         auto homePercent2 = GetHomePercentFromPopulation(c2->GetPopulation(), country);
         for (size_t i = 0; i < homePercent2.size(); i++)
         {
