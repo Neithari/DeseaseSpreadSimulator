@@ -7,7 +7,6 @@ int main()
 
 	DeseaseSpreadSimulation::Simulation simulation{populationSize, true};
 
-	simulation.SetSimulationSpeedMultiplier(2);
 	simulation.Run();
 
 	return 0;

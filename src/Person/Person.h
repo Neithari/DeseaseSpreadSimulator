@@ -1,7 +1,7 @@
 #pragma once
 #include "Places/Places.h"
+#include "Simulation/TimeManager.h"
 #include "Person/PersonBehavior.h"
-#include "Simulation/TimeObserver.h"
 #include <type_traits>
 
 namespace DeseaseSpreadSimulation
@@ -25,7 +25,7 @@ namespace DeseaseSpreadSimulation
 			return id == rhs.id;
 		}
 
-		void Update(uint16_t currentTime, uint64_t currentDay);
+		void Update(TimeManager& time, bool isNewDay);
 
 		void Contact(Person& other);
 		std::string GetDeseaseName() const;
@@ -69,7 +69,7 @@ namespace DeseaseSpreadSimulation
 			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
 		}
 
-		void CheckNextMove(uint16_t currentTime);
+		void CheckNextMove(TimeManager& time);
 		void GoSupplyShopping(uint16_t currentTime);
 		void GoHardwareShopping(uint16_t currentTime);
 
@@ -86,10 +86,6 @@ namespace DeseaseSpreadSimulation
 		Place* whereabouts;
 		Workplace* workplace = nullptr;
 		School* school = nullptr;
-
-		//std::shared_ptr<PersonStates> personState = nullptr;
-
-		uint64_t elapsedDay = 0u;
 
 		// Desease Stuff
 		//-----------------------------------------

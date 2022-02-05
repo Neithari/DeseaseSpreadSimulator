@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
-#include "Simulation/TimeManager.h"
 
 DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
 	:
@@ -11,37 +10,23 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	behavior(behavior),
 	community(community),
 	home(home),
-	whereabouts(home),
-	//personState(std::make_shared<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay())),
-	elapsedDay(TimeManager::Instance().GetElapsedDays())
+	whereabouts(home)
 {
 }
 
-void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, uint64_t currentDay)
+void DeseaseSpreadSimulation::Person::Update(TimeManager& time, bool isNewDay)
 {
-	//auto newPersonState = personState->HandleStateChange(*this, currentTime);
-	//if (newPersonState)
-	//{
-	//	personState = std::move(newPersonState);
-	//	personState->Enter(*this);
-	//}
-	CheckNextMove(currentTime);
+	CheckNextMove(time);
 
-	if (desease)
+	if (desease && isNewDay)
 	{
-		if (currentDay > elapsedDay)
-		{
-			AdvanceDay();
-			elapsedDay = currentDay;
-		}
+		AdvanceDay();
 		DeseaseCheck();
 	}
 }
 
 void DeseaseSpreadSimulation::Person::Contact(Person& other)
 {
-	/// TODO: Should be possible to only alter myself and take other as const
-
 	// if the other person is infectious and I have no desease, now I have
 	if (other.isInfectious() && isSusceptible())
 	{
@@ -208,7 +193,7 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 	}
 }
 
-void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime)
+void DeseaseSpreadSimulation::Person::CheckNextMove(TimeManager& time)
 {
 	if (!alive)
 	{
@@ -224,6 +209,9 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime)
 	bool needHardware = m_lastHardwareBuy >= behavior.hardwareBuyInterval;
 
 	auto currentPlace = whereabouts->GetType();
+	auto currentTime = time.GetTime();
+	bool isWorkday = time.IsWorkday();
+
 	switch (currentPlace)
 	{
 	case DeseaseSpreadSimulation::Place_Type::Home:
@@ -238,14 +226,14 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime)
 		else if (workplace
 			&& currentTime >= workStartTime
 			&& currentTime <= workFinishTime
-			&& TimeManager::Instance().IsWorkday())
+			&& isWorkday)
 		{
 			whereabouts = community->TransferToWork(this);
 		}
 		else if (school != nullptr
 			&& currentTime >= schoolStartTime
 			&& currentTime <= schoolFinishTime
-			&& TimeManager::Instance().IsWorkday())
+			&& isWorkday)
 		{
 			whereabouts = community->TransferToSchool(this);
 		}

@@ -7,15 +7,7 @@ namespace DeseaseSpreadSimulation
 	class Community
 	{
 	public:
-		Community() = default;
 		Community(std::vector<Person> population, Places places);
-
-		void AddPlace(Home home);
-		void AddPlace(Supply store);
-		void AddPlace(Workplace workplace);
-		void AddPlace(School school);
-		void AddPlace(HardwareStore store);
-		void AddPlace(Morgue morgue);
 
 		void AddPerson(Person person);
 		void RemovePerson(uint32_t personID);
@@ -25,7 +17,6 @@ namespace DeseaseSpreadSimulation
 		
 		Person TransferPerson(uint32_t personID);
 
-		Place* TransferToPlace(Person* person, Place* place);
 		Place* TransferToHome(Person* person);
 		Place* TransferToSupplyStore(Person* person);
 		Place* TransferToHardwareStore(Person* person);
@@ -35,7 +26,6 @@ namespace DeseaseSpreadSimulation
 		
 		std::vector<Person>& GetPopulation();
 		Places& GetPlaces();
-
 		std::vector<Home>& GetHomes();
 		// Returns a random supply store
 		Supply* GetSupplyStore();
@@ -44,7 +34,16 @@ namespace DeseaseSpreadSimulation
 		// Returns a random morgue
 		Morgue* GetMorgue();
 
+		void AddPlace(Home home);
+		void AddPlace(Supply store);
+		void AddPlace(Workplace workplace);
+		void AddPlace(School school);
+		void AddPlace(HardwareStore store);
+		void AddPlace(Morgue morgue);
+
 	private:
+		Place* TransferToPlace(Person* person, Place* place);
+
 		// Returns an random index from 0 to size - 1
 		template <typename T>
 		T RandomIndex(T size) const

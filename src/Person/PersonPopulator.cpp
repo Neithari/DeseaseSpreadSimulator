@@ -18,26 +18,26 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, Community& community)
+std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces)
 {
 	std::vector<Person> population;
 
 	// This bool will ensure that a workplace is only assigned if there are workplaces
-	bool noWorkplace = community.GetPlaces().workplaces.empty();
+	bool noWorkplace = workplaces.empty();
 
 	// Create an array containing all workplaces sorted by size
-	std::vector<Workplace*> workplaces;
-	for (auto& workplace : community.GetPlaces().workplaces)
+	std::vector<Workplace*> sortedWorkplaces;
+	for (auto& workplace : workplaces)
 	{
-		workplaces.push_back(&workplace);
+		sortedWorkplaces.push_back(&workplace);
 	}
-	auto workplacesBySize(PlaceBuilder::WorkplacesBySize(populationSize, country, std::move(workplaces)));
+	auto workplacesBySize(PlaceBuilder::WorkplacesBySize(populationSize, country, std::move(sortedWorkplaces)));
 
 	// Create the population
 	while (!allAssigned)
 	{
 		// Get a new person
-		auto person = GetNewPerson(&community);
+		auto person = GetNewPerson();
 
 		// Assigne a workplace when the person is in working age and there are workplaces
 		if (!noWorkplace && person.GetAgeGroup() > Age_Group::UnderTwenty && person.GetAgeGroup() <= Age_Group::UnderSeventy)
@@ -47,6 +47,8 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 		// Add the created person to the community
 		population.push_back(std::move(person));
 	}
+
+	AssigneHomesToPopulation(population, homes, country);
 
 	return population;
 }
@@ -210,6 +212,14 @@ std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> DeseaseSprea
 	default:
 		return Statistics::defaultAgeDistributionUSA;
 		break;
+	}
+}
+
+void DeseaseSpreadSimulation::PersonPopulator::AddCommunityToPopulation(Community* community, std::vector<Person>& population)
+{
+	for (auto& person : population)
+	{
+		person.SetCommunity(community);
 	}
 }
 
