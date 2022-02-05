@@ -153,7 +153,7 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 			{
 				infectious++;
 			}
-			if (person.hasDesease(deseases.back().GetDeseaseName()))
+			if (person.hasDesease())
 			{
 				withDesease++;
 			}
@@ -241,6 +241,7 @@ bool DeseaseSpreadSimulation::Simulation::CheckForNewDay()
 void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
 {
 	DeseaseBuilder dbuilder;
+	PlaceBuilder placeFactory;
 	//deseases.push_back(dbuilder.CreateCorona());
 	deseases.push_back(dbuilder.CreateDeadlyTestDesease());
 
@@ -249,7 +250,6 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 	Measure::MeasureTime measure("Build communities");
 	for (size_t i = 0; i < communityCount; i++)
 	{
-		PlaceBuilder placeFactory;
 		PersonPopulator populationFactory(populationSize, PersonPopulator::GetCountryDistribution(country));
 
 		auto places = placeFactory.CreatePlaces(populationSize, country);

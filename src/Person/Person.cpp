@@ -27,7 +27,6 @@ void DeseaseSpreadSimulation::Person::Update(TimeManager& time, bool isNewDay)
 
 void DeseaseSpreadSimulation::Person::Contact(Person& other)
 {
-	// if the other person is infectious and I have no desease, now I have
 	if (other.isInfectious() && isSusceptible())
 	{
 		if (WillInfect(other.desease))
@@ -36,7 +35,6 @@ void DeseaseSpreadSimulation::Person::Contact(Person& other)
 			other.spreadCount++;
 		}
 	}
-	// if I am infectious and the other person has no desease, now he has
 	else if (isInfectious() && other.isSusceptible())
 	{
 		if (other.WillInfect(desease))
@@ -47,29 +45,6 @@ void DeseaseSpreadSimulation::Person::Contact(Person& other)
 	}
 }
 
-std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
-{
-	if (desease != nullptr)
-	{
-		return desease->GetDeseaseName();
-	}
-	return "";
-}
-
-bool DeseaseSpreadSimulation::Person::WillInfect(const Desease* exposed) const
-{
-	// Map the acceptance factor to the inverse of the desease spread factor
-	// Acceptance factor range is always 0 to 1
-	// Desease spread factor range is spreadFactor to 1/10th of spreadFactor
-	float probability = MapOneRangeToAnother(behavior.acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
-
-	std::random_device seed;
-	std::mt19937 generator(seed());
-	std::bernoulli_distribution distribution(probability);
-
-	return distribution(generator);
-}
-
 void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 {
 	desease = infection;
@@ -78,7 +53,7 @@ void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
 	latentPeriod = desease->IncubationPeriod();
 	daysInfectious = desease->DaysInfectious();
 	daysTillCured = desease->GetDeseaseDuration();
-	// check if the person will die from the infection
+
 	if (desease->isFatal(age))
 	{
 		willDie = true;
@@ -106,14 +81,18 @@ bool DeseaseSpreadSimulation::Person::isAlive() const
 	return alive;
 }
 
-bool DeseaseSpreadSimulation::Person::hasDesease(const std::string& deseaseName) const
+std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 {
-	if (desease == nullptr)
+	if (desease != nullptr)
 	{
-		return false;
+		return desease->GetDeseaseName();
 	}
-	return desease->GetDeseaseName() == deseaseName;
-	
+	return "";
+}
+
+bool DeseaseSpreadSimulation::Person::hasDesease() const
+{
+	return desease == nullptr;	
 }
 
 uint32_t DeseaseSpreadSimulation::Person::GetID() const
@@ -191,6 +170,20 @@ void DeseaseSpreadSimulation::Person::DeseaseCheck()
 	default:
 		break;
 	}
+}
+
+bool DeseaseSpreadSimulation::Person::WillInfect(const Desease* exposed) const
+{
+	// Map the acceptance factor to the inverse of the desease spread factor
+	// Acceptance factor range is always 0 to 1
+	// Desease spread factor range is spreadFactor to 1/10th of spreadFactor
+	float probability = MapOneRangeToAnother(behavior.acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
+
+	std::random_device seed;
+	std::mt19937 generator(seed());
+	std::bernoulli_distribution distribution(probability);
+
+	return distribution(generator);
 }
 
 void DeseaseSpreadSimulation::Person::CheckNextMove(TimeManager& time)
@@ -303,11 +296,6 @@ void DeseaseSpreadSimulation::Person::GoHardwareShopping(uint16_t currentTime)
 	buyFinishTime = currentTime + 1;
 }
 
-void DeseaseSpreadSimulation::Person::SetWhereabouts(Place* newWhereabouts)
-{
-	whereabouts = newWhereabouts;
-}
-
 void DeseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
 {
 	workplace = newWorkplace;
@@ -339,11 +327,6 @@ void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
 void DeseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 {
 	behavior = newBehavior;
-}
-
-void DeseaseSpreadSimulation::Person::Move(Place* destination)
-{
-	whereabouts = destination;
 }
 
 void DeseaseSpreadSimulation::Person::AdvanceDay()

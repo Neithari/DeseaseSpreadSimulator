@@ -11,7 +11,6 @@ namespace DeseaseSpreadSimulation
 	class Person
 	{
 	public:
-		// Create a Person with age, sex, community and set it's home and whereabout to home
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
 		
 		auto operator<=>(const Person& rhs) const
@@ -27,9 +26,9 @@ namespace DeseaseSpreadSimulation
 
 		void Update(TimeManager& time, bool isNewDay);
 
+		// Will try to infect a susceptible person when the other is infectious
 		void Contact(Person& other);
-		std::string GetDeseaseName() const;
-		bool WillInfect(const Desease* exposed) const;
+
 		void Contaminate(const Desease* infection);
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay();
@@ -38,30 +37,30 @@ namespace DeseaseSpreadSimulation
 		bool isInfectious() const;
 		bool isQuarantined() const;
 		bool isAlive() const;
-		bool hasDesease(const std::string& deseaseName) const;
+		bool hasDesease() const;
+		std::string GetDeseaseName() const;
 
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
 		const PersonBehavior& GetBehavior() const;
-		Community* GetCommunity();
 
+		Community* GetCommunity();
 		Place* GetWhereabouts();
 		Home* GetHome() ;
 		Workplace* GetWorkplace();
 		School* GetSchool();
 		
-		void SetWhereabouts(Place* newWhereabouts);
 		void SetHome(Home* newHome);
 		void SetWorkplace(Workplace* newWorkplace);
 		void SetSchool(School* newSchool);
 		void SetCommunity(Community* newCommunity);
 		
 		void ChangeBehavior(PersonBehavior newBehavior);
-		void Move(Place* destination);
 
 	private:
 		void DeseaseCheck();
+		bool WillInfect(const Desease* exposed) const;
 
 		template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
 		T MapOneRangeToAnother(T value, T fromRangeMin, T fromRangeMax, T toRangeMin, T toRangeMax) const
@@ -100,8 +99,6 @@ namespace DeseaseSpreadSimulation
 		unsigned int daysToLive = 0;
 		bool willDie = false;
 		//-----------------------------------------
-
-		// State things
 
 		// In days
 		uint16_t m_lastFoodBuy = 0u;
