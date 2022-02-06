@@ -169,12 +169,12 @@ namespace UnitTests {
         std::vector<DeseaseSpreadSimulation::Person> population1;
 
         // Setup population
-        auto person = populator1.GetNewPerson(&community, &home);
-        population1.push_back(std::move(person));
+        auto person1 = populator1.GetNewPerson(&community, &home);
+        population1.push_back(std::move(person1));
         for (size_t i = 1; i < evenCount; i++)
         {
-            person = populator1.GetNewPerson(&community, &home);
-            population1.push_back(std::move(person));
+            person1 = populator1.GetNewPerson(&community, &home);
+            population1.push_back(std::move(person1));
         }
 
         for (const auto& person : population1)
@@ -219,12 +219,12 @@ namespace UnitTests {
         std::vector<DeseaseSpreadSimulation::Person> population2;
 
         // Setup population
-        auto person = populator2.GetNewPerson(&community, &home);
-        population2.push_back(std::move(person));
+        auto person2 = populator2.GetNewPerson(&community, &home);
+        population2.push_back(std::move(person2));
         for (size_t i = 1; i < unevenCount; i++)
         {
-            person = populator2.GetNewPerson(&community, &home);
-            population2.push_back(std::move(person));
+            person2 = populator2.GetNewPerson(&community, &home);
+            population2.push_back(std::move(person2));
         }
 
         for (const auto& person : population2)
@@ -269,12 +269,12 @@ namespace UnitTests {
         std::vector<DeseaseSpreadSimulation::Person> population3;
 
         // Setup population
-        auto person = populator3.GetNewPerson(&community, &home);
-        population3.push_back(std::move(person));
+        auto person3 = populator3.GetNewPerson(&community, &home);
+        population3.push_back(std::move(person3));
         for (size_t i = 1; i < evenCount; i++)
         {
-            person = populator3.GetNewPerson(&community, &home);
-            population3.push_back(std::move(person));
+            person3 = populator3.GetNewPerson(&community, &home);
+            population3.push_back(std::move(person3));
         }
 
         for (const auto& person : population3)
@@ -319,12 +319,12 @@ namespace UnitTests {
         std::vector<DeseaseSpreadSimulation::Person> population4;
 
         // Setup population
-        auto person = populator4.GetNewPerson(&community, &home);
-        population4.push_back(std::move(person));
+        auto person4 = populator4.GetNewPerson(&community, &home);
+        population4.push_back(std::move(person4));
         for (size_t i = 1; i < unevenCount; i++)
         {
-            person = populator4.GetNewPerson(&community, &home);
-            population4.push_back(std::move(person));
+            person4 = populator4.GetNewPerson(&community, &home);
+            population4.push_back(std::move(person4));
         }
 
         for (const auto& person : population4)
