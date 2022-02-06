@@ -52,14 +52,13 @@ void DeseaseSpreadSimulation::Simulation::Update()
 	{
 		for (auto& community : communities)
 		{
-			auto& population = community.GetPopulation();
 			/// <measure>
 			{
 				Measure::MeasureTime measure("Person.Update");
-			for (auto& person : population)
-			{
-				person.Update(time, isNewDay);
-			}
+				for (auto& person : community.GetPopulation())
+				{
+					person.Update(time, isNewDay);
+				}
 			}/// </measure>
 
 			Contacts(community);
@@ -69,7 +68,6 @@ void DeseaseSpreadSimulation::Simulation::Update()
 		{
 			Print();
 		}
-
 		elapsedHours++;
 	}
 }

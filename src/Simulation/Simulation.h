@@ -41,7 +41,8 @@ namespace DeseaseSpreadSimulation
 		std::vector<Desease> deseases;
 
 		uint64_t elapsedDays = 0u;
-		uint64_t elapsedHours = 0u;
+		// We start with the first hour
+		uint64_t elapsedHours = 1u;
 		uint16_t lastTime = 0u;
 		Day lastDay = Day::Monday;
 		bool isNewDay = false;
