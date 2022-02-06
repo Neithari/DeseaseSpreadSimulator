@@ -25,6 +25,6 @@
 #include "Simulation/TimeManager.h"
 #include "IDGenerator/IDGenerator.h"
 #include "Places/Places.h"
+#include "Places/PlaceBuilder.h"
 #include "Places/Community.h"
-#include "Places/CommunityBuilder.h"
 #include "DeseaseSpreadSimulator/Statistics.h"

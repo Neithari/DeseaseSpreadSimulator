@@ -7,11 +7,15 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
 	sex(sex),
-	behavior(behavior),
+	behavior(std::move(behavior)),
 	community(community),
 	home(home),
 	whereabouts(home)
 {
+	if (whereabouts != nullptr)
+	{
+		whereabouts->AddPerson(this);
+	}
 }
 
 void DeseaseSpreadSimulation::Person::Update(TimeManager& time, bool isNewDay)

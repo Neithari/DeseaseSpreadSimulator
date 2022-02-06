@@ -5,9 +5,9 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 {
 	simulationTime++;
 	dayTime++;
-	if (dayTime >= 24)
+	if (dayTime == 24)
 	{
-		dayTime = 0 + dayTime - 24;
+		dayTime = 0;
 		currentDay = GetNextDay();
 
 		if (currentDay == Day::Saturday || currentDay == Day::Sunday)

@@ -7,7 +7,7 @@ namespace DeseaseSpreadSimulation
 	public:
 		TimeManager() = default;
 
-		// Call once every frame
+		// Call once every frame. Will advance 1 hour per call.
 		void Update();
 		// Returns elapsed hours since the start of the simulation.
 		uint64_t GetElapsedHours() const;
@@ -25,9 +25,8 @@ namespace DeseaseSpreadSimulation
 	private:
 		bool pauseTime = true;
 		
-		// In simulation hours. 1 hour per time step
+		// In simulation hours. 1 hour per update
 		uint64_t simulationTime = 0u;
-		uint16_t simulationTimeMultiplier = 1u;
 
 		Day currentDay = Day::Monday;
 		bool isWorkday = true;
