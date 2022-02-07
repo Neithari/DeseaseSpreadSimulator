@@ -28,17 +28,13 @@ namespace DeseaseSpreadSimulation
 		static size_t DistributionToCountHelper(size_t count, float percent);
 		static void AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country);
 
-		// Get a random index between 0 and maxIndex
-		static size_t GetUniformRandomIndex(size_t maxIndex);
 		// Returns an index weighted by the given distribution
 		template <typename T, size_t SIZE>
 		static size_t GetDistributedArrayIndex(const std::array<T, SIZE>& distributionArray)
 		{
-			std::random_device seed;
-			std::mt19937 generator(seed());
 			// Create the distribution with the distributionArray as weights
 			std::discrete_distribution<size_t> distribution(distributionArray.cbegin(), distributionArray.cend());
-			return distribution(generator);
+			return distribution(Random::generator);
 		};
 
 		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;

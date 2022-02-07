@@ -18,7 +18,9 @@ namespace DeseaseSpreadSimulation
 		uint16_t DaysInfectious() const;
 		float GetMortalityByAge(uint16_t age) const;
 		float GetMortalityByAgeGroup(Age_Group age) const;
+		// Return a random duration out of the range
 		uint16_t GetDeseaseDuration() const;
+		// Return a random death time out of the range
 		uint16_t DaysTillDeath() const;
 		float GetSpreadFactor() const;
 
@@ -31,13 +33,13 @@ namespace DeseaseSpreadSimulation
 	private:
 		const uint32_t id = 0;
 		const std::string name{};
-		// incubation period in days
+		// Incubation period in days
 		const uint16_t incubationPeriod = 0;
-		// patient is contagious for x days after start of symptoms
+		// Patient is contagious for x days after start of symptoms
 		const uint16_t daysInfectious = 0;
-		// duration min, max in days
+		// Duration min, max in days
 		const std::pair<uint16_t, uint16_t> durationRange{};
-		// mortality in percent from 0-1, age from 0-9, 10-19, 20-29,...., >80 years
+		// Mortality in percent from 0-1, age from 0-9, 10-19, 20-29,...., >80 years
 		const std::vector<float> mortalityByAge;
 		const std::pair<uint16_t, uint16_t> daysTillDeathRange{};
 		// In percent from 0-1 how likely it is to get infected at exposure

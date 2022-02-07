@@ -74,22 +74,12 @@ float DeseaseSpreadSimulation::Desease::GetMortalityByAgeGroup(Age_Group age) co
 
 uint16_t DeseaseSpreadSimulation::Desease::GetDeseaseDuration() const
 {
-	std::random_device seed;
-	std::mt19937 randomNumberGenerator(seed());
-	std::uniform_int_distribution<uint16_t> deseaseDistribution(durationRange.first, durationRange.second);
-
-	// return a random duration between min and max
-	return deseaseDistribution(randomNumberGenerator);
+	return Random::UniformIntRange(durationRange.first, durationRange.second);
 }
 
 uint16_t DeseaseSpreadSimulation::Desease::DaysTillDeath() const
 {
-	std::random_device seed;
-	std::mt19937 randomNumberGenerator(seed());
-	std::uniform_int_distribution<uint16_t> deathDistribution(daysTillDeathRange.first, daysTillDeathRange.second);
-
-	// return a random death time out of the range
-	return deathDistribution(randomNumberGenerator);
+	return Random::UniformIntRange(daysTillDeathRange.first, daysTillDeathRange.second);
 }
 
 float DeseaseSpreadSimulation::Desease::GetSpreadFactor() const
@@ -119,10 +109,6 @@ bool DeseaseSpreadSimulation::Desease::hasSameID(const Desease& other) const
 
 bool DeseaseSpreadSimulation::Desease::isFatal(DeseaseSpreadSimulation::Age_Group age) const
 {
-	std::random_device seed;
-	std::mt19937 randomNumberGenerator(seed());
-	std::uniform_real_distribution<float> fatalityDistribution(0.0f, 1.0f);
-
-	// infection is fatal if the random number is <= than the mortality rate
-	return (fatalityDistribution(randomNumberGenerator) <= GetMortalityByAgeGroup(age));
+	// Infection is fatal if the random number is <= than the mortality rate
+	return (Random::Percent<float>() <= GetMortalityByAgeGroup(age));
 }

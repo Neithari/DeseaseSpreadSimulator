@@ -25,6 +25,7 @@
 
 // My
 #include "DeseaseSpreadSimulator/Enums.h"
+#include "DeseaseSpreadSimulator/RandomNumbers.h"
 #include "Desease/Desease.h"
 #include "Desease/Infection.h"
 #include "Person/Person.h"

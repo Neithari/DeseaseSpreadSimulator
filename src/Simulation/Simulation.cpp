@@ -273,9 +273,5 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 
 void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<Person>& population)
 {
-	std::random_device seed;
-	std::mt19937 generator(seed());
-	std::uniform_int_distribution<size_t> distribution(0, population.size() - 1);
-
-	population.at(distribution(generator)).Contaminate(desease);
+	population.at(Random::RandomVectorIndex(population)).Contaminate(desease);
 }

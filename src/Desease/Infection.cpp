@@ -67,11 +67,9 @@ bool DeseaseSpreadSimulation::Infection::WillInfect(const Desease* exposed, floa
 	// Desease spread factor range is spreadFactor to 1/10th of spreadFactor
 	float probability = MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
 
-	std::random_device seed;
-	std::mt19937 generator(seed());
 	std::bernoulli_distribution distribution(probability);
 
-	return distribution(generator);
+	return distribution(Random::generator);
 }
 
 bool DeseaseSpreadSimulation::Infection::IsSusceptible() const

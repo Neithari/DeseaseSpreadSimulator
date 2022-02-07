@@ -44,23 +44,6 @@ namespace DeseaseSpreadSimulation
 	private:
 		Place* TransferToPlace(Person* person, Place* place);
 
-		// Returns an random index from 0 to size - 1
-		template <typename T>
-		T RandomIndex(T size) const
-		{
-			// Prevent return of a negative index
-			if (size <= (T)0)
-			{
-				throw(std::out_of_range("Size = 0. Container possibly empty!"));
-			}
-
-			std::random_device seed;
-			std::mt19937 generator(seed());
-			std::uniform_int_distribution distribution((T)0, size - (T)1);
-
-			return distribution(generator);
-		};
-
 	private:
 		std::vector<Person> m_population;
 		Places m_places;

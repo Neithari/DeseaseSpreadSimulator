@@ -139,19 +139,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 	// Scale count by percent and then omit the decimal
 	return static_cast<size_t>(count * static_cast<double>(percent));
 }
-size_t DeseaseSpreadSimulation::PersonPopulator::GetUniformRandomIndex(size_t maxIndex)
-{
-	if (maxIndex <= 0)
-	{
-		return 0;
-	}
 
-	std::random_device seed;
-	std::mt19937 generator(seed());
-	std::uniform_int_distribution<size_t> uniform(0, maxIndex);
-
-	return uniform(generator);
-}
 DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount)
 {
 	// Create the distribution
@@ -167,7 +155,7 @@ DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignH
 		distIndex = GetDistributedArrayIndex(distributionArray);
 	}
 	// Return a random home of the chosen size
-	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(GetUniformRandomIndex(homesByMemberCount.at(distIndex).size() - 1)));
+	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(Random::RandomVectorIndex(homesByMemberCount.at(distIndex))));
 }
 
 DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const
@@ -180,7 +168,7 @@ DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::As
 		distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
 	}
 	// Return a random workplace at the chosen size
-	return workplacesBySize.at(distIndex).at(GetUniformRandomIndex(workplacesBySize.at(distIndex).size() - 1));
+	return workplacesBySize.at(distIndex).at(Random::RandomVectorIndex(workplacesBySize.at(distIndex)));
 }
 
 void DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
