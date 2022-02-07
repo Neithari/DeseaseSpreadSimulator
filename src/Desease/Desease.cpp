@@ -2,7 +2,7 @@
 #include "Desease/Desease.h"
 #include "IDGenerator/IDGenerator.h"
 
-DeseaseSpreadSimulation::Desease::Desease(std::string name, const int incubationPeriod, const int daysInfectious, std::pair<int, int> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<int, int> daysTillDeathRange, float spreadFactor)
+DeseaseSpreadSimulation::Desease::Desease(std::string name, const uint16_t incubationPeriod, const uint16_t daysInfectious, std::pair<uint16_t, uint16_t> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<uint16_t, uint16_t> daysTillDeathRange, float spreadFactor)
 	:
 	id(IDGenerator::IDGenerator<Desease>::GetNextID()),
 	name(std::move(name)),
@@ -20,17 +20,17 @@ const std::string& DeseaseSpreadSimulation::Desease::GetDeseaseName() const
 	return name;
 }
 
-int DeseaseSpreadSimulation::Desease::IncubationPeriod() const
+uint16_t DeseaseSpreadSimulation::Desease::IncubationPeriod() const
 {
 	return incubationPeriod;
 }
 
-int DeseaseSpreadSimulation::Desease::DaysInfectious() const
+uint16_t DeseaseSpreadSimulation::Desease::DaysInfectious() const
 {
 	return daysInfectious;
 }
 
-float DeseaseSpreadSimulation::Desease::GetMortalityByAge(int age) const
+float DeseaseSpreadSimulation::Desease::GetMortalityByAge(uint16_t age) const
 {
 	// any number devided by 10 will result the tens and we switch on them to get the Age_Group
 	// everything above 7 is Age_Group::AboveEighty
@@ -72,21 +72,21 @@ float DeseaseSpreadSimulation::Desease::GetMortalityByAgeGroup(Age_Group age) co
 	return mortalityByAge.at(static_cast<size_t>(age));
 }
 
-int DeseaseSpreadSimulation::Desease::GetDeseaseDuration() const
+uint16_t DeseaseSpreadSimulation::Desease::GetDeseaseDuration() const
 {
 	std::random_device seed;
 	std::mt19937 randomNumberGenerator(seed());
-	std::uniform_int_distribution<int> deseaseDistribution(durationRange.first, durationRange.second);
+	std::uniform_int_distribution<uint16_t> deseaseDistribution(durationRange.first, durationRange.second);
 
 	// return a random duration between min and max
 	return deseaseDistribution(randomNumberGenerator);
 }
 
-int DeseaseSpreadSimulation::Desease::DaysTillDeath() const
+uint16_t DeseaseSpreadSimulation::Desease::DaysTillDeath() const
 {
 	std::random_device seed;
 	std::mt19937 randomNumberGenerator(seed());
-	std::uniform_int_distribution<int> deathDistribution(daysTillDeathRange.first, daysTillDeathRange.second);
+	std::uniform_int_distribution<uint16_t> deathDistribution(daysTillDeathRange.first, daysTillDeathRange.second);
 
 	// return a random death time out of the range
 	return deathDistribution(randomNumberGenerator);
