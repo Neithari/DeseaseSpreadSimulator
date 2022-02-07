@@ -96,7 +96,7 @@ std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 
 bool DeseaseSpreadSimulation::Person::hasDesease() const
 {
-	return desease == nullptr;	
+	return desease != nullptr;	
 }
 
 uint32_t DeseaseSpreadSimulation::Person::GetID() const
