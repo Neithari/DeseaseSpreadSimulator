@@ -7,15 +7,7 @@ namespace DeseaseSpreadSimulation
 	class Community
 	{
 	public:
-		Community() = default;
 		Community(std::vector<Person> population, Places places);
-
-		void AddPlace(Home home);
-		void AddPlace(Supply store);
-		void AddPlace(Workplace workplace);
-		void AddPlace(School school);
-		void AddPlace(HardwareStore store);
-		void AddPlace(Morgue morgue);
 
 		void AddPerson(Person person);
 		void RemovePerson(uint32_t personID);
@@ -25,7 +17,6 @@ namespace DeseaseSpreadSimulation
 		
 		Person TransferPerson(uint32_t personID);
 
-		Place* TransferToPlace(Person* person, Place* place);
 		Place* TransferToHome(Person* person);
 		Place* TransferToSupplyStore(Person* person);
 		Place* TransferToHardwareStore(Person* person);
@@ -35,7 +26,6 @@ namespace DeseaseSpreadSimulation
 		
 		std::vector<Person>& GetPopulation();
 		Places& GetPlaces();
-
 		std::vector<Home>& GetHomes();
 		// Returns a random supply store
 		Supply* GetSupplyStore();
@@ -44,23 +34,15 @@ namespace DeseaseSpreadSimulation
 		// Returns a random morgue
 		Morgue* GetMorgue();
 
+		void AddPlace(Home home);
+		void AddPlace(Supply store);
+		void AddPlace(Workplace workplace);
+		void AddPlace(School school);
+		void AddPlace(HardwareStore store);
+		void AddPlace(Morgue morgue);
+
 	private:
-		// Returns an random index from 0 to size - 1
-		template <typename T>
-		T RandomIndex(T size) const
-		{
-			// Prevent return of a negative index
-			if (size <= (T)0)
-			{
-				throw(std::out_of_range("Size = 0. Container possibly empty!"));
-			}
-
-			std::random_device seed;
-			std::mt19937 generator(seed());
-			std::uniform_int_distribution distribution((T)0, size - (T)1);
-
-			return distribution(generator);
-		};
+		Place* TransferToPlace(Person* person, Place* place);
 
 	private:
 		std::vector<Person> m_population;

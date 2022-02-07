@@ -3,11 +3,10 @@
 
 int main()
 {	
-	constexpr uint64_t populationSize = 100000u;
+	constexpr uint64_t populationSize = 500000u;
 
 	DeseaseSpreadSimulation::Simulation simulation{populationSize, true};
 
-	simulation.SetSimulationSpeedMultiplier(2);
 	simulation.Run();
 
 	return 0;

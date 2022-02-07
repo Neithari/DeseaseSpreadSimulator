@@ -1,47 +1,85 @@
 #include "pch.h"
 
 namespace UnitTests {
-    TEST(TimeTests, SimulationTimeProgress)
+    class TimeTests : public ::testing::Test
     {
-        auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
-        time.Start();
-
+    protected:
+        DeseaseSpreadSimulation::TimeManager time;
+        std::vector<DeseaseSpreadSimulation::Day> weekdays{
+            DeseaseSpreadSimulation::Day::Monday,
+            DeseaseSpreadSimulation::Day::Tuesday,
+            DeseaseSpreadSimulation::Day::Wednesday,
+            DeseaseSpreadSimulation::Day::Thursday,
+            DeseaseSpreadSimulation::Day::Friday,
+            DeseaseSpreadSimulation::Day::Saturday,
+            DeseaseSpreadSimulation::Day::Sunday
+        };
+    };
+    TEST_F(TimeTests, HourProgessTest)
+    {
         for (size_t i = 0; i < 100; i++)
         {
             EXPECT_EQ(time.GetElapsedHours(), i);
             time.Update();
         }
     }
-    TEST(TimeTests, TimeObserver)
+    TEST_F(TimeTests, DayProgressTest)
     {
-        auto& time = DeseaseSpreadSimulation::TimeManager::Instance();
+        EXPECT_EQ(time.GetElapsedDays(), 0);
 
-        struct Observer : DeseaseSpreadSimulation::TimeObserver
+        for (size_t i = 0; i < 24; i++)
         {
-            uint16_t increasePerDay = 0;
-
-            void OnNewDay(DeseaseSpreadSimulation::Day currentDay)
-            {
-                increasePerDay++;
-            }
-        };
-
-        Observer observer;
-        time.AddObserver(&observer);
-
-        ASSERT_EQ(observer.increasePerDay, 0);
-        for (size_t i = 1; i <= 10; i++)
-        {
-            time.NotifyDayChange();
-            ASSERT_EQ(observer.increasePerDay, i);
+            EXPECT_EQ(time.GetElapsedDays(), 0);
+            time.Update();
         }
+        EXPECT_EQ(time.GetElapsedDays(), 1);
 
-        auto currentIncrease = observer.increasePerDay;
-        time.RemoveObserver(&observer);
-        for (size_t i = 1; i <= 10; i++)
+        for (size_t i = 0; i < 24; i++)
         {
-            time.NotifyDayChange();
-            ASSERT_EQ(observer.increasePerDay, currentIncrease);
+            EXPECT_EQ(time.GetElapsedDays(), 1);
+            time.Update();
+        }
+        EXPECT_EQ(time.GetElapsedDays(), 2);
+    }
+    TEST_F(TimeTests, WeekdayTest)
+    {
+        for (auto& day : weekdays)
+        {
+            for (size_t i = 0; i < 24; i++)
+            {
+                EXPECT_EQ(time.GetCurrentDay(), day);
+                time.Update();
+            }
+        }
+    }
+    TEST_F(TimeTests, WorkdayTest)
+    {
+        for (size_t i = 0; i < weekdays.size() - 2; i++)
+        {
+            for (size_t i = 0; i < 24; i++)
+            {
+                EXPECT_TRUE(time.IsWorkday());
+                time.Update();
+            }
+        }
+        for (size_t i = weekdays.size() - 2; i < weekdays.size(); i++)
+        {
+            for (size_t i = 0; i < 24; i++)
+            {
+                EXPECT_FALSE(time.IsWorkday());
+                time.Update();
+            }
+        }
+    }
+    TEST_F(TimeTests, ClockTimeTest)
+    {
+        for (size_t i = 0; i < 100; i++)
+        {
+            for (size_t i = 0; i < 24; i++)
+            {
+                EXPECT_EQ(time.GetTime(), i);
+                time.Update();
+            }
         }
     }
 }

@@ -9,37 +9,32 @@ namespace DeseaseSpreadSimulation
 	public:		
 		PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
-		std::vector<Person> CreatePopulation(size_t populationSize, Country country, Community& community);
+		std::vector<Person> CreatePopulation(size_t populationSize, Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces);
 
-		// Get a new person for the chosen distribution. Call should return a empty pointer when population size is reached
-		Person GetNewPerson(Community* community, Home* home = nullptr);
+		// Get a new person for the chosen distribution.
+		Person GetNewPerson(Community* community = nullptr, Home* home = nullptr);
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
 		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes);
 		static Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount);
+		
+		static void AddCommunityToPopulation(Community* community, std::vector<Person>& population);
 
-		// Helper function to select the distribution inside the constructor initializer list
 		static Statistics::HouseholdComposition GetHouseholdDistribution(Country country);
 		static std::vector<Statistics::HumanDistribution> GetCountryDistribution(Country country);
-
-		// Assigne homes to our population at this place until we find a better solution
-		static void AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country);
 
 	private:
 		// Returns a rounded down percentage of count
 		static size_t DistributionToCountHelper(size_t count, float percent);
-		// Get a random index between 0 and maxIndex
-		static size_t GetUniformRandomIndex(size_t maxIndex);
+		static void AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country);
 
 		// Returns an index weighted by the given distribution
 		template <typename T, size_t SIZE>
 		static size_t GetDistributedArrayIndex(const std::array<T, SIZE>& distributionArray)
 		{
-			std::random_device seed;
-			std::mt19937 generator(seed());
 			// Create the distribution with the distributionArray as weights
 			std::discrete_distribution<size_t> distribution(distributionArray.cbegin(), distributionArray.cend());
-			return distribution(generator);
+			return distribution(Random::generator);
 		};
 
 		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;

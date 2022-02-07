@@ -241,6 +241,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Desease\Infection.cpp" />
     <ClCompile Include="..\IDGenerator\IDGenerator.cpp" />
     <ClCompile Include="..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -265,7 +266,6 @@
     <ClCompile Include="..\Person\PersonBehavior.cpp" />
     <ClCompile Include="..\Person\PersonPopulator.cpp" />
     <ClCompile Include="..\Places\Community.cpp" />
-    <ClCompile Include="..\Places\CommunityBuilder.cpp" />
     <ClCompile Include="..\Places\PlaceBuilder.cpp" />
     <ClCompile Include="..\Places\Places.cpp" />
     <ClCompile Include="..\Simulation\MeasureTime.cpp" />
@@ -294,20 +294,20 @@
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h" />
     <ClInclude Include="..\Desease\DeseaseBuilder.h" />
+    <ClInclude Include="..\Desease\Infection.h" />
     <ClInclude Include="..\IDGenerator\IDGenerator.h" />
     <ClInclude Include="..\pch.h" />
     <ClInclude Include="..\Person\Person.h" />
     <ClInclude Include="..\Person\PersonBehavior.h" />
     <ClInclude Include="..\Person\PersonPopulator.h" />
     <ClInclude Include="..\Places\Community.h" />
-    <ClInclude Include="..\Places\CommunityBuilder.h" />
     <ClInclude Include="..\Places\PlaceBuilder.h" />
     <ClInclude Include="..\Places\Places.h" />
     <ClInclude Include="..\Simulation\MeasureTime.h" />
-    <ClInclude Include="..\Simulation\TimeObserver.h" />
     <ClInclude Include="..\Simulation\Simulation.h" />
     <ClInclude Include="..\Simulation\TimeManager.h" />
     <ClInclude Include="Enums.h" />
+    <ClInclude Include="RandomNumbers.h" />
     <ClInclude Include="Statistics.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

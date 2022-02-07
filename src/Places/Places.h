@@ -33,17 +33,28 @@ namespace DeseaseSpreadSimulation
 
 	protected:
 		Place(uint32_t id);
+		Place(const Place& other);
+		Place(Place&& other) noexcept;
+		Place& operator=(const Place& other) = default;
+		Place& operator=(Place&& other) noexcept;
 
 	protected:
-		const uint32_t placeID = 0;
+		uint32_t placeID = 0;
 		// People inside the place not owned by place
 		std::vector<Person*> people;
+
+		std::mutex mutexPeople;
 	};
 
 	class Home : public Place
 	{
 	public:
 		Home();
+		Home(const Home& other);
+		Home(Home&& other) noexcept;
+		Home& operator=(const Home& other);
+		Home& operator=(Home&& other) noexcept;
+		~Home() = default;
 
 	public:
 		Place_Type GetType() const override;
@@ -53,6 +64,11 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		Supply();
+		Supply(const Supply& other);
+		Supply(Supply&& other) noexcept;
+		Supply& operator=(const Supply& other);
+		Supply& operator=(Supply&& other) noexcept;
+		~Supply() = default;
 
 	public:
 		Place_Type GetType() const override;
@@ -62,6 +78,11 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		Workplace();
+		Workplace(const Workplace& other);
+		Workplace(Workplace&& other) noexcept;
+		Workplace& operator=(const Workplace& other);
+		Workplace& operator=(Workplace&& other) noexcept;
+		~Workplace() = default;
 
 	public:
 		Place_Type GetType() const override;
@@ -71,6 +92,11 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		School();
+		School(const School& other);
+		School(School&& other) noexcept;
+		School& operator=(const School& other);
+		School& operator=(School&& other) noexcept;
+		~School() = default;
 
 	public:
 		Place_Type GetType() const override;
@@ -80,6 +106,11 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		HardwareStore();
+		HardwareStore(const HardwareStore& other);
+		HardwareStore(HardwareStore&& other) noexcept;
+		HardwareStore& operator=(const HardwareStore& other);
+		HardwareStore& operator=(HardwareStore&& other) noexcept;
+		~HardwareStore() = default;
 
 	public:
 		Place_Type GetType() const override;
@@ -88,6 +119,11 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		Morgue();
+		Morgue(const Morgue& other);
+		Morgue(Morgue&& other) noexcept;
+		Morgue& operator=(const Morgue& other);
+		Morgue& operator=(Morgue&& other) noexcept;
+		~Morgue() = default;
 
 	public:
 		Place_Type GetType() const override;

@@ -5,15 +5,15 @@ namespace UnitTests {
     {
     protected:
         std::string name = "a";
-        int incubationPeriod = 1;
-        int daysInfectious = 1;
-        std::pair<int, int> deseaseDurationRange{ 2, 10 };
+        uint16_t incubationPeriod = 1;
+        uint16_t daysInfectious = 1;
+        std::pair<uint16_t, uint16_t> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
-        std::pair<int, int> daysTillDeathRange{ 1, 2 };
+        std::pair<uint16_t, uint16_t> daysTillDeathRange{ 1, 2 };
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
 
         // Helper function to check if the given x is within the range
-        bool inRange(int x, std::pair<int, int> range)
+        bool inRange(uint16_t x, std::pair<uint16_t, uint16_t> range)
         {
             return x >= range.first && x <= range.second;
         }
@@ -101,17 +101,17 @@ namespace UnitTests {
         EXPECT_FALSE(desease1.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease1));
 
-        int incubationPeriod1 = 2;
+        uint16_t incubationPeriod1 = 2;
         DeseaseSpreadSimulation::Desease desease3{ name, incubationPeriod1, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease3.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease3));
 
-        int daysInfectious1 = 2;
+        uint16_t daysInfectious1 = 2;
         DeseaseSpreadSimulation::Desease desease4{ name, incubationPeriod, daysInfectious1, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease4.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease4));
 
-        std::pair<int, int> deseaseDurationRange1{ 0, 11 };
+        std::pair<uint16_t, uint16_t> deseaseDurationRange1{ 0, 11 };
         DeseaseSpreadSimulation::Desease desease5{ name, incubationPeriod, daysInfectious, deseaseDurationRange1, mortalityByAge, daysTillDeathRange };
         EXPECT_FALSE(desease5.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease5));
@@ -121,7 +121,7 @@ namespace UnitTests {
         EXPECT_FALSE(desease6.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease6));
 
-        std::pair<int, int> daysTillDeathRange1{ 0, 3 };
+        std::pair<uint16_t, uint16_t> daysTillDeathRange1{ 0, 3 };
         DeseaseSpreadSimulation::Desease desease7{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange1 };
         EXPECT_FALSE(desease7.isSame(desease));
         EXPECT_FALSE(desease.isSame(desease7));
@@ -131,11 +131,11 @@ namespace UnitTests {
     {
     protected:
         std::string name = "a";
-        int incubationPeriod = 1;
-        int daysInfectious = 1;
-        std::pair<int, int> deseaseDurationRange{ 2, 10 };
+        uint16_t incubationPeriod = 1;
+        uint16_t daysInfectious = 1;
+        std::pair<uint16_t, uint16_t> deseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
-        std::pair<int, int> daysTillDeathRange{ 1, 2 };
+        std::pair<uint16_t, uint16_t> daysTillDeathRange{ 1, 2 };
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
     };
     // Tests that CreateDesease() asserts are working properly for every set function
@@ -257,11 +257,11 @@ namespace UnitTests {
     TEST_F(DeseaseBuilderTest, CreateCorona)
     {
         std::string name = "COVID-19";
-        int incubationPeriod = 6;
-        int daysInfectious = 8;
-        std::pair<int, int> deseaseDurationRange{ 14, 42 };
+        uint16_t incubationPeriod = 6;
+        uint16_t daysInfectious = 8;
+        std::pair<uint16_t, uint16_t> deseaseDurationRange{ 14, 42 };
         std::vector<float> mortalityByAge{ 0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f };
-        std::pair<int, int> daysTillDeathRange{ 14, 56 };
+        std::pair<uint16_t, uint16_t> daysTillDeathRange{ 14, 56 };
         DeseaseSpreadSimulation::Desease corona{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
 
         DeseaseSpreadSimulation::DeseaseBuilder builder;
