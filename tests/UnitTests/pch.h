@@ -19,6 +19,7 @@
 #include "DeseaseSpreadSimulator/Enums.h"
 #include "Desease/Desease.h"
 #include "Desease/DeseaseBuilder.h"
+#include "Desease/Infection.h"
 #include "Person/Person.h"
 #include "Person/PersonPopulator.h"
 #include "Person/PersonBehavior.h"

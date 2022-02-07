@@ -41,13 +41,11 @@ namespace UnitTests {
         patient.Contaminate(&desease);
 
         // Patient is not contagious right after contamination
-        ASSERT_EQ(patient.isInfectious(), false);
+        ASSERT_EQ(patient.IsInfectious(), false);
         // Advance patient beyond incubation period
-        patient.AdvanceDay();
-
-        patient.Update(time, true);
+        patient.Update(0, true, true);
         // Patient is contagious after incubation period
-        ASSERT_EQ(patient.isInfectious(), true);
+        ASSERT_EQ(patient.IsInfectious(), true);
     }
     TEST_F(PersonTest, ContactWithOtherPersonWillInfect)
     {
@@ -60,9 +58,7 @@ namespace UnitTests {
         // Contaminate 1
         patient1.Contaminate(&desease);
         // Advance patient beyond latent period
-        patient1.AdvanceDay();
-
-        patient1.Update(time, true);
+        patient1.Update(0, true, true);
 
         // Check non infected has contact with infected
         patient2.Contact(patient1);
