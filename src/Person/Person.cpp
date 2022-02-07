@@ -74,13 +74,9 @@ bool DeseaseSpreadSimulation::Person::IsAlive() const
 	return alive;
 }
 
-const std::string& DeseaseSpreadSimulation::Person::GetDeseaseName() const
+std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 {
-	if (infection.HasDesease())
-	{
-		return infection.GetDeseaseName();
-	}
-	return "";
+	return infection.GetDeseaseName();
 }
 
 bool DeseaseSpreadSimulation::Person::HasDesease() const

@@ -19,7 +19,7 @@ namespace DeseaseSpreadSimulation
 		bool IsQuarantined() const;
 		bool IsFatal() const;
 		bool HasDesease() const;
-		const std::string& GetDeseaseName() const;
+		std::string GetDeseaseName() const;
 
 	private:
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time

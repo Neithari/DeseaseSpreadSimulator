@@ -36,7 +36,7 @@ namespace DeseaseSpreadSimulation
 		bool IsQuarantined() const;
 		bool IsAlive() const;
 		bool HasDesease() const;
-		const std::string& GetDeseaseName() const;
+		std::string GetDeseaseName() const;
 
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;

@@ -99,7 +99,7 @@ bool DeseaseSpreadSimulation::Infection::HasDesease() const
 	return desease != nullptr;
 }
 
-const std::string& DeseaseSpreadSimulation::Infection::GetDeseaseName() const
+std::string DeseaseSpreadSimulation::Infection::GetDeseaseName() const
 {
 	if (HasDesease())
 	{
