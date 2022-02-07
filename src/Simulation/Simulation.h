@@ -25,7 +25,7 @@ namespace DeseaseSpreadSimulation
 		void PrintPopulation(const std::vector<Person>& population) const;
 
 		void Contacts(Community& community);
-		void ContactForPlace(Place& place);
+		static void ContactForPlace(Place& place);
 
 		bool CheckForNewDay();
 

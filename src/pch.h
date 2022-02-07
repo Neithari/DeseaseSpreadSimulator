@@ -15,6 +15,7 @@
 #include <compare>
 #include <cmath>
 #include <mutex>
+#include <execution>
 
 // Data structures
 #include <string>

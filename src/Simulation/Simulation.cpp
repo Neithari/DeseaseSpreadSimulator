@@ -175,26 +175,27 @@ void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
 	{
 		Measure::MeasureTime measure("\t\t\t\tContacts");
 	auto& places = community.GetPlaces();
-	for (auto& place : places.homes)
-	{
-		ContactForPlace(place);
-	}
-	for (auto& place : places.supplyStores)
-	{
-		ContactForPlace(place);
-	}
-	for (auto& place : places.workplaces)
-	{
-		ContactForPlace(place);
-	}
-	for (auto& place : places.schools)
-	{
-		ContactForPlace(place);
-	}
-	for (auto& place : places.hardwareStores)
-	{
-		ContactForPlace(place);
-	}
+
+	std::for_each(std::execution::par_unseq, places.homes.begin(), places.homes.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.supplyStores.begin(), places.supplyStores.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.workplaces.begin(), places.workplaces.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.schools.begin(), places.schools.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.hardwareStores.begin(), places.hardwareStores.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
 	}/// </measure>
 }
 
