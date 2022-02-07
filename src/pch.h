@@ -26,6 +26,7 @@
 // My
 #include "DeseaseSpreadSimulator/Enums.h"
 #include "Desease/Desease.h"
+#include "Desease/Infection.h"
 #include "Person/Person.h"
 #include "Places/Community.h"
 #include "Places/Places.h"

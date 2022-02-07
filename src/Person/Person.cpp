@@ -21,82 +21,71 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, bool isWorkday, bool isNewDay)
 {
 	CheckNextMove(currentTime, isWorkday);
-
-	if (desease && isNewDay)
-	{
-		AdvanceDay();
-		DeseaseCheck();
-	}
+	infection.Update(*this, isNewDay);
 }
 
 void DeseaseSpreadSimulation::Person::Contact(Person& other)
 {
-	if (other.isInfectious() && isSusceptible())
+	if (other.IsInfectious() && IsSusceptible())
 	{
-		if (WillInfect(other.desease))
+		if (infection.WillInfect(other.infection.GetDesease(), behavior.acceptanceFactor))
 		{
-			Contaminate(other.desease);
-			other.spreadCount++;
+			infection.Contaminate(other.infection.GetDesease(), age);
+			other.infection.IncreaseSpreadCount();
 		}
 	}
-	else if (isInfectious() && other.isSusceptible())
+	else if (IsInfectious() && other.IsSusceptible())
 	{
-		if (other.WillInfect(desease))
+		if (other.infection.WillInfect(infection.GetDesease(), other.behavior.acceptanceFactor))
 		{
-			other.Contaminate(desease);
-			spreadCount++;
+			other.infection.Contaminate(infection.GetDesease(), other.age);
+			infection.IncreaseSpreadCount();
 		}
 	}
 }
 
-void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
+void DeseaseSpreadSimulation::Person::Contaminate(const Desease* desease)
 {
-	desease = infection;
-	seirState = Seir_State::Exposed;
-	
-	latentPeriod = desease->IncubationPeriod();
-	daysInfectious = desease->DaysInfectious();
-	daysTillCured = desease->GetDeseaseDuration();
-
-	if (desease->isFatal(age))
-	{
-		willDie = true;
-		daysToLive = desease->DaysTillDeath();
-	}
+	infection.Contaminate(desease, age);
 }
 
-bool DeseaseSpreadSimulation::Person::isSusceptible() const
+void DeseaseSpreadSimulation::Person::Kill()
 {
-	return seirState == Seir_State::Susceptible;
+	alive = false;
 }
 
-bool DeseaseSpreadSimulation::Person::isInfectious() const
+bool DeseaseSpreadSimulation::Person::IsSusceptible() const
 {
-	return seirState == Seir_State::Infectious;
+	return infection.IsSusceptible();
 }
 
-bool DeseaseSpreadSimulation::Person::isQuarantined() const
+bool DeseaseSpreadSimulation::Person::IsInfectious() const
 {
-	return quarantined;
+	return infection.IsInfectious();
 }
 
-bool DeseaseSpreadSimulation::Person::isAlive() const
+bool DeseaseSpreadSimulation::Person::IsQuarantined() const
+{
+	return infection.IsQuarantined();
+}
+
+bool DeseaseSpreadSimulation::Person::IsAlive() const
 {
 	return alive;
 }
 
-std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
+const std::string& DeseaseSpreadSimulation::Person::GetDeseaseName() const
 {
-	if (desease != nullptr)
+	if (infection.HasDesease())
 	{
-		return desease->GetDeseaseName();
+		return infection.GetDeseaseName();
 	}
 	return "";
 }
 
-bool DeseaseSpreadSimulation::Person::hasDesease() const
+bool DeseaseSpreadSimulation::Person::HasDesease() const
 {
-	return desease != nullptr;	
+	return infection.HasDesease();
 }
 
 uint32_t DeseaseSpreadSimulation::Person::GetID() const
@@ -142,52 +131,6 @@ DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplac
 DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool()
 {
 	return school;
-}
-
-void DeseaseSpreadSimulation::Person::DeseaseCheck()
-{
-	switch (seirState)
-	{
-	case DeseaseSpreadSimulation::Seir_State::Susceptible:
-		break;
-	case DeseaseSpreadSimulation::Seir_State::Exposed:
-		// Person is infectious when it was exposed to a desease and latent period is over
-		if (latentPeriod <= 0)
-		{
-			seirState = Seir_State::Infectious;
-		}
-		break;
-	case DeseaseSpreadSimulation::Seir_State::Infectious:
-		// Person is recovered when daysInfectious reached 0
-		if (daysInfectious <= 0)
-		{
-			seirState = Seir_State::Recovered;
-		}
-		break;
-	case DeseaseSpreadSimulation::Seir_State::Recovered:
-		if (daysTillCured == 0)
-		{
-			desease = nullptr;
-		}
-		// TODO: Implement that a person can be susceptible again.
-		break;
-	default:
-		break;
-	}
-}
-
-bool DeseaseSpreadSimulation::Person::WillInfect(const Desease* exposed) const
-{
-	// Map the acceptance factor to the inverse of the desease spread factor
-	// Acceptance factor range is always 0 to 1
-	// Desease spread factor range is spreadFactor to 1/10th of spreadFactor
-	float probability = MapOneRangeToAnother(behavior.acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
-
-	std::random_device seed;
-	std::mt19937 generator(seed());
-	std::bernoulli_distribution distribution(probability);
-
-	return distribution(generator);
 }
 
 void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t& currentTime, bool& isWorkday)
@@ -329,33 +272,4 @@ void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
 void DeseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 {
 	behavior = newBehavior;
-}
-
-void DeseaseSpreadSimulation::Person::AdvanceDay()
-{
-	// If the person has no desease, has recovered, is immune or dead do nothing (recovered/immune/dead are all Seir_State::Recovered)
-	if (seirState == Seir_State::Susceptible || seirState == Seir_State::Recovered)
-	{
-		return;
-	}
-	if (latentPeriod > 0)
-	{
-		latentPeriod--;
-	}
-	if (daysInfectious > 0)
-	{
-		daysInfectious--;
-	}
-	if (daysTillCured > 0)
-	{
-		daysTillCured--;
-	}
-	if (willDie)
-	{
-		// decrement daysToLive and if it reached 0 the person will die
-		if (--daysToLive <= 0)
-		{
-			alive = false;
-		}
-	}
 }

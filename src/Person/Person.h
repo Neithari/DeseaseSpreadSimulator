@@ -28,17 +28,15 @@ namespace DeseaseSpreadSimulation
 
 		// Will try to infect a susceptible person when the other is infectious
 		void Contact(Person& other);
+		void Contaminate(const Desease* desease);
+		void Kill();
 
-		void Contaminate(const Desease* infection);
-		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
-		void AdvanceDay();
-
-		bool isSusceptible() const;
-		bool isInfectious() const;
-		bool isQuarantined() const;
-		bool isAlive() const;
-		bool hasDesease() const;
-		std::string GetDeseaseName() const;
+		bool IsSusceptible() const;
+		bool IsInfectious() const;
+		bool IsQuarantined() const;
+		bool IsAlive() const;
+		bool HasDesease() const;
+		const std::string& GetDeseaseName() const;
 
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
@@ -59,15 +57,6 @@ namespace DeseaseSpreadSimulation
 		void ChangeBehavior(PersonBehavior newBehavior);
 
 	private:
-		void DeseaseCheck();
-		bool WillInfect(const Desease* exposed) const;
-
-		template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
-		T MapOneRangeToAnother(T value, T fromRangeMin, T fromRangeMax, T toRangeMin, T toRangeMax) const
-		{
-			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
-		}
-
 		void CheckNextMove(uint16_t& currentTime, bool& isWorkday);
 		void GoSupplyShopping(uint16_t currentTime);
 		void GoHardwareShopping(uint16_t currentTime);
@@ -86,19 +75,7 @@ namespace DeseaseSpreadSimulation
 		Workplace* workplace = nullptr;
 		School* school = nullptr;
 
-		// Desease Stuff
-		//-----------------------------------------
-		Seir_State seirState = Seir_State::Susceptible;
-		bool quarantined = false;
-		unsigned int spreadCount = 0;
-
-		const Desease* desease = nullptr;
-		unsigned int latentPeriod = 0;
-		unsigned int daysInfectious = 0;
-		unsigned int daysTillCured = 0;
-		unsigned int daysToLive = 0;
-		bool willDie = false;
-		//-----------------------------------------
+		Infection infection;
 
 		// In days
 		uint16_t m_lastFoodBuy = 0u;

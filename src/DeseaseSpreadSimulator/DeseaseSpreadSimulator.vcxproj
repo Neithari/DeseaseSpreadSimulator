@@ -241,6 +241,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\Desease\Infection.cpp" />
     <ClCompile Include="..\IDGenerator\IDGenerator.cpp" />
     <ClCompile Include="..\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -293,6 +294,7 @@
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h" />
     <ClInclude Include="..\Desease\DeseaseBuilder.h" />
+    <ClInclude Include="..\Desease\Infection.h" />
     <ClInclude Include="..\IDGenerator\IDGenerator.h" />
     <ClInclude Include="..\pch.h" />
     <ClInclude Include="..\Person\Person.h" />

@@ -60,6 +60,9 @@
     <ClCompile Include="..\Simulation\MeasureTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Desease\Infection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Desease\Desease.h">
@@ -105,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Simulation\MeasureTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Desease\Infection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

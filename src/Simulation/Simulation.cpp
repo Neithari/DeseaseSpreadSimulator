@@ -145,19 +145,19 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 
 	for (auto& person : population)
 	{
-		if (person.isAlive())
+		if (person.IsAlive())
 		{
 			populationCount++;
 
-			if (person.isSusceptible())
+			if (person.IsSusceptible())
 			{
 				susceptible++;
 			}
-			if (person.isInfectious())
+			if (person.IsInfectious())
 			{
 				infectious++;
 			}
-			if (person.hasDesease())
+			if (person.HasDesease())
 			{
 				withDesease++;
 			}
@@ -212,11 +212,11 @@ void DeseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 	std::vector<Person*> infectious;
 	for (auto person : place.GetPeople())
 	{
-		if (person->isSusceptible())
+		if (person->IsSusceptible())
 		{
 			susceptible.push_back(person);
 		}
-		else if (person->isInfectious())
+		else if (person->IsInfectious())
 		{
 			infectious.push_back(person);
 		}
