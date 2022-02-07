@@ -32,21 +32,21 @@ void DeseaseSpreadSimulation::DeseaseBuilder::SetDeseaseName(std::string desease
 	name = std::move(deseaseName);
 }
 
-void DeseaseSpreadSimulation::DeseaseBuilder::SetIncubationPeriod(const int period)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetIncubationPeriod(const uint16_t period)
 {
 	setupDone[1] = true;
 
 	incubationPeriod = period;
 }
 
-void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysInfectious(const int days)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysInfectious(const uint16_t days)
 {
 	setupDone[2] = true;
 
 	daysInfectious = days;
 }
 
-void DeseaseSpreadSimulation::DeseaseBuilder::SetDeseaseDuration(const int min, const int max)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDeseaseDuration(const uint16_t min, const uint16_t max)
 {
 	setupDone[3] = true;
 
@@ -60,7 +60,7 @@ void DeseaseSpreadSimulation::DeseaseBuilder::SetMortalityByAge(std::vector<floa
 	mortalityByAge = std::move(mortality);
 }
 
-void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysTillDeath(const int min, const int max)
+void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysTillDeath(const uint16_t min, const uint16_t max)
 {
 	setupDone[5] = true;
 

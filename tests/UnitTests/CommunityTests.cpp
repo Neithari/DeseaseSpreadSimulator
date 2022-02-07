@@ -4,7 +4,7 @@ namespace UnitTests {
     class CommunityTest : public ::testing::Test
     {
     protected:
-        DeseaseSpreadSimulation::Community community;
+        DeseaseSpreadSimulation::Community community{ std::vector<DeseaseSpreadSimulation::Person>{}, DeseaseSpreadSimulation::Places{} };
         DeseaseSpreadSimulation::PersonBehavior behavior;
     };
     TEST_F(CommunityTest, AddPlaceGetPlaces)
@@ -125,126 +125,5 @@ namespace UnitTests {
         ASSERT_EQ(transferPerson2.GetID(), person2ID);
         ASSERT_EQ(transferPerson3.GetID(), person3ID);
         ASSERT_EQ(transferPerson4.GetID(), person4ID);
-    }
-
-    TEST(CommunityBuilderTest, CreateCommunity)
-    {
-        DeseaseSpreadSimulation::CommunityBuilder cbuilder;
-
-        size_t populationSize1 = 100;
-        auto c1 = cbuilder.CreateCommunity(populationSize1, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c1->GetPopulation().size(), populationSize1);
-
-        size_t populationSize2 = 1000;
-        auto c2 = cbuilder.CreateCommunity(populationSize2, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c2->GetPopulation().size(), populationSize2);
-
-        size_t populationSize3 = 11;
-        auto c3 = cbuilder.CreateCommunity(populationSize3, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c3->GetPopulation().size(), populationSize3);
-
-        size_t populationSize4 = 673;
-        auto c4 = cbuilder.CreateCommunity(populationSize4, DeseaseSpreadSimulation::Country::USA);
-        ASSERT_EQ(c4->GetPopulation().size(), populationSize4);
-    }
-    // Helper function to get the percentages per category form a population so it can be compared to the distribution weights
-    std::array<float, 4> GetHomePercentFromPopulation(std::vector<DeseaseSpreadSimulation::Person>& population, DeseaseSpreadSimulation::Country country)
-    {
-        std::map<uint32_t, DeseaseSpreadSimulation::Home*> homesByID;
-
-        // Get the homes of every person in the population and put it into a map to filter multiples
-        for (auto& person : population)
-        {
-            auto home = person.GetHome();
-            homesByID.try_emplace(home->GetID(), home);
-        }
-
-        // Put the person count in every home into a vector
-        std::vector<size_t> peopleCount;
-        for (auto& [id, home] : homesByID)
-        {
-            peopleCount.emplace_back(home->GetPeople().size());
-        }
-
-        // Count the homes separated by category
-        std::array<size_t, 4> homeCount{};
-        for (auto& count : peopleCount)
-        {
-            // One person homes
-            if (count < 2)
-            {
-                homeCount.at(0)++;
-            }
-            // 2-3 person homes
-            else if (count < 4)
-            {
-                homeCount.at(1)++;
-            }
-            // 4-5 person homes
-            else if (count < 6)
-            {
-                homeCount.at(2)++;
-            }
-            // over 6 person homes
-            else
-            {
-                homeCount.at(3)++;
-            }
-        }
-        size_t sum = homeCount.at(0) + homeCount.at(1) + homeCount.at(2) + homeCount.at(3);
-
-        // Get the percent of the count by dividing it by the sum of all homes and check if it is near our distribution
-
-        std::array<float, 4> percent{};
-        for (size_t i = 0; i < homeCount.size(); i++)
-        {
-            percent.at(i) = static_cast<float>(homeCount.at(i)) / sum;
-        }
-
-        return percent;
-    }
-    TEST(CommunityBuilderTest, CheckHomes)
-    {
-        DeseaseSpreadSimulation::CommunityBuilder cbuilder;
-
-        constexpr auto country = DeseaseSpreadSimulation::Country::USA;
-        const std::array<float, 4> distributionArray{   DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).oneMember,
-                                                        DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
-                                                        DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
-                                                        DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
-        std::shared_mutex distributionArrayMutex;
-
-        constexpr size_t populationSize1 = 1000;
-        constexpr size_t testSize = 20;
-        std::vector<std::thread> threads;
-        threads.reserve(testSize);
-        for (size_t j = 0; j < testSize; j++)
-        {
-            threads.emplace_back([&]() {
-                auto c1 = cbuilder.CreateCommunity(populationSize1, country);
-                DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(c1->GetPopulation(), c1->GetHomes(), DeseaseSpreadSimulation::Country::USA);
-
-                auto homePercent1 = GetHomePercentFromPopulation(c1->GetPopulation(), country);
-                for (size_t i = 0; i < homePercent1.size(); i++)
-                {
-                    std::shared_lock lock(distributionArrayMutex, std::defer_lock);
-                    lock.lock();
-                    EXPECT_NEAR(homePercent1.at(i), distributionArray.at(i), 0.2f);
-                }
-                });
-        }
-        for (auto& thread : threads)
-        {
-            thread.join();
-        }
-
-        size_t populationSize2 = 10000;
-        auto c2 = cbuilder.CreateCommunity(populationSize2, country);
-        DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(c2->GetPopulation(), c2->GetHomes(), country);
-        auto homePercent2 = GetHomePercentFromPopulation(c2->GetPopulation(), country);
-        for (size_t i = 0; i < homePercent2.size(); i++)
-        {
-            EXPECT_NEAR(homePercent2.at(i), distributionArray.at(i), 0.13f);
-        }
     }
 }

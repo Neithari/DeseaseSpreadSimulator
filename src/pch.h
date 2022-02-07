@@ -9,12 +9,8 @@
 #include <random>
 #include <algorithm>
 #include <utility>
-#include <chrono>
-#include <map>
-#include <atomic>
-#include <compare>
-#include <cmath>
 #include <mutex>
+#include <execution>
 
 // Data structures
 #include <string>
@@ -29,7 +25,9 @@
 
 // My
 #include "DeseaseSpreadSimulator/Enums.h"
+#include "DeseaseSpreadSimulator/RandomNumbers.h"
 #include "Desease/Desease.h"
+#include "Desease/Infection.h"
 #include "Person/Person.h"
 #include "Places/Community.h"
 #include "Places/Places.h"

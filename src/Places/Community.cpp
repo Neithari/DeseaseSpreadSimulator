@@ -152,7 +152,7 @@ DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplySt
 		return nullptr;
 	}
 
-	return &m_places.supplyStores.at(RandomIndex(m_places.supplyStores.size()));
+	return &m_places.supplyStores.at(Random::RandomVectorIndex(m_places.supplyStores));
 }
 
 DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetHardwareStore()
@@ -162,7 +162,7 @@ DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetH
 		return nullptr;
 	}
 
-	return &m_places.hardwareStores.at(RandomIndex(m_places.hardwareStores.size()));
+	return &m_places.hardwareStores.at(Random::RandomVectorIndex(m_places.hardwareStores));
 }
 
 DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
@@ -171,6 +171,6 @@ DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
 	{
 		return nullptr;
 	}
-
-	return &m_places.morgues.at(RandomIndex(m_places.morgues.size()));
+	
+	return &m_places.morgues.at(Random::RandomVectorIndex(m_places.morgues));
 }

@@ -13,12 +13,12 @@ namespace DeseaseSpreadSimulation
 
 		// Desease setup functions
 		void SetDeseaseName(std::string name);
-		void SetIncubationPeriod(const int period);
-		void SetDaysInfectious(const int days);
-		void SetDeseaseDuration(const int min, const int max);
+		void SetIncubationPeriod(const uint16_t period);
+		void SetDaysInfectious(const uint16_t days);
+		void SetDeseaseDuration(const uint16_t min, const uint16_t max);
 		// Data in % between 0-1 and for age groups of 10 years, eg. 0-9,10-19,...,80+
 		void SetMortalityByAge(std::vector<float> mortality);
-		void SetDaysTillDeath(const int min, const int max);
+		void SetDaysTillDeath(const uint16_t min, const uint16_t max);
 
 		Desease CreateDeseaseFromFile(std::string fileName);
 		// Call only after you called all setup functions
@@ -28,11 +28,11 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		std::string name = "";
-		int incubationPeriod = 0;
-		int daysInfectious = 0;
-		std::pair<int, int> deseaseDurationRange{ 0,0 };
+		uint16_t incubationPeriod = 0;
+		uint16_t daysInfectious = 0;
+		std::pair<uint16_t, uint16_t> deseaseDurationRange{ 0,0 };
 		std::vector<float> mortalityByAge = {};
-		std::pair<int, int> daysTillDeathRange{ 0,0 };
+		std::pair<uint16_t, uint16_t> daysTillDeathRange{ 0,0 };
 		// For setup
 		bool setupDone[6] = {};
 	};

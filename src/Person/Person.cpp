@@ -1,134 +1,87 @@
 #include "pch.h"
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
-#include "Simulation/TimeManager.h"
 
 DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
 	sex(sex),
-	behavior(behavior),
+	behavior(std::move(behavior)),
 	community(community),
 	home(home),
-	whereabouts(home),
-	//personState(std::make_shared<HomeState>(behavior.foodBuyInterval, behavior.hardwareBuyInterval, TimeManager::Instance().GetCurrentDay())),
-	elapsedDay(TimeManager::Instance().GetElapsedDays())
+	whereabouts(home)
 {
+	if (whereabouts != nullptr)
+	{
+		whereabouts->AddPerson(this);
+	}
 }
 
-void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, uint64_t currentDay)
+void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, bool isWorkday, bool isNewDay)
 {
-	//auto newPersonState = personState->HandleStateChange(*this, currentTime);
-	//if (newPersonState)
-	//{
-	//	personState = std::move(newPersonState);
-	//	personState->Enter(*this);
-	//}
-	CheckNextMove(currentTime);
-
-	if (desease)
-	{
-		if (currentDay > elapsedDay)
-		{
-			AdvanceDay();
-			elapsedDay = currentDay;
-		}
-		DeseaseCheck();
-	}
+	CheckNextMove(currentTime, isWorkday);
+	infection.Update(*this, isNewDay);
 }
 
 void DeseaseSpreadSimulation::Person::Contact(Person& other)
 {
-	/// TODO: Should be possible to only alter myself and take other as const
-
-	// if the other person is infectious and I have no desease, now I have
-	if (other.isInfectious() && isSusceptible())
+	if (other.IsInfectious() && IsSusceptible())
 	{
-		if (WillInfect(other.desease))
+		if (infection.WillInfect(other.infection.GetDesease(), behavior.acceptanceFactor))
 		{
-			Contaminate(other.desease);
-			other.spreadCount++;
+			infection.Contaminate(other.infection.GetDesease(), age);
+			other.infection.IncreaseSpreadCount();
 		}
 	}
-	// if I am infectious and the other person has no desease, now he has
-	else if (isInfectious() && other.isSusceptible())
+	else if (IsInfectious() && other.IsSusceptible())
 	{
-		if (other.WillInfect(desease))
+		if (other.infection.WillInfect(infection.GetDesease(), other.behavior.acceptanceFactor))
 		{
-			other.Contaminate(desease);
-			spreadCount++;
+			other.infection.Contaminate(infection.GetDesease(), other.age);
+			infection.IncreaseSpreadCount();
 		}
 	}
 }
 
-std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
+void DeseaseSpreadSimulation::Person::Contaminate(const Desease* desease)
 {
-	if (desease != nullptr)
-	{
-		return desease->GetDeseaseName();
-	}
-	return "";
+	infection.Contaminate(desease, age);
 }
 
-bool DeseaseSpreadSimulation::Person::WillInfect(const Desease* exposed) const
+void DeseaseSpreadSimulation::Person::Kill()
 {
-	// Map the acceptance factor to the inverse of the desease spread factor
-	// Acceptance factor range is always 0 to 1
-	// Desease spread factor range is spreadFactor to 1/10th of spreadFactor
-	float probability = MapOneRangeToAnother(behavior.acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
-
-	std::random_device seed;
-	std::mt19937 generator(seed());
-	std::bernoulli_distribution distribution(probability);
-
-	return distribution(generator);
+	alive = false;
 }
 
-void DeseaseSpreadSimulation::Person::Contaminate(const Desease* infection)
+bool DeseaseSpreadSimulation::Person::IsSusceptible() const
 {
-	desease = infection;
-	seirState = Seir_State::Exposed;
-	
-	latentPeriod = desease->IncubationPeriod();
-	daysInfectious = desease->DaysInfectious();
-	daysTillCured = desease->GetDeseaseDuration();
-	// check if the person will die from the infection
-	if (desease->isFatal(age))
-	{
-		willDie = true;
-		daysToLive = desease->DaysTillDeath();
-	}
+	return infection.IsSusceptible();
 }
 
-bool DeseaseSpreadSimulation::Person::isSusceptible() const
+bool DeseaseSpreadSimulation::Person::IsInfectious() const
 {
-	return seirState == Seir_State::Susceptible;
+	return infection.IsInfectious();
 }
 
-bool DeseaseSpreadSimulation::Person::isInfectious() const
+bool DeseaseSpreadSimulation::Person::IsQuarantined() const
 {
-	return seirState == Seir_State::Infectious;
+	return infection.IsQuarantined();
 }
 
-bool DeseaseSpreadSimulation::Person::isQuarantined() const
-{
-	return quarantined;
-}
-
-bool DeseaseSpreadSimulation::Person::isAlive() const
+bool DeseaseSpreadSimulation::Person::IsAlive() const
 {
 	return alive;
 }
 
-bool DeseaseSpreadSimulation::Person::hasDesease(const std::string& deseaseName) const
+std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 {
-	if (desease == nullptr)
-	{
-		return false;
-	}
-	return desease->GetDeseaseName() == deseaseName;
-	
+	return infection.GetDeseaseName();
+}
+
+bool DeseaseSpreadSimulation::Person::HasDesease() const
+{
+	return infection.HasDesease();
 }
 
 uint32_t DeseaseSpreadSimulation::Person::GetID() const
@@ -176,39 +129,7 @@ DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool()
 	return school;
 }
 
-void DeseaseSpreadSimulation::Person::DeseaseCheck()
-{
-	switch (seirState)
-	{
-	case DeseaseSpreadSimulation::Seir_State::Susceptible:
-		break;
-	case DeseaseSpreadSimulation::Seir_State::Exposed:
-		// Person is infectious when it was exposed to a desease and latent period is over
-		if (latentPeriod <= 0)
-		{
-			seirState = Seir_State::Infectious;
-		}
-		break;
-	case DeseaseSpreadSimulation::Seir_State::Infectious:
-		// Person is recovered when daysInfectious reached 0
-		if (daysInfectious <= 0)
-		{
-			seirState = Seir_State::Recovered;
-		}
-		break;
-	case DeseaseSpreadSimulation::Seir_State::Recovered:
-		if (daysTillCured == 0)
-		{
-			desease = nullptr;
-		}
-		// TODO: Implement that a person can be susceptible again.
-		break;
-	default:
-		break;
-	}
-}
-
-void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime)
+void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t& currentTime, bool& isWorkday)
 {
 	if (!alive)
 	{
@@ -224,6 +145,7 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime)
 	bool needHardware = m_lastHardwareBuy >= behavior.hardwareBuyInterval;
 
 	auto currentPlace = whereabouts->GetType();
+
 	switch (currentPlace)
 	{
 	case DeseaseSpreadSimulation::Place_Type::Home:
@@ -238,14 +160,14 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime)
 		else if (workplace
 			&& currentTime >= workStartTime
 			&& currentTime <= workFinishTime
-			&& TimeManager::Instance().IsWorkday())
+			&& isWorkday)
 		{
 			whereabouts = community->TransferToWork(this);
 		}
 		else if (school != nullptr
 			&& currentTime >= schoolStartTime
 			&& currentTime <= schoolFinishTime
-			&& TimeManager::Instance().IsWorkday())
+			&& isWorkday)
 		{
 			whereabouts = community->TransferToSchool(this);
 		}
@@ -315,11 +237,6 @@ void DeseaseSpreadSimulation::Person::GoHardwareShopping(uint16_t currentTime)
 	buyFinishTime = currentTime + 1;
 }
 
-void DeseaseSpreadSimulation::Person::SetWhereabouts(Place* newWhereabouts)
-{
-	whereabouts = newWhereabouts;
-}
-
 void DeseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
 {
 	workplace = newWorkplace;
@@ -351,38 +268,4 @@ void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
 void DeseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 {
 	behavior = newBehavior;
-}
-
-void DeseaseSpreadSimulation::Person::Move(Place* destination)
-{
-	whereabouts = destination;
-}
-
-void DeseaseSpreadSimulation::Person::AdvanceDay()
-{
-	// If the person has no desease, has recovered, is immune or dead do nothing (recovered/immune/dead are all Seir_State::Recovered)
-	if (seirState == Seir_State::Susceptible || seirState == Seir_State::Recovered)
-	{
-		return;
-	}
-	if (latentPeriod > 0)
-	{
-		latentPeriod--;
-	}
-	if (daysInfectious > 0)
-	{
-		daysInfectious--;
-	}
-	if (daysTillCured > 0)
-	{
-		daysTillCured--;
-	}
-	if (willDie)
-	{
-		// decrement daysToLive and if it reached 0 the person will die
-		if (--daysToLive <= 0)
-		{
-			alive = false;
-		}
-	}
 }

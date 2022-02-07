@@ -1,8 +1,7 @@
 #pragma once
 #include "Places/Places.h"
+#include "Simulation/TimeManager.h"
 #include "Person/PersonBehavior.h"
-#include "Simulation/TimeObserver.h"
-#include <type_traits>
 
 namespace DeseaseSpreadSimulation
 {
@@ -11,7 +10,6 @@ namespace DeseaseSpreadSimulation
 	class Person
 	{
 	public:
-		// Create a Person with age, sex, community and set it's home and whereabout to home
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
 		
 		auto operator<=>(const Person& rhs) const
@@ -25,51 +23,40 @@ namespace DeseaseSpreadSimulation
 			return id == rhs.id;
 		}
 
-		void Update(uint16_t currentTime, uint64_t currentDay);
+		void Update(uint16_t currentTime, bool isWorkday, bool isNewDay);
 
+		// Will try to infect a susceptible person when the other is infectious
 		void Contact(Person& other);
-		std::string GetDeseaseName() const;
-		bool WillInfect(const Desease* exposed) const;
-		void Contaminate(const Desease* infection);
-		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
-		void AdvanceDay();
+		void Contaminate(const Desease* desease);
+		void Kill();
 
-		bool isSusceptible() const;
-		bool isInfectious() const;
-		bool isQuarantined() const;
-		bool isAlive() const;
-		bool hasDesease(const std::string& deseaseName) const;
+		bool IsSusceptible() const;
+		bool IsInfectious() const;
+		bool IsQuarantined() const;
+		bool IsAlive() const;
+		bool HasDesease() const;
+		std::string GetDeseaseName() const;
 
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
 		const PersonBehavior& GetBehavior() const;
-		Community* GetCommunity();
 
+		Community* GetCommunity();
 		Place* GetWhereabouts();
 		Home* GetHome() ;
 		Workplace* GetWorkplace();
 		School* GetSchool();
 		
-		void SetWhereabouts(Place* newWhereabouts);
 		void SetHome(Home* newHome);
 		void SetWorkplace(Workplace* newWorkplace);
 		void SetSchool(School* newSchool);
 		void SetCommunity(Community* newCommunity);
 		
 		void ChangeBehavior(PersonBehavior newBehavior);
-		void Move(Place* destination);
 
 	private:
-		void DeseaseCheck();
-
-		template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
-		T MapOneRangeToAnother(T value, T fromRangeMin, T fromRangeMax, T toRangeMin, T toRangeMax) const
-		{
-			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
-		}
-
-		void CheckNextMove(uint16_t currentTime);
+		void CheckNextMove(uint16_t& currentTime, bool& isWorkday);
 		void GoSupplyShopping(uint16_t currentTime);
 		void GoHardwareShopping(uint16_t currentTime);
 
@@ -87,25 +74,7 @@ namespace DeseaseSpreadSimulation
 		Workplace* workplace = nullptr;
 		School* school = nullptr;
 
-		//std::shared_ptr<PersonStates> personState = nullptr;
-
-		uint64_t elapsedDay = 0u;
-
-		// Desease Stuff
-		//-----------------------------------------
-		Seir_State seirState = Seir_State::Susceptible;
-		bool quarantined = false;
-		unsigned int spreadCount = 0;
-
-		const Desease* desease = nullptr;
-		unsigned int latentPeriod = 0;
-		unsigned int daysInfectious = 0;
-		unsigned int daysTillCured = 0;
-		unsigned int daysToLive = 0;
-		bool willDie = false;
-		//-----------------------------------------
-
-		// State things
+		Infection infection;
 
 		// In days
 		uint16_t m_lastFoodBuy = 0u;
