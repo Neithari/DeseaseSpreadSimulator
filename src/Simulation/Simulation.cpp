@@ -58,25 +58,13 @@ void DeseaseSpreadSimulation::Simulation::Update()
 				auto& population = community.GetPopulation();
 				auto currentTime = time.GetTime();
 				bool isWorkday = time.IsWorkday();
-				// The threaded version is significantly slower at person movements.
-				// Because of that we call the normal version when people go to work and back home.
-				if (currentTime == 8 || currentTime == 17)
-				{
-					for (auto& person : population)
-					{
-						person.Update(currentTime, isWorkday, isNewDay);
-					}
-				}
-				else
-				{
-					bool tmpIsNewDay = isNewDay;
+				bool tmpIsNewDay = isNewDay;
 
-					std::for_each(std::execution::par_unseq, population.begin(), population.end(),
-						[currentTime, isWorkday, tmpIsNewDay](auto& person)
-						{
-							person.Update(currentTime, isWorkday, tmpIsNewDay);
-						});
-				}
+				std::for_each(std::execution::par_unseq, population.begin(), population.end(),
+					[currentTime, isWorkday, tmpIsNewDay](auto& person)
+					{
+						person.Update(currentTime, isWorkday, tmpIsNewDay);
+					});
 			}/// </measure>
 
 			Contacts(community);

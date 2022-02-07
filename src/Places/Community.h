@@ -8,11 +8,6 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		Community(std::vector<Person> population, Places places);
-		Community(const Community& other);
-		Community(Community&& other);
-		Community& operator=(const Community& other);
-		Community& operator=(Community&& other);
-		~Community() = default;
 
 		void AddPerson(Person person);
 		void RemovePerson(uint32_t personID);
@@ -69,12 +64,5 @@ namespace DeseaseSpreadSimulation
 	private:
 		std::vector<Person> m_population;
 		Places m_places;
-
-		std::mutex mutexHome;
-		std::mutex mutexSupply;
-		std::mutex mutexHardware;
-		std::mutex mutexWork;
-		std::mutex mutexSchool;
-		std::mutex mutexMorgue;
 	};
 }

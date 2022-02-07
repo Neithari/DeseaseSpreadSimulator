@@ -9,32 +9,6 @@ DeseaseSpreadSimulation::Community::Community(std::vector<Person> population, Pl
 {
 }
 
-DeseaseSpreadSimulation::Community::Community(const Community& other)
-	:
-	m_population(other.m_population),
-	m_places(other.m_places)
-{
-}
-
-DeseaseSpreadSimulation::Community::Community(Community&& other)
-	:
-	m_population(other.m_population),
-	m_places(other.m_places)
-{
-}
-
-DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Community::operator=(const Community& other)
-{
-	return *this = Community(other);
-}
-
-DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Community::operator=(Community&& other)
-{
-	std::swap(m_population, other.m_population);
-	std::swap(m_places, other.m_places);
-	return *this;
-}
-
 void DeseaseSpreadSimulation::Community::AddPlace(Home home)
 {
 	m_places.homes.push_back(home);
@@ -116,7 +90,6 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPl
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHome(Person* person)
 {
-	std::lock_guard<std::mutex> lockHomes(mutexHome);
 	auto home = person->GetHome();
 	TransferToPlace(person, home);
 	return home;
@@ -124,7 +97,6 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHo
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSupplyStore(Person* person)
 {
-	std::lock_guard<std::mutex> lockSupplyStores(mutexSupply);
 	auto store = GetSupplyStore();
 	TransferToPlace(person, store);
 	return store;
@@ -132,7 +104,6 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSu
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHardwareStore(Person* person)
 {
-	std::lock_guard<std::mutex> lockHardwareStores(mutexHardware);
 	auto store = GetHardwareStore();
 	TransferToPlace(person, store);
 	return store;
@@ -140,7 +111,6 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHa
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToWork(Person* person)
 {
-	std::lock_guard<std::mutex> lockWorkplaces(mutexWork);
 	auto work = person->GetWorkplace();
 	TransferToPlace(person, work);
 	return work;
@@ -148,7 +118,6 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToWo
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSchool(Person* person)
 {
-	std::lock_guard<std::mutex> lockSchools(mutexSchool);
 	auto school = person->GetSchool();
 	TransferToPlace(person, school);
 	return school;
@@ -156,7 +125,6 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSc
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToMorgue(Person* person)
 {
-	std::lock_guard<std::mutex> lockMorgues(mutexMorgue);
 	auto morgue = GetMorgue();
 	TransferToPlace(person, morgue);
 	return morgue;
