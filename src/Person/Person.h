@@ -24,7 +24,7 @@ namespace DeseaseSpreadSimulation
 			return id == rhs.id;
 		}
 
-		void Update(TimeManager& time, bool isNewDay);
+		void Update(uint16_t currentTime, bool isWorkday, bool isNewDay);
 
 		// Will try to infect a susceptible person when the other is infectious
 		void Contact(Person& other);
@@ -68,7 +68,7 @@ namespace DeseaseSpreadSimulation
 			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
 		}
 
-		void CheckNextMove(TimeManager& time);
+		void CheckNextMove(uint16_t& currentTime, bool& isWorkday);
 		void GoSupplyShopping(uint16_t currentTime);
 		void GoHardwareShopping(uint16_t currentTime);
 

@@ -18,9 +18,9 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	}
 }
 
-void DeseaseSpreadSimulation::Person::Update(TimeManager& time, bool isNewDay)
+void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, bool isWorkday, bool isNewDay)
 {
-	CheckNextMove(time);
+	CheckNextMove(currentTime, isWorkday);
 
 	if (desease && isNewDay)
 	{
@@ -190,7 +190,7 @@ bool DeseaseSpreadSimulation::Person::WillInfect(const Desease* exposed) const
 	return distribution(generator);
 }
 
-void DeseaseSpreadSimulation::Person::CheckNextMove(TimeManager& time)
+void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t& currentTime, bool& isWorkday)
 {
 	if (!alive)
 	{
@@ -206,8 +206,6 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(TimeManager& time)
 	bool needHardware = m_lastHardwareBuy >= behavior.hardwareBuyInterval;
 
 	auto currentPlace = whereabouts->GetType();
-	auto currentTime = time.GetTime();
-	bool isWorkday = time.IsWorkday();
 
 	switch (currentPlace)
 	{

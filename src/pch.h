@@ -9,6 +9,7 @@
 #include <random>
 #include <algorithm>
 #include <utility>
+#include <mutex>
 #include <execution>
 
 // Data structures
