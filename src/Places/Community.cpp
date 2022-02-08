@@ -9,51 +9,15 @@ DeseaseSpreadSimulation::Community::Community(std::vector<Person> population, Pl
 {
 }
 
-void DeseaseSpreadSimulation::Community::AddPlace(Home home)
-{
-	m_places.homes.push_back(home);
-}
-
-void DeseaseSpreadSimulation::Community::AddPlace(Supply store)
-{
-	m_places.supplyStores.push_back(store);
-}
-
-void DeseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
-{
-	m_places.workplaces.push_back(workplace);
-}
-
-void DeseaseSpreadSimulation::Community::AddPlace(School school)
-{
-	m_places.schools.push_back(school);
-}
-
-void DeseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
-{
-	m_places.hardwareStores.push_back(store);
-}
-
-void DeseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
-{
-	m_places.morgues.push_back(morgue);
-}
-
-void DeseaseSpreadSimulation::Community::AddPlaces(Places places)
-{
-	m_places.Insert(places);
-}
-
 void DeseaseSpreadSimulation::Community::AddPerson(Person person)
 {
 	person.SetCommunity(this);
 	m_population.push_back(std::move(person));
 }
 
-void DeseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
+void DeseaseSpreadSimulation::Community::RemovePerson(const Person& person)
 {
-	m_population.reserve(m_population.size() + population.size());
-	m_population.insert(m_population.end(), population.begin(), population.end());
+	RemovePerson(person.GetID());
 }
 
 void DeseaseSpreadSimulation::Community::RemovePerson(uint32_t personID)
@@ -62,6 +26,22 @@ void DeseaseSpreadSimulation::Community::RemovePerson(uint32_t personID)
 		std::remove_if(m_population.begin(), m_population.end(),
 			[&](const Person& person) { return person.GetID() == personID; }), m_population.end()
 	);
+}
+
+void DeseaseSpreadSimulation::Community::AddPlaces(Places places)
+{
+	m_places.Insert(places);
+}
+
+void DeseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
+{
+	m_population.reserve(m_population.size() + population.size());
+	m_population.insert(m_population.end(), population.begin(), population.end());
+}
+
+DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPerson(const Person& person)
+{
+	return TransferPerson(person.GetID());
 }
 
 DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPerson(uint32_t personID)
@@ -79,13 +59,6 @@ DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPers
 	// So we throw and silence compiler warnings
 	throw(std::invalid_argument("person not found"));
 	GSL_ASSUME(false);
-}
-
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
-{
-	person->GetWhereabouts()->RemovePerson(person);
-	place->AddPerson(person);
-	return place;
 }
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHome(Person* person)
@@ -173,4 +146,41 @@ DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
 	}
 	
 	return &m_places.morgues.at(Random::RandomVectorIndex(m_places.morgues));
+}
+
+void DeseaseSpreadSimulation::Community::AddPlace(Home home)
+{
+	m_places.homes.push_back(home);
+}
+
+void DeseaseSpreadSimulation::Community::AddPlace(Supply store)
+{
+	m_places.supplyStores.push_back(store);
+}
+
+void DeseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
+{
+	m_places.workplaces.push_back(workplace);
+}
+
+void DeseaseSpreadSimulation::Community::AddPlace(School school)
+{
+	m_places.schools.push_back(school);
+}
+
+void DeseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
+{
+	m_places.hardwareStores.push_back(store);
+}
+
+void DeseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
+{
+	m_places.morgues.push_back(morgue);
+}
+
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
+{
+	person->GetWhereabouts()->RemovePerson(person);
+	place->AddPerson(person);
+	return place;
 }

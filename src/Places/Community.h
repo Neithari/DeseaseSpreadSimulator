@@ -10,11 +10,13 @@ namespace DeseaseSpreadSimulation
 		Community(std::vector<Person> population, Places places);
 
 		void AddPerson(Person person);
+		void RemovePerson(const Person& person);
 		void RemovePerson(uint32_t personID);
 
 		void AddPlaces(Places places);
 		void AddPopulation(std::vector<Person>& population);
 		
+		Person TransferPerson(const Person& person);
 		Person TransferPerson(uint32_t personID);
 
 		Place* TransferToHome(Person* person);
