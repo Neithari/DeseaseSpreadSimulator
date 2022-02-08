@@ -18,7 +18,7 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces)
+std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools)
 {
 	std::vector<Person> population;
 
@@ -34,6 +34,8 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 	auto workplacesBySize(PlaceBuilder::WorkplacesBySize(populationSize, country, std::move(sortedWorkplaces)));
 
 	// Create the population
+	size_t schoolIndex = 0;
+	auto averageSchoolSize = Statistics::AverageSchoolSize(country);
 	while (!allAssigned)
 	{
 		// Get a new person
@@ -43,6 +45,26 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 		if (!noWorkplace && person.GetAgeGroup() > Age_Group::UnderTwenty && person.GetAgeGroup() <= Age_Group::UnderSeventy)
 		{
 			person.SetWorkplace(AssignWorkplace(workplacesBySize));
+		}
+		// Assign a school for every person under twenty
+		else  if (person.GetAgeGroup() <= Age_Group::UnderTwenty)
+		{
+			// Assign the school at the index until we reach the average school size
+			if (averageSchoolSize-- > 0)
+			{
+				person.SetSchool(&schools.at(schoolIndex));
+			}
+			else
+			{
+				// Reset the size and advance school index
+				averageSchoolSize = Statistics::AverageSchoolSize(country);
+				schoolIndex++;
+				// The last school will get all remaining school kids
+				if (schoolIndex == schools.size())
+				{
+					schoolIndex = schools.size() - 1;
+				}
+			}
 		}
 		// Add the created person to the community
 		population.push_back(std::move(person));
@@ -105,11 +127,29 @@ size_t DeseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t
 		if (humanDistribution.ageGroup > Age_Group::UnderTwenty && humanDistribution.ageGroup <= Age_Group::UnderSeventy)
 		{
 			// ...and if it is, sum the rounded population size with the distribution applied
-			workingPeople += llround(populationSize * static_cast<double>(humanDistribution.percent));
+			workingPeople += std::llround(populationSize * static_cast<double>(humanDistribution.percent));
 		}
 	}
 
 	return workingPeople;
+}
+
+size_t DeseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t populationSize, const Country country)
+{
+	auto countryDistribution = std::move(GetCountryDistribution(country));
+	size_t schoolKids = 0;
+	// For every human distribution in country distribution...
+	for (const auto& humanDistribution : countryDistribution)
+	{
+		// ...check if the distribution is inside working age...
+		if (humanDistribution.ageGroup <= Age_Group::UnderTwenty)
+		{
+			// ...and if it is, sum the rounded population size with the distribution applied
+			schoolKids += std::llround(populationSize * static_cast<double>(humanDistribution.percent));
+		}
+	}
+
+	return schoolKids;
 }
 
 std::array<std::vector<DeseaseSpreadSimulation::Home*>, 4> DeseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes)

@@ -25,6 +25,7 @@ DeseaseSpreadSimulation::Places DeseaseSpreadSimulation::PlaceBuilder::CreatePla
 	float workplaceCount = 0.f;
 	for (size_t i = 0; i < Statistics::workplaceSize.size(); i++)
 	{
+		// Workplaces starting with 25 employees and increasing by 50 per size
 		workplaceCount += (workingPeople * Statistics::workplaceSize.at(i)) / (25 + 50 * i);
 	}
 
@@ -45,6 +46,25 @@ DeseaseSpreadSimulation::Places DeseaseSpreadSimulation::PlaceBuilder::CreatePla
 		places.supplyStores.emplace_back();
 		places.hardwareStores.emplace_back();
 		places.morgues.emplace_back();
+	}
+
+	// Create schools
+	auto schoolKidsCount = PersonPopulator::SchoolKidsCount(populationSize, country);
+	auto schoolSize = Statistics::AverageSchoolSize(country);
+	size_t schoolCount;
+	// Open one extra school if there are 100 kids more than the average
+	size_t rest = schoolKidsCount % schoolSize;
+	if (rest < 100)
+	{
+		schoolCount = schoolKidsCount / schoolSize;
+	}
+	else
+	{
+		schoolCount = static_cast<size_t>(std::ceil(schoolKidsCount / static_cast<double>(schoolSize)));
+	}
+	for (size_t i = 0; i < schoolCount; i++)
+	{
+		places.schools.emplace_back();
 	}
 
 	return places;
