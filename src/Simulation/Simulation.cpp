@@ -103,19 +103,19 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 		auto& places = community.GetPlaces();
 		for (auto& place : places.workplaces)
 		{
-			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
 		for (auto& place : places.schools)
 		{
-			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
 		for (auto& place : places.supplyStores)
 		{
-			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
 		for (auto& place : places.hardwareStores)
 		{
-			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID(), place.GetPersonCount());
+			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
 	}
 }
@@ -258,7 +258,7 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		PersonPopulator populationFactory(populationSize, PersonPopulator::GetCountryDistribution(country));
 
 		auto places = placeFactory.CreatePlaces(populationSize, country);
-		auto population = populationFactory.CreatePopulation(populationSize, country, places.homes, places.workplaces);
+		auto population = populationFactory.CreatePopulation(populationSize, country, places.homes, places.workplaces, places.schools);
 
 		communities.emplace_back(std::move(population), std::move(places));
 		populationFactory.AddCommunityToPopulation(&communities.back(), communities.back().GetPopulation());
