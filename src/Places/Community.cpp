@@ -55,7 +55,7 @@ DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPers
 		m_population.erase(toTransfer);
 		return transferPerson;
 	}
-	// This should never happen, because the person to transfer is calling it.
+	// This should never happen, because the person to transfer should be calling it.
 	// So we throw and silence compiler warnings
 	throw(std::invalid_argument("person not found"));
 	GSL_ASSUME(false);

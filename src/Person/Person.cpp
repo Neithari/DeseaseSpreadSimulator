@@ -54,6 +54,11 @@ void DeseaseSpreadSimulation::Person::Kill()
 	alive = false;
 }
 
+bool DeseaseSpreadSimulation::Person::Travel()
+{
+	return Random::Percent<float>() <= behavior.travelNeed;
+}
+
 bool DeseaseSpreadSimulation::Person::IsSusceptible() const
 {
 	return infection.IsSusceptible();

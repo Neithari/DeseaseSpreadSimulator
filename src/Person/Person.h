@@ -29,6 +29,8 @@ namespace DeseaseSpreadSimulation
 		void Contact(Person& other);
 		void Contaminate(const Desease* desease);
 		void Kill();
+		// Returns true when the person want to travel
+		bool Travel();
 
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
