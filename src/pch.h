@@ -10,7 +10,9 @@
 #include <algorithm>
 #include <utility>
 #include <mutex>
+#include <shared_mutex>
 #include <execution>
+#include <optional>
 
 // Data structures
 #include <string>

@@ -16,16 +16,19 @@ namespace DeseaseSpreadSimulation
 	private:
 		void SetupEverything(uint16_t communityCount);
 		void InfectRandomPerson(const Desease* desease, std::vector<Person>& population);
+		void SetupTravelInfecter(const Desease* desease, Community* communitie);
 		
 		void Update();
+		void UpdatePopulation(std::vector<Person>& population);
+
+		void Contacts(Places& places, Travel& travelLocation);
+		static void ContactForPlace(Place& place);
 
 		void Print();
 		void PrintEveryHour();
 		void PrintOncePerDay();
 		void PrintPopulation(const std::vector<Person>& population) const;
 
-		void Contacts(Community& community);
-		static void ContactForPlace(Place& place);
 
 		bool CheckForNewDay();
 
@@ -39,6 +42,9 @@ namespace DeseaseSpreadSimulation
 		TimeManager time;
 		std::vector<Community> communities;
 		std::vector<Desease> deseases;
+
+		Person travelInfecter;
+		std::shared_timed_mutex travelInfecterMutex;
 
 		uint64_t elapsedDays = 0u;
 		// We start with the first hour

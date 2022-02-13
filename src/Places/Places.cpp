@@ -9,13 +9,13 @@ uint32_t DeseaseSpreadSimulation::Place::GetID() const
 
 void DeseaseSpreadSimulation::Place::AddPerson(Person* person)
 {
-	std::lock_guard<std::mutex> lockHomes(mutexPeople);
+	std::lock_guard<std::mutex> lockPeople(peopleMutex);
 	people.push_back(person);
 }
 
 void DeseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
 {
-	std::lock_guard<std::mutex> lockHomes(mutexPeople);
+	std::lock_guard<std::mutex> lockPeople(peopleMutex);
 	people.erase(
 		std::remove_if(people.begin(), people.end(),
 			[&](Person* person) { return person->GetID() == id; }), people.end()
@@ -80,8 +80,8 @@ DeseaseSpreadSimulation::Place::Place(const Place& other)
 
 DeseaseSpreadSimulation::Place::Place(Place&& other) noexcept
 	:
-	placeID(other.placeID),
-	people(other.people)
+	placeID(std::move(other.placeID)),
+	people(std::move(other.people))
 {
 }
 
@@ -106,7 +106,7 @@ DeseaseSpreadSimulation::Home::Home(const Home& other)
 
 DeseaseSpreadSimulation::Home::Home(Home&& other) noexcept
 	:
-	Place(other)
+	Place(std::move(other))
 {
 }
 
@@ -140,7 +140,7 @@ DeseaseSpreadSimulation::Supply::Supply(const Supply& other)
 
 DeseaseSpreadSimulation::Supply::Supply(Supply&& other) noexcept
 	:
-	Place(other)
+	Place(std::move(other))
 {
 }
 
@@ -174,7 +174,7 @@ DeseaseSpreadSimulation::Workplace::Workplace(const Workplace& other)
 
 DeseaseSpreadSimulation::Workplace::Workplace(Workplace&& other) noexcept
 	:
-	Place(other)
+	Place(std::move(other))
 {
 }
 
@@ -208,7 +208,7 @@ DeseaseSpreadSimulation::HardwareStore::HardwareStore(const HardwareStore& other
 
 DeseaseSpreadSimulation::HardwareStore::HardwareStore(HardwareStore&& other) noexcept
 	:
-	Place(other)
+	Place(std::move(other))
 {
 }
 
@@ -242,7 +242,7 @@ DeseaseSpreadSimulation::Morgue::Morgue(const Morgue& other)
 
 DeseaseSpreadSimulation::Morgue::Morgue(Morgue&& other) noexcept
 	:
-	Place(other)
+	Place(std::move(other))
 {
 }
 
@@ -276,7 +276,7 @@ DeseaseSpreadSimulation::School::School(const School& other)
 
 DeseaseSpreadSimulation::School::School(School&& other) noexcept
 	:
-	Place(other)
+	Place(std::move(other))
 {
 }
 
@@ -294,6 +294,40 @@ DeseaseSpreadSimulation::School& DeseaseSpreadSimulation::School::operator=(Scho
 DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::School::GetType() const
 {
 	return Place_Type::School;
+}
+
+DeseaseSpreadSimulation::Travel::Travel()
+	:
+	Place(IDGenerator::IDGenerator<Travel>::GetNextID())
+{
+}
+
+DeseaseSpreadSimulation::Travel::Travel(const Travel& other)
+	:
+	Place(other)
+{
+}
+
+DeseaseSpreadSimulation::Travel::Travel(Travel&& other) noexcept
+	:
+	Place(std::move(other))
+{
+}
+
+DeseaseSpreadSimulation::Travel& DeseaseSpreadSimulation::Travel::operator=(const Travel& other)
+{
+	return *this = Travel(other);
+}
+
+DeseaseSpreadSimulation::Travel& DeseaseSpreadSimulation::Travel::operator=(Travel&& other) noexcept
+{
+	Place::operator=(std::move(other));
+	return *this;
+}
+
+DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Travel::GetType() const
+{
+	return Place_Type::Travel;
 }
 
 void DeseaseSpreadSimulation::Places::Insert(Places other)

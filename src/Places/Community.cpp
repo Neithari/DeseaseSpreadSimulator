@@ -9,56 +9,85 @@ DeseaseSpreadSimulation::Community::Community(std::vector<Person> population, Pl
 {
 }
 
+DeseaseSpreadSimulation::Community::Community(const Community& other)
+	:
+	m_population(other.m_population),
+	m_places(other.m_places),
+	m_travelLocation(other.m_travelLocation)
+{
+}
+
+DeseaseSpreadSimulation::Community::Community(Community&& other) noexcept
+	:
+	m_population(std::move(other.m_population)),
+	m_places(std::move(other.m_places)),
+	m_travelLocation(std::move(other.m_travelLocation))
+{
+}
+
+DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Community::operator=(const Community& other)
+{
+	return *this = Community(other);
+}
+
+DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Community::operator=(Community&& other) noexcept
+{
+	std::swap(m_population, other.m_population);
+	std::swap(m_places, other.m_places);
+	std::swap(m_travelLocation, other.m_travelLocation);
+	return *this;
+}
+
 void DeseaseSpreadSimulation::Community::AddPerson(Person person)
 {
 	person.SetCommunity(this);
+	std::lock_guard<std::shared_timed_mutex> lockAddPerson(populationMutex);
 	m_population.push_back(std::move(person));
 }
 
-void DeseaseSpreadSimulation::Community::RemovePerson(const Person& person)
+void DeseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemove)
 {
-	RemovePerson(person.GetID());
-}
-
-void DeseaseSpreadSimulation::Community::RemovePerson(uint32_t personID)
-{
+	std::lock_guard<std::shared_timed_mutex> lockRemovePerson(populationMutex);
 	m_population.erase(
 		std::remove_if(m_population.begin(), m_population.end(),
-			[&](const Person& person) { return person.GetID() == personID; }), m_population.end()
+			[&](const Person& person) { return person == personToRemove; }), m_population.end()
 	);
 }
 
 void DeseaseSpreadSimulation::Community::AddPlaces(Places places)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPlaces(placesMutex);
 	m_places.Insert(places);
 }
 
 void DeseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPopulation(populationMutex);
 	m_population.reserve(m_population.size() + population.size());
 	m_population.insert(m_population.end(), population.begin(), population.end());
 }
 
-DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPerson(const Person& person)
+std::optional<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Community::TransferPerson(const Person& traveler)
 {
-	return TransferPerson(person.GetID());
-}
-
-DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::Community::TransferPerson(uint32_t personID)
-{
-	auto toTransfer = std::find_if(m_population.begin(), m_population.end(),
-		[&](const Person& person) { return person.GetID() == personID; });
-	
-	if (toTransfer != m_population.end())
+	// The shared lock can't be upgraded to a full lock. Because of that we need to separate the read from the write part.
+	bool isEnditerator{ true };
+	std::vector<Person>::iterator toTransfer;
 	{
-		auto transferPerson = std::move(*toTransfer);
+		std::shared_lock<std::shared_timed_mutex> lockFindPerson(populationMutex);
+		toTransfer = std::find_if(m_population.begin(), m_population.end(),
+			[&](const Person& person) { return person == traveler; });
+		isEnditerator = toTransfer != m_population.end();
+	}
+
+	if (!isEnditerator)
+	{
+		std::lock_guard<std::shared_timed_mutex> lockPersonTransfer(populationMutex);
+		std::optional<Person> transferPerson = std::move(*toTransfer);
 		m_population.erase(toTransfer);
 		return transferPerson;
 	}
 	// This should never happen, because the person to transfer should be calling it.
-	// So we throw and silence compiler warnings
-	throw(std::invalid_argument("person not found"));
-	GSL_ASSUME(false);
+	return std::nullopt;
 }
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHome(Person* person)
@@ -103,6 +132,13 @@ DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToMo
 	return morgue;
 }
 
+DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToTravelLocation(Person* person)
+{
+	// Currently only one travel location
+	TransferToPlace(person, &m_travelLocation);
+	return &m_travelLocation;
+}
+
 std::vector<DeseaseSpreadSimulation::Person>& DeseaseSpreadSimulation::Community::GetPopulation()
 {
 	return m_population;
@@ -113,6 +149,11 @@ DeseaseSpreadSimulation::Places& DeseaseSpreadSimulation::Community::GetPlaces()
 	return m_places;
 }
 
+DeseaseSpreadSimulation::Travel& DeseaseSpreadSimulation::Community::GetTravelLocation()
+{
+	return m_travelLocation;
+}
+
 std::vector<DeseaseSpreadSimulation::Home>& DeseaseSpreadSimulation::Community::GetHomes()
 {
 	return m_places.homes;
@@ -120,6 +161,7 @@ std::vector<DeseaseSpreadSimulation::Home>& DeseaseSpreadSimulation::Community::
 
 DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplyStore()
 {
+	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
 	if (m_places.supplyStores.empty())
 	{
 		return nullptr;
@@ -130,6 +172,7 @@ DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplySt
 
 DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetHardwareStore()
 {
+	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
 	if (m_places.hardwareStores.empty())
 	{
 		return nullptr;
@@ -140,6 +183,7 @@ DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetH
 
 DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
 {
+	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
 	if (m_places.morgues.empty())
 	{
 		return nullptr;
@@ -150,36 +194,43 @@ DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
 
 void DeseaseSpreadSimulation::Community::AddPlace(Home home)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.homes.push_back(home);
 }
 
 void DeseaseSpreadSimulation::Community::AddPlace(Supply store)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.supplyStores.push_back(store);
 }
 
 void DeseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.workplaces.push_back(workplace);
 }
 
 void DeseaseSpreadSimulation::Community::AddPlace(School school)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.schools.push_back(school);
 }
 
 void DeseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.hardwareStores.push_back(store);
 }
 
 void DeseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 {
+	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.morgues.push_back(morgue);
 }
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
 {
+	std::lock_guard<std::shared_timed_mutex> lockTransferToPlace(placesMutex);
 	person->GetWhereabouts()->RemovePerson(person);
 	place->AddPerson(person);
 	return place;

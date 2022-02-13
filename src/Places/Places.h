@@ -43,7 +43,7 @@ namespace DeseaseSpreadSimulation
 		// People inside the place not owned by place
 		std::vector<Person*> people;
 
-		std::mutex mutexPeople;
+		std::mutex peopleMutex;
 	};
 
 	class Home : public Place
@@ -128,6 +128,20 @@ namespace DeseaseSpreadSimulation
 	public:
 		Place_Type GetType() const override;
 	private:
+	};
+
+	class Travel : public Place
+	{
+	public:
+		Travel();
+		Travel(const Travel& other);
+		Travel(Travel&& other) noexcept;
+		Travel& operator=(const Travel& other);
+		Travel& operator=(Travel&& other) noexcept;
+		~Travel() = default;
+
+	public:
+		Place_Type GetType() const override;
 	};
 
 	struct Places

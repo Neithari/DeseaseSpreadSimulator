@@ -29,12 +29,11 @@ namespace DeseaseSpreadSimulation
 		void Contact(Person& other);
 		void Contaminate(const Desease* desease);
 		void Kill();
-		// Returns true when the person want to travel
-		bool Travel();
 
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
 		bool IsQuarantined() const;
+		bool IsTraveling() const;
 		bool IsAlive() const;
 		bool HasDesease() const;
 		std::string GetDeseaseName() const;
@@ -58,9 +57,12 @@ namespace DeseaseSpreadSimulation
 		void ChangeBehavior(PersonBehavior newBehavior);
 
 	private:
-		void CheckNextMove(uint16_t& currentTime, bool& isWorkday);
+		void CheckNextMove(uint16_t currentTime, bool& isWorkday, bool isNewDay);
+		void PrepareShopping();
 		void GoSupplyShopping(uint16_t currentTime);
 		void GoHardwareShopping(uint16_t currentTime);
+		bool WillTravel() const;
+		void StartTraveling();
 
 	private:
 		uint32_t id;
@@ -68,6 +70,7 @@ namespace DeseaseSpreadSimulation
 		Sex sex;
 		PersonBehavior behavior;
 		bool alive = true;
+		bool isTraveling = false;
 
 		// Not const because we will add ourself to the places
 		Community* community;
@@ -79,14 +82,21 @@ namespace DeseaseSpreadSimulation
 		Infection infection;
 
 		// In days
-		uint16_t m_lastFoodBuy = 0u;
-		uint16_t m_lastHardwareBuy = 0u;
+		uint16_t lastFoodBuy = 0u;
+		uint16_t lastHardwareBuy = 0u;
+		uint16_t travelDays = 0u;
+		// In hours
 		uint16_t buyTime = 0u;
 		uint16_t buyFinishTime = 0u;
+		bool isShoppingDay = false;
 		// Time in x/24h
+		static constexpr uint16_t shopOpenTime = 7u;
+		static constexpr uint16_t shopCloseTime = 20u;
 		static constexpr uint16_t workStartTime = 8u;
 		static constexpr uint16_t workFinishTime = 17u;
 		static constexpr uint16_t schoolStartTime = 8u;
 		static constexpr uint16_t schoolFinishTime = 15u;
+		// Percent
+		static constexpr float baseTravelReturnChance = 0.3f;
 	};
 }
