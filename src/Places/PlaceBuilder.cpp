@@ -54,7 +54,11 @@ DeseaseSpreadSimulation::Places DeseaseSpreadSimulation::PlaceBuilder::CreatePla
 	size_t schoolCount;
 	// Open one extra school if there are 100 kids more than the average
 	size_t rest = schoolKidsCount % schoolSize;
-	if (rest < 100)
+	if (schoolKidsCount < 100)
+	{
+		schoolCount = 1;
+	}
+	else if (rest < 100)
 	{
 		schoolCount = schoolKidsCount / schoolSize;
 	}

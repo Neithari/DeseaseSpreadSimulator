@@ -76,7 +76,7 @@ std::optional<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Communit
 		std::shared_lock<std::shared_timed_mutex> lockFindPerson(populationMutex);
 		toTransfer = std::find_if(m_population.begin(), m_population.end(),
 			[&](const Person& person) { return person == traveler; });
-		isEnditerator = toTransfer != m_population.end();
+		isEnditerator = toTransfer == m_population.end();
 	}
 
 	if (!isEnditerator)

@@ -63,7 +63,7 @@ namespace UnitTests {
 
         community.AddPerson(person1);
         EXPECT_EQ(community.GetPopulation().size(), 1);
-        community.RemovePerson(person1ID);
+        community.RemovePerson(person1);
         ASSERT_EQ(community.GetPopulation().size(), 0);
 
         DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
@@ -75,10 +75,10 @@ namespace UnitTests {
         community.AddPerson(person2);
         community.AddPerson(person3);
         EXPECT_EQ(community.GetPopulation().size(), 2);
-        community.RemovePerson(person2ID);
+        community.RemovePerson(person2);
         EXPECT_EQ(community.GetPopulation().size(), 1);
         ASSERT_EQ(community.GetPopulation().back().GetID(), person3ID);
-        community.RemovePerson(person3ID);
+        community.RemovePerson(person3);
         ASSERT_EQ(community.GetPopulation().size(), 0);
 
         DeseaseSpreadSimulation::Person person4{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
@@ -89,11 +89,11 @@ namespace UnitTests {
         community.AddPerson(person4);
         community.AddPerson(person5);
         EXPECT_EQ(community.GetPopulation().size(), 2);
-        community.RemovePerson(person1ID);
+        community.RemovePerson(person1);
         EXPECT_EQ(community.GetPopulation().size(), 2);
-        community.RemovePerson(person2ID);
+        community.RemovePerson(person2);
         EXPECT_EQ(community.GetPopulation().size(), 2);
-        community.RemovePerson(person3ID);
+        community.RemovePerson(person3);
         EXPECT_EQ(community.GetPopulation().size(), 2);
     }
     TEST_F(CommunityTest, TransferPerson)
@@ -105,9 +105,10 @@ namespace UnitTests {
         community.AddPerson(person1);
         ASSERT_EQ(community.GetPopulation().size(), 1);
 
-        auto transferPerson = community.TransferPerson(person1ID);
+        auto transferPerson = community.TransferPerson(person1);
         EXPECT_EQ(community.GetPopulation().size(), 0);
-        ASSERT_EQ(transferPerson.GetID(), person1ID);
+        ASSERT_TRUE(transferPerson);
+        ASSERT_EQ(transferPerson->GetID(), person1ID);
 
         DeseaseSpreadSimulation::Person person2{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
         DeseaseSpreadSimulation::Person person3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Female, behavior, &community };
@@ -119,11 +120,14 @@ namespace UnitTests {
         community.AddPerson(person2);
         community.AddPerson(person3);
         community.AddPerson(person4);
-        auto transferPerson2 = community.TransferPerson(person2ID);
-        auto transferPerson3 = community.TransferPerson(person3ID);
-        auto transferPerson4 = community.TransferPerson(person4ID);
-        ASSERT_EQ(transferPerson2.GetID(), person2ID);
-        ASSERT_EQ(transferPerson3.GetID(), person3ID);
-        ASSERT_EQ(transferPerson4.GetID(), person4ID);
+        auto transferPerson2 = community.TransferPerson(person2);
+        auto transferPerson3 = community.TransferPerson(person3);
+        auto transferPerson4 = community.TransferPerson(person4);
+        ASSERT_TRUE(transferPerson2);
+        ASSERT_EQ(transferPerson2->GetID(), person2ID);
+        ASSERT_TRUE(transferPerson3);
+        ASSERT_EQ(transferPerson3->GetID(), person3ID);
+        ASSERT_TRUE(transferPerson4);
+        ASSERT_EQ(transferPerson4->GetID(), person4ID);
     }
 }

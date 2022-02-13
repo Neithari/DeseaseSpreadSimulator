@@ -277,7 +277,7 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		PersonPopulator populationFactory(populationSize, PersonPopulator::GetCountryDistribution(country));
 
 		auto places = placeFactory.CreatePlaces(populationSize, country);
-		auto population = populationFactory.CreatePopulation(populationSize, country, places.homes, places.workplaces, places.schools);
+		auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
 		communities.emplace_back(std::move(population), std::move(places));
 		populationFactory.AddCommunityToPopulation(&communities.back(), communities.back().GetPopulation());
