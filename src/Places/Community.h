@@ -8,14 +8,19 @@ namespace DeseaseSpreadSimulation
 	{
 	public:
 		Community(std::vector<Person> population, Places places);
+		Community(const Community& other);
+		Community(Community&& other) noexcept;
+		Community& operator=(const Community& other);
+		Community& operator=(Community&& other) noexcept;
+		~Community() = default;
 
 		void AddPerson(Person person);
-		void RemovePerson(uint32_t personID);
+		void RemovePerson(const Person& person);
 
 		void AddPlaces(Places places);
 		void AddPopulation(std::vector<Person>& population);
 		
-		Person TransferPerson(uint32_t personID);
+		std::optional<Person> TransferPerson(const Person& traveler);
 
 		Place* TransferToHome(Person* person);
 		Place* TransferToSupplyStore(Person* person);
@@ -23,9 +28,11 @@ namespace DeseaseSpreadSimulation
 		Place* TransferToWork(Person* person);
 		Place* TransferToSchool(Person* person);
 		Place* TransferToMorgue(Person* person);
+		Place* TransferToTravelLocation(Person* person);
 		
 		std::vector<Person>& GetPopulation();
 		Places& GetPlaces();
+		Travel& GetTravelLocation();
 		std::vector<Home>& GetHomes();
 		// Returns a random supply store
 		Supply* GetSupplyStore();
@@ -47,5 +54,9 @@ namespace DeseaseSpreadSimulation
 	private:
 		std::vector<Person> m_population;
 		Places m_places;
+		Travel m_travelLocation{};
+
+		std::shared_timed_mutex populationMutex;
+		std::shared_timed_mutex placesMutex;
 	};
 }

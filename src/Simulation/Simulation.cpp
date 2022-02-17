@@ -7,7 +7,8 @@
 DeseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	:
 	withPrint(withPrint),
-	populationSize(populationSize)
+	populationSize(populationSize),
+	travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.f, 1.f), nullptr)
 {
 }
 void DeseaseSpreadSimulation::Simulation::Run()
@@ -22,7 +23,7 @@ void DeseaseSpreadSimulation::Simulation::Run()
 		}
 
 		/// <measure>
-		Measure::MeasureTime measure("\t\t\t\t\t\t\tUpdate");
+		Measure::MeasureTime measure("\t\t\t\t\t\t\t\t\t\t\tUpdate");
 		Update();
 	}
 }
@@ -52,22 +53,18 @@ void DeseaseSpreadSimulation::Simulation::Update()
 	{
 		for (auto& community : communities)
 		{
+			auto& population = community.GetPopulation();
 			/// <measure>
 			{
 				Measure::MeasureTime measure("Person.Update");
-				auto& population = community.GetPopulation();
-				auto currentTime = time.GetTime();
-				bool isWorkday = time.IsWorkday();
-				bool tmpIsNewDay = isNewDay;
-
-				std::for_each(std::execution::par_unseq, population.begin(), population.end(),
-					[currentTime, isWorkday, tmpIsNewDay](auto& person)
-					{
-						person.Update(currentTime, isWorkday, tmpIsNewDay);
-					});
+				UpdatePopulation(population);
 			}/// </measure>
-
-			Contacts(community);
+			
+			/// <measure>
+			{
+				Measure::MeasureTime measure("\t\t\t\tContacts");
+				Contacts(community.GetPlaces(), community.GetTravelLocation());
+			}/// </measure>
 		}
 
 		if (withPrint)
@@ -75,6 +72,78 @@ void DeseaseSpreadSimulation::Simulation::Update()
 			Print();
 		}
 		elapsedHours++;
+	}
+}
+
+void DeseaseSpreadSimulation::Simulation::UpdatePopulation(std::vector<Person>& population)
+{
+	std::for_each(std::execution::par_unseq, population.begin(), population.end(),
+		[this](auto& person)
+		{
+			person.Update(time.GetTime(), time.IsWorkday(), isNewDay);
+		});
+}
+
+void DeseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& travelLocation)
+{
+	std::for_each(std::execution::par_unseq, places.homes.begin(), places.homes.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.supplyStores.begin(), places.supplyStores.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.workplaces.begin(), places.workplaces.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.schools.begin(), places.schools.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+	std::for_each(std::execution::par_unseq, places.hardwareStores.begin(), places.hardwareStores.end(), [](auto& place)
+		{
+			ContactForPlace(place);
+		});
+
+	// Random number of contacts for travelers
+	auto travelers = travelLocation.GetPeople();
+	std::for_each(std::execution::par_unseq, travelers.begin(), travelers.end(), [this](auto traveler)
+		{
+			auto numberOfContacts = Random::UniformIntRange(0, 5);
+			for (size_t i = 0; i < numberOfContacts; i++)
+			{
+				std::shared_lock<std::shared_timed_mutex> lockTravelInfecter(travelInfecterMutex);
+				traveler->Contact(travelInfecter);
+			}
+		});
+}
+
+void DeseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
+{
+	// Get all susceptible and infectious people
+	std::vector<Person*> susceptible;
+	std::vector<Person*> infectious;
+	for (auto person : place.GetPeople())
+	{
+		if (person->IsSusceptible())
+		{
+			susceptible.push_back(person);
+		}
+		else if (person->IsInfectious())
+		{
+			infectious.push_back(person);
+		}
+	}
+
+	// Every infectious person has a chance to infect a susceptible person
+	for (auto infectiousPerson : infectious)
+	{
+		for (auto susceptiblePerson : susceptible)
+		{
+			infectiousPerson->Contact(*susceptiblePerson);
+		}
 	}
 }
 
@@ -142,6 +211,8 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 	size_t withDesease = 0;
 	size_t infectious = 0;
 	size_t deadPeople = 0;
+	size_t traveling = 0;
+
 
 	for (auto& person : population)
 	{
@@ -161,6 +232,10 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 			{
 				withDesease++;
 			}
+			if (person.IsTraveling())
+			{
+				traveling++;
+			}
 		}
 		else
 		{
@@ -168,68 +243,12 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 		}
 	}
 
-	fmt::print("Population:   {}\n ", populationCount);
-	fmt::print("Susceptible:  {}\n ", susceptible);
-	fmt::print("With Desease: {}\n ", withDesease);
-	fmt::print("Infectious:   {}\n ", infectious);
-	fmt::print("Have died:    {}\n ", deadPeople);
-}
-
-void DeseaseSpreadSimulation::Simulation::Contacts(Community& community)
-{
-	/// <measure>
-	{
-		Measure::MeasureTime measure("\t\t\t\tContacts");
-	auto& places = community.GetPlaces();
-
-	std::for_each(std::execution::par_unseq, places.homes.begin(), places.homes.end(), [](auto& place)
-		{
-			ContactForPlace(place);
-		});
-	std::for_each(std::execution::par_unseq, places.supplyStores.begin(), places.supplyStores.end(), [](auto& place)
-		{
-			ContactForPlace(place);
-		});
-	std::for_each(std::execution::par_unseq, places.workplaces.begin(), places.workplaces.end(), [](auto& place)
-		{
-			ContactForPlace(place);
-		});
-	std::for_each(std::execution::par_unseq, places.schools.begin(), places.schools.end(), [](auto& place)
-		{
-			ContactForPlace(place);
-		});
-	std::for_each(std::execution::par_unseq, places.hardwareStores.begin(), places.hardwareStores.end(), [](auto& place)
-		{
-			ContactForPlace(place);
-		});
-	}/// </measure>
-}
-
-void DeseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
-{
-	// Get all susceptible and infectious people
-	std::vector<Person*> susceptible;
-	std::vector<Person*> infectious;
-	for (auto person : place.GetPeople())
-	{
-		if (person->IsSusceptible())
-		{
-			susceptible.push_back(person);
-		}
-		else if (person->IsInfectious())
-		{
-			infectious.push_back(person);
-		}
-	}
-
-	// Every infectious person has a chance to infect a susceptible person
-	for (auto infectiousPerson : infectious)
-	{
-		for (auto susceptiblePerson : susceptible)
-		{
-			infectiousPerson->Contact(*susceptiblePerson);
-		}
-	}
+	fmt::print("Population:   {}\n", populationCount);
+	fmt::print("Susceptible:  {}\n", susceptible);
+	fmt::print("With Desease: {}\n", withDesease);
+	fmt::print("Infectious:   {}\n", infectious);
+	fmt::print("Traveling:    {}\n", traveling);
+	fmt::print("Have died:    {}\n", deadPeople);
 }
 
 bool DeseaseSpreadSimulation::Simulation::CheckForNewDay()
@@ -247,24 +266,26 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 {
 	DeseaseBuilder dbuilder;
 	PlaceBuilder placeFactory;
-	//deseases.push_back(dbuilder.CreateCorona());
-	deseases.push_back(dbuilder.CreateDeadlyTestDesease());
-
 	/// <measure>
 	{
 	Measure::MeasureTime measure("Build communities");
+	//deseases.push_back(dbuilder.CreateCorona());
+	deseases.push_back(dbuilder.CreateDeadlyTestDesease());
+
 	for (size_t i = 0; i < communityCount; i++)
 	{
 		PersonPopulator populationFactory(populationSize, PersonPopulator::GetCountryDistribution(country));
 
 		auto places = placeFactory.CreatePlaces(populationSize, country);
-		auto population = populationFactory.CreatePopulation(populationSize, country, places.homes, places.workplaces, places.schools);
+		auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
 		communities.emplace_back(std::move(population), std::move(places));
 		populationFactory.AddCommunityToPopulation(&communities.back(), communities.back().GetPopulation());
 
 		InfectRandomPerson(&deseases.back(), communities.back().GetPopulation());
 	}
+	
+	SetupTravelInfecter(&deseases.back(), &communities.back());
 	}/// </measure>
 
 	stop = false;
@@ -274,4 +295,16 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<Person>& population)
 {
 	population.at(Random::RandomVectorIndex(population)).Contaminate(desease);
+}
+
+void DeseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Desease* desease, Community* communitie)
+{
+	travelInfecter.Contaminate(desease);
+	travelInfecter.SetCommunity(communitie);
+	Home home{};
+	travelInfecter.SetHome(&home);
+	while (!travelInfecter.IsInfectious())
+	{
+		travelInfecter.Update(0, true, true);
+	}
 }
