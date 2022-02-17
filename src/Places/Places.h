@@ -12,6 +12,7 @@ namespace DeseaseSpreadSimulation
 		std::vector<Person*>& GetPeople();
 		size_t GetPersonCount() const;
 		uint32_t GetID() const;
+		// People inside the place are not owned by the place
 		void AddPerson(Person* person);
 		void RemovePerson(uint32_t id);
 		void RemovePerson(Person* person);
@@ -40,7 +41,7 @@ namespace DeseaseSpreadSimulation
 
 	protected:
 		uint32_t placeID = 0;
-		// People inside the place not owned by place
+		// People inside the place are not owned by the place
 		std::vector<Person*> people;
 
 		std::mutex peopleMutex;
