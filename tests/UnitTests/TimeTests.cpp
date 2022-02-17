@@ -15,7 +15,7 @@ namespace UnitTests {
             DeseaseSpreadSimulation::Day::Sunday
         };
     };
-    TEST_F(TimeTests, HourProgessTest)
+    TEST_F(TimeTests, HourProgressTest)
     {
         for (size_t i = 0; i < 100; i++)
         {
