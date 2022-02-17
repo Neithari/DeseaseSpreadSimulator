@@ -5,7 +5,7 @@
 
 DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
 	:
-	m_populationSize(populationSize),
+	populationSize(populationSize),
 	leftover(populationSize),
 	ageDistribution(std::move(humanDistribution)),
 	currentHumanDistribution(ageDistribution.front())
@@ -18,7 +18,7 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(size_t populationSize, Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools)
+std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools)
 {
 	std::vector<Person> population;
 
@@ -87,7 +87,7 @@ DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::PersonPopulator::GetNew
 		if (!lastFew)
 		{
 			// ...set the currentHumanCount to a percent of the population...
-			currentHumanCount = DistributionToCountHelper(m_populationSize, currentHumanDistribution.percent);
+			currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
 		}
 		// ...and to 1 if this will return 0...
 		if (currentHumanCount == 0)
@@ -141,7 +141,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t po
 	// For every human distribution in country distribution...
 	for (const auto& humanDistribution : countryDistribution)
 	{
-		// ...check if the distribution is inside working age...
+		// ...check if the distribution is inside school age...
 		if (humanDistribution.ageGroup <= Age_Group::UnderTwenty)
 		{
 			// ...and if it is, sum the rounded population size with the distribution applied

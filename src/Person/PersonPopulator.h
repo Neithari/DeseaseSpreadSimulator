@@ -8,7 +8,7 @@ namespace DeseaseSpreadSimulation
 	public:		
 		PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
-		std::vector<Person> CreatePopulation(size_t populationSize, Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools);
+		std::vector<Person> CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools);
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
 		static size_t SchoolKidsCount(const size_t populationSize, const Country country);
@@ -40,7 +40,7 @@ namespace DeseaseSpreadSimulation
 		};
 
 	private:
-		const size_t m_populationSize = 0;
+		const size_t populationSize = 0;
 		bool allAssigned = false;
 		size_t leftover = 0;
 		bool lastFew = false;
