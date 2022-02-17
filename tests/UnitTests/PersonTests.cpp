@@ -14,22 +14,299 @@ namespace UnitTests {
         DeseaseSpreadSimulation::HardwareStore hwStore;
         DeseaseSpreadSimulation::Supply supplyStore;
         DeseaseSpreadSimulation::Morgue morgue;
+        DeseaseSpreadSimulation::Workplace work;
+        DeseaseSpreadSimulation::School school;
         DeseaseSpreadSimulation::Community community{ std::vector<DeseaseSpreadSimulation::Person>{}, DeseaseSpreadSimulation::Places{} };
         DeseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,0.f, 0.f };
         DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
         DeseaseSpreadSimulation::TimeManager time;
+        // Values from Person.h
+        static constexpr uint16_t shopOpenTime = 7u;
+        static constexpr uint16_t shopCloseTime = 20u;
+        static constexpr uint16_t workStartTime = 8u;
+        static constexpr uint16_t workFinishTime = 17u;
+        static constexpr uint16_t schoolStartTime = 8u;
+        static constexpr uint16_t schoolFinishTime = 15u;
 
         void InitCommunity()
         {
+
+            community.AddPlace(homes.back());
             community.AddPlace(hwStore);
             community.AddPlace(supplyStore);
             community.AddPlace(morgue);
+            community.AddPlace(work);
+            community.AddPlace(school);
         }
     };
+    TEST_F(PersonTest, UpdateSupplyMoves)
+    {
+        InitCommunity();
+
+        using namespace DeseaseSpreadSimulation;
+        PersonBehavior foodBuyBehavior{ 0,100,1.f,0.f };
+
+        Person person1(Age_Group::UnderThirty, Sex::Female, foodBuyBehavior, &community, &homes.back());
+        ASSERT_EQ(person1.GetWhereabouts(), person1.GetHome());
+        
+        // Check shopping for supplies
+        // We shop at a random time between open and close. Because of that we need to check the whole time range
+        bool wasShopping = false;
+        for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+        {
+            person1.Update(i, true, false);
+            if (person1.GetWhereabouts()->GetType() == Place_Type::Supply)
+            {
+                wasShopping = true;
+            }
+        }
+        EXPECT_TRUE(wasShopping);
+
+        // Check harware shop after supply
+        Person person2(Age_Group::UnderThirty, Sex::Female, foodBuyBehavior, &community, &homes.back());
+        ASSERT_EQ(person2.GetWhereabouts(), person2.GetHome());
+
+        uint16_t buyEndTime = 0;
+        for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+        {
+            person2.Update(i, true, false);
+            if (person2.GetWhereabouts()->GetType() == Place_Type::Supply)
+            {
+                buyEndTime = i + 1;
+                break;
+            }
+        }
+        ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::Supply);
+        PersonBehavior hardwareBuyBehavior{ 100,0,1.f,0.f };
+        person2.ChangeBehavior(hardwareBuyBehavior);
+        person2.Update(buyEndTime, true, false);
+        ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::HardwareStore);
+
+        // Check home shop after supply
+        Person person3(Age_Group::UnderThirty, Sex::Female, foodBuyBehavior, &community, &homes.back());
+        ASSERT_EQ(person3.GetWhereabouts(), person3.GetHome());
+
+        buyEndTime = 0;
+        for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+        {
+            person3.Update(i, true, false);
+            if (person3.GetWhereabouts()->GetType() == Place_Type::Supply)
+            {
+                buyEndTime = i + 1;
+                break;
+            }
+        }
+        ASSERT_EQ(person3.GetWhereabouts()->GetType(), Place_Type::Supply);
+        person3.Update(buyEndTime, true, false);
+        ASSERT_EQ(person3.GetWhereabouts(), person3.GetHome());
+    }
+    TEST_F(PersonTest, UpdateHardwareMoves)
+    {
+        InitCommunity();
+
+        using namespace DeseaseSpreadSimulation;
+        PersonBehavior hardwareBuyBehavior{ 100,0,1.f,0.f };
+
+        Person person1(Age_Group::UnderThirty, Sex::Male, hardwareBuyBehavior, &community, &homes.back());
+        ASSERT_EQ(person1.GetWhereabouts(), person1.GetHome());
+
+        // We shop at a random time between open and close. Because of that we need to check the whole time range
+        bool wasShopping = false;
+
+        for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+        {
+            person1.Update(i, true, false);
+            if (person1.GetWhereabouts()->GetType() == Place_Type::HardwareStore)
+            {
+                wasShopping = true;
+            }
+        }
+        EXPECT_TRUE(wasShopping);
+
+        // Check harware shop after supply
+        Person person2(Age_Group::UnderThirty, Sex::Female, hardwareBuyBehavior, &community, &homes.back());
+        ASSERT_EQ(person2.GetWhereabouts(), person2.GetHome());
+
+        uint16_t buyEndTime = 0;
+        for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+        {
+            person2.Update(i, true, false);
+            if (person2.GetWhereabouts()->GetType() == Place_Type::HardwareStore)
+            {
+                buyEndTime = i + 1;
+                break;
+            }
+        }
+        ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::HardwareStore);
+        PersonBehavior foodBuyBehavior{ 0,100,1.f,0.f };
+        person2.ChangeBehavior(foodBuyBehavior);
+        person2.Update(buyEndTime, true, false);
+        ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::Supply);
+
+        // Check home shop after supply
+        Person person3(Age_Group::UnderThirty, Sex::Female, hardwareBuyBehavior, &community, &homes.back());
+        ASSERT_EQ(person3.GetWhereabouts(), person3.GetHome());
+
+        buyEndTime = 0;
+        for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+        {
+            person3.Update(i, true, false);
+            if (person3.GetWhereabouts()->GetType() == Place_Type::HardwareStore)
+            {
+                buyEndTime = i + 1;
+                break;
+            }
+        }
+        ASSERT_EQ(person3.GetWhereabouts()->GetType(), Place_Type::HardwareStore);
+        person3.Update(buyEndTime, true, false);
+        ASSERT_EQ(person3.GetWhereabouts(), person3.GetHome());
+    }
+    TEST_F(PersonTest, UpdateTravelMoves)
+    {
+        InitCommunity();
+
+        using namespace DeseaseSpreadSimulation;
+        PersonBehavior travelBehavior{ 100,100,0.f,1.f };
+
+        Person traveler(Age_Group::UnderThirty, Sex::Female, travelBehavior, &community, &homes.back());
+        ASSERT_EQ(traveler.GetWhereabouts(), traveler.GetHome());
+
+        traveler.Update(shopOpenTime, false, false);
+        EXPECT_EQ(traveler.GetWhereabouts()->GetType(), Place_Type::Travel);
+        EXPECT_TRUE(traveler.IsTraveling());
+        
+        // Update with a new day untill we are no longer traveling
+        while (traveler.IsTraveling())
+        {
+            traveler.Update(0, false, true);
+        }
+        ASSERT_EQ(traveler.GetWhereabouts(), traveler.GetHome());
+    }
+    TEST_F(PersonTest, UpdateWorkMoves)
+    {
+        InitCommunity();
+
+        using namespace DeseaseSpreadSimulation;
+        PersonBehavior workerBehavior{ 100,100,1.f,0.f };
+
+        Person worker(Age_Group::UnderThirty, Sex::Female, workerBehavior, &community, &homes.back());
+        ASSERT_EQ(worker.GetWhereabouts(), worker.GetHome());
+        worker.SetWorkplace(&work);
+
+        for (auto i = workStartTime; i < workFinishTime; i++)
+        {
+            worker.Update(i, true, false);
+            EXPECT_EQ(worker.GetWhereabouts(), worker.GetWorkplace());
+        }
+        // Check getting back home
+        worker.Update(workFinishTime, true, false);
+        ASSERT_EQ(worker.GetWhereabouts(), worker.GetHome());
+
+        // Check travel after work
+        worker.Update(workStartTime, true, false);
+        ASSERT_EQ(worker.GetWhereabouts(), worker.GetWorkplace());
+        PersonBehavior travelBehavior{ 100,100,0.f,1.f };
+        worker.ChangeBehavior(travelBehavior);
+
+        worker.Update(workFinishTime, true, false);
+        EXPECT_EQ(worker.GetWhereabouts()->GetType(), Place_Type::Travel);
+    }
+    TEST_F(PersonTest, UpdateSchoolMoves)
+    {
+        InitCommunity();
+
+        using namespace DeseaseSpreadSimulation;
+        PersonBehavior schoolBehavior{ 100,100,1.f,0.f };
+
+        Person schoolKid(Age_Group::UnderThirty, Sex::Male, schoolBehavior, &community, &homes.back());
+        ASSERT_EQ(schoolKid.GetWhereabouts(), schoolKid.GetHome());
+        schoolKid.SetSchool(&school);
+
+        for (auto i = schoolStartTime; i < schoolFinishTime; i++)
+        {
+            schoolKid.Update(i, true, false);
+            EXPECT_EQ(schoolKid.GetWhereabouts(), schoolKid.GetSchool());
+        }
+        // Check getting back home
+        schoolKid.Update(schoolFinishTime, true, false);
+        EXPECT_EQ(schoolKid.GetWhereabouts(), schoolKid.GetHome());
+    }
+    TEST_F(PersonTest, UpdateMorgueMoves)
+    {
+        InitCommunity();
+
+        using namespace DeseaseSpreadSimulation;
+
+        Person person(Age_Group::UnderThirty, Sex::Female, behavior, &community, &homes.back());
+        ASSERT_EQ(person.GetWhereabouts(), person.GetHome());
+        ASSERT_TRUE(person.IsAlive());
+
+        person.Kill();
+        ASSERT_FALSE(person.IsAlive());
+        person.Update(0, false, false);
+        ASSERT_EQ(person.GetWhereabouts()->GetType(), Place_Type::Morgue);
+
+        // Check that the person stays in morgue
+        for (size_t i = 0; i < 1000; i++)
+        {
+            for (uint16_t h = 0; h < 24; h++)
+            {
+                person.Update(h, true, true);
+                ASSERT_EQ(person.GetWhereabouts()->GetType(), Place_Type::Morgue);
+            }
+            // Check other random behaviors
+            if (i % 5 == 0)
+            {
+                person.ChangeBehavior(PersonBehavior{});
+            }
+        }
+    }
+    TEST_F(PersonTest, UpdateInfection)
+    {
+        InitCommunity();
+        using namespace DeseaseSpreadSimulation;
+
+        Person person(Age_Group::UnderTwenty, Sex::Male, behavior, &community, &homes.back());
+
+        ASSERT_FALSE(person.HasDesease());
+        person.Contaminate(&desease);
+        ASSERT_TRUE(person.HasDesease());
+        ASSERT_FALSE(person.IsInfectious());
+        // Advance patient beyond latent period
+        person.Update(0, true, true);
+        ASSERT_TRUE(person.IsInfectious());
+    }
+    TEST_F(PersonTest, ContactWithOtherPersonWillInfect)
+    {
+        InitCommunity();
+
+        // Create 3 patients
+        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        // Contaminate 1
+        patient1.Contaminate(&desease);
+        // Advance patient beyond latent period
+        patient1.Update(0, true, true);
+        ASSERT_TRUE(patient1.IsInfectious());
+
+        // Check non infected has contact with infected
+        patient2.Contact(patient1);
+        EXPECT_EQ(patient1.GetDeseaseName(), patient2.GetDeseaseName());
+
+        // Check infected has contact with non infected
+        patient1.Contact(patient3);
+        EXPECT_EQ(patient1.GetDeseaseName(), patient3.GetDeseaseName());
+    }
     TEST_F(PersonTest, ContaminateAPerson)
     {
+        InitCommunity();
+
         DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+
+        ASSERT_FALSE(patient.HasDesease());
         patient.Contaminate(&desease);
+        ASSERT_TRUE(patient.HasDesease());
 
         ASSERT_EQ(patient.GetDeseaseName(), desease.GetDeseaseName());
     }
@@ -47,26 +324,43 @@ namespace UnitTests {
         // Patient is contagious after incubation period
         ASSERT_EQ(patient.IsInfectious(), true);
     }
-    TEST_F(PersonTest, ContactWithOtherPersonWillInfect)
+    TEST_F(PersonTest, Kill)
     {
         InitCommunity();
 
+        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+
+        ASSERT_TRUE(person.IsAlive());
+        person.Kill();
+        ASSERT_FALSE(person.IsAlive());
+    }
+    TEST_F(PersonTest, IDTest)
+    {
+        InitCommunity();
+
+        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+
+        ASSERT_NE(person1.GetID(), person2.GetID());
+    }
+    TEST_F(PersonTest, ChangeBehavior)
+    {
+        InitCommunity();
+
+        using namespace DeseaseSpreadSimulation;
         // Create 3 patients
-        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
-        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
-        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
-        // Contaminate 1
-        patient1.Contaminate(&desease);
-        // Advance patient beyond latent period
-        patient1.Update(0, true, true);
+        Person person1(Age_Group::UnderTwenty, Sex::Male, behavior, &community, &homes.back());
 
-        // Check non infected has contact with infected
-        patient2.Contact(patient1);
-        EXPECT_EQ(patient1.GetDeseaseName(), patient2.GetDeseaseName());
+        auto& behavior = person1.GetBehavior();
+        PersonBehavior oldBehavior(behavior.foodBuyInterval, behavior.hardwareBuyInterval, behavior.acceptanceFactor, behavior.travelNeed);
 
-        // Check infected has contact with non infected
-        patient1.Contact(patient3);
-        EXPECT_EQ(patient1.GetDeseaseName(), patient3.GetDeseaseName());
+
+        person1.ChangeBehavior(PersonBehavior{});
+        auto& currentBehavior = person1.GetBehavior();
+        EXPECT_NE(currentBehavior.foodBuyInterval, oldBehavior.foodBuyInterval);
+        EXPECT_NE(currentBehavior.hardwareBuyInterval, oldBehavior.hardwareBuyInterval);
+        EXPECT_NE(currentBehavior.acceptanceFactor, oldBehavior.acceptanceFactor);
+        EXPECT_NE(currentBehavior.travelNeed, oldBehavior.travelNeed);
     }
 
     class PersonPopulatorTest : public ::testing::Test
