@@ -31,23 +31,26 @@ std::string DeseaseSpreadSimulation::Place::TypeToString(Place_Type type)
 {
 	switch (type)
 	{
-	case DeseaseSpreadSimulation::Place_Type::Home:
+	case Place_Type::Home:
 		return "Home";
 		break;
-	case DeseaseSpreadSimulation::Place_Type::Supply:
+	case Place_Type::Supply:
 		return "Supply Store";
 		break;
-	case DeseaseSpreadSimulation::Place_Type::Workplace:
+	case Place_Type::Workplace:
 		return "Workplace";
 		break;
-	case DeseaseSpreadSimulation::Place_Type::School:
+	case Place_Type::School:
 		return "School";
 		break;
-	case DeseaseSpreadSimulation::Place_Type::HardwareStore:
+	case Place_Type::HardwareStore:
 		return "Hardware Store";
 		break;
-	case DeseaseSpreadSimulation::Place_Type::Morgue:
+	case Place_Type::Morgue:
 		return "Morgue";
+		break;
+	case Place_Type::Travel:
+		return "Travel location";
 		break;
 	default:
 		break;
