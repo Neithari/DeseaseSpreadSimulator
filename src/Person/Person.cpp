@@ -66,7 +66,7 @@ bool DeseaseSpreadSimulation::Person::IsInfectious() const
 
 bool DeseaseSpreadSimulation::Person::IsQuarantined() const
 {
-	return infection.IsQuarantined();
+	return isQuarantined;
 }
 
 bool DeseaseSpreadSimulation::Person::IsTraveling() const
@@ -82,6 +82,11 @@ bool DeseaseSpreadSimulation::Person::IsAlive() const
 std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
 {
 	return infection.GetDeseaseName();
+}
+
+bool DeseaseSpreadSimulation::Person::HasRecovered() const
+{
+	return infection.HasRecovered();
 }
 
 bool DeseaseSpreadSimulation::Person::HasDesease() const
@@ -107,6 +112,11 @@ DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
 const DeseaseSpreadSimulation::PersonBehavior& DeseaseSpreadSimulation::Person::GetBehavior() const
 {
 	return behavior;
+}
+
+uint32_t DeseaseSpreadSimulation::Person::GetSpreadCount() const
+{
+	return infection.GetSpreadCount();
 }
 
 DeseaseSpreadSimulation::Community* DeseaseSpreadSimulation::Person::GetCommunity()
@@ -178,6 +188,11 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 			return;
 		}
 		whereabouts = community->TransferToMorgue(this);
+	}
+
+	if (IsQuarantined())
+	{
+
 	}
 
 	bool needFood = lastFoodBuy >= behavior.foodBuyInterval;
@@ -338,4 +353,14 @@ void DeseaseSpreadSimulation::Person::StartTraveling()
 {
 	whereabouts = community->TransferToTravelLocation(this);
 	isTraveling = true;
+}
+
+void DeseaseSpreadSimulation::Person::StartQuarantine()
+{
+	isQuarantined = true;
+}
+
+void DeseaseSpreadSimulation::Person::EndQuarantine()
+{
+	isQuarantined = false;
 }

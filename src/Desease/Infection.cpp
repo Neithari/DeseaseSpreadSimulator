@@ -82,11 +82,6 @@ bool DeseaseSpreadSimulation::Infection::IsInfectious() const
 	return seirState == Seir_State::Infectious;
 }
 
-bool DeseaseSpreadSimulation::Infection::IsQuarantined() const
-{
-	return quarantined;
-}
-
 bool DeseaseSpreadSimulation::Infection::IsFatal() const
 {
 	return isFatal;
@@ -104,6 +99,16 @@ std::string DeseaseSpreadSimulation::Infection::GetDeseaseName() const
 		return desease->GetDeseaseName();
 	}
 	return "";
+}
+
+bool DeseaseSpreadSimulation::Infection::HasRecovered() const
+{
+	return hasRecovered;
+}
+
+uint32_t DeseaseSpreadSimulation::Infection::GetSpreadCount() const
+{
+	return spreadCount;
 }
 
 void DeseaseSpreadSimulation::Infection::DeseaseCheck()
@@ -124,6 +129,7 @@ void DeseaseSpreadSimulation::Infection::DeseaseCheck()
 		if (daysInfectious <= 0)
 		{
 			seirState = Seir_State::Recovered;
+			hasRecovered = true;
 		}
 		break;
 	case DeseaseSpreadSimulation::Seir_State::Recovered:

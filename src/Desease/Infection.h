@@ -18,10 +18,12 @@ namespace DeseaseSpreadSimulation
 		bool WillInfect(const Desease* exposed, float acceptanceFactor) const;
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
-		bool IsQuarantined() const;
 		bool IsFatal() const;
 		bool HasDesease() const;
 		std::string GetDeseaseName() const;
+		bool HasRecovered() const;
+
+		uint32_t GetSpreadCount() const;
 
 	private:
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
@@ -36,7 +38,7 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		Seir_State seirState = Seir_State::Susceptible;
-		bool quarantined = false;
+		bool hasRecovered = false;
 		uint32_t spreadCount = 0;
 
 		const Desease* desease = nullptr;

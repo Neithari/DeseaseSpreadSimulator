@@ -6,12 +6,15 @@
 namespace DeseaseSpreadSimulation
 {
 	class Community;
+	class DeseaseControl;
 
 	class Person
 	{
 	public:
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
 		
+		friend class DeseaseControl;
+
 		auto operator<=>(const Person& rhs) const
 		{
 			if (id < rhs.id) return -1;
@@ -30,6 +33,7 @@ namespace DeseaseSpreadSimulation
 		void Contaminate(const Desease* desease);
 		void Kill();
 
+
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
 		bool IsQuarantined() const;
@@ -37,11 +41,13 @@ namespace DeseaseSpreadSimulation
 		bool IsAlive() const;
 		bool HasDesease() const;
 		std::string GetDeseaseName() const;
+		bool HasRecovered() const;
 
 		uint32_t GetID() const;
 		Age_Group GetAgeGroup() const;
 		Sex GetSex() const;
 		const PersonBehavior& GetBehavior() const;
+		uint32_t GetSpreadCount() const;
 
 		Community* GetCommunity();
 		Place* GetWhereabouts();
@@ -64,6 +70,9 @@ namespace DeseaseSpreadSimulation
 		bool WillTravel() const;
 		void StartTraveling();
 
+		void StartQuarantine();
+		void EndQuarantine();
+
 	private:
 		uint32_t id;
 		Age_Group age;
@@ -71,6 +80,7 @@ namespace DeseaseSpreadSimulation
 		PersonBehavior behavior;
 		bool alive = true;
 		bool isTraveling = false;
+		bool isQuarantined = false;
 
 		// Not const because we will add ourself to the places
 		Community* community;

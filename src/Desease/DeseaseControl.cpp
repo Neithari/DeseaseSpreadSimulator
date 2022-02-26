@@ -1,9 +1,18 @@
 #include "pch.h"
-#include "DeseaseControl.h"
+#include "Desease/DeseaseControl.h"
 
 DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::DeseaseControl::Quarantine(Person* person)
 {
+	person->StartQuarantine();
 	return person->GetHome();
+}
+
+void DeseaseSpreadSimulation::DeseaseControl::ReleaseWhenRecovered(Person* person)
+{
+	if (person->HasRecovered())
+	{
+		person->EndQuarantine();
+	}
 }
 
 void DeseaseSpreadSimulation::DeseaseControl::ToggleShops()
