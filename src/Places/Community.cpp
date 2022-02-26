@@ -227,7 +227,7 @@ void DeseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 	m_places.morgues.push_back(morgue);
 }
 
-const DeseaseSpreadSimulation::DeseaseControl& DeseaseSpreadSimulation::Community::ContainmentMeasures() const
+const DeseaseSpreadSimulation::DeseaseContainment& DeseaseSpreadSimulation::Community::ContainmentMeasures() const
 {
 	return m_containmentMeasures;
 }

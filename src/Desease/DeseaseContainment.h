@@ -2,10 +2,10 @@
 
 namespace DeseaseSpreadSimulation
 {
-	class DeseaseControl
+	class DeseaseContainment
 	{
 	public:
-		DeseaseControl() = default;
+		DeseaseContainment() = default;
 
 		Home* Quarantine(Person* person);
 		void ReleaseWhenRecovered(Person* person);

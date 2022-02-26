@@ -6,14 +6,14 @@
 namespace DeseaseSpreadSimulation
 {
 	class Community;
-	class DeseaseControl;
+	class DeseaseContainment;
 
 	class Person
 	{
 	public:
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
 		
-		friend class DeseaseControl;
+		friend class DeseaseContainment;
 
 		auto operator<=>(const Person& rhs) const
 		{

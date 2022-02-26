@@ -63,7 +63,7 @@
     <ClCompile Include="..\Desease\Infection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Desease\DeseaseControl.cpp">
+    <ClCompile Include="..\Desease\DeseaseContainment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,7 +119,7 @@
     <ClInclude Include="RandomNumbers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Desease\DeseaseControl.h">
+    <ClInclude Include="..\Desease\DeseaseContainment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <random>
-#include "Desease/DeseaseControl.h"
+#include "Desease/DeseaseContainment.h"
 
 namespace DeseaseSpreadSimulation
 {
@@ -50,7 +50,7 @@ namespace DeseaseSpreadSimulation
 		void AddPlace(HardwareStore store);
 		void AddPlace(Morgue morgue);
 
-		const DeseaseControl& ContainmentMeasures() const;
+		const DeseaseContainment& ContainmentMeasures() const;
 
 	private:
 		Place* TransferToPlace(Person* person, Place* place);
@@ -59,7 +59,7 @@ namespace DeseaseSpreadSimulation
 		std::vector<Person> m_population;
 		Places m_places;
 		Travel m_travelLocation{};
-		DeseaseControl m_containmentMeasures{};
+		DeseaseContainment m_containmentMeasures{};
 
 		std::shared_timed_mutex populationMutex;
 		std::shared_timed_mutex placesMutex;
