@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Places/Community.h"
-#include <gsl/gsl>
 
 DeseaseSpreadSimulation::Community::Community(std::vector<Person> population, Places places)
 	:
@@ -226,6 +225,11 @@ void DeseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.morgues.push_back(morgue);
+}
+
+const DeseaseSpreadSimulation::DeseaseControl& DeseaseSpreadSimulation::Community::ContainmentMeasures() const
+{
+	return m_containmentMeasures;
 }
 
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
