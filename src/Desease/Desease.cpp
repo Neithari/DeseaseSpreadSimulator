@@ -2,7 +2,15 @@
 #include "Desease/Desease.h"
 #include "IDGenerator/IDGenerator.h"
 
-DeseaseSpreadSimulation::Desease::Desease(std::string name, const uint16_t incubationPeriod, const uint16_t daysInfectious, std::pair<uint16_t, uint16_t> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<uint16_t, uint16_t> daysTillDeathRange, float spreadFactor)
+DeseaseSpreadSimulation::Desease::Desease(std::string name,
+	const uint16_t incubationPeriod,
+	const uint16_t daysInfectious,
+	std::pair<uint16_t, uint16_t> deseaseDurationRange,
+	std::vector<float> mortalityByAge,
+	std::pair<uint16_t, uint16_t> daysTillDeathRange,
+	float spreadFactor,
+	float testAccuracy,
+	std::pair<float, float> symptomsDevelopment)
 	:
 	id(IDGenerator::IDGenerator<Desease>::GetNextID()),
 	name(std::move(name)),
@@ -11,7 +19,9 @@ DeseaseSpreadSimulation::Desease::Desease(std::string name, const uint16_t incub
 	durationRange(std::move(deseaseDurationRange)),
 	mortalityByAge(std::move(mortalityByAge)),
 	daysTillDeathRange(std::move(daysTillDeathRange)),
-	spreadFactor(spreadFactor)
+	spreadFactor(spreadFactor),
+	testAccuracy(testAccuracy),
+	symptomsDevelopment(symptomsDevelopment)
 {
 }
 
@@ -87,6 +97,11 @@ float DeseaseSpreadSimulation::Desease::GetSpreadFactor() const
 	return spreadFactor;
 }
 
+float DeseaseSpreadSimulation::Desease::GetTestAccuracy() const
+{
+	return testAccuracy;
+}
+
 uint32_t DeseaseSpreadSimulation::Desease::GetID() const
 {
 	return id;
@@ -111,4 +126,10 @@ bool DeseaseSpreadSimulation::Desease::isFatal(DeseaseSpreadSimulation::Age_Grou
 {
 	// Infection is fatal if the random number is <= than the mortality rate
 	return (Random::Percent<float>() <= GetMortalityByAgeGroup(age));
+}
+
+bool DeseaseSpreadSimulation::Desease::willDevelopSymptoms() const
+{
+	// Will return true when the random percent is within the symtoms development percent
+	return Random::Percent<float>() <= Random::UniformFloatRange(symptomsDevelopment.first, symptomsDevelopment.second);
 }

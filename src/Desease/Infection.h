@@ -22,23 +22,20 @@ namespace DeseaseSpreadSimulation
 		bool HasDesease() const;
 		std::string GetDeseaseName() const;
 		bool HasRecovered() const;
+		bool HasSymptoms() const;
 
 		uint32_t GetSpreadCount() const;
+		const Desease* GetDesease() const;
 
 	private:
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
 		void AdvanceDay(Person& person);
 		void DeseaseCheck();
 
-		template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
-		T MapOneRangeToAnother(T value, T fromRangeMin, T fromRangeMax, T toRangeMin, T toRangeMax) const
-		{
-			return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
-		}
-
 	private:
 		Seir_State seirState = Seir_State::Susceptible;
 		bool hasRecovered = false;
+		bool hasSymptoms = false;
 		uint32_t spreadCount = 0;
 
 		const Desease* desease = nullptr;

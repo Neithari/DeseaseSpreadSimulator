@@ -51,8 +51,10 @@ namespace DeseaseSpreadSimulation
 		void AddPlace(Morgue morgue);
 
 		const DeseaseContainment& ContainmentMeasures() const;
+		void TestStation(Person* person);
 
 	private:
+		bool TestPersonForInfection(const Person* person) const;
 		Place* TransferToPlace(Person* person, Place* place);
 
 	private:

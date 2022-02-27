@@ -3,12 +3,25 @@
 
 DeseaseSpreadSimulation::Desease DeseaseSpreadSimulation::DeseaseBuilder::CreateCorona()
 {
+	// https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Steckbrief.html
 	SetDeseaseName("COVID-19");
-	SetIncubationPeriod(6);
-	SetDaysInfectious(8);
-	SetDeseaseDuration(14, 42);
+	static constexpr uint16_t coronaIncubationPeriod{ 6 };
+	SetIncubationPeriod(coronaIncubationPeriod);
+	SetDaysInfectious(10);
+	static constexpr uint16_t coronaDurationMin{ 8 };
+	static constexpr uint16_t coronaDurationMax{ 10 };
+	SetDeseaseDuration(coronaIncubationPeriod + coronaDurationMin, coronaIncubationPeriod + coronaDurationMax);
 	SetMortalityByAge({ 0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f });
 	SetDaysTillDeath(14, 56);
+
+	// According to multiple sources only few individuals infect a lot of people.
+	// We use a log normal distribution with most people in the low percents because of that.
+	std::lognormal_distribution factorDistribution(0.0f,0.5f);
+	SetSpreadFactor(Random::MapRangeToPercent(factorDistribution(Random::generator), factorDistribution.min(), factorDistribution.max()));
+
+	SetTestAccuracy(0.981f);
+	// https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Steckbrief.html -> Manifestationsindex
+	SetSymptomsDevelopment(0.55f, 0.85f);
 
 	return CreateDesease();
 }
@@ -21,6 +34,9 @@ DeseaseSpreadSimulation::Desease DeseaseSpreadSimulation::DeseaseBuilder::Create
 	SetDeseaseDuration(10, 10);
 	SetMortalityByAge({ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f });
 	SetDaysTillDeath(10, 10);
+	SetSpreadFactor(1.0f);
+	SetTestAccuracy(1.0f);
+	SetSymptomsDevelopment(1.f, 1.f);
 
 	return CreateDesease();
 }
@@ -67,16 +83,46 @@ void DeseaseSpreadSimulation::DeseaseBuilder::SetDaysTillDeath(const uint16_t mi
 	daysTillDeathRange = { min, max };
 }
 
+void DeseaseSpreadSimulation::DeseaseBuilder::SetSpreadFactor(const float factor)
+{
+	setupDone[6] = true;
+
+	spreadFactor = factor;
+}
+
+void DeseaseSpreadSimulation::DeseaseBuilder::SetTestAccuracy(const float accuracy)
+{
+	setupDone[7] = true;
+
+	testAccuracy = accuracy;
+}
+
+void DeseaseSpreadSimulation::DeseaseBuilder::SetSymptomsDevelopment(const float minPercent, const float maxPercent)
+{
+	setupDone[8] = true;
+
+	symptomsDevelopment.first = minPercent;
+	symptomsDevelopment.second = maxPercent;
+}
+
 DeseaseSpreadSimulation::Desease DeseaseSpreadSimulation::DeseaseBuilder::CreateDesease()
 {
 	for (bool& setup : setupDone)
 	{
-		// will throw if you didn't setup everything befor trying to create the desease
+		// Will throw if you didn't setup everything befor trying to create the desease
 		if (!setup)
 		{
 			throw std::logic_error("Complete setup to create a desease!");
 		}
 	}
 
-	return Desease(name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange);
+	return Desease{ name,
+		incubationPeriod,
+		daysInfectious,
+		deseaseDurationRange,
+		mortalityByAge,
+		daysTillDeathRange,
+		spreadFactor,
+		testAccuracy,
+		symptomsDevelopment };
 }

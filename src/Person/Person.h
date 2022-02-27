@@ -48,6 +48,7 @@ namespace DeseaseSpreadSimulation
 		Sex GetSex() const;
 		const PersonBehavior& GetBehavior() const;
 		uint32_t GetSpreadCount() const;
+		const Desease* GetDesease() const;
 
 		Community* GetCommunity();
 		Place* GetWhereabouts();

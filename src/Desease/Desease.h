@@ -5,7 +5,15 @@ namespace DeseaseSpreadSimulation
 	class Desease
 	{
 	public:
-		Desease(std::string name, const uint16_t incubationPeriod, const uint16_t daysInfectious, std::pair<uint16_t, uint16_t> deseaseDurationRange, std::vector<float> mortalityByAge, std::pair<uint16_t, uint16_t> daysTillDeathRange, float spreadFactor = 1.0f);
+		Desease(std::string name,
+			const uint16_t incubationPeriod,
+			const uint16_t daysInfectious,
+			std::pair<uint16_t, uint16_t> deseaseDurationRange,
+			std::vector<float> mortalityByAge,
+			std::pair<uint16_t, uint16_t> daysTillDeathRange,
+			float spreadFactor = 1.0f,
+			float testAccuracy = 1.0f,
+			std::pair<float, float> symptomsDevelopment = { 1.0f, 1.0f });
 
 		// Check with ID
 		inline bool operator==(const Desease& rhs) const
@@ -23,12 +31,14 @@ namespace DeseaseSpreadSimulation
 		// Return a random death time out of the range
 		uint16_t DaysTillDeath() const;
 		float GetSpreadFactor() const;
+		float GetTestAccuracy() const;
 
 		uint32_t GetID() const;
 		// Check without ID
 		bool isSame(const Desease& other) const;
 		bool hasSameID(const Desease& other) const;
 		bool isFatal(Age_Group age) const;
+		bool willDevelopSymptoms() const;
 
 	private:
 		const uint32_t id = 0;
@@ -44,5 +54,7 @@ namespace DeseaseSpreadSimulation
 		const std::pair<uint16_t, uint16_t> daysTillDeathRange{};
 		// In percent from 0-1 how likely it is to get infected at exposure
 		float spreadFactor = 1.0f;
+		float testAccuracy = 1.0f;
+		std::pair<float, float> symptomsDevelopment;
 	};
 }

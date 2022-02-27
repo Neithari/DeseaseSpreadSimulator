@@ -7,8 +7,9 @@ namespace DeseaseSpreadSimulation
 	public:
 		DeseaseContainment() = default;
 
-		Home* Quarantine(Person* person);
-		void ReleaseWhenRecovered(Person* person);
+		// Start the quarantine and send the person home
+		void Quarantine(Person* person) const;
+		void ReleaseWhenRecovered(Person* person) const;
 		// Open or close shops
 		void ToggleShops();
 		void ToggleWorkingFromHome();

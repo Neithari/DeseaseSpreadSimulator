@@ -119,6 +119,11 @@ uint32_t DeseaseSpreadSimulation::Person::GetSpreadCount() const
 	return infection.GetSpreadCount();
 }
 
+const DeseaseSpreadSimulation::Desease* DeseaseSpreadSimulation::Person::GetDesease() const
+{
+	return infection.GetDesease();
+}
+
 DeseaseSpreadSimulation::Community* DeseaseSpreadSimulation::Person::GetCommunity()
 {
 	return community;
@@ -190,9 +195,21 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		whereabouts = community->TransferToMorgue(this);
 	}
 
+	// When we are quarantined do nothing untill we have recovered
 	if (IsQuarantined())
 	{
+		if (infection.HasRecovered() && currentTime >= shopOpenTime)
+		{
+			community->TestStation(this);
+		}
+		return;
+	}
 
+	// Test when we have symptoms
+	if (infection.HasSymptoms() && currentTime >= shopOpenTime)
+	{
+		community->TestStation(this);
+		return;
 	}
 
 	bool needFood = lastFoodBuy >= behavior.foodBuyInterval;
@@ -203,7 +220,7 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 	switch (currentPlace)
 	{
 	case DeseaseSpreadSimulation::Place_Type::Home:
-		// Branch to shopping, work, school or travel here
+		// Branch to shopping, work, school, travel or test here
 		// Go shopping at a random time between the open hours
 		if (needFood && currentTime >= shopOpenTime)
 		{

@@ -10,6 +10,8 @@ void DeseaseSpreadSimulation::Infection::Contaminate(const Desease* infection, A
 	daysInfectious = desease->DaysInfectious();
 	daysTillCured = desease->GetDeseaseDuration();
 
+	hasSymptoms = desease->willDevelopSymptoms();
+
 	if (desease->isFatal(age))
 	{
 		isFatal = true;
@@ -65,7 +67,7 @@ bool DeseaseSpreadSimulation::Infection::WillInfect(const Desease* exposed, floa
 	// Map the acceptance factor to the inverse of the desease spread factor
 	// Acceptance factor range is always 0 to 1
 	// Desease spread factor range is spreadFactor to 1/10th of spreadFactor
-	float probability = MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
+	float probability = Random::MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
 
 	std::bernoulli_distribution distribution(probability);
 
@@ -106,9 +108,19 @@ bool DeseaseSpreadSimulation::Infection::HasRecovered() const
 	return hasRecovered;
 }
 
+bool DeseaseSpreadSimulation::Infection::HasSymptoms() const
+{
+	return hasSymptoms;
+}
+
 uint32_t DeseaseSpreadSimulation::Infection::GetSpreadCount() const
 {
 	return spreadCount;
+}
+
+const DeseaseSpreadSimulation::Desease* DeseaseSpreadSimulation::Infection::GetDesease() const
+{
+	return desease;
 }
 
 void DeseaseSpreadSimulation::Infection::DeseaseCheck()
@@ -135,6 +147,7 @@ void DeseaseSpreadSimulation::Infection::DeseaseCheck()
 	case DeseaseSpreadSimulation::Seir_State::Recovered:
 		if (daysTillCured == 0)
 		{
+			hasSymptoms = false;
 			desease = nullptr;
 		}
 		// TODO: Implement that a person can be susceptible again.

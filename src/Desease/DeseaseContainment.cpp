@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "Desease/DeseaseContainment.h"
 
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::DeseaseContainment::Quarantine(Person* person)
+void DeseaseSpreadSimulation::DeseaseContainment::Quarantine(Person* person) const
 {
 	person->StartQuarantine();
-	return person->GetHome();
+	person->whereabouts = person->GetCommunity()->TransferToHome(person);
 }
 
-void DeseaseSpreadSimulation::DeseaseContainment::ReleaseWhenRecovered(Person* person)
+void DeseaseSpreadSimulation::DeseaseContainment::ReleaseWhenRecovered(Person* person) const
 {
 	if (person->HasRecovered())
 	{

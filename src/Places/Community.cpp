@@ -232,6 +232,29 @@ const DeseaseSpreadSimulation::DeseaseContainment& DeseaseSpreadSimulation::Comm
 	return m_containmentMeasures;
 }
 
+void DeseaseSpreadSimulation::Community::TestStation(Person* person)
+{
+	if (TestPersonForInfection(person))
+	{
+		m_containmentMeasures.Quarantine(person);
+	}
+}
+
+bool DeseaseSpreadSimulation::Community::TestPersonForInfection(const Person* person) const
+{
+	if (!person->HasDesease())
+	{
+		return false;
+	}
+
+	// Return true when our test is inside the accuracy and false otherwise
+	if (Random::Percent<float>() < person->GetDesease()->GetTestAccuracy())
+	{
+		return true;
+	}
+	return false;
+}
+
 DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
 {
 	std::lock_guard<std::shared_timed_mutex> lockTransferToPlace(placesMutex);
