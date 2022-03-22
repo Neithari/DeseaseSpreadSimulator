@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 
-namespace DeseaseSpreadSimulation
+namespace DiseaseSpreadSimulation
 {	
 	class PersonPopulator
 	{

@@ -1,11 +1,11 @@
 #pragma once
 
-namespace DeseaseSpreadSimulation
+namespace DiseaseSpreadSimulation
 {
-	class DeseaseContainment
+	class DiseaseContainment
 	{
 	public:
-		DeseaseContainment() = default;
+		DiseaseContainment() = default;
 
 		// Start the quarantine and send the person home
 		void Quarantine(Person* person) const;

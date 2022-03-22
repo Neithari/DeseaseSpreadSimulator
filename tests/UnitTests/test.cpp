@@ -1,8 +1,8 @@
 #include "pch.h"
 
 // Includes to be tested
-#include "Desease/Desease.h"
-#include "Desease/DeseaseBuilder.h"
+#include "Disease/Disease.h"
+#include "Disease/DiseaseBuilder.h"
 #include "Person/Person.h"
 #include "Simulation/TimeManager.h"
 #include "Person/PersonPopulator.h"

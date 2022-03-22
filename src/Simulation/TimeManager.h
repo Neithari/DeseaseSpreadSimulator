@@ -1,6 +1,6 @@
 #pragma once
 
-namespace DeseaseSpreadSimulation
+namespace DiseaseSpreadSimulation
 {
 	class TimeManager
 	{

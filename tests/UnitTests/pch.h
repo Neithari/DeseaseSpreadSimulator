@@ -16,12 +16,12 @@
 #include <algorithm>
 
 // Includes to be tested
-#include "DeseaseSpreadSimulator/Enums.h"
-#include "DeseaseSpreadSimulator/RandomNumbers.h"
-#include "DeseaseSpreadSimulator/Statistics.h"
-#include "Desease/Desease.h"
-#include "Desease/DeseaseBuilder.h"
-#include "Desease/Infection.h"
+#include "DiseaseSpreadSimulator/Enums.h"
+#include "DiseaseSpreadSimulator/RandomNumbers.h"
+#include "DiseaseSpreadSimulator/Statistics.h"
+#include "Disease/Disease.h"
+#include "Disease/DiseaseBuilder.h"
+#include "Disease/Infection.h"
 #include "Person/Person.h"
 #include "Person/PersonPopulator.h"
 #include "Person/PersonBehavior.h"

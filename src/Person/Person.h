@@ -3,17 +3,17 @@
 #include "Simulation/TimeManager.h"
 #include "Person/PersonBehavior.h"
 
-namespace DeseaseSpreadSimulation
+namespace DiseaseSpreadSimulation
 {
 	class Community;
-	class DeseaseContainment;
+	class DiseaseContainment;
 
 	class Person
 	{
 	public:
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
 		
-		friend class DeseaseContainment;
+		friend class DiseaseContainment;
 
 		auto operator<=>(const Person& rhs) const
 		{
@@ -30,7 +30,7 @@ namespace DeseaseSpreadSimulation
 
 		// Will try to infect a susceptible person when the other is infectious
 		void Contact(Person& other);
-		void Contaminate(const Desease* desease);
+		void Contaminate(const Disease* disease);
 		void Kill();
 
 
@@ -39,8 +39,8 @@ namespace DeseaseSpreadSimulation
 		bool IsQuarantined() const;
 		bool IsTraveling() const;
 		bool IsAlive() const;
-		bool HasDesease() const;
-		std::string GetDeseaseName() const;
+		bool HasDisease() const;
+		std::string GetDiseaseName() const;
 		bool HasRecovered() const;
 
 		uint32_t GetID() const;
@@ -48,7 +48,7 @@ namespace DeseaseSpreadSimulation
 		Sex GetSex() const;
 		const PersonBehavior& GetBehavior() const;
 		uint32_t GetSpreadCount() const;
-		const Desease* GetDesease() const;
+		const Disease* GetDisease() const;
 
 		Community* GetCommunity();
 		Place* GetWhereabouts();

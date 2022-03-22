@@ -1,17 +1,17 @@
 #include "pch.h"
 #include "Simulation/Simulation.h"
-#include "Desease/DeseaseBuilder.h"
+#include "Disease/DiseaseBuilder.h"
 #include "Person/PersonPopulator.h"
 #include "Places/PlaceBuilder.h"
 
-DeseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
+DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	:
 	withPrint(withPrint),
 	populationSize(populationSize),
 	travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.f, 1.f), nullptr)
 {
 }
-void DeseaseSpreadSimulation::Simulation::Run()
+void DiseaseSpreadSimulation::Simulation::Run()
 {
 	SetupEverything(1);
 
@@ -28,22 +28,22 @@ void DeseaseSpreadSimulation::Simulation::Run()
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::Stop()
+void DiseaseSpreadSimulation::Simulation::Stop()
 {
 	stop = true;
 }
 
-void DeseaseSpreadSimulation::Simulation::Pause()
+void DiseaseSpreadSimulation::Simulation::Pause()
 {
 	pause = true;
 }
 
-void DeseaseSpreadSimulation::Simulation::Resume()
+void DiseaseSpreadSimulation::Simulation::Resume()
 {
 	pause = false;
 }
 
-void DeseaseSpreadSimulation::Simulation::Update()
+void DiseaseSpreadSimulation::Simulation::Update()
 {
 	time.Update();
 
@@ -75,7 +75,7 @@ void DeseaseSpreadSimulation::Simulation::Update()
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::UpdatePopulation(std::vector<Person>& population)
+void DiseaseSpreadSimulation::Simulation::UpdatePopulation(std::vector<Person>& population)
 {
 	std::for_each(std::execution::par_unseq, population.begin(), population.end(),
 		[this](auto& person)
@@ -84,7 +84,7 @@ void DeseaseSpreadSimulation::Simulation::UpdatePopulation(std::vector<Person>& 
 		});
 }
 
-void DeseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& travelLocation)
+void DiseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& travelLocation)
 {
 	std::for_each(std::execution::par_unseq, places.homes.begin(), places.homes.end(), [](auto& place)
 		{
@@ -120,7 +120,7 @@ void DeseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& trave
 		});
 }
 
-void DeseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
+void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 {
 	// Get all susceptible and infectious people
 	std::vector<Person*> susceptible;
@@ -147,7 +147,7 @@ void DeseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::Print()
+void DiseaseSpreadSimulation::Simulation::Print()
 {
 	// Only print once per hour
 	//PrintEveryHour();
@@ -158,7 +158,7 @@ void DeseaseSpreadSimulation::Simulation::Print()
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
+void DiseaseSpreadSimulation::Simulation::PrintEveryHour()
 {
 	for (size_t i = 0; i < communities.size(); i++)
 	{
@@ -189,7 +189,7 @@ void DeseaseSpreadSimulation::Simulation::PrintEveryHour()
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
+void DiseaseSpreadSimulation::Simulation::PrintOncePerDay()
 {
 	/// <measure>
 	Measure::MeasureTime measure("Print");
@@ -204,11 +204,11 @@ void DeseaseSpreadSimulation::Simulation::PrintOncePerDay()
 	}
 }
 
-void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population) const
+void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population) const
 {
 	size_t populationCount = 0;
 	size_t susceptible = 0;
-	size_t withDesease = 0;
+	size_t withDisease = 0;
 	size_t infectious = 0;
 	size_t deadPeople = 0;
 	size_t traveling = 0;
@@ -228,9 +228,9 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 			{
 				infectious++;
 			}
-			if (person.HasDesease())
+			if (person.HasDisease())
 			{
-				withDesease++;
+				withDisease++;
 			}
 			if (person.IsTraveling())
 			{
@@ -245,13 +245,13 @@ void DeseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 
 	fmt::print("Population:   {}\n", populationCount);
 	fmt::print("Susceptible:  {}\n", susceptible);
-	fmt::print("With Desease: {}\n", withDesease);
+	fmt::print("With Disease: {}\n", withDisease);
 	fmt::print("Infectious:   {}\n", infectious);
 	fmt::print("Traveling:    {}\n", traveling);
 	fmt::print("Have died:    {}\n", deadPeople);
 }
 
-bool DeseaseSpreadSimulation::Simulation::CheckForNewDay()
+bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
 {
 	if (time.GetElapsedDays() <= elapsedDays)
 	{
@@ -262,15 +262,15 @@ bool DeseaseSpreadSimulation::Simulation::CheckForNewDay()
 	return true;
 }
 
-void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
+void DiseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
 {
-	DeseaseBuilder dbuilder;
+	DiseaseBuilder dbuilder;
 	PlaceBuilder placeFactory;
 	/// <measure>
 	{
 	Measure::MeasureTime measure("Build communities");
-	//deseases.push_back(dbuilder.CreateCorona());
-	deseases.push_back(dbuilder.CreateDeadlyTestDesease());
+	//diseases.push_back(dbuilder.CreateCorona());
+	diseases.push_back(dbuilder.CreateDeadlyTestDisease());
 
 	for (size_t i = 0; i < communityCount; i++)
 	{
@@ -282,24 +282,24 @@ void DeseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 		communities.emplace_back(std::move(population), std::move(places));
 		populationFactory.AddCommunityToPopulation(&communities.back(), communities.back().GetPopulation());
 
-		InfectRandomPerson(&deseases.back(), communities.back().GetPopulation());
+		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
 	}
 	
-	SetupTravelInfecter(&deseases.back(), &communities.back());
+	SetupTravelInfecter(&diseases.back(), &communities.back());
 	}/// </measure>
 
 	stop = false;
 	fmt::print("Setup complete\n");
 }
 
-void DeseaseSpreadSimulation::Simulation::InfectRandomPerson(const Desease* desease, std::vector<Person>& population)
+void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* disease, std::vector<Person>& population)
 {
-	population.at(Random::RandomVectorIndex(population)).Contaminate(desease);
+	population.at(Random::RandomVectorIndex(population)).Contaminate(disease);
 }
 
-void DeseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Desease* desease, Community* communitie)
+void DiseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Disease* disease, Community* communitie)
 {
-	travelInfecter.Contaminate(desease);
+	travelInfecter.Contaminate(disease);
 	travelInfecter.SetCommunity(communitie);
 	Home home{};
 	travelInfecter.SetHome(&home);

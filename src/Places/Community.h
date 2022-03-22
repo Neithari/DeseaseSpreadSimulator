@@ -1,9 +1,9 @@
 #pragma once
 #include <algorithm>
 #include <random>
-#include "Desease/DeseaseContainment.h"
+#include "Disease/DiseaseContainment.h"
 
-namespace DeseaseSpreadSimulation
+namespace DiseaseSpreadSimulation
 {
 
 	class Community
@@ -50,7 +50,7 @@ namespace DeseaseSpreadSimulation
 		void AddPlace(HardwareStore store);
 		void AddPlace(Morgue morgue);
 
-		const DeseaseContainment& ContainmentMeasures() const;
+		const DiseaseContainment& ContainmentMeasures() const;
 		void TestStation(Person* person);
 
 	private:
@@ -61,7 +61,7 @@ namespace DeseaseSpreadSimulation
 		std::vector<Person> m_population;
 		Places m_places;
 		Travel m_travelLocation{};
-		DeseaseContainment m_containmentMeasures{};
+		DiseaseContainment m_containmentMeasures{};
 
 		std::shared_timed_mutex populationMutex;
 		std::shared_timed_mutex placesMutex;
