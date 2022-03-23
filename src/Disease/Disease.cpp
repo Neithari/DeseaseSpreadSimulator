@@ -32,12 +32,9 @@ const std::string& DiseaseSpreadSimulation::Disease::GetDiseaseName() const
 
 uint16_t DiseaseSpreadSimulation::Disease::IncubationPeriod() const
 {
-	// We use a log normal distribution to generate an incubation period
-	std::lognormal_distribution<float> incubationDistribution(0.f, 0.5f);
-	return static_cast<uint16_t>(std::round(
-		Random::MapOneRangeToAnother(incubationDistribution(Random::generator), 
-			incubationDistribution.min(), incubationDistribution.max(), 
-			(float)incubationPeriod.first, (float)incubationPeriod.second)));
+	/// TODO: Implement a lognormal distribution for random number generation
+
+	return Random::UniformIntRange(incubationPeriod.first, incubationPeriod.second);
 }
 
 uint16_t DiseaseSpreadSimulation::Disease::DaysInfectious() const
@@ -99,9 +96,9 @@ uint16_t DiseaseSpreadSimulation::Disease::DaysTillDeath() const
 
 float DiseaseSpreadSimulation::Disease::GetSpreadFactor() const
 {
-	// We use a log normal distribution to generate a spread factor
-	std::lognormal_distribution factorDistribution(spreadFactor.first, spreadFactor.second);
-	return Random::MapRangeToPercent(factorDistribution(Random::generator), factorDistribution.min(), factorDistribution.max());
+	/// TODO: Implement a lognormal distribution for random number generation
+
+	return Random::MapRangeToPercent(Random::UniformFloatRange(spreadFactor.first, spreadFactor.second), spreadFactor.first, spreadFactor.second);
 }
 
 float DiseaseSpreadSimulation::Disease::GetTestAccuracy() const
