@@ -63,12 +63,19 @@ void DiseaseSpreadSimulation::Infection::AdvanceDay(Person& person)
 	}
 }
 
-bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, float acceptanceFactor) const
+bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community) const
 {
 	// Map the acceptance factor to the inverse of the disease spread factor
 	// Acceptance factor range is always 0 to 1
 	// Disease spread factor range is spreadFactor to 1/10th of spreadFactor
 	float probability = Random::MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed.spreadFactor, exposed.spreadFactor * 0.1f);
+
+	// Decrease probability when there is a mask mandate. Take the median effectiveness of the 3 different masks
+	// https://www.cdc.gov/mmwr/volumes/71/wr/mm7106e1.htm
+	if (community->ContainmentMeasures().IsMaskMandate())
+	{
+		probability *= .68333f;
+	}
 
 	std::bernoulli_distribution distribution(probability);
 

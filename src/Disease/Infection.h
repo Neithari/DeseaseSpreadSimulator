@@ -4,6 +4,7 @@
 namespace DiseaseSpreadSimulation
 {
 	class Person;
+	class Community;
 
 	class Infection
 	{
@@ -15,7 +16,7 @@ namespace DiseaseSpreadSimulation
 		void Update(Person& person, bool isNewDay);
 		void IncreaseSpreadCount();
 
-		bool WillInfect(const Infection& exposed, float acceptanceFactor) const;
+		bool WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community) const;
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
 		bool IsFatal() const;
