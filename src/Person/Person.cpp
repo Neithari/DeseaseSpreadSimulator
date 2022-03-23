@@ -28,7 +28,7 @@ void DiseaseSpreadSimulation::Person::Contact(Person& other)
 {
 	if (other.IsInfectious() && IsSusceptible())
 	{
-		if (infection.WillInfect(other.infection.GetDisease(), behavior.acceptanceFactor))
+		if (infection.WillInfect(other.infection, behavior.acceptanceFactor))
 		{
 			infection.Contaminate(other.infection.GetDisease(), age);
 			other.infection.IncreaseSpreadCount();
@@ -36,7 +36,7 @@ void DiseaseSpreadSimulation::Person::Contact(Person& other)
 	}
 	else if (IsInfectious() && other.IsSusceptible())
 	{
-		if (other.infection.WillInfect(infection.GetDisease(), other.behavior.acceptanceFactor))
+		if (other.infection.WillInfect(infection, other.behavior.acceptanceFactor))
 		{
 			other.infection.Contaminate(infection.GetDisease(), other.age);
 			infection.IncreaseSpreadCount();

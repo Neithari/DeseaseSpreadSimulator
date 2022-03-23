@@ -15,7 +15,7 @@ namespace DiseaseSpreadSimulation
 		void Update(Person& person, bool isNewDay);
 		void IncreaseSpreadCount();
 
-		bool WillInfect(const Disease* exposed, float acceptanceFactor) const;
+		bool WillInfect(const Infection& exposed, float acceptanceFactor) const;
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
 		bool IsFatal() const;
@@ -44,5 +44,6 @@ namespace DiseaseSpreadSimulation
 		uint16_t daysTillCured = 0;
 		uint16_t daysToLive = 0;
 		bool isFatal = false;
+		float spreadFactor = 0.f;
 	};
 }

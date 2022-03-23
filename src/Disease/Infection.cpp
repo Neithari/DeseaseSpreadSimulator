@@ -11,6 +11,7 @@ void DiseaseSpreadSimulation::Infection::Contaminate(const Disease* infection, A
 	daysTillCured = disease->GetDiseaseDuration();
 
 	hasSymptoms = disease->willDevelopSymptoms();
+	spreadFactor = disease->GetSpreadFactor();
 
 	if (disease->isFatal(age))
 	{
@@ -62,12 +63,12 @@ void DiseaseSpreadSimulation::Infection::AdvanceDay(Person& person)
 	}
 }
 
-bool DiseaseSpreadSimulation::Infection::WillInfect(const Disease* exposed, float acceptanceFactor) const
+bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, float acceptanceFactor) const
 {
 	// Map the acceptance factor to the inverse of the disease spread factor
 	// Acceptance factor range is always 0 to 1
 	// Disease spread factor range is spreadFactor to 1/10th of spreadFactor
-	float probability = Random::MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed->GetSpreadFactor(), exposed->GetSpreadFactor() * 0.1f);
+	float probability = Random::MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed.spreadFactor, exposed.spreadFactor * 0.1f);
 
 	std::bernoulli_distribution distribution(probability);
 
