@@ -237,7 +237,10 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 				GoSupplyShopping(currentTime);
 			}
 		}
-		else if (needHardware && currentTime >= shopOpenTime)
+		// Hardware shopping is suspended during a lockdown
+		else if (needHardware
+			&& currentTime >= shopOpenTime
+			&& !community->ContainmentMeasures().IsLockdown())
 		{
 			PrepareShopping();
 
@@ -248,7 +251,10 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		}
 		else if (!isShoppingDay)
 		{
-			if (WillTravel() && currentTime >= shopOpenTime)
+			// No traveling during a lockdown
+			if (WillTravel()
+				&& currentTime >= shopOpenTime
+				&& !community->ContainmentMeasures().IsLockdown())
 			{
 				StartTraveling();
 			}
@@ -257,12 +263,36 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 				&& currentTime <= workFinishTime
 				&& isWorkday)
 			{
-				whereabouts = community->TransferToWork(this);
+				if (community->ContainmentMeasures().WorkingFormHome())
+				{
+					// 50% of working people are allowed to go to work when there is a working from home mandate.
+					// Reflecting jobs that are not capable of work from home
+					if (Random::Percent<float>() <= .5f)
+					{
+						whereabouts = community->TransferToWork(this);
+					}
+				}
+				else if (community->ContainmentMeasures().IsLockdown())
+				{
+					// During a lockdown only 10% of people are allowed to go to work
+					// Reflecting jobs that are mandatory to supply people
+					if (Random::Percent<float>() <= .1f)
+					{
+						whereabouts = community->TransferToWork(this);
+					}
+				}
+				else
+				{
+					whereabouts = community->TransferToWork(this);
+				}
 			}
+			// Schools will close when there is a work form home mandate and when there is a lockdown
 			else if (school != nullptr
 				&& currentTime >= schoolStartTime
 				&& currentTime <= schoolFinishTime
-				&& isWorkday)
+				&& isWorkday
+				&& !community->ContainmentMeasures().WorkingFormHome()
+				&& !community->ContainmentMeasures().IsLockdown())
 			{
 				whereabouts = community->TransferToSchool(this);
 			}
@@ -272,7 +302,8 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		// When the buy time is over go to the hardware store if we need to, else go home
 		if (currentTime >= buyFinishTime)
 		{
-			if (lastHardwareBuy >= behavior.hardwareBuyInterval)
+			// Hardware stores are closed during a lockdown
+			if (lastHardwareBuy >= behavior.hardwareBuyInterval && !community->ContainmentMeasures().IsLockdown())
 			{
 				// No preparation needed. Just go shopping.
 				GoHardwareShopping(currentTime);
@@ -284,8 +315,9 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		}
 		break;
 	case DiseaseSpreadSimulation::Place_Type::Workplace:
-		// Go traveling or home after the work has finished
-		if (WillTravel())
+		// Go traveling or home after the work has finished 
+		// No traveling during a lockdown
+		if (WillTravel() && !community->ContainmentMeasures().IsLockdown())
 		{
 			StartTraveling();
 		}
