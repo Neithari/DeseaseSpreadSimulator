@@ -14,6 +14,7 @@
 #include <shared_mutex>
 #include <map>
 #include <algorithm>
+#include <stdexcept>
 
 // Includes to be tested
 #include "DiseaseSpreadSimulator/Enums.h"

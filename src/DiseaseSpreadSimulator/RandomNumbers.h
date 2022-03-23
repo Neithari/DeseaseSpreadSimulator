@@ -48,7 +48,14 @@ namespace Random
 	template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
 	static T MapOneRangeToAnother(T value, T fromRangeMin, T fromRangeMax, T toRangeMin, T toRangeMax)
 	{
-		return toRangeMin + (((value - fromRangeMin) * (toRangeMax - toRangeMin)) / (fromRangeMax - fromRangeMin));
+		// When from range consists of only one number return the max of the to range
+		// This will prevent division by 0
+		if (fromRangeMin == fromRangeMax)
+		{
+			return toRangeMax;
+		}
+		T slope = static_cast<T>(1) * (toRangeMax - toRangeMin) / (fromRangeMax - fromRangeMin);
+		return toRangeMin + slope * (value - fromRangeMin);
 	}
 
 	template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
