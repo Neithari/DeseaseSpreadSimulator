@@ -1,15 +1,6 @@
 #include "pch.h"
 
 // Includes to be tested
-#include "Disease/Disease.h"
-#include "Disease/DiseaseBuilder.h"
-#include "Person/Person.h"
-#include "Simulation/TimeManager.h"
-#include "Person/PersonPopulator.h"
-#include "IDGenerator/IDGenerator.h"
-#include "Places/Places.h"
-#include "Places/Community.h"
-#include "DiseaseSpreadSimulator/RandomNumbers.h"
 
 namespace UnitTests {
    TEST(IDGeneratorTests, IDIncrementing)

@@ -17,6 +17,8 @@
 #include <stdexcept>
 
 // Includes to be tested
+#include "IDGenerator/IDGenerator.h"
+#include "DiseaseSpreadSimulator/RandomNumbers.h"
 #include "DiseaseSpreadSimulator/Enums.h"
 #include "DiseaseSpreadSimulator/RandomNumbers.h"
 #include "DiseaseSpreadSimulator/Statistics.h"
@@ -27,7 +29,6 @@
 #include "Person/PersonPopulator.h"
 #include "Person/PersonBehavior.h"
 #include "Simulation/TimeManager.h"
-#include "IDGenerator/IDGenerator.h"
 #include "Places/Places.h"
 #include "Places/PlaceBuilder.h"
 #include "Places/Community.h"
