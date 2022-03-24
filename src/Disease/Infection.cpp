@@ -10,7 +10,6 @@ void DiseaseSpreadSimulation::Infection::Contaminate(const Disease* infection, A
 	daysInfectious = disease->DaysInfectious();
 	daysTillCured = disease->GetDiseaseDuration();
 
-	hasSymptoms = disease->willDevelopSymptoms();
 	spreadFactor = disease->GetSpreadFactor();
 
 	if (disease->isFatal(age))
@@ -141,20 +140,22 @@ void DiseaseSpreadSimulation::Infection::DiseaseCheck()
 		// Person is infectious when it was exposed to a disease and latent period is over
 		if (latentPeriod <= 0)
 		{
+			hasSymptoms = disease->willDevelopSymptoms();
 			seirState = Seir_State::Infectious;
 		}
 		break;
 	case DiseaseSpreadSimulation::Seir_State::Infectious:
-		// Person is recovered when daysInfectious reached 0
+		// We switch to recovered state after we stop being infectious but we wait with flagging us recovered
 		if (daysInfectious <= 0)
 		{
 			seirState = Seir_State::Recovered;
-			hasRecovered = true;
 		}
 		break;
 	case DiseaseSpreadSimulation::Seir_State::Recovered:
 		if (daysTillCured == 0)
 		{
+			// Person is recovered when daysTillCured reached 0
+			hasRecovered = true;
 			hasSymptoms = false;
 			disease = nullptr;
 		}
