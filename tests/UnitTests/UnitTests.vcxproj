@@ -53,7 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommunityTests.cpp" />
+    <ClCompile Include="DiseaseContainmentTests.cpp" />
     <ClCompile Include="DiseaseTests.cpp" />
+    <ClCompile Include="InfectionTests.cpp" />
     <ClCompile Include="PersonTests.cpp" />
     <ClCompile Include="PlaceTests.cpp" />
     <ClCompile Include="test.cpp" />

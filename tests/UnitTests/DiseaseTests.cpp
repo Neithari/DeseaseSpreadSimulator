@@ -37,7 +37,6 @@ namespace UnitTests {
         EXPECT_EQ(disease.GetDiseaseName(), name);
         EXPECT_TRUE(IsBetweenInclusive(disease.IncubationPeriod(), incubationPeriod.first, incubationPeriod.second));
         EXPECT_EQ(disease.DaysInfectious(), daysInfectious);
-        EXPECT_EQ(disease.GetID(), 0);
     }
     TEST_F(DiseaseTest, DiseaseDurationRange)
     {
