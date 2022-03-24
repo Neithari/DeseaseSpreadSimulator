@@ -44,4 +44,23 @@ namespace Random
 	{
 		return UniformFloatRange((T)0.0, (T)1.0);
 	}
+
+	template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
+	static T MapOneRangeToAnother(T value, T fromRangeMin, T fromRangeMax, T toRangeMin, T toRangeMax)
+	{
+		// When from range consists of only one number return the max of the to range
+		// This will prevent division by 0
+		if (fromRangeMin == fromRangeMax)
+		{
+			return toRangeMax;
+		}
+		T slope = static_cast<T>(1) * (toRangeMax - toRangeMin) / (fromRangeMax - fromRangeMin);
+		return toRangeMin + slope * (value - fromRangeMin);
+	}
+
+	template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>
+	static T MapRangeToPercent(T value, T fromRangeMin, T fromRangeMax)
+	{
+		return MapOneRangeToAnother(value, fromRangeMin, fromRangeMax, static_cast<T>(0), static_cast<T>(1));
+	}
 }

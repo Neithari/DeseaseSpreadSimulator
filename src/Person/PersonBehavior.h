@@ -1,5 +1,5 @@
 #pragma once
-namespace DeseaseSpreadSimulation
+namespace DiseaseSpreadSimulation
 {
 	struct PersonBehavior
 	{

@@ -4,29 +4,29 @@ namespace UnitTests {
     class PlaceTests : public ::testing::Test
     {
     protected:
-        DeseaseSpreadSimulation::Home home;
-        DeseaseSpreadSimulation::Supply market;
-        DeseaseSpreadSimulation::Workplace work;
-        DeseaseSpreadSimulation::School school;
-        DeseaseSpreadSimulation::HardwareStore hardware;
-        DeseaseSpreadSimulation::Morgue morgue;
-        DeseaseSpreadSimulation::Travel travel;
-        DeseaseSpreadSimulation::Community community{ std::vector<DeseaseSpreadSimulation::Person>{}, DeseaseSpreadSimulation::Places{} };
-        DeseaseSpreadSimulation::PersonBehavior behavior;
+        DiseaseSpreadSimulation::Home home;
+        DiseaseSpreadSimulation::Supply market;
+        DiseaseSpreadSimulation::Workplace work;
+        DiseaseSpreadSimulation::School school;
+        DiseaseSpreadSimulation::HardwareStore hardware;
+        DiseaseSpreadSimulation::Morgue morgue;
+        DiseaseSpreadSimulation::Travel travel;
+        DiseaseSpreadSimulation::Community community{ std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{} };
+        DiseaseSpreadSimulation::PersonBehavior behavior;
     };
     TEST_F(PlaceTests, GetType)
     {
-        EXPECT_EQ(home.GetType(), DeseaseSpreadSimulation::Place_Type::Home);
-        EXPECT_EQ(market.GetType(), DeseaseSpreadSimulation::Place_Type::Supply);
-        EXPECT_EQ(work.GetType(), DeseaseSpreadSimulation::Place_Type::Workplace);
-        EXPECT_EQ(school.GetType(), DeseaseSpreadSimulation::Place_Type::School);
-        EXPECT_EQ(hardware.GetType(), DeseaseSpreadSimulation::Place_Type::HardwareStore);
-        EXPECT_EQ(morgue.GetType(), DeseaseSpreadSimulation::Place_Type::Morgue);
-        EXPECT_EQ(travel.GetType(), DeseaseSpreadSimulation::Place_Type::Travel);
+        EXPECT_EQ(home.GetType(), DiseaseSpreadSimulation::Place_Type::Home);
+        EXPECT_EQ(market.GetType(), DiseaseSpreadSimulation::Place_Type::Supply);
+        EXPECT_EQ(work.GetType(), DiseaseSpreadSimulation::Place_Type::Workplace);
+        EXPECT_EQ(school.GetType(), DiseaseSpreadSimulation::Place_Type::School);
+        EXPECT_EQ(hardware.GetType(), DiseaseSpreadSimulation::Place_Type::HardwareStore);
+        EXPECT_EQ(morgue.GetType(), DiseaseSpreadSimulation::Place_Type::Morgue);
+        EXPECT_EQ(travel.GetType(), DiseaseSpreadSimulation::Place_Type::Travel);
     }
     TEST_F(PlaceTests, AddPerson)
     {
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
         auto personID = person.GetID();
         ASSERT_EQ(home.GetPersonCount(), 0);
         home.AddPerson(&person);
@@ -35,9 +35,9 @@ namespace UnitTests {
     }
     TEST_F(PlaceTests, GetPersonCount)
     {
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
-        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, behavior, &community);
-        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, behavior, &community);
+        DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DiseaseSpreadSimulation::Person person1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, &community);
+        DiseaseSpreadSimulation::Person person2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, &community);
 
         EXPECT_EQ(home.GetPersonCount(), 0);
         home.AddPerson(&person);
@@ -49,9 +49,9 @@ namespace UnitTests {
     }
     TEST_F(PlaceTests, RemovePerson)
     {
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
-        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community);
-        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, behavior, &community);
+        DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DiseaseSpreadSimulation::Person person1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
+        DiseaseSpreadSimulation::Person person2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, &community);
         auto personID = person.GetID();
         auto personID1 = person1.GetID();
         auto personID2 = person2.GetID();
@@ -90,7 +90,7 @@ namespace UnitTests {
     }
     TEST_F(PlaceTests, TypeToString)
     {
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
 
         EXPECT_EQ(home.TypeToString(home.GetType()),        "Home");
         EXPECT_EQ(market.TypeToString(market.GetType()),    "Supply Store");
@@ -103,7 +103,7 @@ namespace UnitTests {
 
     TEST(PlacesTests, InsertPlaces)
     {
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
 
         Places places1{};
         Places places2{};

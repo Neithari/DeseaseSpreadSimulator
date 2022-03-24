@@ -3,7 +3,7 @@
 #include "Person/PersonBehavior.h"
 #include "Places/PlaceBuilder.h"
 
-DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
+DiseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
 	:
 	populationSize(populationSize),
 	leftover(populationSize),
@@ -18,7 +18,7 @@ DeseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize,
 	}
 }
 
-std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopulator::CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools)
+std::vector<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::PersonPopulator::CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools)
 {
 	std::vector<Person> population;
 
@@ -75,7 +75,7 @@ std::vector<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::PersonPopu
 	return population;
 }
 
-DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::PersonPopulator::GetNewPerson(Community* community, Home* home)
+DiseaseSpreadSimulation::Person DiseaseSpreadSimulation::PersonPopulator::GetNewPerson(Community* community, Home* home)
 {
 	// As long as we don't have assigned the full population create a new person with age and sex according to our distribution
 	// When the currentHumanCount is 0...
@@ -115,7 +115,7 @@ DeseaseSpreadSimulation::Person DeseaseSpreadSimulation::PersonPopulator::GetNew
 	return Person(currentHumanDistribution.ageGroup, currentHumanDistribution.sex, PersonBehavior(), community, home);
 }
 
-size_t DeseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t populationSize, const Country country)
+size_t DiseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t populationSize, const Country country)
 {
 	// TODO: Need a better way to get the working people. Not in sync with PersonPopulator::GetNewPerson()
 	auto countryDistribution = std::move(GetCountryDistribution(country));
@@ -134,7 +134,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t
 	return workingPeople;
 }
 
-size_t DeseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t populationSize, const Country country)
+size_t DiseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t populationSize, const Country country)
 {
 	auto countryDistribution = std::move(GetCountryDistribution(country));
 	size_t schoolKids = 0;
@@ -152,7 +152,7 @@ size_t DeseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t po
 	return schoolKids;
 }
 
-std::array<std::vector<DeseaseSpreadSimulation::Home*>, 4> DeseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes)
+std::array<std::vector<DiseaseSpreadSimulation::Home*>, 4> DiseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes)
 {
 	auto homeCounts(PlaceBuilder::GetHomeCounts(populationSize, country));
 
@@ -174,13 +174,13 @@ std::array<std::vector<DeseaseSpreadSimulation::Home*>, 4> DeseaseSpreadSimulati
 	return { oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers };
 }
 
-size_t DeseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_t count, float percent)
+size_t DiseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_t count, float percent)
 {
 	// Scale count by percent and then omit the decimal
 	return static_cast<size_t>(count * static_cast<double>(percent));
 }
 
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount)
+DiseaseSpreadSimulation::Home* DiseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount)
 {
 	// Create the distribution
 	std::array<double, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
@@ -198,7 +198,7 @@ DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::PersonPopulator::AssignH
 	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(Random::RandomVectorIndex(homesByMemberCount.at(distIndex))));
 }
 
-DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const
+DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const
 {
 	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
 	size_t distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
@@ -211,7 +211,7 @@ DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::PersonPopulator::As
 	return workplacesBySize.at(distIndex).at(Random::RandomVectorIndex(workplacesBySize.at(distIndex)));
 }
 
-void DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
+void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
 {
 	std::vector<Home*> homes;
 	for (auto& home : homesToAssigne)
@@ -226,14 +226,14 @@ void DeseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vec
 	}
 }
 
-std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> DeseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)
+std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> DiseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)
 {
 	switch (country)
 	{
-	case DeseaseSpreadSimulation::Country::USA:
+	case DiseaseSpreadSimulation::Country::USA:
 		return Statistics::defaultAgeDistributionUSA;
 		break;
-	case DeseaseSpreadSimulation::Country::Germany:
+	case DiseaseSpreadSimulation::Country::Germany:
 		// TODO: Implement german distribution
 		return Statistics::defaultAgeDistributionUSA;
 		break;
@@ -243,7 +243,7 @@ std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> DeseaseSprea
 	}
 }
 
-void DeseaseSpreadSimulation::PersonPopulator::AddCommunityToPopulation(Community* community, std::vector<Person>& population)
+void DiseaseSpreadSimulation::PersonPopulator::AddCommunityToPopulation(Community* community, std::vector<Person>& population)
 {
 	for (auto& person : population)
 	{
@@ -251,14 +251,14 @@ void DeseaseSpreadSimulation::PersonPopulator::AddCommunityToPopulation(Communit
 	}
 }
 
-DeseaseSpreadSimulation::Statistics::HouseholdComposition DeseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(Country country)
+DiseaseSpreadSimulation::Statistics::HouseholdComposition DiseaseSpreadSimulation::PersonPopulator::GetHouseholdDistribution(Country country)
 {
 	switch (country)
 	{
-	case DeseaseSpreadSimulation::Country::USA:
+	case DiseaseSpreadSimulation::Country::USA:
 		return Statistics::householdUSA;
 		break;
-	case DeseaseSpreadSimulation::Country::Germany:
+	case DiseaseSpreadSimulation::Country::Germany:
 		// TODO: Implement german distribution
 		return Statistics::householdGermany;
 		break;

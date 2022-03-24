@@ -2,7 +2,7 @@
 #include "Places/PlaceBuilder.h"
 #include "Person/PersonPopulator.h"
 
-DeseaseSpreadSimulation::Places DeseaseSpreadSimulation::PlaceBuilder::CreatePlaces(const size_t populationSize, const Country country) const
+DiseaseSpreadSimulation::Places DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(const size_t populationSize, const Country country) const
 {
 	Places places;
 	// Get the person count per household category and create the correct number of homes
@@ -74,7 +74,7 @@ DeseaseSpreadSimulation::Places DeseaseSpreadSimulation::PlaceBuilder::CreatePla
 	return places;
 }
 
-std::array<std::vector<DeseaseSpreadSimulation::Workplace*>, 5> DeseaseSpreadSimulation::PlaceBuilder::WorkplacesBySize(const size_t populationSize, const Country country, std::vector<Workplace*> workplaces)
+std::array<std::vector<DiseaseSpreadSimulation::Workplace*>, 5> DiseaseSpreadSimulation::PlaceBuilder::WorkplacesBySize(const size_t populationSize, const Country country, std::vector<Workplace*> workplaces)
 {
 	// First get number of working people
 	size_t workingPeople = PersonPopulator::WorkingPeopleCount(populationSize, country);
@@ -98,7 +98,7 @@ std::array<std::vector<DeseaseSpreadSimulation::Workplace*>, 5> DeseaseSpreadSim
 	return workplacesBySize;
 }
 
-std::array<size_t, 4> DeseaseSpreadSimulation::PlaceBuilder::GetHomeCounts(const size_t populationSize, const Country country)
+std::array<size_t, 4> DiseaseSpreadSimulation::PlaceBuilder::GetHomeCounts(const size_t populationSize, const Country country)
 {
 	// The home count is equal to the person count living in such a home devided by the median person count in the category
 	// To get the person count we multiply the population size with the percentage of the distribution

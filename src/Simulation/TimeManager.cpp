@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Simulation/TimeManager.h"
 
-void DeseaseSpreadSimulation::TimeManager::Update()
+void DiseaseSpreadSimulation::TimeManager::Update()
 {
 	simulationTime++;
 	dayTime++;
@@ -21,32 +21,32 @@ void DeseaseSpreadSimulation::TimeManager::Update()
 	}
 }
 
-uint64_t DeseaseSpreadSimulation::TimeManager::GetElapsedHours() const
+uint64_t DiseaseSpreadSimulation::TimeManager::GetElapsedHours() const
 {
 	return simulationTime;
 }
 
-uint64_t DeseaseSpreadSimulation::TimeManager::GetElapsedDays() const
+uint64_t DiseaseSpreadSimulation::TimeManager::GetElapsedDays() const
 {
 	return simulationTime / 24u;
 }
 
-DeseaseSpreadSimulation::Day DeseaseSpreadSimulation::TimeManager::GetCurrentDay() const
+DiseaseSpreadSimulation::Day DiseaseSpreadSimulation::TimeManager::GetCurrentDay() const
 {
 	return currentDay;
 }
 
-uint16_t DeseaseSpreadSimulation::TimeManager::GetTime() const
+uint16_t DiseaseSpreadSimulation::TimeManager::GetTime() const
 {
 	return dayTime;
 }
 
-bool DeseaseSpreadSimulation::TimeManager::IsWorkday() const
+bool DiseaseSpreadSimulation::TimeManager::IsWorkday() const
 {
 	return isWorkday;
 }
 
-DeseaseSpreadSimulation::Day DeseaseSpreadSimulation::TimeManager::GetNextDay() const
+DiseaseSpreadSimulation::Day DiseaseSpreadSimulation::TimeManager::GetNextDay() const
 {
 	if (currentDay == Day::Sunday)
 	{
