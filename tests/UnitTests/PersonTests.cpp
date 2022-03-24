@@ -5,21 +5,24 @@ namespace UnitTests {
     {
     protected:
         std::string name = "a";
-        int incubationPeriod = 1;
-        int daysInfectious = 1;
-        std::pair<int, int> deseaseDurationRange{ 2, 10 };
+        std::pair<uint16_t, uint16_t> incubationPeriod{ 1, 1 };
+        uint16_t daysInfectious = 1;
+        std::pair<uint16_t, uint16_t> diseaseDurationRange{ 2, 10 };
         std::vector<float> mortalityByAge{ 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f };
-        std::pair<int, int> daysTillDeathRange{ 1, 2 };
-        std::vector<DeseaseSpreadSimulation::Home> homes{ DeseaseSpreadSimulation::Home{} };
-        DeseaseSpreadSimulation::HardwareStore hwStore;
-        DeseaseSpreadSimulation::Supply supplyStore;
-        DeseaseSpreadSimulation::Morgue morgue;
-        DeseaseSpreadSimulation::Workplace work;
-        DeseaseSpreadSimulation::School school;
-        DeseaseSpreadSimulation::Community community{ std::vector<DeseaseSpreadSimulation::Person>{}, DeseaseSpreadSimulation::Places{} };
-        DeseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,0.f, 0.f };
-        DeseaseSpreadSimulation::Desease desease{ name, incubationPeriod, daysInfectious, deseaseDurationRange, mortalityByAge, daysTillDeathRange };
-        DeseaseSpreadSimulation::TimeManager time;
+        std::pair<uint16_t, uint16_t> daysTillDeathRange{ 1, 2 };
+        std::pair<float, float> spreadFactor{ 1.f, 1.f };
+        float testAccuracy{ 1.0f };
+        std::pair<float, float> symptomsDevelopment{ 1.f, 1.f };
+        std::vector<DiseaseSpreadSimulation::Home> homes{ DiseaseSpreadSimulation::Home{} };
+        DiseaseSpreadSimulation::HardwareStore hwStore;
+        DiseaseSpreadSimulation::Supply supplyStore;
+        DiseaseSpreadSimulation::Morgue morgue;
+        DiseaseSpreadSimulation::Workplace work;
+        DiseaseSpreadSimulation::School school;
+        DiseaseSpreadSimulation::Community community{ std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{} };
+        DiseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,0.f, 0.f };
+        DiseaseSpreadSimulation::Disease disease{ name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment };
+        DiseaseSpreadSimulation::TimeManager time;
         // Values from Person.h
         static constexpr uint16_t shopOpenTime = 7u;
         static constexpr uint16_t shopCloseTime = 20u;
@@ -43,7 +46,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
         PersonBehavior foodBuyBehavior{ 0,100,1.f,0.f };
 
         Person person1(Age_Group::UnderThirty, Sex::Female, foodBuyBehavior, &community, &homes.back());
@@ -104,7 +107,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
         PersonBehavior hardwareBuyBehavior{ 100,0,1.f,0.f };
 
         Person person1(Age_Group::UnderThirty, Sex::Male, hardwareBuyBehavior, &community, &homes.back());
@@ -165,7 +168,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
         PersonBehavior travelBehavior{ 100,100,0.f,1.f };
 
         Person traveler(Age_Group::UnderThirty, Sex::Female, travelBehavior, &community, &homes.back());
@@ -186,7 +189,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
         PersonBehavior workerBehavior{ 100,100,1.f,0.f };
 
         Person worker(Age_Group::UnderThirty, Sex::Female, workerBehavior, &community, &homes.back());
@@ -215,7 +218,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
         PersonBehavior schoolBehavior{ 100,100,1.f,0.f };
 
         Person schoolKid(Age_Group::UnderThirty, Sex::Male, schoolBehavior, &community, &homes.back());
@@ -235,7 +238,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
 
         Person person(Age_Group::UnderThirty, Sex::Female, behavior, &community, &homes.back());
         ASSERT_EQ(person.GetWhereabouts(), person.GetHome());
@@ -264,13 +267,13 @@ namespace UnitTests {
     TEST_F(PersonTest, UpdateInfection)
     {
         InitCommunity();
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
 
         Person person(Age_Group::UnderTwenty, Sex::Male, behavior, &community, &homes.back());
 
-        ASSERT_FALSE(person.HasDesease());
-        person.Contaminate(&desease);
-        ASSERT_TRUE(person.HasDesease());
+        ASSERT_FALSE(person.HasDisease());
+        person.Contaminate(&disease);
+        ASSERT_TRUE(person.HasDisease());
         ASSERT_FALSE(person.IsInfectious());
         // Advance patient beyond latent period
         person.Update(0, true, true);
@@ -281,41 +284,47 @@ namespace UnitTests {
         InitCommunity();
 
         // Create 3 patients
-        DeseaseSpreadSimulation::Person patient1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
-        DeseaseSpreadSimulation::Person patient2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
-        DeseaseSpreadSimulation::Person patient3(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DiseaseSpreadSimulation::Person patient1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DiseaseSpreadSimulation::Person patient2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DiseaseSpreadSimulation::Person patient3(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
         // Contaminate 1
-        patient1.Contaminate(&desease);
+        patient1.Contaminate(&disease);
         // Advance patient beyond latent period
         patient1.Update(0, true, true);
         ASSERT_TRUE(patient1.IsInfectious());
 
         // Check non infected has contact with infected
-        patient2.Contact(patient1);
-        EXPECT_EQ(patient1.GetDeseaseName(), patient2.GetDeseaseName());
+        do
+        {
+            patient2.Contact(patient1);
+        } while (!patient2.HasDisease());
+        EXPECT_EQ(patient1.GetDiseaseName(), patient2.GetDiseaseName());
 
         // Check infected has contact with non infected
-        patient1.Contact(patient3);
-        EXPECT_EQ(patient1.GetDeseaseName(), patient3.GetDeseaseName());
+        do
+        {
+            patient1.Contact(patient3);
+        } while (!patient3.HasDisease());
+        EXPECT_EQ(patient1.GetDiseaseName(), patient3.GetDiseaseName());
     }
     TEST_F(PersonTest, ContaminateAPerson)
     {
         InitCommunity();
 
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DiseaseSpreadSimulation::Person patient(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
 
-        ASSERT_FALSE(patient.HasDesease());
-        patient.Contaminate(&desease);
-        ASSERT_TRUE(patient.HasDesease());
+        ASSERT_FALSE(patient.HasDisease());
+        patient.Contaminate(&disease);
+        ASSERT_TRUE(patient.HasDisease());
 
-        ASSERT_EQ(patient.GetDeseaseName(), desease.GetDeseaseName());
+        ASSERT_EQ(patient.GetDiseaseName(), disease.GetDiseaseName());
     }
     TEST_F(PersonTest, PersonIsInfectiousAfterLatentPeriod)
     {
         InitCommunity();
 
-        DeseaseSpreadSimulation::Person patient(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
-        patient.Contaminate(&desease);
+        DiseaseSpreadSimulation::Person patient(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        patient.Contaminate(&disease);
 
         // Patient is not contagious right after contamination
         ASSERT_EQ(patient.IsInfectious(), false);
@@ -328,7 +337,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        DeseaseSpreadSimulation::Person person(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
 
         ASSERT_TRUE(person.IsAlive());
         person.Kill();
@@ -338,8 +347,8 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        DeseaseSpreadSimulation::Person person1(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
-        DeseaseSpreadSimulation::Person person2(DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DiseaseSpreadSimulation::Person person1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
+        DiseaseSpreadSimulation::Person person2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &homes.back());
 
         ASSERT_NE(person1.GetID(), person2.GetID());
     }
@@ -347,7 +356,7 @@ namespace UnitTests {
     {
         InitCommunity();
 
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
         // Create 3 patients
         Person person1(Age_Group::UnderTwenty, Sex::Male, behavior, &community, &homes.back());
 
@@ -368,31 +377,31 @@ namespace UnitTests {
     protected:
         static constexpr size_t evenCount{ 100 };
         static constexpr size_t unevenCount{ 111 };
-        DeseaseSpreadSimulation::Country country{ DeseaseSpreadSimulation::Country::USA };
-        DeseaseSpreadSimulation::Community community{ std::vector<DeseaseSpreadSimulation::Person>{}, DeseaseSpreadSimulation::Places{} };
+        DiseaseSpreadSimulation::Country country{ DiseaseSpreadSimulation::Country::USA };
+        DiseaseSpreadSimulation::Community community{ std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{} };
 
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human1{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.25f };
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human2{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human3{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.25f };
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human4{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.25f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human1{ DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Sex::Male, 0.25f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human2{ DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, 0.25f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human3{ DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Male, 0.25f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human4{ DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Sex::Female, 0.25f };
 
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human5{ DeseaseSpreadSimulation::Age_Group::UnderTen, DeseaseSpreadSimulation::Sex::Male, 0.10f };
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human6{ DeseaseSpreadSimulation::Age_Group::UnderTwenty, DeseaseSpreadSimulation::Sex::Female, 0.20f };
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human7{ DeseaseSpreadSimulation::Age_Group::UnderThirty, DeseaseSpreadSimulation::Sex::Male, 0.30f };
-        DeseaseSpreadSimulation::Statistics::HumanDistribution human8{ DeseaseSpreadSimulation::Age_Group::UnderFourty, DeseaseSpreadSimulation::Sex::Female, 0.40f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human5{ DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Sex::Male, 0.10f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human6{ DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, 0.20f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human7{ DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Male, 0.30f };
+        DiseaseSpreadSimulation::Statistics::HumanDistribution human8{ DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Sex::Female, 0.40f };
 
-        std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
-        std::vector<DeseaseSpreadSimulation::Statistics::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
+        std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> evenDistribution{ human1, human2, human3, human4 };
+        std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> unevenDistribution{ human5, human6, human7, human8 };
 
-        DeseaseSpreadSimulation::PersonPopulator populator1{ evenCount, evenDistribution };
-        DeseaseSpreadSimulation::PersonPopulator populator2{ unevenCount, evenDistribution };
-        DeseaseSpreadSimulation::PersonPopulator populator3{ evenCount, unevenDistribution };
-        DeseaseSpreadSimulation::PersonPopulator populator4{ unevenCount, unevenDistribution };
+        DiseaseSpreadSimulation::PersonPopulator populator1{ evenCount, evenDistribution };
+        DiseaseSpreadSimulation::PersonPopulator populator2{ unevenCount, evenDistribution };
+        DiseaseSpreadSimulation::PersonPopulator populator3{ evenCount, unevenDistribution };
+        DiseaseSpreadSimulation::PersonPopulator populator4{ unevenCount, unevenDistribution };
     };
     TEST_F(PersonPopulatorTest, SizeIsEqualEvenDistributionEvenCount)
     {
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(evenCount, country);
         auto population1 = populator1.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
@@ -401,7 +410,7 @@ namespace UnitTests {
     TEST_F(PersonPopulatorTest, SizeIsEqualEvenDistributionUnevenCount)
     {
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(unevenCount, country);
         auto population2 = populator2.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
@@ -410,7 +419,7 @@ namespace UnitTests {
     TEST_F(PersonPopulatorTest, SizeIsEqualUnevenDistributionEvenCount)
     {
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(evenCount, country);
         auto population3 = populator3.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
@@ -419,7 +428,7 @@ namespace UnitTests {
     TEST_F(PersonPopulatorTest, SizeIsEqualUnevenDistributionUnevenCount)
     {
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(unevenCount, country);
         auto population4 = populator4.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
@@ -433,13 +442,13 @@ namespace UnitTests {
         float countHumanDistribution4 = 0.f;
 
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(evenCount, country);
         auto population1 = populator1.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
         for (const auto& person : population1)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DiseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human1)
             {
@@ -477,13 +486,13 @@ namespace UnitTests {
         float countHumanDistribution4 = 0.f;
 
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(unevenCount, country);
         auto population2 = populator2.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
         for (const auto& person : population2)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DiseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human1)
             {
@@ -521,13 +530,13 @@ namespace UnitTests {
         float countHumanDistribution4 = 0.f;
 
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(evenCount, country);
         auto population3 = populator3.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
         for (const auto& person : population3)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DiseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human5)
             {
@@ -565,13 +574,13 @@ namespace UnitTests {
         float countHumanDistribution4 = 0.f;
 
         // Setup population
-        DeseaseSpreadSimulation::PlaceBuilder placeBuilder;
+        DiseaseSpreadSimulation::PlaceBuilder placeBuilder;
         auto places = placeBuilder.CreatePlaces(unevenCount, country);
         auto population4 = populator4.CreatePopulation(country, places.homes, places.workplaces, places.schools);
 
         for (const auto& person : population4)
         {
-            DeseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
+            DiseaseSpreadSimulation::Statistics::HumanDistribution h{ person.GetAgeGroup(), person.GetSex(), 0.f };
 
             if (h == human5)
             {
@@ -602,9 +611,9 @@ namespace UnitTests {
         EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01f);
     }
     // Helper function to get the percentages per category form a population so it can be compared to the distribution weights
-    std::array<float, 4> GetHomePercentFromPopulation(std::vector<DeseaseSpreadSimulation::Person>& population, DeseaseSpreadSimulation::Country country)
+    std::array<float, 4> GetHomePercentFromPopulation(std::vector<DiseaseSpreadSimulation::Person>& population, DiseaseSpreadSimulation::Country country)
     {
-        std::map<uint32_t, DeseaseSpreadSimulation::Home*> homesByID;
+        std::map<uint32_t, DiseaseSpreadSimulation::Home*> homesByID;
 
         // Get the homes of every person in the population and put it into a map to filter multiples
         for (auto& person : population)
@@ -659,7 +668,7 @@ namespace UnitTests {
     }
     TEST_F(PersonPopulatorTest, CheckHomes)
     {
-        using namespace DeseaseSpreadSimulation;
+        using namespace DiseaseSpreadSimulation;
         constexpr auto country = Country::USA;
         const std::array<float, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
                                                         PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,

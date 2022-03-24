@@ -2,18 +2,18 @@
 #include "Places/Places.h"
 #include "IDGenerator/IDGenerator.h"
 
-uint32_t DeseaseSpreadSimulation::Place::GetID() const
+uint32_t DiseaseSpreadSimulation::Place::GetID() const
 {
 	return placeID;
 }
 
-void DeseaseSpreadSimulation::Place::AddPerson(Person* person)
+void DiseaseSpreadSimulation::Place::AddPerson(Person* person)
 {
 	std::lock_guard<std::mutex> lockPeople(peopleMutex);
 	people.push_back(person);
 }
 
-void DeseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
+void DiseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
 {
 	std::lock_guard<std::mutex> lockPeople(peopleMutex);
 	people.erase(
@@ -22,12 +22,12 @@ void DeseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
 	);
 }
 
-void DeseaseSpreadSimulation::Place::RemovePerson(Person* person)
+void DiseaseSpreadSimulation::Place::RemovePerson(Person* person)
 {
 	RemovePerson(person->GetID());
 }
 
-std::string DeseaseSpreadSimulation::Place::TypeToString(Place_Type type)
+std::string DiseaseSpreadSimulation::Place::TypeToString(Place_Type type)
 {
 	switch (type)
 	{
@@ -58,282 +58,282 @@ std::string DeseaseSpreadSimulation::Place::TypeToString(Place_Type type)
 	return std::string();
 }
 
-std::vector<DeseaseSpreadSimulation::Person*>& DeseaseSpreadSimulation::Place::GetPeople()
+std::vector<DiseaseSpreadSimulation::Person*>& DiseaseSpreadSimulation::Place::GetPeople()
 {
 	return people;
 }
 
-size_t DeseaseSpreadSimulation::Place::GetPersonCount() const
+size_t DiseaseSpreadSimulation::Place::GetPersonCount() const
 {
 	return people.size();
 }
 
-DeseaseSpreadSimulation::Place::Place(uint32_t id)
+DiseaseSpreadSimulation::Place::Place(uint32_t id)
 	:
 	placeID(id)
 {
 }
 
-DeseaseSpreadSimulation::Place::Place(const Place& other)
+DiseaseSpreadSimulation::Place::Place(const Place& other)
 	:
 	placeID(other.placeID),
 	people(other.people)
 {
 }
 
-DeseaseSpreadSimulation::Place::Place(Place&& other) noexcept
+DiseaseSpreadSimulation::Place::Place(Place&& other) noexcept
 	:
 	placeID(std::move(other.placeID)),
 	people(std::move(other.people))
 {
 }
 
-DeseaseSpreadSimulation::Place& DeseaseSpreadSimulation::Place::operator=(Place&& other) noexcept
+DiseaseSpreadSimulation::Place& DiseaseSpreadSimulation::Place::operator=(Place&& other) noexcept
 {
 	std::swap(placeID, other.placeID);
 	std::swap(people, other.people);
 	return *this;
 }
 
-DeseaseSpreadSimulation::Home::Home()
+DiseaseSpreadSimulation::Home::Home()
 	:
 	Place(IDGenerator::IDGenerator<Home>::GetNextID())
 {
 }
 
-DeseaseSpreadSimulation::Home::Home(const Home& other)
+DiseaseSpreadSimulation::Home::Home(const Home& other)
 	:
 	Place(other)
 {
 }
 
-DeseaseSpreadSimulation::Home::Home(Home&& other) noexcept
+DiseaseSpreadSimulation::Home::Home(Home&& other) noexcept
 	:
 	Place(std::move(other))
 {
 }
 
-DeseaseSpreadSimulation::Home& DeseaseSpreadSimulation::Home::operator=(const Home& other)
+DiseaseSpreadSimulation::Home& DiseaseSpreadSimulation::Home::operator=(const Home& other)
 {
 	return *this = Home(other);
 }
 
-DeseaseSpreadSimulation::Home& DeseaseSpreadSimulation::Home::operator=(Home&& other) noexcept
+DiseaseSpreadSimulation::Home& DiseaseSpreadSimulation::Home::operator=(Home&& other) noexcept
 {
 	Place::operator=(std::move(other));
 	return *this;
 }
 
-DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Home::GetType() const
+DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Home::GetType() const
 {
 	return Place_Type::Home;
 }
 
-DeseaseSpreadSimulation::Supply::Supply()
+DiseaseSpreadSimulation::Supply::Supply()
 	:
 	Place(IDGenerator::IDGenerator<Supply>::GetNextID())
 {
 }
 
-DeseaseSpreadSimulation::Supply::Supply(const Supply& other)
+DiseaseSpreadSimulation::Supply::Supply(const Supply& other)
 	:
 	Place(other)
 {
 }
 
-DeseaseSpreadSimulation::Supply::Supply(Supply&& other) noexcept
+DiseaseSpreadSimulation::Supply::Supply(Supply&& other) noexcept
 	:
 	Place(std::move(other))
 {
 }
 
-DeseaseSpreadSimulation::Supply& DeseaseSpreadSimulation::Supply::operator=(const Supply& other)
+DiseaseSpreadSimulation::Supply& DiseaseSpreadSimulation::Supply::operator=(const Supply& other)
 {
 	return *this = Supply(other);
 }
 
-DeseaseSpreadSimulation::Supply& DeseaseSpreadSimulation::Supply::operator=(Supply&& other) noexcept
+DiseaseSpreadSimulation::Supply& DiseaseSpreadSimulation::Supply::operator=(Supply&& other) noexcept
 {
 	Place::operator=(std::move(other));
 	return *this;
 }
 
-DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Supply::GetType() const
+DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Supply::GetType() const
 {
 	return Place_Type::Supply;
 }
 
-DeseaseSpreadSimulation::Workplace::Workplace()
+DiseaseSpreadSimulation::Workplace::Workplace()
 	:
 	Place(IDGenerator::IDGenerator<Workplace>::GetNextID())
 {
 }
 
-DeseaseSpreadSimulation::Workplace::Workplace(const Workplace& other)
+DiseaseSpreadSimulation::Workplace::Workplace(const Workplace& other)
 	:
 	Place(other)
 {
 }
 
-DeseaseSpreadSimulation::Workplace::Workplace(Workplace&& other) noexcept
+DiseaseSpreadSimulation::Workplace::Workplace(Workplace&& other) noexcept
 	:
 	Place(std::move(other))
 {
 }
 
-DeseaseSpreadSimulation::Workplace& DeseaseSpreadSimulation::Workplace::operator=(const Workplace& other)
+DiseaseSpreadSimulation::Workplace& DiseaseSpreadSimulation::Workplace::operator=(const Workplace& other)
 {
 	return *this = Workplace(other);
 }
 
-DeseaseSpreadSimulation::Workplace& DeseaseSpreadSimulation::Workplace::operator=(Workplace&& other) noexcept
+DiseaseSpreadSimulation::Workplace& DiseaseSpreadSimulation::Workplace::operator=(Workplace&& other) noexcept
 {
 	Place::operator=(std::move(other));
 	return *this;
 }
 
-DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Workplace::GetType() const
+DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Workplace::GetType() const
 {
 	return Place_Type::Workplace;
 }
 
-DeseaseSpreadSimulation::HardwareStore::HardwareStore()
+DiseaseSpreadSimulation::HardwareStore::HardwareStore()
 	:
 	Place(IDGenerator::IDGenerator<HardwareStore>::GetNextID())
 {
 }
 
-DeseaseSpreadSimulation::HardwareStore::HardwareStore(const HardwareStore& other)
+DiseaseSpreadSimulation::HardwareStore::HardwareStore(const HardwareStore& other)
 	:
 	Place(other)
 {
 }
 
-DeseaseSpreadSimulation::HardwareStore::HardwareStore(HardwareStore&& other) noexcept
+DiseaseSpreadSimulation::HardwareStore::HardwareStore(HardwareStore&& other) noexcept
 	:
 	Place(std::move(other))
 {
 }
 
-DeseaseSpreadSimulation::HardwareStore& DeseaseSpreadSimulation::HardwareStore::operator=(const HardwareStore& other)
+DiseaseSpreadSimulation::HardwareStore& DiseaseSpreadSimulation::HardwareStore::operator=(const HardwareStore& other)
 {
 	return *this = HardwareStore(other);
 }
 
-DeseaseSpreadSimulation::HardwareStore& DeseaseSpreadSimulation::HardwareStore::operator=(HardwareStore&& other) noexcept
+DiseaseSpreadSimulation::HardwareStore& DiseaseSpreadSimulation::HardwareStore::operator=(HardwareStore&& other) noexcept
 {
 	Place::operator=(std::move(other));
 	return *this;
 }
 
-DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::HardwareStore::GetType() const
+DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::HardwareStore::GetType() const
 {
 	return Place_Type::HardwareStore;
 }
 
-DeseaseSpreadSimulation::Morgue::Morgue()
+DiseaseSpreadSimulation::Morgue::Morgue()
 	:
 	Place(IDGenerator::IDGenerator<Morgue>::GetNextID())
 {
 }
 
-DeseaseSpreadSimulation::Morgue::Morgue(const Morgue& other)
+DiseaseSpreadSimulation::Morgue::Morgue(const Morgue& other)
 	:
 	Place(other)
 {
 }
 
-DeseaseSpreadSimulation::Morgue::Morgue(Morgue&& other) noexcept
+DiseaseSpreadSimulation::Morgue::Morgue(Morgue&& other) noexcept
 	:
 	Place(std::move(other))
 {
 }
 
-DeseaseSpreadSimulation::Morgue& DeseaseSpreadSimulation::Morgue::operator=(const Morgue& other)
+DiseaseSpreadSimulation::Morgue& DiseaseSpreadSimulation::Morgue::operator=(const Morgue& other)
 {
 	return *this = Morgue(other);
 }
 
-DeseaseSpreadSimulation::Morgue& DeseaseSpreadSimulation::Morgue::operator=(Morgue&& other) noexcept
+DiseaseSpreadSimulation::Morgue& DiseaseSpreadSimulation::Morgue::operator=(Morgue&& other) noexcept
 {
 	Place::operator=(std::move(other));
 	return *this;
 }
 
-DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Morgue::GetType() const
+DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Morgue::GetType() const
 {
 	return Place_Type::Morgue;
 }
 
-DeseaseSpreadSimulation::School::School()
+DiseaseSpreadSimulation::School::School()
 	:
 	Place(IDGenerator::IDGenerator<School>::GetNextID())
 {
 }
 
-DeseaseSpreadSimulation::School::School(const School& other)
+DiseaseSpreadSimulation::School::School(const School& other)
 	:
 	Place(other)
 {
 }
 
-DeseaseSpreadSimulation::School::School(School&& other) noexcept
+DiseaseSpreadSimulation::School::School(School&& other) noexcept
 	:
 	Place(std::move(other))
 {
 }
 
-DeseaseSpreadSimulation::School& DeseaseSpreadSimulation::School::operator=(const School& other)
+DiseaseSpreadSimulation::School& DiseaseSpreadSimulation::School::operator=(const School& other)
 {
 	return *this = School(other);
 }
 
-DeseaseSpreadSimulation::School& DeseaseSpreadSimulation::School::operator=(School&& other) noexcept
+DiseaseSpreadSimulation::School& DiseaseSpreadSimulation::School::operator=(School&& other) noexcept
 {
 	Place::operator=(std::move(other));
 	return *this;
 }
 
-DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::School::GetType() const
+DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::School::GetType() const
 {
 	return Place_Type::School;
 }
 
-DeseaseSpreadSimulation::Travel::Travel()
+DiseaseSpreadSimulation::Travel::Travel()
 	:
 	Place(IDGenerator::IDGenerator<Travel>::GetNextID())
 {
 }
 
-DeseaseSpreadSimulation::Travel::Travel(const Travel& other)
+DiseaseSpreadSimulation::Travel::Travel(const Travel& other)
 	:
 	Place(other)
 {
 }
 
-DeseaseSpreadSimulation::Travel::Travel(Travel&& other) noexcept
+DiseaseSpreadSimulation::Travel::Travel(Travel&& other) noexcept
 	:
 	Place(std::move(other))
 {
 }
 
-DeseaseSpreadSimulation::Travel& DeseaseSpreadSimulation::Travel::operator=(const Travel& other)
+DiseaseSpreadSimulation::Travel& DiseaseSpreadSimulation::Travel::operator=(const Travel& other)
 {
 	return *this = Travel(other);
 }
 
-DeseaseSpreadSimulation::Travel& DeseaseSpreadSimulation::Travel::operator=(Travel&& other) noexcept
+DiseaseSpreadSimulation::Travel& DiseaseSpreadSimulation::Travel::operator=(Travel&& other) noexcept
 {
 	Place::operator=(std::move(other));
 	return *this;
 }
 
-DeseaseSpreadSimulation::Place_Type DeseaseSpreadSimulation::Travel::GetType() const
+DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Travel::GetType() const
 {
 	return Place_Type::Travel;
 }
 
-void DeseaseSpreadSimulation::Places::Insert(Places other)
+void DiseaseSpreadSimulation::Places::Insert(Places other)
 {
 	homes.reserve(homes.size() + other.homes.size());
 	AppendVectorAtEnd(homes, other.homes);

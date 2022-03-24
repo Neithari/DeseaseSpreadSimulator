@@ -2,7 +2,7 @@
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
 
-DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
+DiseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
 	:
 	id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	age(age),
@@ -18,138 +18,153 @@ DeseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	}
 }
 
-void DeseaseSpreadSimulation::Person::Update(uint16_t currentTime, bool isWorkday, bool isNewDay)
+void DiseaseSpreadSimulation::Person::Update(uint16_t currentTime, bool isWorkday, bool isNewDay)
 {
 	CheckNextMove(currentTime, isWorkday, isNewDay);
 	infection.Update(*this, isNewDay);
 }
 
-void DeseaseSpreadSimulation::Person::Contact(Person& other)
+void DiseaseSpreadSimulation::Person::Contact(Person& other)
 {
 	if (other.IsInfectious() && IsSusceptible())
 	{
-		if (infection.WillInfect(other.infection.GetDesease(), behavior.acceptanceFactor))
+		if (infection.WillInfect(other.infection, behavior.acceptanceFactor, community))
 		{
-			infection.Contaminate(other.infection.GetDesease(), age);
+			infection.Contaminate(other.infection.GetDisease(), age);
 			other.infection.IncreaseSpreadCount();
 		}
 	}
 	else if (IsInfectious() && other.IsSusceptible())
 	{
-		if (other.infection.WillInfect(infection.GetDesease(), other.behavior.acceptanceFactor))
+		if (other.infection.WillInfect(infection, other.behavior.acceptanceFactor, other.community))
 		{
-			other.infection.Contaminate(infection.GetDesease(), other.age);
+			other.infection.Contaminate(infection.GetDisease(), other.age);
 			infection.IncreaseSpreadCount();
 		}
 	}
 }
 
-void DeseaseSpreadSimulation::Person::Contaminate(const Desease* desease)
+void DiseaseSpreadSimulation::Person::Contaminate(const Disease* disease)
 {
-	infection.Contaminate(desease, age);
+	infection.Contaminate(disease, age);
 }
 
-void DeseaseSpreadSimulation::Person::Kill()
+void DiseaseSpreadSimulation::Person::Kill()
 {
 	alive = false;
 }
 
-bool DeseaseSpreadSimulation::Person::IsSusceptible() const
+bool DiseaseSpreadSimulation::Person::IsSusceptible() const
 {
 	return infection.IsSusceptible();
 }
 
-bool DeseaseSpreadSimulation::Person::IsInfectious() const
+bool DiseaseSpreadSimulation::Person::IsInfectious() const
 {
 	return infection.IsInfectious();
 }
 
-bool DeseaseSpreadSimulation::Person::IsQuarantined() const
+bool DiseaseSpreadSimulation::Person::IsQuarantined() const
 {
-	return infection.IsQuarantined();
+	return isQuarantined;
 }
 
-bool DeseaseSpreadSimulation::Person::IsTraveling() const
+bool DiseaseSpreadSimulation::Person::IsTraveling() const
 {
 	return isTraveling;
 }
 
-bool DeseaseSpreadSimulation::Person::IsAlive() const
+bool DiseaseSpreadSimulation::Person::IsAlive() const
 {
 	return alive;
 }
 
-std::string DeseaseSpreadSimulation::Person::GetDeseaseName() const
+std::string DiseaseSpreadSimulation::Person::GetDiseaseName() const
 {
-	return infection.GetDeseaseName();
+	return infection.GetDiseaseName();
 }
 
-bool DeseaseSpreadSimulation::Person::HasDesease() const
+bool DiseaseSpreadSimulation::Person::HasRecovered() const
 {
-	return infection.HasDesease();
+	return infection.HasRecovered();
 }
 
-uint32_t DeseaseSpreadSimulation::Person::GetID() const
+bool DiseaseSpreadSimulation::Person::HasDisease() const
+{
+	return infection.HasDisease();
+}
+
+uint32_t DiseaseSpreadSimulation::Person::GetID() const
 {
 	return id;
 }
 
-DeseaseSpreadSimulation::Age_Group DeseaseSpreadSimulation::Person::GetAgeGroup() const
+DiseaseSpreadSimulation::Age_Group DiseaseSpreadSimulation::Person::GetAgeGroup() const
 {
 	return age;
 }
 
-DeseaseSpreadSimulation::Sex DeseaseSpreadSimulation::Person::GetSex() const
+DiseaseSpreadSimulation::Sex DiseaseSpreadSimulation::Person::GetSex() const
 {
 	return sex;
 }
 
-const DeseaseSpreadSimulation::PersonBehavior& DeseaseSpreadSimulation::Person::GetBehavior() const
+const DiseaseSpreadSimulation::PersonBehavior& DiseaseSpreadSimulation::Person::GetBehavior() const
 {
 	return behavior;
 }
 
-DeseaseSpreadSimulation::Community* DeseaseSpreadSimulation::Person::GetCommunity()
+uint32_t DiseaseSpreadSimulation::Person::GetSpreadCount() const
+{
+	return infection.GetSpreadCount();
+}
+
+const DiseaseSpreadSimulation::Disease* DiseaseSpreadSimulation::Person::GetDisease() const
+{
+	return infection.GetDisease();
+}
+
+DiseaseSpreadSimulation::Community* DiseaseSpreadSimulation::Person::GetCommunity()
 {
 	return community;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Person::GetWhereabouts()
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Person::GetWhereabouts()
 {
 	return whereabouts;
 }
 
-DeseaseSpreadSimulation::Home* DeseaseSpreadSimulation::Person::GetHome()
+DiseaseSpreadSimulation::Home* DiseaseSpreadSimulation::Person::GetHome()
 {
 	return home;
 }
 
-DeseaseSpreadSimulation::Workplace* DeseaseSpreadSimulation::Person::GetWorkplace()
+DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::Person::GetWorkplace()
 {
 	return workplace;
 }
 
-DeseaseSpreadSimulation::School* DeseaseSpreadSimulation::Person::GetSchool()
+DiseaseSpreadSimulation::School* DiseaseSpreadSimulation::Person::GetSchool()
 {
 	return school;
 }
 
-void DeseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
+void DiseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
 {
 	workplace = newWorkplace;
 }
 
-void DeseaseSpreadSimulation::Person::SetSchool(School* newSchool)
+void DiseaseSpreadSimulation::Person::SetSchool(School* newSchool)
 {
 	school = newSchool;
 }
 
-void DeseaseSpreadSimulation::Person::SetCommunity(Community* newCommunity)
+void DiseaseSpreadSimulation::Person::SetCommunity(Community* newCommunity)
 {
 	community = newCommunity;
 }
 
-void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
+void DiseaseSpreadSimulation::Person::SetHome(Home* newHome)
 {
 	home = newHome;
 	// Check if the person is already somewhere.
@@ -162,12 +177,12 @@ void DeseaseSpreadSimulation::Person::SetHome(Home* newHome)
 	}
 }
 
-void DeseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
+void DiseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 {
 	behavior = newBehavior;
 }
 
-void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& isWorkday, bool isNewDay)
+void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& isWorkday, bool isNewDay)
 {
 	// Send the person to the morgue if not alive
 	if (!alive)
@@ -180,6 +195,29 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		whereabouts = community->TransferToMorgue(this);
 	}
 
+	// When we are quarantined do nothing untill we have recovered
+	if (IsQuarantined())
+	{
+		if (infection.HasRecovered() && currentTime >= shopOpenTime)
+		{
+			community->TestStation(this);
+		}
+		return;
+	}
+
+	// Test if we have symptoms
+	if (infection.HasSymptoms() && currentTime >= shopOpenTime)
+	{
+		// When our acceptance factor is too low, we decide random if we test or not
+		if (behavior.acceptanceFactor <= 0.6f && Random::Percent<float>() > behavior.acceptanceFactor)
+		{
+			return;
+		}
+
+		community->TestStation(this);
+		return;
+	}
+
 	bool needFood = lastFoodBuy >= behavior.foodBuyInterval;
 	bool needHardware = lastHardwareBuy >= behavior.hardwareBuyInterval;
 
@@ -187,8 +225,8 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 
 	switch (currentPlace)
 	{
-	case DeseaseSpreadSimulation::Place_Type::Home:
-		// Branch to shopping, work, school or travel here
+	case DiseaseSpreadSimulation::Place_Type::Home:
+		// Branch to shopping, work, school, travel or test here
 		// Go shopping at a random time between the open hours
 		if (needFood && currentTime >= shopOpenTime)
 		{
@@ -199,7 +237,10 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 				GoSupplyShopping(currentTime);
 			}
 		}
-		else if (needHardware && currentTime >= shopOpenTime)
+		// Hardware shopping is suspended during a lockdown
+		else if (needHardware
+			&& currentTime >= shopOpenTime
+			&& !community->ContainmentMeasures().IsLockdown())
 		{
 			PrepareShopping();
 
@@ -210,7 +251,10 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		}
 		else if (!isShoppingDay)
 		{
-			if (WillTravel() && currentTime >= shopOpenTime)
+			// No traveling during a lockdown
+			if (WillTravel()
+				&& currentTime >= shopOpenTime
+				&& !community->ContainmentMeasures().IsLockdown())
 			{
 				StartTraveling();
 			}
@@ -219,22 +263,47 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 				&& currentTime <= workFinishTime
 				&& isWorkday)
 			{
-				whereabouts = community->TransferToWork(this);
+				if (community->ContainmentMeasures().WorkingFormHome())
+				{
+					// 50% of working people are allowed to go to work when there is a working from home mandate.
+					// Reflecting jobs that are not capable of work from home
+					if (Random::Percent<float>() <= .5f)
+					{
+						whereabouts = community->TransferToWork(this);
+					}
+				}
+				else if (community->ContainmentMeasures().IsLockdown())
+				{
+					// During a lockdown only 10% of people are allowed to go to work
+					// Reflecting jobs that are mandatory to supply people
+					if (Random::Percent<float>() <= .1f)
+					{
+						whereabouts = community->TransferToWork(this);
+					}
+				}
+				else
+				{
+					whereabouts = community->TransferToWork(this);
+				}
 			}
+			// Schools will close when there is a work form home mandate and when there is a lockdown
 			else if (school != nullptr
 				&& currentTime >= schoolStartTime
 				&& currentTime <= schoolFinishTime
-				&& isWorkday)
+				&& isWorkday
+				&& !community->ContainmentMeasures().WorkingFormHome()
+				&& !community->ContainmentMeasures().IsLockdown())
 			{
 				whereabouts = community->TransferToSchool(this);
 			}
 		}
 		break;
-	case DeseaseSpreadSimulation::Place_Type::Supply:
+	case DiseaseSpreadSimulation::Place_Type::Supply:
 		// When the buy time is over go to the hardware store if we need to, else go home
 		if (currentTime >= buyFinishTime)
 		{
-			if (lastHardwareBuy >= behavior.hardwareBuyInterval)
+			// Hardware stores are closed during a lockdown
+			if (lastHardwareBuy >= behavior.hardwareBuyInterval && !community->ContainmentMeasures().IsLockdown())
 			{
 				// No preparation needed. Just go shopping.
 				GoHardwareShopping(currentTime);
@@ -245,9 +314,10 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 			}
 		}
 		break;
-	case DeseaseSpreadSimulation::Place_Type::Workplace:
-		// Go traveling or home after the work has finished
-		if (WillTravel())
+	case DiseaseSpreadSimulation::Place_Type::Workplace:
+		// Go traveling or home after the work has finished 
+		// No traveling during a lockdown
+		if (WillTravel() && !community->ContainmentMeasures().IsLockdown())
 		{
 			StartTraveling();
 		}
@@ -256,14 +326,14 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 			whereabouts = community->TransferToHome(this);
 		}
 		break;
-	case DeseaseSpreadSimulation::Place_Type::School:
+	case DiseaseSpreadSimulation::Place_Type::School:
 		// Go home after the school has finished
 		if (currentTime >= schoolFinishTime)
 		{
 			whereabouts = community->TransferToHome(this);
 		}
 		break;
-	case DeseaseSpreadSimulation::Place_Type::HardwareStore:
+	case DiseaseSpreadSimulation::Place_Type::HardwareStore:
 		// When the buy time is over go to the supply store if we need to, else go home
 		if (currentTime >= buyFinishTime)
 		{
@@ -278,11 +348,11 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 			}
 		}
 		break;
-	case DeseaseSpreadSimulation::Place_Type::Morgue:
+	case DiseaseSpreadSimulation::Place_Type::Morgue:
 		// We stay here for ever
 		return;
 		break;
-	case DeseaseSpreadSimulation::Place_Type::Travel:
+	case DiseaseSpreadSimulation::Place_Type::Travel:
 		// Return from travel to home is an increasing chance per day traveling. 
 		if (isNewDay)
 		{
@@ -301,7 +371,7 @@ void DeseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 	}
 }
 
-void DeseaseSpreadSimulation::Person::PrepareShopping()
+void DiseaseSpreadSimulation::Person::PrepareShopping()
 {
 	if (!isShoppingDay)
 	{
@@ -311,7 +381,7 @@ void DeseaseSpreadSimulation::Person::PrepareShopping()
 	}
 }
 
-void DeseaseSpreadSimulation::Person::GoSupplyShopping(uint16_t currentTime)
+void DiseaseSpreadSimulation::Person::GoSupplyShopping(uint16_t currentTime)
 {
 	whereabouts = community->TransferToSupplyStore(this);
 
@@ -320,7 +390,7 @@ void DeseaseSpreadSimulation::Person::GoSupplyShopping(uint16_t currentTime)
 	buyFinishTime = currentTime + 1;
 }
 
-void DeseaseSpreadSimulation::Person::GoHardwareShopping(uint16_t currentTime)
+void DiseaseSpreadSimulation::Person::GoHardwareShopping(uint16_t currentTime)
 {
 	whereabouts = community->TransferToHardwareStore(this);
 
@@ -329,13 +399,23 @@ void DeseaseSpreadSimulation::Person::GoHardwareShopping(uint16_t currentTime)
 	buyFinishTime = currentTime + 1;
 }
 
-bool DeseaseSpreadSimulation::Person::WillTravel() const
+bool DiseaseSpreadSimulation::Person::WillTravel() const
 {
 	return Random::Percent<float>() <= behavior.travelNeed;
 }
 
-void DeseaseSpreadSimulation::Person::StartTraveling()
+void DiseaseSpreadSimulation::Person::StartTraveling()
 {
 	whereabouts = community->TransferToTravelLocation(this);
 	isTraveling = true;
+}
+
+void DiseaseSpreadSimulation::Person::StartQuarantine()
+{
+	isQuarantined = true;
+}
+
+void DiseaseSpreadSimulation::Person::EndQuarantine()
+{
+	isQuarantined = false;
 }

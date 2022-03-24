@@ -26,11 +26,11 @@
 #include "fmt/core.h"
 
 // My
-#include "DeseaseSpreadSimulator/Enums.h"
-#include "DeseaseSpreadSimulator/RandomNumbers.h"
-#include "DeseaseSpreadSimulator/Statistics.h"
-#include "Desease/Desease.h"
-#include "Desease/Infection.h"
+#include "DiseaseSpreadSimulator/Enums.h"
+#include "DiseaseSpreadSimulator/RandomNumbers.h"
+#include "DiseaseSpreadSimulator/Statistics.h"
+#include "Disease/Disease.h"
+#include "Disease/Infection.h"
 #include "Person/Person.h"
 #include "Places/Places.h"
 #include "Places/Community.h"

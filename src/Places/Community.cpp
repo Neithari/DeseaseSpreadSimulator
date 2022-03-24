@@ -1,15 +1,14 @@
 #include "pch.h"
 #include "Places/Community.h"
-#include <gsl/gsl>
 
-DeseaseSpreadSimulation::Community::Community(std::vector<Person> population, Places places)
+DiseaseSpreadSimulation::Community::Community(std::vector<Person> population, Places places)
 	:
 	m_population(std::move(population)),
 	m_places(std::move(places))
 {
 }
 
-DeseaseSpreadSimulation::Community::Community(const Community& other)
+DiseaseSpreadSimulation::Community::Community(const Community& other)
 	:
 	m_population(other.m_population),
 	m_places(other.m_places),
@@ -17,7 +16,7 @@ DeseaseSpreadSimulation::Community::Community(const Community& other)
 {
 }
 
-DeseaseSpreadSimulation::Community::Community(Community&& other) noexcept
+DiseaseSpreadSimulation::Community::Community(Community&& other) noexcept
 	:
 	m_population(std::move(other.m_population)),
 	m_places(std::move(other.m_places)),
@@ -25,12 +24,12 @@ DeseaseSpreadSimulation::Community::Community(Community&& other) noexcept
 {
 }
 
-DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Community::operator=(const Community& other)
+DiseaseSpreadSimulation::Community& DiseaseSpreadSimulation::Community::operator=(const Community& other)
 {
 	return *this = Community(other);
 }
 
-DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Community::operator=(Community&& other) noexcept
+DiseaseSpreadSimulation::Community& DiseaseSpreadSimulation::Community::operator=(Community&& other) noexcept
 {
 	std::swap(m_population, other.m_population);
 	std::swap(m_places, other.m_places);
@@ -38,14 +37,14 @@ DeseaseSpreadSimulation::Community& DeseaseSpreadSimulation::Community::operator
 	return *this;
 }
 
-void DeseaseSpreadSimulation::Community::AddPerson(Person person)
+void DiseaseSpreadSimulation::Community::AddPerson(Person person)
 {
 	person.SetCommunity(this);
 	std::lock_guard<std::shared_timed_mutex> lockAddPerson(populationMutex);
 	m_population.push_back(std::move(person));
 }
 
-void DeseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemove)
+void DiseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemove)
 {
 	std::lock_guard<std::shared_timed_mutex> lockRemovePerson(populationMutex);
 	m_population.erase(
@@ -54,20 +53,20 @@ void DeseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemo
 	);
 }
 
-void DeseaseSpreadSimulation::Community::AddPlaces(Places places)
+void DiseaseSpreadSimulation::Community::AddPlaces(Places places)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlaces(placesMutex);
 	m_places.Insert(places);
 }
 
-void DeseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
+void DiseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPopulation(populationMutex);
 	m_population.reserve(m_population.size() + population.size());
 	m_population.insert(m_population.end(), population.begin(), population.end());
 }
 
-std::optional<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Community::TransferPerson(const Person& traveler)
+std::optional<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::Community::TransferPerson(const Person& traveler)
 {
 	// The shared lock can't be upgraded to a full lock. Because of that we need to separate the read from the write part.
 	bool isEnditerator{ true };
@@ -90,76 +89,76 @@ std::optional<DeseaseSpreadSimulation::Person> DeseaseSpreadSimulation::Communit
 	return std::nullopt;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHome(Person* person)
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToHome(Person* person)
 {
 	auto home = person->GetHome();
 	TransferToPlace(person, home);
 	return home;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSupplyStore(Person* person)
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToSupplyStore(Person* person)
 {
 	auto store = GetSupplyStore();
 	TransferToPlace(person, store);
 	return store;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToHardwareStore(Person* person)
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToHardwareStore(Person* person)
 {
 	auto store = GetHardwareStore();
 	TransferToPlace(person, store);
 	return store;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToWork(Person* person)
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToWork(Person* person)
 {
 	auto work = person->GetWorkplace();
 	TransferToPlace(person, work);
 	return work;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToSchool(Person* person)
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToSchool(Person* person)
 {
 	auto school = person->GetSchool();
 	TransferToPlace(person, school);
 	return school;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToMorgue(Person* person)
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToMorgue(Person* person)
 {
 	auto morgue = GetMorgue();
 	TransferToPlace(person, morgue);
 	return morgue;
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToTravelLocation(Person* person)
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToTravelLocation(Person* person)
 {
 	// Currently only one travel location
 	TransferToPlace(person, &m_travelLocation);
 	return &m_travelLocation;
 }
 
-std::vector<DeseaseSpreadSimulation::Person>& DeseaseSpreadSimulation::Community::GetPopulation()
+std::vector<DiseaseSpreadSimulation::Person>& DiseaseSpreadSimulation::Community::GetPopulation()
 {
 	return m_population;
 }
 
-DeseaseSpreadSimulation::Places& DeseaseSpreadSimulation::Community::GetPlaces()
+DiseaseSpreadSimulation::Places& DiseaseSpreadSimulation::Community::GetPlaces()
 {
 	return m_places;
 }
 
-DeseaseSpreadSimulation::Travel& DeseaseSpreadSimulation::Community::GetTravelLocation()
+DiseaseSpreadSimulation::Travel& DiseaseSpreadSimulation::Community::GetTravelLocation()
 {
 	return m_travelLocation;
 }
 
-std::vector<DeseaseSpreadSimulation::Home>& DeseaseSpreadSimulation::Community::GetHomes()
+std::vector<DiseaseSpreadSimulation::Home>& DiseaseSpreadSimulation::Community::GetHomes()
 {
 	return m_places.homes;
 }
 
-DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplyStore()
+DiseaseSpreadSimulation::Supply* DiseaseSpreadSimulation::Community::GetSupplyStore()
 {
 	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
 	if (m_places.supplyStores.empty())
@@ -170,7 +169,7 @@ DeseaseSpreadSimulation::Supply* DeseaseSpreadSimulation::Community::GetSupplySt
 	return &m_places.supplyStores.at(Random::RandomVectorIndex(m_places.supplyStores));
 }
 
-DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetHardwareStore()
+DiseaseSpreadSimulation::HardwareStore* DiseaseSpreadSimulation::Community::GetHardwareStore()
 {
 	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
 	if (m_places.hardwareStores.empty())
@@ -181,7 +180,7 @@ DeseaseSpreadSimulation::HardwareStore* DeseaseSpreadSimulation::Community::GetH
 	return &m_places.hardwareStores.at(Random::RandomVectorIndex(m_places.hardwareStores));
 }
 
-DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
+DiseaseSpreadSimulation::Morgue* DiseaseSpreadSimulation::Community::GetMorgue()
 {
 	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
 	if (m_places.morgues.empty())
@@ -192,43 +191,71 @@ DeseaseSpreadSimulation::Morgue* DeseaseSpreadSimulation::Community::GetMorgue()
 	return &m_places.morgues.at(Random::RandomVectorIndex(m_places.morgues));
 }
 
-void DeseaseSpreadSimulation::Community::AddPlace(Home home)
+void DiseaseSpreadSimulation::Community::AddPlace(Home home)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.homes.push_back(home);
 }
 
-void DeseaseSpreadSimulation::Community::AddPlace(Supply store)
+void DiseaseSpreadSimulation::Community::AddPlace(Supply store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.supplyStores.push_back(store);
 }
 
-void DeseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
+void DiseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.workplaces.push_back(workplace);
 }
 
-void DeseaseSpreadSimulation::Community::AddPlace(School school)
+void DiseaseSpreadSimulation::Community::AddPlace(School school)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.schools.push_back(school);
 }
 
-void DeseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
+void DiseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.hardwareStores.push_back(store);
 }
 
-void DeseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
+void DiseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.morgues.push_back(morgue);
 }
 
-DeseaseSpreadSimulation::Place* DeseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
+const DiseaseSpreadSimulation::DiseaseContainment& DiseaseSpreadSimulation::Community::ContainmentMeasures() const
+{
+	return m_containmentMeasures;
+}
+
+void DiseaseSpreadSimulation::Community::TestStation(Person* person)
+{
+	if (TestPersonForInfection(person))
+	{
+		m_containmentMeasures.Quarantine(person);
+	}
+}
+
+bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* person) const
+{
+	if (!person->HasDisease())
+	{
+		return false;
+	}
+
+	// Return true when our test is inside the accuracy and false otherwise
+	if (Random::Percent<float>() < person->GetDisease()->GetTestAccuracy())
+	{
+		return true;
+	}
+	return false;
+}
+
+DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
 {
 	std::lock_guard<std::shared_timed_mutex> lockTransferToPlace(placesMutex);
 	person->GetWhereabouts()->RemovePerson(person);

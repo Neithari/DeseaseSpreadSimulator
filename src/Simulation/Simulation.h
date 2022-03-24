@@ -1,7 +1,7 @@
 #pragma once
 #include "Simulation/TimeManager.h"
 
-namespace DeseaseSpreadSimulation
+namespace DiseaseSpreadSimulation
 {
 	class Simulation
 	{
@@ -15,8 +15,8 @@ namespace DeseaseSpreadSimulation
 
 	private:
 		void SetupEverything(uint16_t communityCount);
-		void InfectRandomPerson(const Desease* desease, std::vector<Person>& population);
-		void SetupTravelInfecter(const Desease* desease, Community* communitie);
+		void InfectRandomPerson(const Disease* disease, std::vector<Person>& population);
+		void SetupTravelInfecter(const Disease* disease, Community* communitie);
 		
 		void Update();
 		void UpdatePopulation(std::vector<Person>& population);
@@ -41,7 +41,7 @@ namespace DeseaseSpreadSimulation
 		uint64_t populationSize = 0u;
 		TimeManager time;
 		std::vector<Community> communities;
-		std::vector<Desease> deseases;
+		std::vector<Disease> diseases;
 
 		Person travelInfecter;
 		std::shared_timed_mutex travelInfecterMutex;

@@ -4,15 +4,15 @@ namespace UnitTests {
     class TimeTests : public ::testing::Test
     {
     protected:
-        DeseaseSpreadSimulation::TimeManager time;
-        std::vector<DeseaseSpreadSimulation::Day> weekdays{
-            DeseaseSpreadSimulation::Day::Monday,
-            DeseaseSpreadSimulation::Day::Tuesday,
-            DeseaseSpreadSimulation::Day::Wednesday,
-            DeseaseSpreadSimulation::Day::Thursday,
-            DeseaseSpreadSimulation::Day::Friday,
-            DeseaseSpreadSimulation::Day::Saturday,
-            DeseaseSpreadSimulation::Day::Sunday
+        DiseaseSpreadSimulation::TimeManager time;
+        std::vector<DiseaseSpreadSimulation::Day> weekdays{
+            DiseaseSpreadSimulation::Day::Monday,
+            DiseaseSpreadSimulation::Day::Tuesday,
+            DiseaseSpreadSimulation::Day::Wednesday,
+            DiseaseSpreadSimulation::Day::Thursday,
+            DiseaseSpreadSimulation::Day::Friday,
+            DiseaseSpreadSimulation::Day::Saturday,
+            DiseaseSpreadSimulation::Day::Sunday
         };
     };
     TEST_F(TimeTests, HourProgressTest)
