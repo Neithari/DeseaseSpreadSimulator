@@ -13,6 +13,7 @@
 #include <shared_mutex>
 #include <execution>
 #include <optional>
+#include <iostream>
 
 // Data structures
 #include <string>
@@ -24,6 +25,7 @@
  
 // Extern libs
 #include "fmt/core.h"
+#include "nlohmann/json.hpp"
 
 // My
 #include "DiseaseSpreadSimulator/Enums.h"

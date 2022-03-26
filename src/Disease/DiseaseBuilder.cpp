@@ -126,3 +126,40 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		testAccuracy,
 		symptomsDevelopment };
 }
+
+std::optional<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseaseFromFile(std::string fileName)
+{// read a JSON file
+	using json = nlohmann::json;
+	std::ifstream diseaseJsonFile{ fileName };
+
+	if (!diseaseJsonFile)
+	{
+
+		std::cerr << fileName << " could not be opened for reading!\n";
+		return std::nullopt;
+	}
+
+	json j;
+	diseaseJsonFile >> j;
+
+	Disease disease = j["Disease"];
+	return disease;
+}
+
+void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const Disease& disease, std::string fileName)
+{
+	using json = nlohmann::json;
+
+	std::ofstream diseaseSaveFile{ fileName };
+
+	if (!diseaseSaveFile)
+	{
+		std::cerr << fileName << " could not be opened for writing!\n";
+		return;
+	}
+
+	json diseaseJson;
+	diseaseJson["Disease"] = disease;
+
+	diseaseSaveFile << diseaseJson << std::endl;
+}

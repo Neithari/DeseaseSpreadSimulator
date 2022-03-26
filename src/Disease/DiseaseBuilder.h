@@ -26,8 +26,10 @@ namespace DiseaseSpreadSimulation
 		// Call only after you called all setup functions
 		Disease CreateDisease();
 
-		Disease CreateDiseaseFromFile(std::string fileName);
-		void SaveDiseaseToFile(std::string fileName) const;
+		// In json format. One disease per file
+		static std::optional<Disease> CreateDiseaseFromFile(std::string fileName);
+		// In json format. One disease per file
+		static void SaveDiseaseToFile(const Disease& disease, std::string fileName);
 
 	private:
 		std::string name{};
