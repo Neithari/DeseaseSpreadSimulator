@@ -22,8 +22,6 @@ void DiseaseSpreadSimulation::Simulation::Run()
 			// Idle when pause is called until resumed
 		}
 
-		/// <measure>
-		Measure::MeasureTime measure("\t\t\t\t\t\t\t\t\t\t\tUpdate");
 		Update();
 	}
 }
@@ -54,17 +52,10 @@ void DiseaseSpreadSimulation::Simulation::Update()
 		for (auto& community : communities)
 		{
 			auto& population = community.GetPopulation();
-			/// <measure>
-			{
-				Measure::MeasureTime measure("Person.Update");
-				UpdatePopulation(population);
-			}/// </measure>
 			
-			/// <measure>
-			{
-				Measure::MeasureTime measure("\t\t\t\tContacts");
-				Contacts(community.GetPlaces(), community.GetTravelLocation());
-			}/// </measure>
+			UpdatePopulation(population);
+			
+			Contacts(community.GetPlaces(), community.GetTravelLocation());
 		}
 
 		if (withPrint)
@@ -191,9 +182,6 @@ void DiseaseSpreadSimulation::Simulation::PrintEveryHour()
 
 void DiseaseSpreadSimulation::Simulation::PrintOncePerDay()
 {
-	/// <measure>
-	Measure::MeasureTime measure("Print");
-
 	for (size_t i = 0; i < communities.size(); i++)
 	{
 		auto& community = communities.at(i);
@@ -266,9 +254,6 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 {
 	DiseaseBuilder dbuilder;
 	PlaceBuilder placeFactory;
-	/// <measure>
-	{
-	Measure::MeasureTime measure("Build communities");
 	//diseases.push_back(dbuilder.CreateCorona());
 	diseases.push_back(dbuilder.CreateDeadlyTestDisease());
 
@@ -286,7 +271,6 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 	}
 	
 	SetupTravelInfecter(&diseases.back(), &communities.back());
-	}/// </measure>
 
 	stop = false;
 	fmt::print("Setup complete\n");
