@@ -126,3 +126,64 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		testAccuracy,
 		symptomsDevelopment };
 }
+
+std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseaseFromFile(std::string fileName)
+{
+	using json = nlohmann::json;
+	std::ifstream diseaseJsonFile{ fileName };
+
+	if (!diseaseJsonFile)
+	{
+
+		std::cerr << fileName << " could not be opened for reading!\n";
+		return {};
+	}
+
+	json diseaseJson;
+	diseaseJsonFile >> diseaseJson;
+	
+	std::vector<Disease> diseases;
+	for (auto& disease : diseaseJson)
+	{
+		diseases.push_back(disease);
+	}
+
+	return diseases;
+}
+
+void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(std::string diseaseSaveName, const Disease& disease, std::string fileName)
+{
+	using json = nlohmann::json;
+
+	// Because of the json formatting we can't just append the new desease
+	json diseaseJson;
+
+	// We need to check if the file exists
+	std::ifstream fileExists{ fileName };
+	json existingDiseaseJson;
+	if (fileExists)
+	{
+		// Copy all contents
+		fileExists >> existingDiseaseJson;
+		// Append them
+		for (auto& [key, existingDisease] : existingDiseaseJson.items())
+		{
+			diseaseJson.emplace(key, existingDisease);
+		}
+	}
+	fileExists.close();
+
+	// Append the new desease
+	diseaseJson.emplace(diseaseSaveName, disease);
+
+	std::ofstream diseaseSaveFile{ fileName };
+
+	if (!diseaseSaveFile)
+	{
+		std::cerr << fileName << " could not be opened for writing!\n";
+		return;
+	}
+
+	// Write it
+	diseaseSaveFile << std::setw(4) << diseaseJson << std::endl;
+}
