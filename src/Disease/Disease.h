@@ -40,6 +40,9 @@ namespace DiseaseSpreadSimulation
 		bool isFatal(Age_Group age) const;
 		bool willDevelopSymptoms() const;
 
+		// For nlohmann/json conversion
+		friend struct nlohmann::adl_serializer<Disease, void>;
+
 	private:
 		const uint32_t id = 0;
 		const std::string name{};
@@ -56,5 +59,44 @@ namespace DiseaseSpreadSimulation
 		std::pair<float, float> spreadFactor{};
 		float testAccuracy = 1.0f;
 		std::pair<float, float> symptomsDevelopment{};
+	};
+}
+
+// For nlohmann/json conversion
+namespace nlohmann {
+	template <>
+	struct adl_serializer<DiseaseSpreadSimulation::Disease> {
+		// note: the return type is no longer 'void', and the method only takes
+		// one argument
+		static DiseaseSpreadSimulation::Disease from_json(const json& j) {
+			return {
+				j["Name"].get<std::string>(),
+				j["Incubation Period"].get<std::pair<uint16_t, uint16_t>>(),
+				j["Days Infectious"].get<uint16_t>(),
+				j["Disease Duration Range"].get<std::pair<uint16_t, uint16_t>>(),
+				j["Mortality By Age"].get<std::vector<float>>(),
+				j["Days Till Death Range"].get<std::pair<uint16_t, uint16_t>>(),
+				j["Spread Factor"].get<std::pair<float, float>>(),
+				j["Test Accuracy"].get<float>(),
+				j["Symptoms Development"].get<std::pair<float, float>>()
+			};
+		}
+
+		// Here's the catch! You must provide a to_json method! Otherwise, you
+		// will not be able to convert move_only_type to json, since you fully
+		// specialized adl_serializer on that type
+		static void to_json(json& j, const DiseaseSpreadSimulation::Disease& disease) {
+			j = {
+				{"Name", disease.name},
+				{"Incubation Period", disease.incubationPeriod},
+				{"Days Infectious", disease.daysInfectious},
+				{"Disease Duration Range", disease.durationRange},
+				{"Mortality By Age", disease.mortalityByAge},
+				{"Days Till Death Range", disease.daysTillDeathRange},
+				{"Spread Factor", disease.spreadFactor},
+				{"Test Accuracy", disease.testAccuracy},
+				{"Symptoms Development", disease.symptomsDevelopment}
+			};
+		}
 	};
 }
