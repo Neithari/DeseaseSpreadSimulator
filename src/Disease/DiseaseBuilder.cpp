@@ -127,8 +127,8 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		symptomsDevelopment };
 }
 
-std::optional<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseaseFromFile(std::string fileName)
-{// read a JSON file
+std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseaseFromFile(std::string fileName)
+{
 	using json = nlohmann::json;
 	std::ifstream diseaseJsonFile{ fileName };
 
@@ -136,19 +136,45 @@ std::optional<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::Disease
 	{
 
 		std::cerr << fileName << " could not be opened for reading!\n";
-		return std::nullopt;
+		return {};
 	}
 
-	json j;
-	diseaseJsonFile >> j;
+	json diseaseJson;
+	diseaseJsonFile >> diseaseJson;
+	
+	std::vector<Disease> diseases;
+	for (auto& disease : diseaseJson)
+	{
+		diseases.push_back(disease);
+	}
 
-	Disease disease = j["Disease"];
-	return disease;
+	return diseases;
 }
 
 void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const Disease& disease, std::string fileName)
 {
 	using json = nlohmann::json;
+
+	// Because of the json formatting we can't just append the new desease
+	json diseaseJson;
+
+	// We need to check if the file exists
+	std::ifstream fileExists{ fileName };
+	json existingDiseaseJson;
+	if (fileExists)
+	{
+		// Copy all contents
+		fileExists >> existingDiseaseJson;
+		// Append them
+		for (auto& existingDisease : existingDiseaseJson)
+		{
+			diseaseJson.push_back(existingDisease);
+		}
+	}
+	fileExists.close();
+
+	// Append the new desease
+	diseaseJson.push_back(disease);
 
 	std::ofstream diseaseSaveFile{ fileName };
 
@@ -158,8 +184,6 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const Disease& d
 		return;
 	}
 
-	json diseaseJson;
-	diseaseJson["Disease"] = disease;
-
-	diseaseSaveFile << diseaseJson << std::endl;
+	// Write it
+	diseaseSaveFile << std::setw(4) << diseaseJson << std::endl;
 }
