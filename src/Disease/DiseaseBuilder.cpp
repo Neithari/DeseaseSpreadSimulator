@@ -151,7 +151,7 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 	return diseases;
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const Disease& disease, std::string fileName)
+void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(std::string diseaseSaveName, const Disease& disease, std::string fileName)
 {
 	using json = nlohmann::json;
 
@@ -166,15 +166,15 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const Disease& d
 		// Copy all contents
 		fileExists >> existingDiseaseJson;
 		// Append them
-		for (auto& existingDisease : existingDiseaseJson)
+		for (auto& [key, existingDisease] : existingDiseaseJson.items())
 		{
-			diseaseJson.push_back(existingDisease);
+			diseaseJson.emplace(key, existingDisease);
 		}
 	}
 	fileExists.close();
 
 	// Append the new desease
-	diseaseJson.push_back(disease);
+	diseaseJson.emplace(diseaseSaveName, disease);
 
 	std::ofstream diseaseSaveFile{ fileName };
 
