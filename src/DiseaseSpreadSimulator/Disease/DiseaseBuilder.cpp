@@ -6,14 +6,14 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 	// https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Steckbrief.html
 	// https://elemental.medium.com/from-infection-to-recovery-how-long-it-lasts-199e266fd018
 	SetDiseaseName("COVID-19");
-	static constexpr uint16_t coronaIncubationPeriodMin{ 1 };
-	static constexpr uint16_t coronaIncubationPeriodMax{ 14 };
+	static constexpr uint16_t coronaIncubationPeriodMin{1};
+	static constexpr uint16_t coronaIncubationPeriodMax{14};
 	SetIncubationPeriod(coronaIncubationPeriodMin, coronaIncubationPeriodMax);
 	SetDaysInfectious(10);
-	static constexpr uint16_t coronaDurationMin{ 14 };
-	static constexpr uint16_t coronaDurationMax{ 56 };
+	static constexpr uint16_t coronaDurationMin{14};
+	static constexpr uint16_t coronaDurationMax{56};
 	SetDiseaseDuration(coronaIncubationPeriodMin + coronaDurationMin, coronaIncubationPeriodMax + coronaDurationMax);
-	SetMortalityByAge({ 0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f });
+	SetMortalityByAge({0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f});
 	SetDaysTillDeath(coronaDurationMin, coronaDurationMax);
 
 	// According to multiple sources only few individuals infect a lot of people.
@@ -33,7 +33,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 	SetIncubationPeriod(1, 1);
 	SetDaysInfectious(10);
 	SetDiseaseDuration(10, 10);
-	SetMortalityByAge({ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f });
+	SetMortalityByAge({1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f});
 	SetDaysTillDeath(10, 10);
 	SetSpreadFactor(1.0f, 1.0f);
 	SetTestAccuracy(1.0f);
@@ -53,7 +53,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetIncubationPeriod(const uint16_t
 {
 	setupDone[1] = true;
 
-	incubationPeriod = { minDays, maxDays };
+	incubationPeriod = {minDays, maxDays};
 }
 
 void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysInfectious(const uint16_t days)
@@ -67,7 +67,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetDiseaseDuration(const uint16_t 
 {
 	setupDone[3] = true;
 
-	diseaseDurationRange = { minDays, maxDays };
+	diseaseDurationRange = {minDays, maxDays};
 }
 
 void DiseaseSpreadSimulation::DiseaseBuilder::SetMortalityByAge(std::vector<float> mortality)
@@ -81,14 +81,14 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysTillDeath(const uint16_t mi
 {
 	setupDone[5] = true;
 
-	daysTillDeathRange = { min, max };
+	daysTillDeathRange = {min, max};
 }
 
 void DiseaseSpreadSimulation::DiseaseBuilder::SetSpreadFactor(const float minFactor, const float maxFactor)
 {
 	setupDone[6] = true;
 
-	spreadFactor = { minFactor, maxFactor };
+	spreadFactor = {minFactor, maxFactor};
 }
 
 void DiseaseSpreadSimulation::DiseaseBuilder::SetTestAccuracy(const float accuracy)
@@ -102,7 +102,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetSymptomsDevelopment(const float
 {
 	setupDone[8] = true;
 
-	symptomsDevelopment = { minPercent, maxPercent };
+	symptomsDevelopment = {minPercent, maxPercent};
 }
 
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateDisease()
@@ -116,7 +116,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		}
 	}
 
-	return Disease{ name,
+	return Disease{name,
 		incubationPeriod,
 		daysInfectious,
 		diseaseDurationRange,
@@ -124,13 +124,13 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		daysTillDeathRange,
 		spreadFactor,
 		testAccuracy,
-		symptomsDevelopment };
+		symptomsDevelopment};
 }
 
 std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseaseFromFile(std::string fileName)
 {
 	using json = nlohmann::json;
-	std::ifstream diseaseJsonFile{ fileName };
+	std::ifstream diseaseJsonFile{fileName};
 
 	if (!diseaseJsonFile)
 	{
@@ -141,7 +141,7 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 
 	json diseaseJson;
 	diseaseJsonFile >> diseaseJson;
-	
+
 	std::vector<Disease> diseases;
 	for (auto& disease : diseaseJson)
 	{
@@ -159,7 +159,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(std::string dise
 	json diseaseJson;
 
 	// We need to check if the file exists
-	std::ifstream fileExists{ fileName };
+	std::ifstream fileExists{fileName};
 	json existingDiseaseJson;
 	if (fileExists)
 	{
@@ -176,7 +176,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(std::string dise
 	// Append the new desease
 	diseaseJson.emplace(diseaseSaveName, disease);
 
-	std::ofstream diseaseSaveFile{ fileName };
+	std::ofstream diseaseSaveFile{fileName};
 
 	if (!diseaseSaveFile)
 	{

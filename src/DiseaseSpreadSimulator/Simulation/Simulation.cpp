@@ -5,10 +5,9 @@
 #include "Places/PlaceBuilder.h"
 
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
-	:
-	withPrint(withPrint),
-	populationSize(populationSize),
-	travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.f, 1.f), nullptr)
+	: withPrint(withPrint),
+	  populationSize(populationSize),
+	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.f, 1.f), nullptr)
 {
 }
 void DiseaseSpreadSimulation::Simulation::Run()
@@ -52,9 +51,9 @@ void DiseaseSpreadSimulation::Simulation::Update()
 		for (auto& community : communities)
 		{
 			auto& population = community.GetPopulation();
-			
+
 			UpdatePopulation(population);
-			
+
 			Contacts(community.GetPlaces(), community.GetTravelLocation());
 		}
 
@@ -68,8 +67,7 @@ void DiseaseSpreadSimulation::Simulation::Update()
 
 void DiseaseSpreadSimulation::Simulation::UpdatePopulation(std::vector<Person>& population)
 {
-	std::for_each(std::execution::par_unseq, population.begin(), population.end(),
-		[this](auto& person)
+	std::for_each(std::execution::par_unseq, population.begin(), population.end(), [this](auto& person)
 		{
 			person.Update(time.GetTime(), time.IsWorkday(), isNewDay);
 		});
@@ -187,7 +185,7 @@ void DiseaseSpreadSimulation::Simulation::PrintOncePerDay()
 		auto& community = communities.at(i);
 
 		fmt::print("\nCommunity #{} Day: {} Time : {} o'clock\n", i + 1, elapsedDays, time.GetTime());
-		
+
 		PrintPopulation(community.GetPopulation());
 	}
 }
@@ -200,7 +198,6 @@ void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 	size_t infectious = 0;
 	size_t deadPeople = 0;
 	size_t traveling = 0;
-
 
 	for (auto& person : population)
 	{
@@ -269,7 +266,7 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCoun
 
 		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
 	}
-	
+
 	SetupTravelInfecter(&diseases.back(), &communities.back());
 
 	stop = false;

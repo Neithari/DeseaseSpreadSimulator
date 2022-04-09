@@ -12,7 +12,7 @@ namespace DiseaseSpreadSimulation
 	{
 	public:
 		Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home = nullptr);
-		
+
 		friend class DiseaseContainment;
 
 		auto operator<=>(const Person& rhs) const
@@ -33,7 +33,6 @@ namespace DiseaseSpreadSimulation
 		void Contaminate(const Disease* disease);
 		void Kill();
 
-
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
 		bool IsQuarantined() const;
@@ -52,15 +51,15 @@ namespace DiseaseSpreadSimulation
 
 		Community* GetCommunity();
 		Place* GetWhereabouts();
-		Home* GetHome() ;
+		Home* GetHome();
 		Workplace* GetWorkplace();
 		School* GetSchool();
-		
+
 		void SetHome(Home* newHome);
 		void SetWorkplace(Workplace* newWorkplace);
 		void SetSchool(School* newSchool);
 		void SetCommunity(Community* newCommunity);
-		
+
 		void ChangeBehavior(PersonBehavior newBehavior);
 
 	private:
@@ -110,4 +109,4 @@ namespace DiseaseSpreadSimulation
 		// Percent
 		static constexpr float baseTravelReturnChance = 0.3f;
 	};
-}
+} // namespace DiseaseSpreadSimulation

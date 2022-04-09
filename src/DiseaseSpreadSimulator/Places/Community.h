@@ -21,7 +21,7 @@ namespace DiseaseSpreadSimulation
 
 		void AddPlaces(Places places);
 		void AddPopulation(std::vector<Person>& population);
-		
+
 		std::optional<Person> TransferPerson(const Person& traveler);
 
 		Place* TransferToHome(Person* person);
@@ -31,7 +31,7 @@ namespace DiseaseSpreadSimulation
 		Place* TransferToSchool(Person* person);
 		Place* TransferToMorgue(Person* person);
 		Place* TransferToTravelLocation(Person* person);
-		
+
 		std::vector<Person>& GetPopulation();
 		Places& GetPlaces();
 		Travel& GetTravelLocation();
@@ -66,4 +66,4 @@ namespace DiseaseSpreadSimulation
 		std::shared_timed_mutex populationMutex;
 		std::shared_timed_mutex placesMutex;
 	};
-}
+} // namespace DiseaseSpreadSimulation

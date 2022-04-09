@@ -2,10 +2,10 @@
 #include <random>
 
 namespace DiseaseSpreadSimulation
-{	
+{
 	class PersonPopulator
 	{
-	public:		
+	public:
 		PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
 		std::vector<Person> CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools);
@@ -14,7 +14,7 @@ namespace DiseaseSpreadSimulation
 		static size_t SchoolKidsCount(const size_t populationSize, const Country country);
 		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes);
 		static Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount);
-		
+
 		static void AddCommunityToPopulation(Community* community, std::vector<Person>& population);
 
 		static Statistics::HouseholdComposition GetHouseholdDistribution(Country country);
@@ -26,7 +26,7 @@ namespace DiseaseSpreadSimulation
 
 		// Returns a rounded down percentage of count
 		static size_t DistributionToCountHelper(size_t count, float percent);
-		
+
 		static void AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country);
 		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
 
@@ -50,4 +50,4 @@ namespace DiseaseSpreadSimulation
 		Statistics::HumanDistribution currentHumanDistribution;
 		size_t currentHumanCount = 0;
 	};
-}
+} // namespace DiseaseSpreadSimulation

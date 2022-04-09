@@ -11,17 +11,16 @@ DiseaseSpreadSimulation::Disease::Disease(std::string name,
 	std::pair<float, float> spreadFactor,
 	float testAccuracy,
 	std::pair<float, float> symptomsDevelopment)
-	:
-	id(IDGenerator::IDGenerator<Disease>::GetNextID()),
-	name(std::move(name)),
-	incubationPeriod(incubationPeriod),
-	daysInfectious(daysInfectious),
-	durationRange(std::move(diseaseDurationRange)),
-	mortalityByAge(std::move(mortalityByAge)),
-	daysTillDeathRange(std::move(daysTillDeathRange)),
-	spreadFactor(spreadFactor),
-	testAccuracy(testAccuracy),
-	symptomsDevelopment(symptomsDevelopment)
+	: id(IDGenerator::IDGenerator<Disease>::GetNextID()),
+	  name(std::move(name)),
+	  incubationPeriod(incubationPeriod),
+	  daysInfectious(daysInfectious),
+	  durationRange(std::move(diseaseDurationRange)),
+	  mortalityByAge(std::move(mortalityByAge)),
+	  daysTillDeathRange(std::move(daysTillDeathRange)),
+	  spreadFactor(spreadFactor),
+	  testAccuracy(testAccuracy),
+	  symptomsDevelopment(symptomsDevelopment)
 {
 }
 
@@ -78,7 +77,6 @@ float DiseaseSpreadSimulation::Disease::GetMortalityByAge(uint16_t age) const
 	}
 }
 
-
 float DiseaseSpreadSimulation::Disease::GetMortalityByAgeGroup(Age_Group age) const
 {
 	return mortalityByAge.at(static_cast<size_t>(age));
@@ -113,15 +111,15 @@ uint32_t DiseaseSpreadSimulation::Disease::GetID() const
 
 bool DiseaseSpreadSimulation::Disease::isSame(const Disease& other) const
 {
-	return	name == other.name
-		 && incubationPeriod == other.incubationPeriod
-		 && daysInfectious == other.daysInfectious
-		 && durationRange == other.durationRange
-		 && mortalityByAge == other.mortalityByAge
-		 && daysTillDeathRange == other.daysTillDeathRange
-		 && spreadFactor == other.spreadFactor
-		 && testAccuracy == other.testAccuracy
-		 && symptomsDevelopment == other.symptomsDevelopment;
+	return name == other.name
+		   && incubationPeriod == other.incubationPeriod
+		   && daysInfectious == other.daysInfectious
+		   && durationRange == other.durationRange
+		   && mortalityByAge == other.mortalityByAge
+		   && daysTillDeathRange == other.daysTillDeathRange
+		   && spreadFactor == other.spreadFactor
+		   && testAccuracy == other.testAccuracy
+		   && symptomsDevelopment == other.symptomsDevelopment;
 }
 
 bool DiseaseSpreadSimulation::Disease::hasSameID(const Disease& other) const

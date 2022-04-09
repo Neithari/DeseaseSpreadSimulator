@@ -22,7 +22,7 @@
 
 // GSL: Guidelines Support Library
 //#include <gsl/gsl>
- 
+
 // Extern libs
 #include "fmt/core.h"
 #include "nlohmann/json.hpp"

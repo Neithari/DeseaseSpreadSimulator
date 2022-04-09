@@ -103,9 +103,10 @@ std::array<size_t, 4> DiseaseSpreadSimulation::PlaceBuilder::GetHomeCounts(const
 	// The home count is equal to the person count living in such a home devided by the median person count in the category
 	// To get the person count we multiply the population size with the percentage of the distribution
 	// Values are rounded at the end and cast to size_t
-	return { static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).oneMember)),				// One member homes
-			 static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers) / 2.5),	// Two to three member homes
-			 static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers) / 4.5),	// Four to five member homes
-			 static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers) / 6.5)		// Six and more member homes
+	return {
+		static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).oneMember)),               // One member homes
+		static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers) / 2.5), // Two to three member homes
+		static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers) / 4.5), // Four to five member homes
+		static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers) / 6.5)     // Six and more member homes
 	};
 }

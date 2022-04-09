@@ -2,9 +2,8 @@
 #include "Simulation/MeasureTime.h"
 
 Measure::MeasureTime::MeasureTime(std::string&& measureName)
-	:
-	begin(std::chrono::high_resolution_clock::now()),
-	measureName(measureName)
+	: begin(std::chrono::high_resolution_clock::now()),
+	  measureName(measureName)
 {
 }
 

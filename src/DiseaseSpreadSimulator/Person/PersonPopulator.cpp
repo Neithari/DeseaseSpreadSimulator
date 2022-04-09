@@ -4,11 +4,10 @@
 #include "Places/PlaceBuilder.h"
 
 DiseaseSpreadSimulation::PersonPopulator::PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
-	:
-	populationSize(populationSize),
-	leftover(populationSize),
-	ageDistribution(std::move(humanDistribution)),
-	currentHumanDistribution(ageDistribution.front())
+	: populationSize(populationSize),
+	  leftover(populationSize),
+	  ageDistribution(std::move(humanDistribution)),
+	  currentHumanDistribution(ageDistribution.front())
 {
 	// Set the currentHumanCount to a percent of the population and to 1 if this will return 0
 	currentHumanCount = DistributionToCountHelper(populationSize, currentHumanDistribution.percent);
@@ -47,7 +46,7 @@ std::vector<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::PersonPopu
 			person.SetWorkplace(AssignWorkplace(workplacesBySize));
 		}
 		// Assign a school for every person under twenty
-		else  if (person.GetAgeGroup() <= Age_Group::UnderTwenty)
+		else if (person.GetAgeGroup() <= Age_Group::UnderTwenty)
 		{
 			// Assign the school at the index until we reach the average school size
 			if (averageSchoolSize-- > 0)
@@ -83,7 +82,7 @@ DiseaseSpreadSimulation::Person DiseaseSpreadSimulation::PersonPopulator::GetNew
 	{
 		// ...we set the new current distribution...
 		currentHumanDistribution = ageDistribution.at(ageDistributionIndex);
-		
+
 		if (!lastFew)
 		{
 			// ...set the currentHumanCount to a percent of the population...
@@ -94,7 +93,7 @@ DiseaseSpreadSimulation::Person DiseaseSpreadSimulation::PersonPopulator::GetNew
 		{
 			currentHumanCount = 1;
 		}
-		
+
 		// ...advance the index and check if we used all distributions...
 		if (++ageDistributionIndex >= ageDistribution.size())
 		{
@@ -171,7 +170,7 @@ std::array<std::vector<DiseaseSpreadSimulation::Home*>, 4> DiseaseSpreadSimulati
 	std::vector<Home*> sixPlusMembers(from, homes.cend());
 
 	// Return an array with all size vectors
-	return { oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers };
+	return {oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers};
 }
 
 size_t DiseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_t count, float percent)
@@ -183,10 +182,10 @@ size_t DiseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 DiseaseSpreadSimulation::Home* DiseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount)
 {
 	// Create the distribution
-	std::array<double, 4> distributionArray{ PersonPopulator::GetHouseholdDistribution(country).oneMember,
-											PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
-											PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
-											PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers };
+	std::array<double, 4> distributionArray{PersonPopulator::GetHouseholdDistribution(country).oneMember,
+		PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
+		PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
+		PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers};
 
 	size_t distIndex = GetDistributedArrayIndex(distributionArray);
 	// Get a new index until the vector is not empty or the person is under twenty and the index is for one member homes

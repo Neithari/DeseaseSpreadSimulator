@@ -11,14 +11,14 @@ namespace DiseaseSpreadSimulation
 			std::pair<uint16_t, uint16_t> diseaseDurationRange,
 			std::vector<float> mortalityByAge,
 			std::pair<uint16_t, uint16_t> daysTillDeathRange,
-			std::pair<float, float> spreadFactor = { 1.0f, 1.0f },
+			std::pair<float, float> spreadFactor = {1.0f, 1.0f},
 			float testAccuracy = 1.0f,
-			std::pair<float, float> symptomsDevelopment = { 1.0f, 1.0f });
+			std::pair<float, float> symptomsDevelopment = {1.0f, 1.0f});
 
 		// Check with ID
 		inline bool operator==(const Disease& rhs) const
 		{
-			return	id == rhs.id;
+			return id == rhs.id;
 		};
 
 		const std::string& GetDiseaseName() const;
@@ -60,15 +60,18 @@ namespace DiseaseSpreadSimulation
 		float testAccuracy = 1.0f;
 		std::pair<float, float> symptomsDevelopment{};
 	};
-}
+} // namespace DiseaseSpreadSimulation
 
 // For nlohmann/json conversion
-namespace nlohmann {
+namespace nlohmann
+{
 	template <>
-	struct adl_serializer<DiseaseSpreadSimulation::Disease> {
+	struct adl_serializer<DiseaseSpreadSimulation::Disease>
+	{
 		// note: the return type is no longer 'void', and the method only takes
 		// one argument
-		static DiseaseSpreadSimulation::Disease from_json(const json& j) {
+		static DiseaseSpreadSimulation::Disease from_json(const json& j)
+		{
 			return {
 				j["Name"].get<std::string>(),
 				j["Incubation Period"].get<std::pair<uint16_t, uint16_t>>(),
@@ -78,14 +81,14 @@ namespace nlohmann {
 				j["Days Till Death Range"].get<std::pair<uint16_t, uint16_t>>(),
 				j["Spread Factor"].get<std::pair<float, float>>(),
 				j["Test Accuracy"].get<float>(),
-				j["Symptoms Development"].get<std::pair<float, float>>()
-			};
+				j["Symptoms Development"].get<std::pair<float, float>>()};
 		}
 
 		// Here's the catch! You must provide a to_json method! Otherwise, you
 		// will not be able to convert move_only_type to json, since you fully
 		// specialized adl_serializer on that type
-		static void to_json(json& j, const DiseaseSpreadSimulation::Disease& disease) {
+		static void to_json(json& j, const DiseaseSpreadSimulation::Disease& disease)
+		{
 			j = {
 				{"Name", disease.name},
 				{"Incubation Period", disease.incubationPeriod},
@@ -95,8 +98,7 @@ namespace nlohmann {
 				{"Days Till Death Range", disease.daysTillDeathRange},
 				{"Spread Factor", disease.spreadFactor},
 				{"Test Accuracy", disease.testAccuracy},
-				{"Symptoms Development", disease.symptomsDevelopment}
-			};
+				{"Symptoms Development", disease.symptomsDevelopment}};
 		}
 	};
-}
+} // namespace nlohmann

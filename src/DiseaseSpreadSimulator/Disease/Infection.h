@@ -47,4 +47,4 @@ namespace DiseaseSpreadSimulation
 		bool isFatal = false;
 		float spreadFactor = 0.f;
 	};
-}
+} // namespace DiseaseSpreadSimulation

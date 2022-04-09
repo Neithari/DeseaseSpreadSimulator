@@ -22,4 +22,4 @@ namespace DiseaseSpreadSimulation
 		static constexpr uint16_t minDaysToNextHardwareBuy = 10u;
 		static constexpr uint16_t maxDaysToNextHardwareBuy = 90u;
 	};
-}
+} // namespace DiseaseSpreadSimulation

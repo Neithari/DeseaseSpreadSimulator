@@ -15,7 +15,7 @@ namespace DiseaseSpreadSimulation
 		void ToggleWorkingFromHome();
 		void ToggleLockdown();
 		void ToggleMaskMandate();
-		
+
 		bool ShopsAreOpen() const;
 		bool WorkingFormHome() const;
 		bool IsLockdown() const;
@@ -27,4 +27,4 @@ namespace DiseaseSpreadSimulation
 		bool isLockdown = false;
 		bool isMaskMandate = false;
 	};
-}
+} // namespace DiseaseSpreadSimulation

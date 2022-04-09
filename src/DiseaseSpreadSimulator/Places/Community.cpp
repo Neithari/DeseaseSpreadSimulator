@@ -2,25 +2,22 @@
 #include "Places/Community.h"
 
 DiseaseSpreadSimulation::Community::Community(std::vector<Person> population, Places places)
-	:
-	m_population(std::move(population)),
-	m_places(std::move(places))
+	: m_population(std::move(population)),
+	  m_places(std::move(places))
 {
 }
 
 DiseaseSpreadSimulation::Community::Community(const Community& other)
-	:
-	m_population(other.m_population),
-	m_places(other.m_places),
-	m_travelLocation(other.m_travelLocation)
+	: m_population(other.m_population),
+	  m_places(other.m_places),
+	  m_travelLocation(other.m_travelLocation)
 {
 }
 
 DiseaseSpreadSimulation::Community::Community(Community&& other) noexcept
-	:
-	m_population(std::move(other.m_population)),
-	m_places(std::move(other.m_places)),
-	m_travelLocation(std::move(other.m_travelLocation))
+	: m_population(std::move(other.m_population)),
+	  m_places(std::move(other.m_places)),
+	  m_travelLocation(std::move(other.m_travelLocation))
 {
 }
 
@@ -48,9 +45,11 @@ void DiseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemo
 {
 	std::lock_guard<std::shared_timed_mutex> lockRemovePerson(populationMutex);
 	m_population.erase(
-		std::remove_if(m_population.begin(), m_population.end(),
-			[&](const Person& person) { return person == personToRemove; }), m_population.end()
-	);
+		std::remove_if(m_population.begin(), m_population.end(), [&](const Person& person)
+			{
+				return person == personToRemove;
+			}),
+		m_population.end());
 }
 
 void DiseaseSpreadSimulation::Community::AddPlaces(Places places)
@@ -69,12 +68,14 @@ void DiseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& popu
 std::optional<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::Community::TransferPerson(const Person& traveler)
 {
 	// The shared lock can't be upgraded to a full lock. Because of that we need to separate the read from the write part.
-	bool isEnditerator{ true };
+	bool isEnditerator{true};
 	std::vector<Person>::iterator toTransfer;
 	{
 		std::shared_lock<std::shared_timed_mutex> lockFindPerson(populationMutex);
-		toTransfer = std::find_if(m_population.begin(), m_population.end(),
-			[&](const Person& person) { return person == traveler; });
+		toTransfer = std::find_if(m_population.begin(), m_population.end(), [&](const Person& person)
+			{
+				return person == traveler;
+			});
 		isEnditerator = toTransfer == m_population.end();
 	}
 
@@ -187,7 +188,7 @@ DiseaseSpreadSimulation::Morgue* DiseaseSpreadSimulation::Community::GetMorgue()
 	{
 		return nullptr;
 	}
-	
+
 	return &m_places.morgues.at(Random::RandomVectorIndex(m_places.morgues));
 }
 

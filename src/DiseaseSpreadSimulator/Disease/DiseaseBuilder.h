@@ -44,4 +44,4 @@ namespace DiseaseSpreadSimulation
 		// For setup
 		std::array<bool, 9> setupDone{};
 	};
-}
+} // namespace DiseaseSpreadSimulation

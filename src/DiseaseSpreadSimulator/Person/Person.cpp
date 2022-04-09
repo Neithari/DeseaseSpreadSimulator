@@ -3,14 +3,13 @@
 #include "IDGenerator/IDGenerator.h"
 
 DiseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
-	:
-	id(IDGenerator::IDGenerator<Person>::GetNextID()),
-	age(age),
-	sex(sex),
-	behavior(std::move(behavior)),
-	community(community),
-	home(home),
-	whereabouts(home)
+	: id(IDGenerator::IDGenerator<Person>::GetNextID()),
+	  age(age),
+	  sex(sex),
+	  behavior(std::move(behavior)),
+	  community(community),
+	  home(home),
+	  whereabouts(home)
 {
 	if (whereabouts != nullptr)
 	{
@@ -239,8 +238,8 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		}
 		// Hardware shopping is suspended during a lockdown
 		else if (needHardware
-			&& currentTime >= shopOpenTime
-			&& !community->ContainmentMeasures().IsLockdown())
+				 && currentTime >= shopOpenTime
+				 && !community->ContainmentMeasures().IsLockdown())
 		{
 			PrepareShopping();
 
@@ -259,9 +258,9 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 				StartTraveling();
 			}
 			else if (workplace != nullptr
-				&& currentTime >= workStartTime
-				&& currentTime <= workFinishTime
-				&& isWorkday)
+					 && currentTime >= workStartTime
+					 && currentTime <= workFinishTime
+					 && isWorkday)
 			{
 				if (community->ContainmentMeasures().WorkingFormHome())
 				{
@@ -288,11 +287,11 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 			}
 			// Schools will close when there is a work form home mandate and when there is a lockdown
 			else if (school != nullptr
-				&& currentTime >= schoolStartTime
-				&& currentTime <= schoolFinishTime
-				&& isWorkday
-				&& !community->ContainmentMeasures().WorkingFormHome()
-				&& !community->ContainmentMeasures().IsLockdown())
+					 && currentTime >= schoolStartTime
+					 && currentTime <= schoolFinishTime
+					 && isWorkday
+					 && !community->ContainmentMeasures().WorkingFormHome()
+					 && !community->ContainmentMeasures().IsLockdown())
 			{
 				whereabouts = community->TransferToSchool(this);
 			}
@@ -315,7 +314,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		}
 		break;
 	case DiseaseSpreadSimulation::Place_Type::Workplace:
-		// Go traveling or home after the work has finished 
+		// Go traveling or home after the work has finished
 		// No traveling during a lockdown
 		if (WillTravel() && !community->ContainmentMeasures().IsLockdown())
 		{
@@ -353,7 +352,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& 
 		return;
 		break;
 	case DiseaseSpreadSimulation::Place_Type::Travel:
-		// Return from travel to home is an increasing chance per day traveling. 
+		// Return from travel to home is an increasing chance per day traveling.
 		if (isNewDay)
 		{
 			travelDays++;

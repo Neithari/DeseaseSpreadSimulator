@@ -17,7 +17,7 @@ namespace DiseaseSpreadSimulation
 		void SetupEverything(uint16_t communityCount);
 		void InfectRandomPerson(const Disease* disease, std::vector<Person>& population);
 		void SetupTravelInfecter(const Disease* disease, Community* communitie);
-		
+
 		void Update();
 		void UpdatePopulation(std::vector<Person>& population);
 
@@ -28,7 +28,6 @@ namespace DiseaseSpreadSimulation
 		void PrintEveryHour();
 		void PrintOncePerDay();
 		void PrintPopulation(const std::vector<Person>& population) const;
-
 
 		bool CheckForNewDay();
 
@@ -53,4 +52,4 @@ namespace DiseaseSpreadSimulation
 		Day lastDay = Day::Monday;
 		bool isNewDay = false;
 	};
-}
+} // namespace DiseaseSpreadSimulation

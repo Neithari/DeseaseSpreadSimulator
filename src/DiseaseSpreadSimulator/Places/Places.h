@@ -167,4 +167,4 @@ namespace DiseaseSpreadSimulation
 		std::vector<HardwareStore> hardwareStores;
 		std::vector<Morgue> morgues;
 	};
-}
+} // namespace DiseaseSpreadSimulation

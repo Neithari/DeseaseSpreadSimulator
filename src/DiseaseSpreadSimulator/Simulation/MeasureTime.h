@@ -11,4 +11,4 @@ namespace Measure
 		std::chrono::high_resolution_clock::time_point begin;
 		const std::string measureName;
 	};
-}
+} // namespace Measure

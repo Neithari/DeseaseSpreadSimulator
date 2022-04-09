@@ -24,7 +24,7 @@ namespace DiseaseSpreadSimulation
 
 	private:
 		bool pauseTime = true;
-		
+
 		// In simulation hours. 1 hour per update
 		uint64_t simulationTime = 0u;
 
@@ -32,4 +32,4 @@ namespace DiseaseSpreadSimulation
 		bool isWorkday = true;
 		uint16_t dayTime = 0u;
 	};
-}
+} // namespace DiseaseSpreadSimulation

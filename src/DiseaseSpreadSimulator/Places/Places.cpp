@@ -17,9 +17,11 @@ void DiseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
 {
 	std::lock_guard<std::mutex> lockPeople(peopleMutex);
 	people.erase(
-		std::remove_if(people.begin(), people.end(),
-			[&](Person* person) { return person->GetID() == id; }), people.end()
-	);
+		std::remove_if(people.begin(), people.end(), [&](Person* person)
+			{
+				return person->GetID() == id;
+			}),
+		people.end());
 }
 
 void DiseaseSpreadSimulation::Place::RemovePerson(Person* person)
@@ -69,22 +71,19 @@ size_t DiseaseSpreadSimulation::Place::GetPersonCount() const
 }
 
 DiseaseSpreadSimulation::Place::Place(uint32_t id)
-	:
-	placeID(id)
+	: placeID(id)
 {
 }
 
 DiseaseSpreadSimulation::Place::Place(const Place& other)
-	:
-	placeID(other.placeID),
-	people(other.people)
+	: placeID(other.placeID),
+	  people(other.people)
 {
 }
 
 DiseaseSpreadSimulation::Place::Place(Place&& other) noexcept
-	:
-	placeID(std::move(other.placeID)),
-	people(std::move(other.people))
+	: placeID(std::move(other.placeID)),
+	  people(std::move(other.people))
 {
 }
 
@@ -96,20 +95,17 @@ DiseaseSpreadSimulation::Place& DiseaseSpreadSimulation::Place::operator=(Place&
 }
 
 DiseaseSpreadSimulation::Home::Home()
-	:
-	Place(IDGenerator::IDGenerator<Home>::GetNextID())
+	: Place(IDGenerator::IDGenerator<Home>::GetNextID())
 {
 }
 
 DiseaseSpreadSimulation::Home::Home(const Home& other)
-	:
-	Place(other)
+	: Place(other)
 {
 }
 
 DiseaseSpreadSimulation::Home::Home(Home&& other) noexcept
-	:
-	Place(std::move(other))
+	: Place(std::move(other))
 {
 }
 
@@ -130,20 +126,17 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Home::GetType() con
 }
 
 DiseaseSpreadSimulation::Supply::Supply()
-	:
-	Place(IDGenerator::IDGenerator<Supply>::GetNextID())
+	: Place(IDGenerator::IDGenerator<Supply>::GetNextID())
 {
 }
 
 DiseaseSpreadSimulation::Supply::Supply(const Supply& other)
-	:
-	Place(other)
+	: Place(other)
 {
 }
 
 DiseaseSpreadSimulation::Supply::Supply(Supply&& other) noexcept
-	:
-	Place(std::move(other))
+	: Place(std::move(other))
 {
 }
 
@@ -164,20 +157,17 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Supply::GetType() c
 }
 
 DiseaseSpreadSimulation::Workplace::Workplace()
-	:
-	Place(IDGenerator::IDGenerator<Workplace>::GetNextID())
+	: Place(IDGenerator::IDGenerator<Workplace>::GetNextID())
 {
 }
 
 DiseaseSpreadSimulation::Workplace::Workplace(const Workplace& other)
-	:
-	Place(other)
+	: Place(other)
 {
 }
 
 DiseaseSpreadSimulation::Workplace::Workplace(Workplace&& other) noexcept
-	:
-	Place(std::move(other))
+	: Place(std::move(other))
 {
 }
 
@@ -198,20 +188,17 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Workplace::GetType(
 }
 
 DiseaseSpreadSimulation::HardwareStore::HardwareStore()
-	:
-	Place(IDGenerator::IDGenerator<HardwareStore>::GetNextID())
+	: Place(IDGenerator::IDGenerator<HardwareStore>::GetNextID())
 {
 }
 
 DiseaseSpreadSimulation::HardwareStore::HardwareStore(const HardwareStore& other)
-	:
-	Place(other)
+	: Place(other)
 {
 }
 
 DiseaseSpreadSimulation::HardwareStore::HardwareStore(HardwareStore&& other) noexcept
-	:
-	Place(std::move(other))
+	: Place(std::move(other))
 {
 }
 
@@ -232,20 +219,17 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::HardwareStore::GetT
 }
 
 DiseaseSpreadSimulation::Morgue::Morgue()
-	:
-	Place(IDGenerator::IDGenerator<Morgue>::GetNextID())
+	: Place(IDGenerator::IDGenerator<Morgue>::GetNextID())
 {
 }
 
 DiseaseSpreadSimulation::Morgue::Morgue(const Morgue& other)
-	:
-	Place(other)
+	: Place(other)
 {
 }
 
 DiseaseSpreadSimulation::Morgue::Morgue(Morgue&& other) noexcept
-	:
-	Place(std::move(other))
+	: Place(std::move(other))
 {
 }
 
@@ -266,20 +250,17 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Morgue::GetType() c
 }
 
 DiseaseSpreadSimulation::School::School()
-	:
-	Place(IDGenerator::IDGenerator<School>::GetNextID())
+	: Place(IDGenerator::IDGenerator<School>::GetNextID())
 {
 }
 
 DiseaseSpreadSimulation::School::School(const School& other)
-	:
-	Place(other)
+	: Place(other)
 {
 }
 
 DiseaseSpreadSimulation::School::School(School&& other) noexcept
-	:
-	Place(std::move(other))
+	: Place(std::move(other))
 {
 }
 
@@ -300,20 +281,17 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::School::GetType() c
 }
 
 DiseaseSpreadSimulation::Travel::Travel()
-	:
-	Place(IDGenerator::IDGenerator<Travel>::GetNextID())
+	: Place(IDGenerator::IDGenerator<Travel>::GetNextID())
 {
 }
 
 DiseaseSpreadSimulation::Travel::Travel(const Travel& other)
-	:
-	Place(other)
+	: Place(other)
 {
 }
 
 DiseaseSpreadSimulation::Travel::Travel(Travel&& other) noexcept
-	:
-	Place(std::move(other))
+	: Place(std::move(other))
 {
 }
 
@@ -337,19 +315,19 @@ void DiseaseSpreadSimulation::Places::Insert(Places other)
 {
 	homes.reserve(homes.size() + other.homes.size());
 	AppendVectorAtEnd(homes, other.homes);
-	
+
 	supplyStores.reserve(supplyStores.size() + other.supplyStores.size());
 	AppendVectorAtEnd(supplyStores, other.supplyStores);
-	
+
 	workplaces.reserve(workplaces.size() + other.workplaces.size());
 	AppendVectorAtEnd(workplaces, other.workplaces);
-	
+
 	schools.reserve(schools.size() + other.schools.size());
 	AppendVectorAtEnd(schools, other.schools);
-	
+
 	hardwareStores.reserve(hardwareStores.size() + other.hardwareStores.size());
 	AppendVectorAtEnd(hardwareStores, other.hardwareStores);
-	
+
 	morgues.reserve(morgues.size() + other.morgues.size());
 	AppendVectorAtEnd(morgues, other.morgues);
 }
