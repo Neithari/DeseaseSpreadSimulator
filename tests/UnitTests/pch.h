@@ -16,19 +16,23 @@
 #include <algorithm>
 #include <stdexcept>
 
+// Extern libs
+#include "nlohmann/json.hpp"
+
 // Includes to be tested
-#include "IDGenerator/IDGenerator.h"
+// DiseaseSpreadSimulator
+#include "DiseaseSpreadSimulator/IDGenerator/IDGenerator.h"
 #include "DiseaseSpreadSimulator/RandomNumbers.h"
 #include "DiseaseSpreadSimulator/Enums.h"
 #include "DiseaseSpreadSimulator/RandomNumbers.h"
 #include "DiseaseSpreadSimulator/Statistics.h"
-#include "Disease/Disease.h"
-#include "Disease/DiseaseBuilder.h"
-#include "Disease/Infection.h"
-#include "Person/Person.h"
-#include "Person/PersonPopulator.h"
-#include "Person/PersonBehavior.h"
-#include "Simulation/TimeManager.h"
-#include "Places/Places.h"
-#include "Places/PlaceBuilder.h"
-#include "Places/Community.h"
+#include "DiseaseSpreadSimulator/Disease/Disease.h"
+#include "DiseaseSpreadSimulator/Disease/DiseaseBuilder.h"
+#include "DiseaseSpreadSimulator/Disease/Infection.h"
+#include "DiseaseSpreadSimulator/Person/Person.h"
+#include "DiseaseSpreadSimulator/Person/PersonPopulator.h"
+#include "DiseaseSpreadSimulator/Person/PersonBehavior.h"
+#include "DiseaseSpreadSimulator/Simulation/TimeManager.h"
+#include "DiseaseSpreadSimulator/Places/Places.h"
+#include "DiseaseSpreadSimulator/Places/PlaceBuilder.h"
+#include "DiseaseSpreadSimulator/Places/Community.h"

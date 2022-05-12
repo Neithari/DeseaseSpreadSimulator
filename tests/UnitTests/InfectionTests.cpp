@@ -1,194 +1,186 @@
 #include "pch.h"
 
-namespace UnitTests {
-    class InfectionTest : public ::testing::Test
-    {
-    protected:
-        // Disease
-        std::string name = "a";
-        std::pair<uint16_t, uint16_t> incubationPeriod{ 2, 2 };
-        uint16_t daysInfectious = 1;
-        std::pair<uint16_t, uint16_t> diseaseDurationRange{ 3, 3 };
-        std::vector<float> mortalityByAge{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
-        std::pair<uint16_t, uint16_t> daysTillDeathRange{ 1, 1 };
-        std::pair<float, float> spreadFactor{ 1.f, 1.f };
-        float testAccuracy{ 1.0f };
-        std::pair<float, float> symptomsDevelopment{ 1.f, 1.f };
-        DiseaseSpreadSimulation::Disease disease{ name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment };
-        
-        std::string deadlyName = "DeadlyTestDisease";
-        std::pair<uint16_t, uint16_t> deadlyIncubationPeriod{ 1, 1 };
-        uint16_t deadlyDaysInfectious = 1;
-        std::pair<uint16_t, uint16_t> deadlyDiseaseDurationRange{ 2, 2 };
-        std::vector<float> deadlyMortalityByAge{ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
-        std::pair<uint16_t, uint16_t> deadlyDaysTillDeathRange{ 2, 2 };
-        std::pair<float, float> deadlySpreadFactor{ 1.f, 1.f };
-        float deadlyTestAccuracy{ 1.0f };
-        std::pair<float, float> deadlySymptomsDevelopment{ 1.f, 1.f };
-        DiseaseSpreadSimulation::Disease deadlyDisease{ deadlyName, deadlyIncubationPeriod, deadlyDaysInfectious, deadlyDiseaseDurationRange, deadlyMortalityByAge, deadlyDaysTillDeathRange, deadlySpreadFactor, deadlyTestAccuracy, deadlySymptomsDevelopment };
+namespace UnitTests
+{
+	class InfectionTest : public ::testing::Test
+	{
+	protected:
+		// Disease
+		std::string name = "a";
+		std::pair<uint16_t, uint16_t> incubationPeriod{2, 2};
+		uint16_t daysInfectious = 1;
+		std::pair<uint16_t, uint16_t> diseaseDurationRange{3, 3};
+		std::vector<float> mortalityByAge{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
+		std::pair<uint16_t, uint16_t> daysTillDeathRange{1, 1};
+		std::pair<float, float> spreadFactor{1.f, 1.f};
+		float testAccuracy{1.0f};
+		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
+		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 
+		std::string deadlyName = "DeadlyTestDisease";
+		std::pair<uint16_t, uint16_t> deadlyIncubationPeriod{1, 1};
+		uint16_t deadlyDaysInfectious = 1;
+		std::pair<uint16_t, uint16_t> deadlyDiseaseDurationRange{2, 2};
+		std::vector<float> deadlyMortalityByAge{1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
+		std::pair<uint16_t, uint16_t> deadlyDaysTillDeathRange{2, 2};
+		std::pair<float, float> deadlySpreadFactor{1.f, 1.f};
+		float deadlyTestAccuracy{1.0f};
+		std::pair<float, float> deadlySymptomsDevelopment{1.f, 1.f};
+		DiseaseSpreadSimulation::Disease deadlyDisease{deadlyName, deadlyIncubationPeriod, deadlyDaysInfectious, deadlyDiseaseDurationRange, deadlyMortalityByAge, deadlyDaysTillDeathRange, deadlySpreadFactor, deadlyTestAccuracy, deadlySymptomsDevelopment};
 
-        // Age groups
-        std::vector<DiseaseSpreadSimulation::Age_Group> ageGroups{ DiseaseSpreadSimulation::Age_Group::UnderTen
-            , DiseaseSpreadSimulation::Age_Group::UnderTwenty
-            , DiseaseSpreadSimulation::Age_Group::UnderThirty
-            , DiseaseSpreadSimulation::Age_Group::UnderFourty
-            , DiseaseSpreadSimulation::Age_Group::UnderFifty
-            , DiseaseSpreadSimulation::Age_Group::UnderSixty
-            , DiseaseSpreadSimulation::Age_Group::UnderSeventy
-            , DiseaseSpreadSimulation::Age_Group::UnderEighty
-            , DiseaseSpreadSimulation::Age_Group::AboveEighty };
+		// Age groups
+		std::vector<DiseaseSpreadSimulation::Age_Group> ageGroups{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Age_Group::UnderFifty, DiseaseSpreadSimulation::Age_Group::UnderSixty, DiseaseSpreadSimulation::Age_Group::UnderSeventy, DiseaseSpreadSimulation::Age_Group::UnderEighty, DiseaseSpreadSimulation::Age_Group::AboveEighty};
 
-        // Community
-        DiseaseSpreadSimulation::Community community{ std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{} };
-               
-        // Person
-        DiseaseSpreadSimulation::Home home{};
-        DiseaseSpreadSimulation::PersonBehavior behavior{ 10u,10u,0.f, 0.f };
-    };
-    TEST_F(InfectionTest, Contaminate)
-    {
-        for (auto ageGroup : ageGroups)
-        {
-            // Normal infection
-            DiseaseSpreadSimulation::Infection infection;
+		// Community
+		DiseaseSpreadSimulation::Community community{std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{}};
 
-            ASSERT_FALSE(infection.HasDisease());
-            ASSERT_TRUE(infection.IsSusceptible());
-            ASSERT_FALSE(infection.IsInfectious());
+		// Person
+		DiseaseSpreadSimulation::Home home{};
+		DiseaseSpreadSimulation::PersonBehavior behavior{10u, 10u, 0.f, 0.f};
+	};
+	TEST_F(InfectionTest, Contaminate)
+	{
+		for (auto ageGroup : ageGroups)
+		{
+			// Normal infection
+			DiseaseSpreadSimulation::Infection infection;
 
-            infection.Contaminate(&disease, ageGroup);
+			ASSERT_FALSE(infection.HasDisease());
+			ASSERT_TRUE(infection.IsSusceptible());
+			ASSERT_FALSE(infection.IsInfectious());
 
-            ASSERT_TRUE(infection.HasDisease());
-            EXPECT_EQ(infection.GetDiseaseName(), name);
-            EXPECT_TRUE(!infection.IsSusceptible());
-            ASSERT_FALSE(infection.IsInfectious());
-            EXPECT_FALSE(infection.IsFatal());
+			infection.Contaminate(&disease, ageGroup);
 
-            // Deadly infection
-            DiseaseSpreadSimulation::Infection deadlyInfection;
+			ASSERT_TRUE(infection.HasDisease());
+			EXPECT_EQ(infection.GetDiseaseName(), name);
+			EXPECT_TRUE(!infection.IsSusceptible());
+			ASSERT_FALSE(infection.IsInfectious());
+			EXPECT_FALSE(infection.IsFatal());
 
-            ASSERT_FALSE(deadlyInfection.HasDisease());
-            ASSERT_TRUE(deadlyInfection.IsSusceptible());
-            ASSERT_FALSE(deadlyInfection.IsInfectious());
+			// Deadly infection
+			DiseaseSpreadSimulation::Infection deadlyInfection;
 
-            deadlyInfection.Contaminate(&deadlyDisease, ageGroup);
+			ASSERT_FALSE(deadlyInfection.HasDisease());
+			ASSERT_TRUE(deadlyInfection.IsSusceptible());
+			ASSERT_FALSE(deadlyInfection.IsInfectious());
 
-            ASSERT_TRUE(deadlyInfection.HasDisease());
-            EXPECT_EQ(deadlyInfection.GetDiseaseName(), deadlyName);
-            EXPECT_TRUE(!deadlyInfection.IsSusceptible());
-            EXPECT_TRUE(deadlyInfection.IsFatal());
-        }
-    }
-    TEST_F(InfectionTest, UpdateWithoutDisease)
-    {
-        DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+			deadlyInfection.Contaminate(&deadlyDisease, ageGroup);
 
-        DiseaseSpreadSimulation::Infection infection;
+			ASSERT_TRUE(deadlyInfection.HasDisease());
+			EXPECT_EQ(deadlyInfection.GetDiseaseName(), deadlyName);
+			EXPECT_TRUE(!deadlyInfection.IsSusceptible());
+			EXPECT_TRUE(deadlyInfection.IsFatal());
+		}
+	}
+	TEST_F(InfectionTest, UpdateWithoutDisease)
+	{
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
 
-        ASSERT_FALSE(infection.HasDisease());
-        ASSERT_TRUE(infection.IsSusceptible());
-        ASSERT_FALSE(infection.IsInfectious());
+		DiseaseSpreadSimulation::Infection infection;
 
-        // Check that an update without a disease won't change anything
-        for (size_t i = 0; i < 10; i++)
-        {
-            infection.Update(person, true);
-            ASSERT_TRUE(infection.IsSusceptible());
-            ASSERT_FALSE(infection.IsInfectious());
-        }
-    }
-    TEST_F(InfectionTest, UpdateWithDisease)
-    {
-        DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		ASSERT_FALSE(infection.HasDisease());
+		ASSERT_TRUE(infection.IsSusceptible());
+		ASSERT_FALSE(infection.IsInfectious());
 
-        DiseaseSpreadSimulation::Infection infection;
+		// Check that an update without a disease won't change anything
+		for (size_t i = 0; i < 10; i++)
+		{
+			infection.Update(person, true);
+			ASSERT_TRUE(infection.IsSusceptible());
+			ASSERT_FALSE(infection.IsInfectious());
+		}
+	}
+	TEST_F(InfectionTest, UpdateWithDisease)
+	{
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
 
-        ASSERT_FALSE(infection.HasDisease());
-        ASSERT_TRUE(infection.IsSusceptible());
-        ASSERT_FALSE(infection.IsInfectious());
+		DiseaseSpreadSimulation::Infection infection;
 
-        // Check update with disease
-        infection.Contaminate(&disease, ageGroups.at(2));
+		ASSERT_FALSE(infection.HasDisease());
+		ASSERT_TRUE(infection.IsSusceptible());
+		ASSERT_FALSE(infection.IsInfectious());
 
-        ASSERT_TRUE(infection.HasDisease());
-        ASSERT_EQ(infection.GetDiseaseName(), name);
-        ASSERT_FALSE(infection.IsSusceptible());
-        ASSERT_FALSE(infection.IsInfectious());
-        ASSERT_FALSE(infection.IsFatal());
+		// Check update with disease
+		infection.Contaminate(&disease, ageGroups.at(2));
 
-        // Advance latent period
-        infection.Update(person, true);
-        EXPECT_FALSE(infection.IsInfectious());
-        EXPECT_FALSE(infection.HasSymptoms());
+		ASSERT_TRUE(infection.HasDisease());
+		ASSERT_EQ(infection.GetDiseaseName(), name);
+		ASSERT_FALSE(infection.IsSusceptible());
+		ASSERT_FALSE(infection.IsInfectious());
+		ASSERT_FALSE(infection.IsFatal());
 
-        // Advance infectious period
-        infection.Update(person, true);
-        EXPECT_TRUE(infection.IsInfectious());
-        EXPECT_TRUE(infection.HasSymptoms());
-        EXPECT_FALSE(infection.HasRecovered());
+		// Advance latent period
+		infection.Update(person, true);
+		EXPECT_FALSE(infection.IsInfectious());
+		EXPECT_FALSE(infection.HasSymptoms());
 
-        // Advance recovered period
-        infection.Update(person, true);
-        EXPECT_FALSE(infection.IsInfectious());
-        EXPECT_TRUE(infection.HasSymptoms());
-        EXPECT_FALSE(infection.HasRecovered());
+		// Advance infectious period
+		infection.Update(person, true);
+		EXPECT_TRUE(infection.IsInfectious());
+		EXPECT_TRUE(infection.HasSymptoms());
+		EXPECT_FALSE(infection.HasRecovered());
 
-        infection.Update(person, true);
-        EXPECT_FALSE(infection.IsInfectious());
-        EXPECT_FALSE(infection.HasSymptoms());
-        EXPECT_TRUE(infection.HasRecovered());
-    }
-    TEST_F(InfectionTest, UpdateWithDeadlyDisease)
-    {
-        DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		// Advance recovered period
+		infection.Update(person, true);
+		EXPECT_FALSE(infection.IsInfectious());
+		EXPECT_TRUE(infection.HasSymptoms());
+		EXPECT_FALSE(infection.HasRecovered());
 
-        ASSERT_TRUE(person.IsAlive());
+		infection.Update(person, true);
+		EXPECT_FALSE(infection.IsInfectious());
+		EXPECT_FALSE(infection.HasSymptoms());
+		EXPECT_TRUE(infection.HasRecovered());
+	}
+	TEST_F(InfectionTest, UpdateWithDeadlyDisease)
+	{
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
 
-        // Deadly infection
-        DiseaseSpreadSimulation::Infection deadlyInfection;
+		ASSERT_TRUE(person.IsAlive());
 
-        ASSERT_FALSE(deadlyInfection.HasDisease());
-        ASSERT_TRUE(deadlyInfection.IsSusceptible());
-        ASSERT_FALSE(deadlyInfection.IsInfectious());
+		// Deadly infection
+		DiseaseSpreadSimulation::Infection deadlyInfection;
 
-        deadlyInfection.Contaminate(&deadlyDisease, ageGroups.at(2));
+		ASSERT_FALSE(deadlyInfection.HasDisease());
+		ASSERT_TRUE(deadlyInfection.IsSusceptible());
+		ASSERT_FALSE(deadlyInfection.IsInfectious());
 
-        ASSERT_TRUE(deadlyInfection.HasDisease());
-        ASSERT_EQ(deadlyInfection.GetDiseaseName(), deadlyName);
-        ASSERT_TRUE(!deadlyInfection.IsSusceptible());
-        ASSERT_TRUE(deadlyInfection.IsFatal());
+		deadlyInfection.Contaminate(&deadlyDisease, ageGroups.at(2));
 
-        deadlyInfection.Update(person, true);
-        EXPECT_TRUE(deadlyInfection.IsInfectious());
-        EXPECT_TRUE(deadlyInfection.HasSymptoms());
-        EXPECT_FALSE(deadlyInfection.HasRecovered());
-        EXPECT_TRUE(person.IsAlive());
+		ASSERT_TRUE(deadlyInfection.HasDisease());
+		ASSERT_EQ(deadlyInfection.GetDiseaseName(), deadlyName);
+		ASSERT_TRUE(!deadlyInfection.IsSusceptible());
+		ASSERT_TRUE(deadlyInfection.IsFatal());
 
-        deadlyInfection.Update(person, true);
-        EXPECT_FALSE(person.IsAlive());
-    }
-    TEST_F(InfectionTest, WillInfect)
-    {
-        DiseaseSpreadSimulation::Infection infection;
-        infection.Contaminate(&disease, ageGroups.at(2));
-        ASSERT_TRUE(infection.HasDisease());
+		deadlyInfection.Update(person, true);
+		EXPECT_TRUE(deadlyInfection.IsInfectious());
+		EXPECT_TRUE(deadlyInfection.HasSymptoms());
+		EXPECT_FALSE(deadlyInfection.HasRecovered());
+		EXPECT_TRUE(person.IsAlive());
 
-        EXPECT_TRUE(infection.WillInfect(infection, 0.f, &community));
+		deadlyInfection.Update(person, true);
+		EXPECT_FALSE(person.IsAlive());
+	}
+	TEST_F(InfectionTest, WillInfect)
+	{
+		DiseaseSpreadSimulation::Infection infection;
+		infection.Contaminate(&disease, ageGroups.at(2));
+		ASSERT_TRUE(infection.HasDisease());
 
-        // To negate the small chance of being infected that everyone has we check multiple times
-        static constexpr uint16_t sampleSize{ 100 };
-        uint16_t willInfect = 0;
+		EXPECT_TRUE(infection.WillInfect(infection, 0.f, &community));
 
-        for (size_t i = 0; i < sampleSize; i++)
-        {
-            if (infection.WillInfect(infection, 1.f, &community))
-            {
-                willInfect++;
-            }
-        }
+		// To negate the small chance of being infected that everyone has we check multiple times
+		static constexpr uint16_t sampleSize{100};
+		uint16_t willInfect = 0;
 
-        // Less than 20% should be infected
-        EXPECT_LT(willInfect, sampleSize * 0.2f);
-    }
-}
+		for (size_t i = 0; i < sampleSize; i++)
+		{
+			if (infection.WillInfect(infection, 1.f, &community))
+			{
+				willInfect++;
+			}
+		}
+
+		// Less than 20% should be infected
+		EXPECT_LT(willInfect, sampleSize * 0.2f);
+	}
+} // namespace UnitTests

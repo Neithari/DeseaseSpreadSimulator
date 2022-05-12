@@ -21,84 +21,84 @@
     <ClCompile Include="DiseaseSpreadSimulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Disease\Disease.cpp">
+    <ClCompile Include=".\Disease\Disease.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Disease\DiseaseBuilder.cpp">
+    <ClCompile Include=".\Disease\DiseaseBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Person\Person.cpp">
+    <ClCompile Include=".\Person\Person.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Simulation\TimeManager.cpp">
+    <ClCompile Include=".\Simulation\TimeManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\pch.cpp">
+    <ClCompile Include=".\pch.cpp">
       <Filter>Header Files\pch</Filter>
     </ClCompile>
-    <ClCompile Include="..\Simulation\Simulation.cpp">
+    <ClCompile Include=".\Simulation\Simulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Person\PersonPopulator.cpp">
+    <ClCompile Include=".\Person\PersonPopulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Places\Places.cpp">
+    <ClCompile Include=".\Places\Places.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\IDGenerator\IDGenerator.cpp">
+    <ClCompile Include=".\IDGenerator\IDGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Places\Community.cpp">
+    <ClCompile Include=".\Places\Community.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Places\PlaceBuilder.cpp">
+    <ClCompile Include=".\Places\PlaceBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Person\PersonBehavior.cpp">
+    <ClCompile Include=".\Person\PersonBehavior.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Simulation\MeasureTime.cpp">
+    <ClCompile Include=".\Simulation\MeasureTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Disease\Infection.cpp">
+    <ClCompile Include=".\Disease\Infection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Disease\DiseaseContainment.cpp">
+    <ClCompile Include=".\Disease\DiseaseContainment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Disease\Disease.h">
+    <ClInclude Include=".\Disease\Disease.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Disease\DiseaseBuilder.h">
+    <ClInclude Include=".\Disease\DiseaseBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Person\Person.h">
+    <ClInclude Include=".\Person\Person.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Simulation\TimeManager.h">
+    <ClInclude Include=".\Simulation\TimeManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\pch.h">
+    <ClInclude Include=".\pch.h">
       <Filter>Header Files\pch</Filter>
     </ClInclude>
-    <ClInclude Include="..\Simulation\Simulation.h">
+    <ClInclude Include=".\Simulation\Simulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Person\PersonPopulator.h">
+    <ClInclude Include=".\Person\PersonPopulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Places\Places.h">
+    <ClInclude Include=".\Places\Places.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\IDGenerator\IDGenerator.h">
+    <ClInclude Include=".\IDGenerator\IDGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Places\Community.h">
+    <ClInclude Include=".\Places\Community.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Places\PlaceBuilder.h">
+    <ClInclude Include=".\Places\PlaceBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Enums.h">
@@ -107,19 +107,19 @@
     <ClInclude Include="Statistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Person\PersonBehavior.h">
+    <ClInclude Include=".\Person\PersonBehavior.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Simulation\MeasureTime.h">
+    <ClInclude Include=".\Simulation\MeasureTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Disease\Infection.h">
+    <ClInclude Include=".\Disease\Infection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RandomNumbers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Disease\DiseaseContainment.h">
+    <ClInclude Include=".\Disease\DiseaseContainment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
