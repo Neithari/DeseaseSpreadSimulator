@@ -63,4 +63,4 @@ namespace Random
 	{
 		return MapOneRangeToAnother(value, fromRangeMin, fromRangeMax, static_cast<T>(0), static_cast<T>(1));
 	}
-}
+} // namespace Random
