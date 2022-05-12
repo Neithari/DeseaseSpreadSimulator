@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Disease/DiseaseBuilder.h"
 
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateCorona()

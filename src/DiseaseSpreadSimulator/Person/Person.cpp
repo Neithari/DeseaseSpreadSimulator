@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Person/Person.h"
 #include "IDGenerator/IDGenerator.h"
 

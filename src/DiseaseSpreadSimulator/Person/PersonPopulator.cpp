@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Person/PersonPopulator.h"
 #include "Person/PersonBehavior.h"
 #include "Places/PlaceBuilder.h"

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Infection.h"
 
 void DiseaseSpreadSimulation::Infection::Contaminate(const Disease* infection, Age_Group age)

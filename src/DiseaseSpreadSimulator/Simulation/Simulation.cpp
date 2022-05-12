@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Simulation/Simulation.h"
 #include "Disease/DiseaseBuilder.h"
 #include "Person/PersonPopulator.h"

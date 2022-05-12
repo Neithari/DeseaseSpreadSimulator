@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Disease/DiseaseContainment.h"
 
 void DiseaseSpreadSimulation::DiseaseContainment::Quarantine(Person* person) const

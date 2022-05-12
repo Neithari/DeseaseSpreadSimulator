@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Simulation/TimeManager.h"
 
 void DiseaseSpreadSimulation::TimeManager::Update()

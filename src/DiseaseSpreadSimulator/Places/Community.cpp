@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Places/Community.h"
 
 DiseaseSpreadSimulation::Community::Community(std::vector<Person> population, Places places)

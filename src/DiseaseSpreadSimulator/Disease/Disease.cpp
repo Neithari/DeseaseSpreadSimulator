@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Disease/Disease.h"
 #include "IDGenerator/IDGenerator.h"
 

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Simulation/MeasureTime.h"
 
 Measure::MeasureTime::MeasureTime(std::string&& measureName)
