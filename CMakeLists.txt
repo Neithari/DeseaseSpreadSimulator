@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
+# For debugging: Print variables with "cmake_print_variables(MY_VARIABLE)"
 include(CMakePrintHelpers)
 
 # Not ideal to use this global variable, but necessary to make sure
@@ -86,6 +87,8 @@ include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 # set(<feature_name>_DEFAULT <value>) - set default for both user and developer modes
 # set(<feature_name>_DEVELOPER_DEFAULT <value>) - set default for developer mode
 # set(<feature_name>_USER_DEFAULT <value>) - set default for user mode
+set(ENABLE_CLANG_TIDY_DEFAULT OFF)
+set(ENABLE_CPPCHECK OFF)
 
 # Initialize project_options variable related to this project
 # This overwrites `project_options` and sets `project_warnings`
