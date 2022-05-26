@@ -1,0 +1,27 @@
+{
+  "name": "disease-spread-simulator",
+  "version": "0.1",
+  "dependencies": [
+    {
+      "name": "sfml",
+      "version>=": "2.5.1#13"
+    },
+    "imgui[docking-experimental]",
+    {
+      "name": "imgui-sfml",
+      "version>=": "2.5"
+    },
+    {
+      "name": "implot",
+      "version>=": "0.13"
+    },
+    {
+      "name": "fmt",
+      "version>=": "8.1.1#1"
+    },
+    {
+      "name": "nlohmann-json",
+      "version>=": "3.10.5#3"
+    }
+  ]
+}
