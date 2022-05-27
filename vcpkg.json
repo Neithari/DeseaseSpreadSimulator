@@ -1,12 +1,17 @@
 {
   "name": "disease-spread-simulator",
   "version": "0.1",
+  "builtin-baseline": "a97ebbef7fca32ed90b79fb2bfe0c9b730683751",
   "dependencies": [
     {
       "name": "sfml",
       "version>=": "2.5.1#13"
     },
-    "imgui[docking-experimental]",
+    {
+      "name": "imgui",
+      "version>=": "1.87",
+      "features": [ "docking-experimental" ]
+    },
     {
       "name": "imgui-sfml",
       "version>=": "2.5"
