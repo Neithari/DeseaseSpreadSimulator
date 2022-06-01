@@ -137,9 +137,9 @@
       }
     },
     {
-      "name": "unixlike-gcc-debug",
+      "name": "linux-gcc-debug",
       "displayName": "gcc Debug",
-      "description": "Target Unix-like OS with the gcc compiler, debug build type",
+      "description": "Target Linux with the gcc compiler, debug build type",
       "inherits": "conf-unixlike-common",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc",
@@ -148,9 +148,9 @@
       }
     },
     {
-      "name": "unixlike-gcc-release",
+      "name": "linux-gcc-release",
       "displayName": "gcc Release",
-      "description": "Target Unix-like OS with the gcc compiler, release build type",
+      "description": "Target Linux with the gcc compiler, release build type",
       "inherits": "conf-unixlike-common",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc",
@@ -159,9 +159,9 @@
       }
     },
     {
-      "name": "unixlike-clang-debug",
+      "name": "linux-clang-debug",
       "displayName": "clang Debug",
-      "description": "Target Unix-like OS with the clang compiler, debug build type",
+      "description": "Target Linux with the clang compiler, debug build type",
       "inherits": "conf-unixlike-common",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
@@ -170,15 +170,89 @@
       }
     },
     {
-      "name": "unixlike-clang-release",
+      "name": "linux-clang-release",
       "displayName": "clang Release",
-      "description": "Target Unix-like OS with the clang compiler, release build type",
+      "description": "Target Linux with the clang compiler, release build type",
       "inherits": "conf-unixlike-common",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-linux-clang-debug",
+      "displayName": "Debug Linux clang",
+      "configurePreset": "linux-clang-debug",
+      "description": "Debug build"
+    },
+    {
+      "name": "verbose-build-linux-clang-debug",
+      "displayName": "Verbose debug build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "linux-clang-debug",
+      "nativeToolOptions": [ "-v" ]
+    },
+    {
+      "name": "build-linux-clang-release",
+      "displayName": "Release Linux clang",
+      "configurePreset": "linux-clang-release",
+      "description": "Release build"
+    },
+    {
+      "name": "verbose-build-linux-clang-release",
+      "displayName": "Verbose release build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "linux-clang-release",
+      "nativeToolOptions": [ "-v" ]
+    },
+    {
+      "name": "build-windows-msvc-debug-developer-mode",
+      "displayName": "MSVC debug developer",
+      "configurePreset": "windows-msvc-debug-developer-mode",
+      "description": "MSVC debug developer mode"
+    },
+    {
+      "name": "build-windows-clang-debug",
+      "displayName": "Windows clang debug",
+      "configurePreset": "windows-clang-debug",
+      "description": "Windows Clang debug"
+    },
+    {
+      "name": "build-windows-clang-release",
+      "displayName": "Windows clang release",
+      "configurePreset": "windows-clang-release",
+      "description": "Windows Clang release"
+    },
+    {
+      "name": "verbose-build-msvc-debug-developer-mode",
+      "displayName": "Verbose MSVC debug build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "windows-msvc-debug-developer-mode",
+      "nativeToolOptions": [ "-v" ]
+    },
+    {
+      "name": "verbose-build-msvc-release-developer-mode",
+      "displayName": "Verbose MSVC release build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "windows-msvc-release-developer-mode",
+      "nativeToolOptions": [ "-v" ]
+    },
+    {
+      "name": "verbose-build-windows-clang-debug",
+      "displayName": "Verbose windows clang debug build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "windows-clang-debug",
+      "nativeToolOptions": [ "-v" ]
+    },
+    {
+      "name": "verbose-build-windows-clang-release",
+      "displayName": "Verbose windows clang release build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "windows-clang-release",
+      "nativeToolOptions": [ "-v" ]
     }
   ],
   "testPresets": [
@@ -223,32 +297,32 @@
       "configurePreset": "windows-clang-release"
     },
     {
-      "name": "test-unixlike-gcc-debug",
+      "name": "test-linux-gcc-debug",
       "displayName": "Strict",
       "description": "Enable output and stop on failure",
       "inherits": "test-common",
-      "configurePreset": "unixlike-gcc-debug"
+      "configurePreset": "linux-gcc-debug"
     },
     {
-      "name": "test-unixlike-gcc-release",
+      "name": "test-linux-gcc-release",
       "displayName": "Strict",
       "description": "Enable output and stop on failure",
       "inherits": "test-common",
-      "configurePreset": "unixlike-gcc-release"
+      "configurePreset": "linux-gcc-release"
     },
     {
-      "name": "test-unixlike-clang-debug",
+      "name": "test-linux-clang-debug",
       "displayName": "Strict",
       "description": "Enable output and stop on failure",
       "inherits": "test-common",
-      "configurePreset": "unixlike-clang-debug"
+      "configurePreset": "linux-clang-debug"
     },
     {
-      "name": "test-unixlike-clang-release",
+      "name": "test-linux-clang-release",
       "displayName": "Strict",
       "description": "Enable output and stop on failure",
       "inherits": "test-common",
-      "configurePreset": "unixlike-clang-release"
+      "configurePreset": "linux-clang-release"
     }
   ]
 }
