@@ -259,6 +259,32 @@
       "description": "Passes -v to Ninja",
       "configurePreset": "windows-clang-release",
       "nativeToolOptions": [ "-v" ]
+    },
+    {
+      "name": "build-linux-gcc-debug",
+      "displayName": "Debug Linux gcc",
+      "configurePreset": "linux-gcc-debug",
+      "description": "Debug build"
+    },
+    {
+      "name": "verbose-build-linux-gcc-debug",
+      "displayName": "Verbose gcc debug build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "linux-gcc-debug",
+      "nativeToolOptions": [ "-v" ]
+    },
+    {
+      "name": "build-linux-gcc-release",
+      "displayName": "Release Linux gcc",
+      "configurePreset": "linux-gcc-release",
+      "description": "Release build"
+    },
+    {
+      "name": "verbose-build-linux-gcc-release",
+      "displayName": "Verbose gcc release build",
+      "description": "Passes -v to Ninja",
+      "configurePreset": "linux-gcc-release",
+      "nativeToolOptions": [ "-v" ]
     }
   ],
   "testPresets": [
