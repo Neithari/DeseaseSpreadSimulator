@@ -1,7 +1,7 @@
 {
   "name": "disease-spread-simulator",
   "version": "0.1",
-  "builtin-baseline": "a97ebbef7fca32ed90b79fb2bfe0c9b730683751",
+  "builtin-baseline": "f78f4440df86358575dea65e748a39fdad41eb85",
   "dependencies": [
     {
       "name": "sfml",
@@ -9,7 +9,7 @@
     },
     {
       "name": "imgui",
-      "version>=": "1.87",
+      "version>=": "1.87#1",
       "features": [ "docking-experimental" ]
     },
     {
