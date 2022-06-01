@@ -215,6 +215,12 @@
       "description": "MSVC debug developer mode"
     },
     {
+      "name": "build-windows-msvc-release-developer-mode",
+      "displayName": "MSVC release developer",
+      "configurePreset": "windows-msvc-release-developer-mode",
+      "description": "MSVC release developer mode"
+    },
+    {
       "name": "build-windows-clang-debug",
       "displayName": "Windows clang debug",
       "configurePreset": "windows-clang-debug",
