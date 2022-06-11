@@ -381,4 +381,23 @@ namespace UnitTests
 
 		EXPECT_TRUE(builtCorona.isSame(corona));
 	}
+	TEST_F(DiseaseBuilderTest, SaveCreateDeseaseFromFile)
+	{
+		std::string fileName{"testDiseaseFile.txt"};
+
+		DiseaseSpreadSimulation::DiseaseBuilder builder;
+		auto corona = builder.CreateCorona();
+
+		builder.SaveDiseaseToFile("Corona1", corona, fileName);
+
+		auto savedDiseases = builder.CreateDiseasesFromFile(fileName);
+
+		// We check the front here because after the first run that file will contain both diseases until clean build
+		EXPECT_TRUE(savedDiseases.front().isSame(corona));
+
+		builder.SaveDiseaseToFile("Corona2", corona, fileName);
+
+		EXPECT_TRUE(savedDiseases.back().isSame(corona));
+		EXPECT_TRUE(savedDiseases.front().isSame(corona));
+	}
 } // namespace UnitTests

@@ -15,6 +15,7 @@
 #include <map>
 #include <algorithm>
 #include <stdexcept>
+#include <numeric>
 
 // Extern libs
 #include "nlohmann/json.hpp"

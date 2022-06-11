@@ -715,4 +715,38 @@ namespace UnitTests
 			EXPECT_NEAR(homePercent2.at(i), distributionArray.at(i), 0.13f);
 		}
 	}
+	// Helper to sum up all working people
+	size_t SumWorkingPeople(size_t populationSize, const DiseaseSpreadSimulation::Country& country)
+	{
+		using namespace DiseaseSpreadSimulation;
+		auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
+		size_t workingPeople{};
+
+		// For every human distribution in country distribution...
+		for (const auto& humanDistribution : countryDistribution)
+		{
+			// ...check if the distribution is inside working age...
+			if (humanDistribution.ageGroup > Age_Group::UnderTwenty && humanDistribution.ageGroup <= Age_Group::UnderSeventy)
+			{
+				// ...and if it is, sum the rounded population size with the distribution applied
+				workingPeople += std::llround(populationSize * static_cast<double>(humanDistribution.percent));
+			}
+		}
+		return workingPeople;
+	}
+	TEST_F(PersonPopulatorTest, WorkingPeopleCount)
+	{
+		using namespace DiseaseSpreadSimulation;
+		size_t populationSize{100};
+		EXPECT_EQ(PersonPopulator::WorkingPeopleCount(populationSize, country), SumWorkingPeople(populationSize, country));
+
+		populationSize = 1000;
+		EXPECT_EQ(PersonPopulator::WorkingPeopleCount(populationSize, country), SumWorkingPeople(populationSize, country));
+
+		populationSize = 3333;
+		EXPECT_EQ(PersonPopulator::WorkingPeopleCount(populationSize, country), SumWorkingPeople(populationSize, country));
+
+		populationSize = 7777;
+		EXPECT_EQ(PersonPopulator::WorkingPeopleCount(populationSize, country), SumWorkingPeople(populationSize, country));
+	}
 } // namespace UnitTests
