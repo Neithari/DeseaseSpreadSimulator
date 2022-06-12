@@ -18,7 +18,8 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # if you want to switch this behavior, change TRUE to FALSE
 set(ENABLE_DEVELOPER_MODE
     TRUE
-    CACHE BOOL "Enable 'developer mode'")
+    CACHE BOOL "Enable 'developer mode'"
+)
 
 # Change this to false if you want to disable warnings_as_errors in developer mode
 set(OPT_WARNINGS_AS_ERRORS_DEVELOPER_DEFAULT TRUE)
@@ -31,8 +32,8 @@ FetchContent_MakeAvailable(_project_options)
 include(${_project_options_SOURCE_DIR}/Index.cmake)
 
 # Enable vcpkg:
-# # Setup VCPKG_ROOT per command line or in a CMakeUserPresets.json
-# # Will be installed in HOME when no VCPKG_ROOT is provided
+# Setup VCPKG_ROOT per command line or in a CMakeUserPresets.json
+# Will be installed in HOME when no VCPKG_ROOT is provided
 run_vcpkg(ENABLE_VCPKG_UPDATE TRUE VCPKG_DIR "${VCPKG_ROOT}")
 
 # Set the project name and language
@@ -40,7 +41,8 @@ project(
   DiseaseSpreadSimulator
   VERSION 0.0.1
   DESCRIPTION "Simulating the spread of a disease"
-  LANGUAGES CXX)
+  LANGUAGES CXX
+)
 
   # This variable is set by project() in CMake 3.21+
 string(
@@ -51,7 +53,7 @@ string(
 if(PROJECT_IS_TOP_LEVEL)
   # Consider the CTest module, which creates targets and options!
   # Only needed if you want to enable submissions to a CDash server.
-  include(CTest)
+  include(GoogleTest)
 endif()
 
 get_property(BUILDING_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -67,12 +69,14 @@ if(BUILDING_MULTI_CONFIG)
         Release
         RelWithDebInfo
         MinSizeRel
-        CACHE STRING "Enabled build types" FORCE)
+        CACHE STRING "Enabled build types" FORCE
+      )
   else()
     message(TRACE "User chose a specific build type, so we are using that")
     set(CMAKE_CONFIGURATION_TYPES
         ${CMAKE_BUILD_TYPE}
-        CACHE STRING "Enabled build types" FORCE)
+        CACHE STRING "Enabled build types" FORCE
+      )
   endif()
 endif()
 
@@ -109,6 +113,7 @@ dynamic_project_options(
   <execution>
   <optional>
   <iostream>
+  <numeric>
   # Data structures
   <string>
   <vector>
@@ -157,7 +162,6 @@ add_subdirectory(src)
 option(ENABLE_TESTING "Enable the tests" ${PROJECT_IS_TOP_LEVEL})
 if(ENABLE_TESTING)
   enable_testing()
-  message(AUTHOR_WARNING "Building Tests. Be sure to check out tests/constexpr_tests.cpp for constexpr testing")
   add_subdirectory(tests)
 endif()
 
