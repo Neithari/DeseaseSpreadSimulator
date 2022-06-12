@@ -1,11 +1,9 @@
 #include "Simulation/Simulation.h"
 #include "Disease/DiseaseBuilder.h"
-#include "Person/PersonPopulator.h"
-#include "Places/PlaceBuilder.h"
 
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
-	: withPrint(withPrint),
-	  populationSize(populationSize),
+	: m_withPrint(withPrint),
+	  m_populationSize(populationSize),
 	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.f, 1.f), nullptr)
 {
 }
@@ -56,7 +54,7 @@ void DiseaseSpreadSimulation::Simulation::Update()
 			Contacts(community.GetPlaces(), community.GetTravelLocation());
 		}
 
-		if (withPrint)
+		if (m_withPrint)
 		{
 			Print();
 		}
@@ -99,7 +97,7 @@ void DiseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& trave
 	auto travelers = travelLocation.GetPeople();
 	std::for_each(std::execution::par_unseq, travelers.begin(), travelers.end(), [this](auto traveler)
 		{
-			auto numberOfContacts = Random::UniformIntRange(0, 5);
+			auto numberOfContacts = Random::UniformIntRange(0u, 5u);
 			for (size_t i = 0; i < numberOfContacts; i++)
 			{
 				std::shared_lock<std::shared_timed_mutex> lockTravelInfecter(travelInfecterMutex);
@@ -189,7 +187,7 @@ void DiseaseSpreadSimulation::Simulation::PrintOncePerDay()
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population) const
+void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population)
 {
 	size_t populationCount = 0;
 	size_t susceptible = 0;
@@ -249,24 +247,16 @@ bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
 void DiseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
 {
 	DiseaseBuilder dbuilder;
-	PlaceBuilder placeFactory;
 	//diseases.push_back(dbuilder.CreateCorona());
 	diseases.push_back(dbuilder.CreateDeadlyTestDisease());
 
 	for (size_t i = 0; i < communityCount; i++)
 	{
-		PersonPopulator populationFactory(populationSize, PersonPopulator::GetCountryDistribution(country));
-
-		auto places = placeFactory.CreatePlaces(populationSize, country);
-		auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools);
-
-		communities.emplace_back(std::move(population), std::move(places));
-		populationFactory.AddCommunityToPopulation(&communities.back(), communities.back().GetPopulation());
+		communities.emplace_back(m_populationSize, country);
 
 		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
+		SetupTravelInfecter(&diseases.back(), &communities.back());
 	}
-
-	SetupTravelInfecter(&diseases.back(), &communities.back());
 
 	stop = false;
 	fmt::print("Setup complete\n");

@@ -18,7 +18,7 @@ namespace DiseaseSpreadSimulation
 		// Check with ID
 		inline bool operator==(const Disease& rhs) const
 		{
-			return id == rhs.id;
+			return m_id == rhs.m_id;
 		};
 
 		const std::string& GetDiseaseName() const;
@@ -44,21 +44,21 @@ namespace DiseaseSpreadSimulation
 		friend struct nlohmann::adl_serializer<Disease, void>;
 
 	private:
-		const uint32_t id = 0;
-		const std::string name{};
+		const uint32_t m_id = 0;
+		const std::string m_name{};
 		// Incubation period in days
-		const std::pair<uint16_t, uint16_t> incubationPeriod{};
+		const std::pair<uint16_t, uint16_t> m_incubationPeriod{};
 		// Patient is contagious for x days after start of symptoms
-		const uint16_t daysInfectious = 0;
+		const uint16_t m_daysInfectious = 0;
 		// Duration min, max in days
-		const std::pair<uint16_t, uint16_t> durationRange{};
+		const std::pair<uint16_t, uint16_t> m_durationRange{};
 		// Mortality in percent from 0-1, age from 0-9, 10-19, 20-29,...., >80 years
-		const std::vector<float> mortalityByAge;
-		const std::pair<uint16_t, uint16_t> daysTillDeathRange{};
+		const std::vector<float> m_mortalityByAge;
+		const std::pair<uint16_t, uint16_t> m_daysTillDeathRange{};
 		// In percent from 0-1 how likely it is to get infected at exposure
-		std::pair<float, float> spreadFactor{};
-		float testAccuracy = 1.0f;
-		std::pair<float, float> symptomsDevelopment{};
+		std::pair<float, float> m_spreadFactor{};
+		float m_testAccuracy = 1.0f;
+		std::pair<float, float> m_symptomsDevelopment{};
 	};
 } // namespace DiseaseSpreadSimulation
 
@@ -90,15 +90,15 @@ namespace nlohmann
 		static void to_json(json& j, const DiseaseSpreadSimulation::Disease& disease)
 		{
 			j = {
-				{"Name", disease.name},
-				{"Incubation Period", disease.incubationPeriod},
-				{"Days Infectious", disease.daysInfectious},
-				{"Disease Duration Range", disease.durationRange},
-				{"Mortality By Age", disease.mortalityByAge},
-				{"Days Till Death Range", disease.daysTillDeathRange},
-				{"Spread Factor", disease.spreadFactor},
-				{"Test Accuracy", disease.testAccuracy},
-				{"Symptoms Development", disease.symptomsDevelopment}};
+				{"Name", disease.m_name},
+				{"Incubation Period", disease.m_incubationPeriod},
+				{"Days Infectious", disease.m_daysInfectious},
+				{"Disease Duration Range", disease.m_durationRange},
+				{"Mortality By Age", disease.m_mortalityByAge},
+				{"Days Till Death Range", disease.m_daysTillDeathRange},
+				{"Spread Factor", disease.m_spreadFactor},
+				{"Test Accuracy", disease.m_testAccuracy},
+				{"Symptoms Development", disease.m_symptomsDevelopment}};
 		}
 	};
 } // namespace nlohmann

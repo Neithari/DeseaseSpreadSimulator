@@ -42,7 +42,7 @@ namespace UnitTests
 	TEST_F(DiseaseTest, DiseaseDurationRange)
 	{
 		// Check 10 times to get an average
-		int duration = 0;
+		uint16_t duration = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			duration = disease.GetDiseaseDuration();
@@ -52,7 +52,7 @@ namespace UnitTests
 	TEST_F(DiseaseTest, DaysTillDeathRange)
 	{
 		// Check 10 times to get an average
-		int days = 0;
+		uint16_t days = 0;
 		for (int i = 0; i < 10; i++)
 		{
 			days = disease.DaysTillDeath();
@@ -74,15 +74,15 @@ namespace UnitTests
 	TEST_F(DiseaseTest, MortalityByAge)
 	{
 		// Check age 0-89
-		int age = 0;
-		for (int index = 0; index < mortalityByAge.size(); index++)
+		uint16_t age = 0u;
+		for (uint16_t index = 0u; index < mortalityByAge.size(); index++)
 		{
-			for (int i = 0; i < 10; i++)
+			for (uint16_t i = 0u; i < 10u; i++)
 			{
 				// Age will be between 0 and 89
-				age = index * 10 + i;
+				age = static_cast<uint16_t>((index * 10u) + i);
 				// mortalityByAge vector does only have 9 members so prevent an out of bound
-				if (index <= 8)
+				if (index <= 8u)
 				{
 					EXPECT_FLOAT_EQ(disease.GetMortalityByAge(age), mortalityByAge.at(index));
 				}
@@ -93,7 +93,7 @@ namespace UnitTests
 			}
 		}
 		// Check age >=90
-		for (int age = 90; age < 111; age++)
+		for (age = 90; age < 111; age++)
 		{
 			EXPECT_FLOAT_EQ(disease.GetMortalityByAge(age), mortalityByAge.back());
 		}

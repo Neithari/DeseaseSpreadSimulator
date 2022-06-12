@@ -5,7 +5,7 @@ namespace UnitTests
 	class CommunityTest : public ::testing::Test
 	{
 	protected:
-		DiseaseSpreadSimulation::Community community{std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{}};
+		DiseaseSpreadSimulation::Community community{0u, DiseaseSpreadSimulation::Country::USA};
 		DiseaseSpreadSimulation::PersonBehavior behavior;
 	};
 	TEST_F(CommunityTest, AddPlaceGetPlaces)
@@ -58,7 +58,6 @@ namespace UnitTests
 	TEST_F(CommunityTest, RemovePerson)
 	{
 		DiseaseSpreadSimulation::Person person1{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Female, behavior, &community};
-		auto person1ID = person1.GetID();
 
 		ASSERT_EQ(community.GetPopulation().size(), 0);
 
@@ -70,22 +69,17 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Person person2{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Female, behavior, &community};
 		DiseaseSpreadSimulation::Person person3{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Female, behavior, &community};
 
-		auto person2ID = person2.GetID();
-		auto person3ID = person3.GetID();
-
 		community.AddPerson(person2);
 		community.AddPerson(person3);
 		EXPECT_EQ(community.GetPopulation().size(), 2);
 		community.RemovePerson(person2);
 		EXPECT_EQ(community.GetPopulation().size(), 1);
-		ASSERT_EQ(community.GetPopulation().back().GetID(), person3ID);
+		ASSERT_EQ(community.GetPopulation().back().GetID(), person3.GetID());
 		community.RemovePerson(person3);
 		ASSERT_EQ(community.GetPopulation().size(), 0);
 
 		DiseaseSpreadSimulation::Person person4{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Female, behavior, &community};
 		DiseaseSpreadSimulation::Person person5{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Female, behavior, &community};
-		auto person4ID = person4.GetID();
-		auto person5ID = person5.GetID();
 
 		community.AddPerson(person4);
 		community.AddPerson(person5);

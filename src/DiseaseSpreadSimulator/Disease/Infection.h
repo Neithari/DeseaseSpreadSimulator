@@ -12,11 +12,11 @@ namespace DiseaseSpreadSimulation
 		Infection() = default;
 
 		void Contaminate(const Disease* infection, Age_Group age);
-		const Disease* GetDisease();
+		const Disease* GetDisease() const;
 		void Update(Person& person, bool isNewDay);
 		void IncreaseSpreadCount();
 
-		bool WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community) const;
+		static bool WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community);
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
 		bool IsFatal() const;
@@ -26,7 +26,6 @@ namespace DiseaseSpreadSimulation
 		bool HasSymptoms() const;
 
 		uint32_t GetSpreadCount() const;
-		const Disease* GetDisease() const;
 
 	private:
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time

@@ -1,10 +1,10 @@
 #include "Person/PersonBehavior.h"
 
-DiseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint16_t foodBuyInterval, uint16_t hardwareBuyInterval, float acceptanceFactor, float travelNeed)
-	: foodBuyInterval(foodBuyInterval),
-	  hardwareBuyInterval(hardwareBuyInterval),
-	  acceptanceFactor(acceptanceFactor),
-	  travelNeed(travelNeed)
+DiseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint16_t foodBuyIntervalIn, uint16_t hardwareBuyIntervalIn, float acceptanceFactorIn, float travelNeedIn)
+	: foodBuyInterval(foodBuyIntervalIn),
+	  hardwareBuyInterval(hardwareBuyIntervalIn),
+	  acceptanceFactor(acceptanceFactorIn),
+	  travelNeed(travelNeedIn)
 {
 }
 

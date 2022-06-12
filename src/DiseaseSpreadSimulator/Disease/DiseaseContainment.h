@@ -8,8 +8,8 @@ namespace DiseaseSpreadSimulation
 		DiseaseContainment() = default;
 
 		// Start the quarantine and send the person home
-		void Quarantine(Person* person) const;
-		void ReleaseWhenRecovered(Person* person) const;
+		static void Quarantine(Person* person);
+		static void ReleaseWhenRecovered(Person* person);
 		// Open or close shops
 		void ToggleShops();
 		void ToggleWorkingFromHome();

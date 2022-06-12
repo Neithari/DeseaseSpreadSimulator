@@ -10,34 +10,34 @@ DiseaseSpreadSimulation::Disease::Disease(std::string name,
 	std::pair<float, float> spreadFactor,
 	float testAccuracy,
 	std::pair<float, float> symptomsDevelopment)
-	: id(IDGenerator::IDGenerator<Disease>::GetNextID()),
-	  name(std::move(name)),
-	  incubationPeriod(incubationPeriod),
-	  daysInfectious(daysInfectious),
-	  durationRange(std::move(diseaseDurationRange)),
-	  mortalityByAge(std::move(mortalityByAge)),
-	  daysTillDeathRange(std::move(daysTillDeathRange)),
-	  spreadFactor(spreadFactor),
-	  testAccuracy(testAccuracy),
-	  symptomsDevelopment(symptomsDevelopment)
+	: m_id(IDGenerator::IDGenerator<Disease>::GetNextID()),
+	  m_name(std::move(name)),
+	  m_incubationPeriod(incubationPeriod),
+	  m_daysInfectious(daysInfectious),
+	  m_durationRange(std::move(diseaseDurationRange)),
+	  m_mortalityByAge(std::move(mortalityByAge)),
+	  m_daysTillDeathRange(std::move(daysTillDeathRange)),
+	  m_spreadFactor(spreadFactor),
+	  m_testAccuracy(testAccuracy),
+	  m_symptomsDevelopment(symptomsDevelopment)
 {
 }
 
 const std::string& DiseaseSpreadSimulation::Disease::GetDiseaseName() const
 {
-	return name;
+	return m_name;
 }
 
 uint16_t DiseaseSpreadSimulation::Disease::IncubationPeriod() const
 {
 	/// TODO: Implement a lognormal distribution for random number generation
 
-	return Random::UniformIntRange(incubationPeriod.first, incubationPeriod.second);
+	return Random::UniformIntRange(m_incubationPeriod.first, m_incubationPeriod.second);
 }
 
 uint16_t DiseaseSpreadSimulation::Disease::DaysInfectious() const
 {
-	return daysInfectious;
+	return m_daysInfectious;
 }
 
 float DiseaseSpreadSimulation::Disease::GetMortalityByAge(uint16_t age) const
@@ -78,47 +78,47 @@ float DiseaseSpreadSimulation::Disease::GetMortalityByAge(uint16_t age) const
 
 float DiseaseSpreadSimulation::Disease::GetMortalityByAgeGroup(Age_Group age) const
 {
-	return mortalityByAge.at(static_cast<size_t>(age));
+	return m_mortalityByAge.at(static_cast<size_t>(age));
 }
 
 uint16_t DiseaseSpreadSimulation::Disease::GetDiseaseDuration() const
 {
-	return Random::UniformIntRange(durationRange.first, durationRange.second);
+	return Random::UniformIntRange(m_durationRange.first, m_durationRange.second);
 }
 
 uint16_t DiseaseSpreadSimulation::Disease::DaysTillDeath() const
 {
-	return Random::UniformIntRange(daysTillDeathRange.first, daysTillDeathRange.second);
+	return Random::UniformIntRange(m_daysTillDeathRange.first, m_daysTillDeathRange.second);
 }
 
 float DiseaseSpreadSimulation::Disease::GetSpreadFactor() const
 {
 	/// TODO: Implement a lognormal distribution for random number generation
 
-	return Random::MapRangeToPercent(Random::UniformFloatRange(spreadFactor.first, spreadFactor.second), spreadFactor.first, spreadFactor.second);
+	return Random::MapRangeToPercent(Random::UniformFloatRange(m_spreadFactor.first, m_spreadFactor.second), m_spreadFactor.first, m_spreadFactor.second);
 }
 
 float DiseaseSpreadSimulation::Disease::GetTestAccuracy() const
 {
-	return testAccuracy;
+	return m_testAccuracy;
 }
 
 uint32_t DiseaseSpreadSimulation::Disease::GetID() const
 {
-	return id;
+	return m_id;
 }
 
 bool DiseaseSpreadSimulation::Disease::isSame(const Disease& other) const
 {
-	return name == other.name
-		   && incubationPeriod == other.incubationPeriod
-		   && daysInfectious == other.daysInfectious
-		   && durationRange == other.durationRange
-		   && mortalityByAge == other.mortalityByAge
-		   && daysTillDeathRange == other.daysTillDeathRange
-		   && spreadFactor == other.spreadFactor
-		   && testAccuracy == other.testAccuracy
-		   && symptomsDevelopment == other.symptomsDevelopment;
+	return m_name == other.m_name
+		   && m_incubationPeriod == other.m_incubationPeriod
+		   && m_daysInfectious == other.m_daysInfectious
+		   && m_durationRange == other.m_durationRange
+		   && m_mortalityByAge == other.m_mortalityByAge
+		   && m_daysTillDeathRange == other.m_daysTillDeathRange
+		   && m_spreadFactor == other.m_spreadFactor
+		   && m_testAccuracy == other.m_testAccuracy
+		   && m_symptomsDevelopment == other.m_symptomsDevelopment;
 }
 
 bool DiseaseSpreadSimulation::Disease::hasSameID(const Disease& other) const
@@ -135,5 +135,5 @@ bool DiseaseSpreadSimulation::Disease::isFatal(DiseaseSpreadSimulation::Age_Grou
 bool DiseaseSpreadSimulation::Disease::willDevelopSymptoms() const
 {
 	// Will return true when the random percent is within the symtoms development percent
-	return Random::Percent<float>() <= Random::UniformFloatRange(symptomsDevelopment.first, symptomsDevelopment.second);
+	return Random::Percent<float>() <= Random::UniformFloatRange(m_symptomsDevelopment.first, m_symptomsDevelopment.second);
 }

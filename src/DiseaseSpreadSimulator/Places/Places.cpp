@@ -76,16 +76,20 @@ DiseaseSpreadSimulation::Place::Place(uint32_t id)
 
 DiseaseSpreadSimulation::Place::Place(const Place& other)
 	: placeID(other.placeID),
-	  people(other.people)
+	  people(other.people),
+	  peopleMutex()
 {
 }
 
 DiseaseSpreadSimulation::Place::Place(Place&& other) noexcept
 	: placeID(std::move(other.placeID)),
-	  people(std::move(other.people))
+	  people(std::move(other.people)),
+	  peopleMutex()
 {
 }
 
+// We don't want to copy peopleMutex so we suppress the static analyzer warning
+// cppcheck-suppress operatorEqVarError
 DiseaseSpreadSimulation::Place& DiseaseSpreadSimulation::Place::operator=(Place&& other) noexcept
 {
 	std::swap(placeID, other.placeID);

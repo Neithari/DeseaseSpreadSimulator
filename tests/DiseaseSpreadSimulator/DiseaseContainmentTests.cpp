@@ -16,7 +16,7 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Morgue morgue;
 		DiseaseSpreadSimulation::Workplace work;
 		DiseaseSpreadSimulation::School school;
-		DiseaseSpreadSimulation::Community community{std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{}};
+		DiseaseSpreadSimulation::Community community{0u, DiseaseSpreadSimulation::Country::USA};
 		DiseaseSpreadSimulation::TimeManager time;
 		// Values from Person.h
 		static constexpr uint16_t shopOpenTime = 7u;
@@ -60,13 +60,13 @@ namespace UnitTests
 		EXPECT_TRUE(person.IsQuarantined());
 
 		// Advance day and check if the person will stay at home
-		for (uint16_t i = 0; i < 10; i++)
+		for (uint16_t day = 0; day < 10; day++)
 		{
 			person.Update(1, true, true);
 
-			for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+			for (auto hour = shopOpenTime; hour <= shopCloseTime; hour++)
 			{
-				person.Update(i, true, false);
+				person.Update(hour, true, false);
 				EXPECT_EQ(person.GetWhereabouts(), person.GetHome());
 			}
 		}

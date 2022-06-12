@@ -83,7 +83,7 @@ namespace UnitTests
 		for (size_t i = 0; i < 10; i++)
 		{
 			auto index = Random::RandomVectorIndex(vec);
-			EXPECT_TRUE(index >= 0 && index <= 1);
+			EXPECT_TRUE(index == 0 || index == 1);
 		}
 	}
 	TEST(RandomNumbersTests, MapOneRangeToAnother)

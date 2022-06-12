@@ -12,7 +12,7 @@ namespace DiseaseSpreadSimulation
 		Disease CreateDeadlyTestDisease();
 
 		// Disease setup functions
-		void SetDiseaseName(std::string name);
+		void SetDiseaseName(std::string diseaseName);
 		void SetIncubationPeriod(const uint16_t minDays, const uint16_t maxDays);
 		void SetDaysInfectious(const uint16_t days);
 		void SetDiseaseDuration(const uint16_t minDays, const uint16_t maxDays);
@@ -27,7 +27,7 @@ namespace DiseaseSpreadSimulation
 		Disease CreateDisease();
 
 		// In json format
-		static std::vector<Disease> CreateDiseaseFromFile(std::string fileName);
+		static std::vector<Disease> CreateDiseasesFromFile(std::string fileName);
 		// In json format
 		static void SaveDiseaseToFile(std::string diseaseSaveName, const Disease& disease, std::string fileName);
 

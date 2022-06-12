@@ -31,9 +31,6 @@ namespace UnitTests
 		// Age groups
 		std::vector<DiseaseSpreadSimulation::Age_Group> ageGroups{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Age_Group::UnderFifty, DiseaseSpreadSimulation::Age_Group::UnderSixty, DiseaseSpreadSimulation::Age_Group::UnderSeventy, DiseaseSpreadSimulation::Age_Group::UnderEighty, DiseaseSpreadSimulation::Age_Group::AboveEighty};
 
-		// Community
-		DiseaseSpreadSimulation::Community community{std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{}};
-
 		// Person
 		DiseaseSpreadSimulation::Home home{};
 		DiseaseSpreadSimulation::PersonBehavior behavior{10u, 10u, 0.f, 0.f};
@@ -74,7 +71,7 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, UpdateWithoutDisease)
 	{
-		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, nullptr, &home);
 
 		DiseaseSpreadSimulation::Infection infection;
 
@@ -92,7 +89,7 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, UpdateWithDisease)
 	{
-		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, nullptr, &home);
 
 		DiseaseSpreadSimulation::Infection infection;
 
@@ -133,7 +130,7 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, UpdateWithDeadlyDisease)
 	{
-		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, nullptr, &home);
 
 		ASSERT_TRUE(person.IsAlive());
 
@@ -162,6 +159,8 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, WillInfect)
 	{
+		// Community
+		DiseaseSpreadSimulation::Community community(0u, DiseaseSpreadSimulation::Country::USA);
 		DiseaseSpreadSimulation::Infection infection;
 		infection.Contaminate(&disease, ageGroups.at(2));
 		ASSERT_TRUE(infection.HasDisease());

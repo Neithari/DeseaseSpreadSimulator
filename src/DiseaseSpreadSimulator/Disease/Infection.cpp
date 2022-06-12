@@ -18,7 +18,7 @@ void DiseaseSpreadSimulation::Infection::Contaminate(const Disease* infection, A
 	}
 }
 
-const DiseaseSpreadSimulation::Disease* DiseaseSpreadSimulation::Infection::GetDisease()
+const DiseaseSpreadSimulation::Disease* DiseaseSpreadSimulation::Infection::GetDisease() const
 {
 	return disease;
 }
@@ -61,7 +61,7 @@ void DiseaseSpreadSimulation::Infection::AdvanceDay(Person& person)
 	}
 }
 
-bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community) const
+bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community)
 {
 	// Map the acceptance factor to the inverse of the disease spread factor
 	// Acceptance factor range is always 0 to 1
@@ -124,11 +124,6 @@ uint32_t DiseaseSpreadSimulation::Infection::GetSpreadCount() const
 	return spreadCount;
 }
 
-const DiseaseSpreadSimulation::Disease* DiseaseSpreadSimulation::Infection::GetDisease() const
-{
-	return disease;
-}
-
 void DiseaseSpreadSimulation::Infection::DiseaseCheck()
 {
 	switch (seirState)
@@ -137,7 +132,7 @@ void DiseaseSpreadSimulation::Infection::DiseaseCheck()
 		break;
 	case DiseaseSpreadSimulation::Seir_State::Exposed:
 		// Person is infectious when it was exposed to a disease and latent period is over
-		if (latentPeriod <= 0)
+		if (latentPeriod == 0)
 		{
 			hasSymptoms = disease->willDevelopSymptoms();
 			seirState = Seir_State::Infectious;
@@ -145,7 +140,7 @@ void DiseaseSpreadSimulation::Infection::DiseaseCheck()
 		break;
 	case DiseaseSpreadSimulation::Seir_State::Infectious:
 		// We switch to recovered state after we stop being infectious but we wait with flagging us recovered
-		if (daysInfectious <= 0)
+		if (daysInfectious == 0)
 		{
 			seirState = Seir_State::Recovered;
 		}

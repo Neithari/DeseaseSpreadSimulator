@@ -106,13 +106,13 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetSymptomsDevelopment(const float
 
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateDisease()
 {
-	for (bool& setupStep : setupDone)
+	// Will throw if you didn't setup everything befor trying to create the disease
+	if (!std::all_of(setupDone.begin(), setupDone.end(), [](bool step)
+			{
+				return step;
+			}))
 	{
-		// Will throw if you didn't setup everything befor trying to create the disease
-		if (!setupStep)
-		{
-			throw std::logic_error("Complete setup to create a disease!");
-		}
+		throw std::logic_error("Complete setup to create a disease!");
 	}
 
 	return Disease{name,
@@ -126,7 +126,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		symptomsDevelopment};
 }
 
-std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseaseFromFile(std::string fileName)
+std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(std::string fileName)
 {
 	using json = nlohmann::json;
 	std::ifstream diseaseJsonFile{fileName};
@@ -142,10 +142,9 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 	diseaseJsonFile >> diseaseJson;
 
 	std::vector<Disease> diseases;
-	for (auto& disease : diseaseJson)
-	{
-		diseases.push_back(disease);
-	}
+	diseases.reserve(diseaseJson.size());
+
+	std::copy(diseaseJson.begin(), diseaseJson.end(), std::back_inserter(diseases));
 
 	return diseases;
 }

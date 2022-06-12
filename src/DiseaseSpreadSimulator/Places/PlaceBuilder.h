@@ -2,14 +2,10 @@
 
 namespace DiseaseSpreadSimulation
 {
-	class PlaceBuilder
+	namespace PlaceBuilder
 	{
-	public:
-		PlaceBuilder() = default;
-
-		Places CreatePlaces(const size_t populationSize, const Country country) const;
-
-		static std::array<std::vector<Workplace*>, 5> WorkplacesBySize(const size_t populationSize, const Country country, std::vector<Workplace*> workplaces);
-		static std::array<size_t, 4> GetHomeCounts(const size_t populationSize, const Country country);
-	};
+		Places CreatePlaces(const size_t populationSize, const Country country);
+		std::array<std::vector<Workplace*>, 5> WorkplacesBySize(const size_t populationSize, const Country country, std::vector<Workplace*> workplaces);
+		std::array<size_t, 4> GetHomeCounts(const float populationSize, const Country country);
+	} // namespace PlaceBuilder
 } // namespace DiseaseSpreadSimulation

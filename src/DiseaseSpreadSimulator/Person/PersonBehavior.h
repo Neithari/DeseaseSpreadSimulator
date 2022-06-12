@@ -4,7 +4,7 @@ namespace DiseaseSpreadSimulation
 	struct PersonBehavior
 	{
 		// Intervals in days, acceptance in percent
-		PersonBehavior(uint16_t foodBuyInterval, uint16_t hardwareBuyInterval, float acceptanceFactor, float travelNeed);
+		PersonBehavior(uint16_t foodBuyIntervalIn, uint16_t hardwareBuyIntervalIn, float acceptanceFactorIn, float travelNeedIn);
 		// Construct a randomized behavior
 		PersonBehavior();
 

@@ -56,7 +56,7 @@ namespace UnitTests
 	{
 		for (size_t i = 0; i < weekdays.size() - 2; i++)
 		{
-			for (size_t i = 0; i < 24; i++)
+			for (size_t j = 0; j < 24; j++)
 			{
 				EXPECT_TRUE(time.IsWorkday());
 				time.Update();
@@ -64,7 +64,7 @@ namespace UnitTests
 		}
 		for (size_t i = weekdays.size() - 2; i < weekdays.size(); i++)
 		{
-			for (size_t i = 0; i < 24; i++)
+			for (size_t j = 0; j < 24; j++)
 			{
 				EXPECT_FALSE(time.IsWorkday());
 				time.Update();
@@ -75,9 +75,9 @@ namespace UnitTests
 	{
 		for (size_t i = 0; i < 100; i++)
 		{
-			for (size_t i = 0; i < 24; i++)
+			for (size_t hour = 0; hour < 24; hour++)
 			{
-				EXPECT_EQ(time.GetTime(), i);
+				EXPECT_EQ(time.GetTime(), hour);
 				time.Update();
 			}
 		}

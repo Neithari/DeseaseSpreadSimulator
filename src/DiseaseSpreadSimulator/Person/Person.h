@@ -75,16 +75,16 @@ namespace DiseaseSpreadSimulation
 
 	private:
 		uint32_t id;
-		Age_Group age;
-		Sex sex;
-		PersonBehavior behavior;
+		Age_Group m_age;
+		Sex m_sex;
+		PersonBehavior m_behavior;
 		bool alive = true;
 		bool isTraveling = false;
 		bool isQuarantined = false;
 
 		// Not const because we will add ourself to the places
-		Community* community;
-		Home* home;
+		Community* m_community;
+		Home* m_home;
 		Place* whereabouts;
 		Workplace* workplace = nullptr;
 		School* school = nullptr;

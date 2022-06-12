@@ -9,7 +9,7 @@ namespace DiseaseSpreadSimulation
 	class Community
 	{
 	public:
-		Community(std::vector<Person> population, Places places);
+		Community(const size_t populationSize, const Country country);
 		Community(const Community& other);
 		Community(Community&& other) noexcept;
 		Community& operator=(const Community& other);
@@ -17,7 +17,7 @@ namespace DiseaseSpreadSimulation
 		~Community() = default;
 
 		void AddPerson(Person person);
-		void RemovePerson(const Person& person);
+		void RemovePerson(const Person& personToRemove);
 
 		void AddPlaces(Places places);
 		void AddPopulation(std::vector<Person>& population);
@@ -58,8 +58,8 @@ namespace DiseaseSpreadSimulation
 		Place* TransferToPlace(Person* person, Place* place);
 
 	private:
-		std::vector<Person> m_population;
-		Places m_places;
+		std::vector<Person> m_population{};
+		Places m_places{};
 		Travel m_travelLocation{};
 		DiseaseContainment m_containmentMeasures{};
 

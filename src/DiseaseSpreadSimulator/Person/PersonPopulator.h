@@ -6,11 +6,12 @@ namespace DiseaseSpreadSimulation
 	class PersonPopulator
 	{
 	public:
-		PersonPopulator(size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
+		PersonPopulator(const size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
-		std::vector<Person> CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools);
+		std::vector<Person> CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools, Community* community = nullptr);
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
+		static float WorkingPeopleCountFloat(const size_t populationSize, const Country country);
 		static size_t SchoolKidsCount(const size_t populationSize, const Country country);
 		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes);
 		static Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount);
@@ -37,17 +38,17 @@ namespace DiseaseSpreadSimulation
 			// Create the distribution with the distributionArray as weights
 			std::discrete_distribution<size_t> distribution(distributionArray.cbegin(), distributionArray.cend());
 			return distribution(Random::generator);
-		};
+		}
 
 	private:
-		const size_t populationSize = 0;
-		bool allAssigned = false;
-		size_t leftover = 0;
-		bool lastFew = false;
-		const std::vector<Statistics::HumanDistribution> ageDistribution;
+		const size_t m_populationSize{};
+		bool m_allAssigned = false;
+		size_t m_leftover{};
+		bool m_lastFew = false;
+		const std::vector<Statistics::HumanDistribution> m_ageDistribution;
 		// Set to 1 because we use the distribution on 0 inside the constructor
-		size_t ageDistributionIndex = 1;
-		Statistics::HumanDistribution currentHumanDistribution;
-		size_t currentHumanCount = 0;
+		size_t m_ageDistributionIndex{};
+		Statistics::HumanDistribution m_currentHumanDistribution;
+		size_t m_currentHumanCount{};
 	};
 } // namespace DiseaseSpreadSimulation

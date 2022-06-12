@@ -148,6 +148,8 @@ dynamic_project_options(
   --suppress=passedByValue
   --suppress=syntaxError
   --inconclusive
+  # suppress all google test files
+  --suppress=*:*gtest/*
 )
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})

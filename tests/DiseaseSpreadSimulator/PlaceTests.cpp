@@ -12,7 +12,6 @@ namespace UnitTests
 		DiseaseSpreadSimulation::HardwareStore hardware;
 		DiseaseSpreadSimulation::Morgue morgue;
 		DiseaseSpreadSimulation::Travel travel;
-		DiseaseSpreadSimulation::Community community{std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{}};
 		DiseaseSpreadSimulation::PersonBehavior behavior;
 	};
 	TEST_F(PlaceTests, GetType)
@@ -27,7 +26,7 @@ namespace UnitTests
 	}
 	TEST_F(PlaceTests, AddPerson)
 	{
-		DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
+		DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, nullptr);
 		auto personID = person.GetID();
 		ASSERT_EQ(home.GetPersonCount(), 0);
 		home.AddPerson(&person);
@@ -36,9 +35,9 @@ namespace UnitTests
 	}
 	TEST_F(PlaceTests, GetPersonCount)
 	{
-		DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
-		DiseaseSpreadSimulation::Person person1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, &community);
-		DiseaseSpreadSimulation::Person person2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, &community);
+		DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, nullptr);
+		DiseaseSpreadSimulation::Person person1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, nullptr);
+		DiseaseSpreadSimulation::Person person2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, nullptr);
 
 		EXPECT_EQ(home.GetPersonCount(), 0);
 		home.AddPerson(&person);
@@ -50,9 +49,9 @@ namespace UnitTests
 	}
 	TEST_F(PlaceTests, RemovePerson)
 	{
-		DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
-		DiseaseSpreadSimulation::Person person1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, &community);
-		DiseaseSpreadSimulation::Person person2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, &community);
+		DiseaseSpreadSimulation::Person person(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, nullptr);
+		DiseaseSpreadSimulation::Person person1(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Male, behavior, nullptr);
+		DiseaseSpreadSimulation::Person person2(DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, behavior, nullptr);
 		auto personID = person.GetID();
 		auto personID1 = person1.GetID();
 		auto personID2 = person2.GetID();
