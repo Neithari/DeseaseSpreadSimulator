@@ -1,4 +1,5 @@
 #pragma once
+#include "Person/Person.h"
 
 namespace DiseaseSpreadSimulation
 {

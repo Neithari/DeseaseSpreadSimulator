@@ -1,8 +1,4 @@
-//
-// pch.h
-// Header for standard system include files.
-//
-
+// Precompiled headers go in here
 #pragma once
 
 // Google test

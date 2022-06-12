@@ -1,5 +1,6 @@
 #include "Disease/Disease.h"
 #include "IDGenerator/IDGenerator.h"
+#include "RandomNumbers.h"
 
 DiseaseSpreadSimulation::Disease::Disease(std::string name,
 	const std::pair<uint16_t, uint16_t> incubationPeriod,

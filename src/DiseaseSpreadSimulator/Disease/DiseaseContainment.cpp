@@ -1,4 +1,5 @@
 #include "Disease/DiseaseContainment.h"
+#include "Places/Community.h"
 
 void DiseaseSpreadSimulation::DiseaseContainment::Quarantine(Person* person)
 {

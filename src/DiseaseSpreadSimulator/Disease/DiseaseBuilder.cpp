@@ -1,4 +1,6 @@
 #include "Disease/DiseaseBuilder.h"
+#include <fstream>
+#include <iostream>
 
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateCorona()
 {

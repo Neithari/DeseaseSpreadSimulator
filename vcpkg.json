@@ -4,10 +4,6 @@
   "builtin-baseline": "f78f4440df86358575dea65e748a39fdad41eb85",
   "dependencies": [
     {
-      "name": "sfml",
-      "version>=": "2.5.1#13"
-    },
-    {
       "name": "imgui",
       "version>=": "1.87#1",
       "features": [ "docking-experimental" ]
