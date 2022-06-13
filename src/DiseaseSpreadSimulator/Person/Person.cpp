@@ -1,5 +1,9 @@
 #include "Person/Person.h"
+#include "Disease/Disease.h"
 #include "IDGenerator/IDGenerator.h"
+#include "Places/Community.h"
+#include "Disease/DiseaseContainment.h"
+#include "RandomNumbers.h"
 
 DiseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
 	: id(IDGenerator::IDGenerator<Person>::GetNextID()),

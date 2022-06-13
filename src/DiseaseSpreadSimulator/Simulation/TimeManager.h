@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+#include "Enums.h"
 
 namespace DiseaseSpreadSimulation
 {

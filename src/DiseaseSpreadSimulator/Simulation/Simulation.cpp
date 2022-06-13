@@ -1,5 +1,9 @@
 #include "Simulation/Simulation.h"
+#include <algorithm>
+#include <execution>
+#include "fmt/core.h"
 #include "Disease/DiseaseBuilder.h"
+#include "RandomNumbers.h"
 
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	: m_withPrint(withPrint),

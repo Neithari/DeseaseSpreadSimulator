@@ -1,7 +1,12 @@
 #pragma once
+#include <array>
+#include <vector>
+#include "Places/Places.h"
 
 namespace DiseaseSpreadSimulation
 {
+	enum class Country;
+
 	namespace PlaceBuilder
 	{
 		Places CreatePlaces(const size_t populationSize, const Country country);

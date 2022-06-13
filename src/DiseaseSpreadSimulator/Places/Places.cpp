@@ -1,5 +1,7 @@
 #include "Places/Places.h"
+#include "Enums.h"
 #include "IDGenerator/IDGenerator.h"
+#include "Person/Person.h"
 
 uint32_t DiseaseSpreadSimulation::Place::GetID() const
 {

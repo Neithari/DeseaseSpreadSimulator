@@ -1,5 +1,7 @@
 #include "Person/PersonPopulator.h"
+#include "Person/Person.h"
 #include "Person/PersonBehavior.h"
+#include "Places/Community.h"
 #include "Places/PlaceBuilder.h"
 
 DiseaseSpreadSimulation::PersonPopulator::PersonPopulator(const size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)

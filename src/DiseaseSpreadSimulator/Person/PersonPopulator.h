@@ -1,8 +1,16 @@
 #pragma once
 #include <random>
+#include <vector>
+#include "Enums.h"
+#include "Statistics.h"
+#include "Places/Places.h"
+#include "RandomNumbers.h"
 
 namespace DiseaseSpreadSimulation
 {
+	class Person;
+	class Community;
+
 	class PersonPopulator
 	{
 	public:

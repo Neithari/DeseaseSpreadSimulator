@@ -1,4 +1,7 @@
 #include "Person/PersonBehavior.h"
+#include <array>
+#include <random>
+#include "RandomNumbers.h"
 
 DiseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint16_t foodBuyIntervalIn, uint16_t hardwareBuyIntervalIn, float acceptanceFactorIn, float travelNeedIn)
 	: foodBuyInterval(foodBuyIntervalIn),

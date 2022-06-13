@@ -1,10 +1,14 @@
 #pragma once
+#include <cstdint>
+#include <string>
+#include "Enums.h"
+#include "Disease/Infection.h"
 #include "Places/Places.h"
-#include "Simulation/TimeManager.h"
 #include "Person/PersonBehavior.h"
 
 namespace DiseaseSpreadSimulation
 {
+	class Disease;
 	class Community;
 	class DiseaseContainment;
 

@@ -1,5 +1,12 @@
 #pragma once
+#include <cstdint>
+#include <vector>
+#include <shared_mutex>
+#include "Enums.h"
 #include "Simulation/TimeManager.h"
+#include "Person/Person.h"
+#include "Disease/Disease.h"
+#include "Places/Community.h"
 
 namespace DiseaseSpreadSimulation
 {

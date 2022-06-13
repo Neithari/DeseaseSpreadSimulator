@@ -1,10 +1,15 @@
 #pragma once
+#include <optional>
+#include <vector>
 #include <algorithm>
 #include <random>
+#include <shared_mutex>
 #include "Disease/DiseaseContainment.h"
+#include "Places/Places.h"
 
 namespace DiseaseSpreadSimulation
 {
+	class Person;
 
 	class Community
 	{
@@ -54,7 +59,7 @@ namespace DiseaseSpreadSimulation
 		void TestStation(Person* person);
 
 	private:
-		bool TestPersonForInfection(const Person* person) const;
+		static bool TestPersonForInfection(const Person* person);
 		Place* TransferToPlace(Person* person, Place* place);
 
 	private:

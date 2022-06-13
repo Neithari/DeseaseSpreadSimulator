@@ -1,6 +1,7 @@
 #pragma once
 #include <concepts>
 #include <random>
+#include <stdexcept>
 
 namespace Random
 {
@@ -17,7 +18,7 @@ namespace Random
 		}
 
 		using size_type = std::vector<T>::size_type;
-		std::uniform_int_distribution<size_type> distribution((size_type)0, vector.size() - (size_type)1);
+		std::uniform_int_distribution<size_type> distribution(static_cast<size_type>(0), vector.size() - static_cast<size_type>(1));
 
 		return distribution(generator);
 	};
@@ -42,7 +43,7 @@ namespace Random
 	template <std::floating_point T>
 	static auto Percent()
 	{
-		return UniformFloatRange((T)0.0, (T)1.0);
+		return UniformFloatRange(static_cast<T>(0.0), static_cast<T>(1.0));
 	}
 
 	template <typename T, typename = typename std::enable_if_t<std::is_floating_point<T>::value>>

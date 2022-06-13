@@ -1,6 +1,8 @@
 #pragma once
+#include <cstdint>
 #include <vector>
 #include <array>
+#include "Enums.h"
 
 namespace DiseaseSpreadSimulation
 {
@@ -8,12 +10,12 @@ namespace DiseaseSpreadSimulation
 	{
 		struct HumanDistribution
 		{
-			HumanDistribution(Age_Group ageGroup, Sex sex, float percent)
-				: ageGroup(ageGroup),
-				  sex(sex),
-				  percent(percent){};
+			HumanDistribution(Age_Group inAgeGroup, Sex inSex, float inPercent)
+				: ageGroup(inAgeGroup),
+				  sex(inSex),
+				  percent(inPercent){};
 
-			inline bool operator==(const HumanDistribution& rhs)
+			inline bool operator==(const HumanDistribution& rhs) const
 			{
 				return ageGroup == rhs.ageGroup && sex == rhs.sex;
 			};
@@ -26,11 +28,11 @@ namespace DiseaseSpreadSimulation
 		struct HouseholdComposition
 		{
 			// All in percent from 0.0 - 1.0
-			constexpr HouseholdComposition(float oneMember, float twoToThreeMembers, float fourToFiveMembers, float sixPlusMembers)
-				: oneMember(oneMember),
-				  twoToThreeMembers(twoToThreeMembers),
-				  fourToFiveMembers(fourToFiveMembers),
-				  sixPlusMembers(sixPlusMembers){};
+			constexpr HouseholdComposition(float single, float twoToThree, float fourToFive, float sixPlus)
+				: oneMember(single),
+				  twoToThreeMembers(twoToThree),
+				  fourToFiveMembers(fourToFive),
+				  sixPlusMembers(sixPlus){};
 
 			const float oneMember;
 			const float twoToThreeMembers;
@@ -70,7 +72,7 @@ namespace DiseaseSpreadSimulation
 
 		// NCES - Public elementary and secondary school stats -> https://nces.ed.gov/programs/digest/d20/tables/dt20_214.40.asp
 		static constexpr uint16_t averageSchoolSizeUSA{527};
-		// Baden-Wuertemberg - Schüler und Schulen nach Schularten -> https://www.statistik-bw.de/BildungKultur/SchulenAllgem/1301518x.tab?R=LA
+		// Baden-Wuertemberg - Schï¿½ler und Schulen nach Schularten -> https://www.statistik-bw.de/BildungKultur/SchulenAllgem/1301518x.tab?R=LA
 		// Average per school - schoolkids / school count rounded
 		static constexpr uint16_t averageSchoolSizeGermany{236};
 

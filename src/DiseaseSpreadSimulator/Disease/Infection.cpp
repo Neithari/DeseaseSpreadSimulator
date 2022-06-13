@@ -1,4 +1,7 @@
 #include "Infection.h"
+#include "Enums.h"
+#include "RandomNumbers.h"
+#include "Places/Community.h"
 
 void DiseaseSpreadSimulation::Infection::Contaminate(const Disease* infection, Age_Group age)
 {

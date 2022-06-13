@@ -1,6 +1,8 @@
 #include "Places/Community.h"
 #include "Places/PlaceBuilder.h"
+#include "Person/Person.h"
 #include "Person/PersonPopulator.h"
+#include "RandomNumbers.h"
 
 DiseaseSpreadSimulation::Community::Community(const size_t populationSize, const Country country)
 {
@@ -256,7 +258,7 @@ void DiseaseSpreadSimulation::Community::TestStation(Person* person)
 	}
 }
 
-bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* person) const
+bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* person)
 {
 	if (!person->HasDisease())
 	{

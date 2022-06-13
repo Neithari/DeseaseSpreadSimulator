@@ -1,4 +1,7 @@
 #pragma once
+#include <cstdint>
+#include <atomic>
+
 namespace IDGenerator
 {
 	// Get a ascending id separated for every type

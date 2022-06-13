@@ -1,3 +1,4 @@
+#include <cstdint>
 #include "Simulation/Simulation.h"
 
 int main()

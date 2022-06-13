@@ -1,4 +1,6 @@
 #include "Places/PlaceBuilder.h"
+#include <cmath>
+#include <Enums.h>
 #include "Person/PersonPopulator.h"
 
 DiseaseSpreadSimulation::Places DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(const size_t populationSize, const Country country)
@@ -102,9 +104,9 @@ std::array<size_t, 4> DiseaseSpreadSimulation::PlaceBuilder::GetHomeCounts(const
 	// To get the person count we multiply the population size with the percentage of the distribution
 	// Values are rounded at the end and cast to size_t
 	return {
-		static_cast<size_t>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).oneMember)),                                    // One member homes
-		static_cast<size_t>(static_cast<float>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers)) / 2.5F), // Two to three member homes
-		static_cast<size_t>(static_cast<float>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers)) / 4.5F), // Four to five member homes
-		static_cast<size_t>(static_cast<float>(llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers)) / 6.5F)     // Six and more member homes
+		static_cast<size_t>(std::llround(populationSize * PersonPopulator::GetHouseholdDistribution(country).oneMember)),               // One member homes
+		static_cast<size_t>(std::roundf(populationSize * PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers) / 2.5F), // Two to three member homes
+		static_cast<size_t>(std::roundf(populationSize * PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers) / 4.5F), // Four to five member homes
+		static_cast<size_t>(std::roundf(populationSize * PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers) / 6.5F)     // Six and more member homes
 	};
 }

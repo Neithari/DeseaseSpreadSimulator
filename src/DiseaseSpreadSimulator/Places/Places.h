@@ -1,9 +1,12 @@
 #pragma once
+#include <cstdint>
+#include <vector>
+#include <mutex>
 
 namespace DiseaseSpreadSimulation
 {
-	// Forward declare Person
 	class Person;
+	enum class Place_Type;
 
 	class Place
 	{
@@ -158,7 +161,7 @@ namespace DiseaseSpreadSimulation
 				dest.push_back(std::move(src.back()));
 				src.pop_back();
 			}
-		};
+		}
 	public:
 		std::vector<Home> homes;
 		std::vector<Supply> supplyStores;

@@ -6,7 +6,7 @@ void DiseaseSpreadSimulation::TimeManager::Update()
 	dayTime++;
 	if (dayTime == 24)
 	{
-		dayTime = 0;
+		dayTime = 0u;
 		currentDay = GetNextDay();
 
 		if (currentDay == Day::Saturday || currentDay == Day::Sunday)

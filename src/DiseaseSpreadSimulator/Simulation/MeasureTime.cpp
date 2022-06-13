@@ -1,4 +1,5 @@
 #include "Simulation/MeasureTime.h"
+#include "fmt/core.h"
 
 Measure::MeasureTime::MeasureTime(std::string measureName)
 	: m_begin(std::chrono::high_resolution_clock::now()),
