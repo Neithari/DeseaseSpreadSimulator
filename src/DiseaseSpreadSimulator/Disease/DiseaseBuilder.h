@@ -14,12 +14,12 @@ namespace DiseaseSpreadSimulation
 
 		// Disease setup functions
 		void SetDiseaseName(std::string diseaseName);
-		void SetIncubationPeriod(const uint16_t minDays, const uint16_t maxDays);
-		void SetDaysInfectious(const uint16_t days);
-		void SetDiseaseDuration(const uint16_t minDays, const uint16_t maxDays);
+		void SetIncubationPeriod(const uint32_t minDays, const uint32_t maxDays);
+		void SetDaysInfectious(const uint32_t days);
+		void SetDiseaseDuration(const uint32_t minDays, const uint32_t maxDays);
 		// Data in % between 0-1 and for age groups of 10 years, eg. 0-9,10-19,...,80+
 		void SetMortalityByAge(std::vector<float> mortality);
-		void SetDaysTillDeath(const uint16_t min, const uint16_t max);
+		void SetDaysTillDeath(const uint32_t min, const uint32_t max);
 		void SetSpreadFactor(const float minFactor, const float maxFactor);
 		void SetTestAccuracy(const float accuracy);
 		void SetSymptomsDevelopment(const float minPercent, const float maxPercent);
@@ -34,11 +34,11 @@ namespace DiseaseSpreadSimulation
 
 	private:
 		std::string name{};
-		std::pair<uint16_t, uint16_t> incubationPeriod{};
-		uint16_t daysInfectious{};
-		std::pair<uint16_t, uint16_t> diseaseDurationRange{};
+		std::pair<uint32_t, uint32_t> incubationPeriod{};
+		uint32_t daysInfectious{};
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{};
 		std::vector<float> mortalityByAge{};
-		std::pair<uint16_t, uint16_t> daysTillDeathRange{};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{};
 		std::pair<float, float> spreadFactor{};
 		float testAccuracy{};
 		std::pair<float, float> symptomsDevelopment{};

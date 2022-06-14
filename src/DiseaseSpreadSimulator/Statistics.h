@@ -71,10 +71,10 @@ namespace DiseaseSpreadSimulation
 		static constexpr HouseholdComposition householdGermany{0.3953f, 0.47f, 0.1271f, 0.0076f};
 
 		// NCES - Public elementary and secondary school stats -> https://nces.ed.gov/programs/digest/d20/tables/dt20_214.40.asp
-		static constexpr uint16_t averageSchoolSizeUSA{527};
+		static constexpr uint32_t averageSchoolSizeUSA{527};
 		// Baden-Wuertemberg - Sch�ler und Schulen nach Schularten -> https://www.statistik-bw.de/BildungKultur/SchulenAllgem/1301518x.tab?R=LA
 		// Average per school - schoolkids / school count rounded
-		static constexpr uint16_t averageSchoolSizeGermany{236};
+		static constexpr uint32_t averageSchoolSizeGermany{236};
 
 		static constexpr auto AverageSchoolSize(Country country)
 		{

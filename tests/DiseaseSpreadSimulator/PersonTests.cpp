@@ -6,11 +6,11 @@ namespace UnitTests
 	{
 	protected:
 		std::string name = "a";
-		std::pair<uint16_t, uint16_t> incubationPeriod{1, 1};
-		uint16_t daysInfectious = 1;
-		std::pair<uint16_t, uint16_t> diseaseDurationRange{2, 10};
+		std::pair<uint32_t, uint32_t> incubationPeriod{1u, 1u};
+		uint32_t daysInfectious = 1;
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{2u, 10u};
 		std::vector<float> mortalityByAge{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f};
-		std::pair<uint16_t, uint16_t> daysTillDeathRange{1, 2};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 2u};
 		std::pair<float, float> spreadFactor{1.f, 1.f};
 		float testAccuracy{1.0f};
 		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
@@ -25,12 +25,12 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 		DiseaseSpreadSimulation::TimeManager time;
 		// Values from Person.h
-		static constexpr uint16_t shopOpenTime = 7u;
-		static constexpr uint16_t shopCloseTime = 20u;
-		static constexpr uint16_t workStartTime = 8u;
-		static constexpr uint16_t workFinishTime = 17u;
-		static constexpr uint16_t schoolStartTime = 8u;
-		static constexpr uint16_t schoolFinishTime = 15u;
+		static constexpr uint32_t shopOpenTime = 7u;
+		static constexpr uint32_t shopCloseTime = 20u;
+		static constexpr uint32_t workStartTime = 8u;
+		static constexpr uint32_t workFinishTime = 17u;
+		static constexpr uint32_t schoolStartTime = 8u;
+		static constexpr uint32_t schoolFinishTime = 15u;
 
 		void InitCommunity()
 		{
@@ -70,7 +70,7 @@ namespace UnitTests
 		Person person2(Age_Group::UnderThirty, Sex::Female, foodBuyBehavior, &community, &homes.back());
 		ASSERT_EQ(person2.GetWhereabouts(), person2.GetHome());
 
-		uint16_t buyEndTime = 0;
+		uint32_t buyEndTime = 0;
 		for (auto i = shopOpenTime; i <= shopCloseTime; i++)
 		{
 			person2.Update(i, true, false);
@@ -131,7 +131,7 @@ namespace UnitTests
 		Person person2(Age_Group::UnderThirty, Sex::Female, hardwareBuyBehavior, &community, &homes.back());
 		ASSERT_EQ(person2.GetWhereabouts(), person2.GetHome());
 
-		uint16_t buyEndTime = 0;
+		uint32_t buyEndTime = 0;
 		for (auto i = shopOpenTime; i <= shopCloseTime; i++)
 		{
 			person2.Update(i, true, false);
@@ -253,7 +253,7 @@ namespace UnitTests
 		// Check that the person stays in morgue
 		for (size_t i = 0; i < 1000; i++)
 		{
-			for (uint16_t h = 0; h < 24; h++)
+			for (uint32_t h = 0; h < 24; h++)
 			{
 				person.Update(h, true, true);
 				ASSERT_EQ(person.GetWhereabouts()->GetType(), Place_Type::Morgue);

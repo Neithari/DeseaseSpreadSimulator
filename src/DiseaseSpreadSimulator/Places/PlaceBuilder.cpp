@@ -1,6 +1,8 @@
 #include "Places/PlaceBuilder.h"
 #include <cmath>
-#include <Enums.h>
+#include <numeric>
+#include "Enums.h"
+#include "Statistics.h"
 #include "Person/PersonPopulator.h"
 
 DiseaseSpreadSimulation::Places DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(const size_t populationSize, const Country country)
@@ -15,7 +17,7 @@ DiseaseSpreadSimulation::Places DiseaseSpreadSimulation::PlaceBuilder::CreatePla
 	// Get the person count per household category and create the correct number of homes
 	// Sum the home counts to create the needed number of homes
 	auto homeCounts = GetHomeCounts(static_cast<float>(populationSize), country);
-	size_t sum = std::accumulate(homeCounts.begin(), homeCounts.end(), 0u);
+	size_t sum = std::accumulate(homeCounts.begin(), homeCounts.end(), 0ULL);
 
 	places.homes.reserve(sum);
 	for (size_t i = 0; i < sum; i++)

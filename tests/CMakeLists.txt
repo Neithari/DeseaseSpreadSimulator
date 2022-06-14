@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 
 # Get the current main branch of googletest and make it available
 include(FetchContent)

@@ -19,7 +19,7 @@ namespace DiseaseSpreadSimulation
 		Day GetCurrentDay() const;
 		bool IsWorkday() const;
 		// Get the time in 24h format
-		uint16_t GetTime() const;
+		uint32_t GetTime() const;
 
 	private:
 		Day GetNextDay() const;
@@ -30,6 +30,6 @@ namespace DiseaseSpreadSimulation
 
 		Day currentDay = Day::Monday;
 		bool isWorkday = true;
-		uint16_t dayTime = 0u;
+		uint32_t dayTime = 0u;
 	};
 } // namespace DiseaseSpreadSimulation

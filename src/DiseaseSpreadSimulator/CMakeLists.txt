@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -26,7 +26,7 @@ set(SOURCES
 )
 
 # Add a library with the above sources
-add_library(${CMAKE_PROJECT_NAME} SHARED ${SOURCES})
+add_library(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 # Add the current folder to the include directories
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC

@@ -21,7 +21,7 @@ namespace DiseaseSpreadSimulation
 		void Resume();
 
 	private:
-		void SetupEverything(uint16_t communityCount);
+		void SetupEverything(uint32_t communityCount);
 		static void InfectRandomPerson(const Disease* disease, std::vector<Person>& population);
 		void SetupTravelInfecter(const Disease* disease, Community* communitie);
 

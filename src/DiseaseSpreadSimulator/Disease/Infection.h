@@ -39,10 +39,10 @@ namespace DiseaseSpreadSimulation
 		uint32_t spreadCount = 0;
 
 		const Disease* disease = nullptr;
-		uint16_t latentPeriod = 0;
-		uint16_t daysInfectious = 0;
-		uint16_t daysTillCured = 0;
-		uint16_t daysToLive = 0;
+		uint32_t latentPeriod = 0;
+		uint32_t daysInfectious = 0;
+		uint32_t daysTillCured = 0;
+		uint32_t daysToLive = 0;
 		bool isFatal = false;
 		float spreadFactor = 0.f;
 	};

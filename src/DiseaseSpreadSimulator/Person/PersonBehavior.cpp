@@ -3,7 +3,7 @@
 #include <random>
 #include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint16_t foodBuyIntervalIn, uint16_t hardwareBuyIntervalIn, float acceptanceFactorIn, float travelNeedIn)
+DiseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint32_t foodBuyIntervalIn, uint32_t hardwareBuyIntervalIn, float acceptanceFactorIn, float travelNeedIn)
 	: foodBuyInterval(foodBuyIntervalIn),
 	  hardwareBuyInterval(hardwareBuyIntervalIn),
 	  acceptanceFactor(acceptanceFactorIn),

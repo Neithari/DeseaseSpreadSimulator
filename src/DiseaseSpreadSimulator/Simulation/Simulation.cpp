@@ -248,7 +248,7 @@ bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
 	return true;
 }
 
-void DiseaseSpreadSimulation::Simulation::SetupEverything(uint16_t communityCount)
+void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCount)
 {
 	DiseaseBuilder dbuilder;
 	//diseases.push_back(dbuilder.CreateCorona());

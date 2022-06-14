@@ -3,11 +3,11 @@
 #include "RandomNumbers.h"
 
 DiseaseSpreadSimulation::Disease::Disease(std::string name,
-	const std::pair<uint16_t, uint16_t> incubationPeriod,
-	const uint16_t daysInfectious,
-	std::pair<uint16_t, uint16_t> diseaseDurationRange,
+	const std::pair<uint32_t, uint32_t> incubationPeriod,
+	const uint32_t daysInfectious,
+	std::pair<uint32_t, uint32_t> diseaseDurationRange,
 	std::vector<float> mortalityByAge,
-	std::pair<uint16_t, uint16_t> daysTillDeathRange,
+	std::pair<uint32_t, uint32_t> daysTillDeathRange,
 	std::pair<float, float> spreadFactor,
 	float testAccuracy,
 	std::pair<float, float> symptomsDevelopment)
@@ -29,19 +29,19 @@ const std::string& DiseaseSpreadSimulation::Disease::GetDiseaseName() const
 	return m_name;
 }
 
-uint16_t DiseaseSpreadSimulation::Disease::IncubationPeriod() const
+uint32_t DiseaseSpreadSimulation::Disease::IncubationPeriod() const
 {
 	/// TODO: Implement a lognormal distribution for random number generation
 
 	return Random::UniformIntRange(m_incubationPeriod.first, m_incubationPeriod.second);
 }
 
-uint16_t DiseaseSpreadSimulation::Disease::DaysInfectious() const
+uint32_t DiseaseSpreadSimulation::Disease::DaysInfectious() const
 {
 	return m_daysInfectious;
 }
 
-float DiseaseSpreadSimulation::Disease::GetMortalityByAge(uint16_t age) const
+float DiseaseSpreadSimulation::Disease::GetMortalityByAge(uint32_t age) const
 {
 	// any number devided by 10 will result the tens and we switch on them to get the Age_Group
 	// everything above 7 is Age_Group::AboveEighty
@@ -82,12 +82,12 @@ float DiseaseSpreadSimulation::Disease::GetMortalityByAgeGroup(Age_Group age) co
 	return m_mortalityByAge.at(static_cast<size_t>(age));
 }
 
-uint16_t DiseaseSpreadSimulation::Disease::GetDiseaseDuration() const
+uint32_t DiseaseSpreadSimulation::Disease::GetDiseaseDuration() const
 {
 	return Random::UniformIntRange(m_durationRange.first, m_durationRange.second);
 }
 
-uint16_t DiseaseSpreadSimulation::Disease::DaysTillDeath() const
+uint32_t DiseaseSpreadSimulation::Disease::DaysTillDeath() const
 {
 	return Random::UniformIntRange(m_daysTillDeathRange.first, m_daysTillDeathRange.second);
 }

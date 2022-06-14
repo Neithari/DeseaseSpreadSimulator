@@ -35,7 +35,7 @@ DiseaseSpreadSimulation::Day DiseaseSpreadSimulation::TimeManager::GetCurrentDay
 	return currentDay;
 }
 
-uint16_t DiseaseSpreadSimulation::TimeManager::GetTime() const
+uint32_t DiseaseSpreadSimulation::TimeManager::GetTime() const
 {
 	return dayTime;
 }

@@ -20,7 +20,7 @@ DiseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior b
 	}
 }
 
-void DiseaseSpreadSimulation::Person::Update(uint16_t currentTime, bool isWorkday, bool isNewDay)
+void DiseaseSpreadSimulation::Person::Update(uint32_t currentTime, bool isWorkday, bool isNewDay)
 {
 	CheckNextMove(currentTime, isWorkday, isNewDay);
 	infection.Update(*this, isNewDay);
@@ -184,7 +184,7 @@ void DiseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 	m_behavior = newBehavior;
 }
 
-void DiseaseSpreadSimulation::Person::CheckNextMove(uint16_t currentTime, bool& isWorkday, bool isNewDay)
+void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& isWorkday, bool isNewDay)
 {
 	// Send the person to the morgue if not alive
 	if (!alive)
@@ -383,7 +383,7 @@ void DiseaseSpreadSimulation::Person::PrepareShopping()
 	}
 }
 
-void DiseaseSpreadSimulation::Person::GoSupplyShopping(uint16_t currentTime)
+void DiseaseSpreadSimulation::Person::GoSupplyShopping(uint32_t currentTime)
 {
 	whereabouts = m_community->TransferToSupplyStore(this);
 
@@ -392,7 +392,7 @@ void DiseaseSpreadSimulation::Person::GoSupplyShopping(uint16_t currentTime)
 	buyFinishTime = currentTime + 1;
 }
 
-void DiseaseSpreadSimulation::Person::GoHardwareShopping(uint16_t currentTime)
+void DiseaseSpreadSimulation::Person::GoHardwareShopping(uint32_t currentTime)
 {
 	whereabouts = m_community->TransferToHardwareStore(this);
 
