@@ -59,7 +59,7 @@ namespace UnitTests
 		};
 		class Derived : public Base
 		{
-		private:
+		public:
 			int d;
 		};
 		for (size_t i = 0; i < 10; i++)

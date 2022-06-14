@@ -56,8 +56,6 @@ namespace DiseaseSpreadSimulation
 		uint64_t elapsedDays{};
 		// We start with the first hour
 		uint64_t elapsedHours{1u};
-		uint16_t lastTime{};
-		Day lastDay = Day::Monday;
 		bool isNewDay = false;
 	};
 } // namespace DiseaseSpreadSimulation

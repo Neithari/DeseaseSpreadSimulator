@@ -127,7 +127,7 @@ DiseaseSpreadSimulation::Person DiseaseSpreadSimulation::PersonPopulator::GetNew
 size_t DiseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t populationSize, const Country country)
 {
 	// TODO: Need a better way to get the working people. Not in sync with PersonPopulator::GetNewPerson()
-	auto countryDistribution = std::move(GetCountryDistribution(country));
+	auto countryDistribution = GetCountryDistribution(country);
 	// Sum up every human distribution inside working age (>20 and <70).
 	return std::accumulate(countryDistribution.begin(), countryDistribution.end(), static_cast<size_t>(0), [populationSize](size_t people, const DiseaseSpreadSimulation::Statistics::HumanDistribution& humanDistribution)
 		{
@@ -146,7 +146,7 @@ float DiseaseSpreadSimulation::PersonPopulator::WorkingPeopleCountFloat(const si
 
 size_t DiseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t populationSize, const Country country)
 {
-	auto countryDistribution = std::move(GetCountryDistribution(country));
+	auto countryDistribution = GetCountryDistribution(country);
 	// Sum up every human distribution inside school age (<20).
 	return std::accumulate(countryDistribution.begin(), countryDistribution.end(), static_cast<size_t>(0), [populationSize](size_t people, const DiseaseSpreadSimulation::Statistics::HumanDistribution& humanDistribution)
 		{
@@ -189,10 +189,10 @@ size_t DiseaseSpreadSimulation::PersonPopulator::DistributionToCountHelper(size_
 DiseaseSpreadSimulation::Home* DiseaseSpreadSimulation::PersonPopulator::AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount)
 {
 	// Create the distribution
-	std::array<double, 4> distributionArray{PersonPopulator::GetHouseholdDistribution(country).oneMember,
-		PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers,
-		PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers,
-		PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers};
+	std::array<double, 4> distributionArray{static_cast<double>(PersonPopulator::GetHouseholdDistribution(country).oneMember),
+		static_cast<double>(PersonPopulator::GetHouseholdDistribution(country).twoToThreeMembers),
+		static_cast<double>(PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers),
+		static_cast<double>(PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers)};
 
 	size_t distIndex = GetDistributedArrayIndex(distributionArray);
 	// Get a new index until the vector is not empty or the person is under twenty and the index is for one member homes

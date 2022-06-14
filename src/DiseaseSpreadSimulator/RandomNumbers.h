@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <concepts>
 #include <random>
 #include <stdexcept>
@@ -17,7 +18,7 @@ namespace Random
 			throw(std::out_of_range("Vector is Empty!"));
 		}
 
-		using size_type = std::vector<T>::size_type;
+		typedef typename std::vector<T>::size_type size_type;
 		std::uniform_int_distribution<size_type> distribution(static_cast<size_type>(0), vector.size() - static_cast<size_type>(1));
 
 		return distribution(generator);

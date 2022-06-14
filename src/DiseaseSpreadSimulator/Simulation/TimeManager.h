@@ -25,8 +25,6 @@ namespace DiseaseSpreadSimulation
 		Day GetNextDay() const;
 
 	private:
-		bool pauseTime = true;
-
 		// In simulation hours. 1 hour per update
 		uint64_t simulationTime = 0u;
 

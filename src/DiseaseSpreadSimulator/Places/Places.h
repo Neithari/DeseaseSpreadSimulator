@@ -39,7 +39,8 @@ namespace DiseaseSpreadSimulation
 		Place(uint32_t id);
 		Place(const Place& other);
 		Place(Place&& other) noexcept;
-		Place& operator=(const Place& other) = default;
+		// Deleted here because a cast to abstract class is not allowed and we only need the derived versions
+		Place& operator=(const Place& other) = delete;
 		Place& operator=(Place&& other) noexcept;
 
 	protected:

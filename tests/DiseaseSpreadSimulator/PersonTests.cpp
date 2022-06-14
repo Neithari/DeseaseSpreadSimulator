@@ -706,7 +706,7 @@ namespace UnitTests
 	size_t SumWorkingPeople(size_t populationSize, const DiseaseSpreadSimulation::Country& country)
 	{
 		using namespace DiseaseSpreadSimulation;
-		auto countryDistribution = std::move(PersonPopulator::GetCountryDistribution(country));
+		auto countryDistribution = PersonPopulator::GetCountryDistribution(country);
 		size_t workingPeople{};
 
 		// For every human distribution in country distribution...
