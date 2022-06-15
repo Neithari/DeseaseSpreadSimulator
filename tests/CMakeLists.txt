@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
 
+set (THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+if(NOT MSVC)
+  set(PThreadLib -pthread)
+endif()
+
 # Get the current main branch of googletest and make it available
 include(FetchContent)
 

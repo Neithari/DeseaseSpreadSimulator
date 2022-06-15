@@ -49,12 +49,8 @@ string(
   COMPARE EQUAL
           "${CMAKE_SOURCE_DIR}"
           "${PROJECT_SOURCE_DIR}"
-          PROJECT_IS_TOP_LEVEL)
-if(PROJECT_IS_TOP_LEVEL)
-  # Consider the CTest module, which creates targets and options!
-  # Only needed if you want to enable submissions to a CDash server.
-  include(GoogleTest)
-endif()
+          PROJECT_IS_TOP_LEVEL
+  )
 
 get_property(BUILDING_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(BUILDING_MULTI_CONFIG)
@@ -76,7 +72,7 @@ if(BUILDING_MULTI_CONFIG)
     set(CMAKE_CONFIGURATION_TYPES
         ${CMAKE_BUILD_TYPE}
         CACHE STRING "Enabled build types" FORCE
-      )
+    )
   endif()
 endif()
 
@@ -190,7 +186,7 @@ elseif(NOT PROJECT_IS_TOP_LEVEL)
   return()
 endif()
 
-# Add other targets that you want installed here, be default we just package the one executable
+# Add other targets that you want installed here, by default we just package the one executable
 # we know we want to ship
 package_project(TARGETS ${CMAKE_PROJECT_NAME} project_options project_warnings
   # FIXME: this does not work! CK
