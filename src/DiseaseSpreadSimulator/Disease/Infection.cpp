@@ -57,7 +57,7 @@ void DiseaseSpreadSimulation::Infection::AdvanceDay(Person& person)
 	if (isFatal)
 	{
 		// Decrement daysToLive and if it reached 0 the person will die
-		if (--daysToLive <= 0)
+		if (--daysToLive == 0)
 		{
 			person.Kill();
 		}

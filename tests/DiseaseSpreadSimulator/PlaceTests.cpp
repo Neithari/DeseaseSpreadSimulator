@@ -1,4 +1,11 @@
-#include "pch.h"
+#include <gtest/gtest.h>
+#include <cstdint>
+#include <vector>
+#include "Enums.h"
+#include "Places/Places.h"
+#include "Person/Person.h"
+#include "Person/PersonBehavior.h"
+
 
 namespace UnitTests
 {

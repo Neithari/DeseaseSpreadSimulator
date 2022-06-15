@@ -1,6 +1,8 @@
-#include "pch.h"
-
-// Includes to be tested
+#include <gtest/gtest.h>
+#include <vector>
+#include <stdexcept>
+#include "IDGenerator/IDGenerator.h"
+#include "RandomNumbers.h"
 
 namespace UnitTests
 {

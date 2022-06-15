@@ -2,20 +2,22 @@
 #pragma once
 
 // Google test
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 // Used during testing
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <shared_mutex>
+#include <cstdint>
+#include <vector>
+#include <array>
 #include <map>
-#include <algorithm>
+#include <string>
+#include <optional>
+#include <utility>
+#include <thread>
+#include <shared_mutex>
 #include <stdexcept>
-#include <numeric>
 
 // Extern libs
-#include "nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 // Includes to be tested
 // DiseaseSpreadSimulator

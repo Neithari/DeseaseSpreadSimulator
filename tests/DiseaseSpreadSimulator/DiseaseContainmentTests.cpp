@@ -1,4 +1,17 @@
-#include "pch.h"
+#include <gtest/gtest.h>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <utility>
+#include "Enums.h"
+#include "Places/Community.h"
+#include "Places/Places.h"
+#include "Person/Person.h"
+#include "Person/PersonBehavior.h"
+#include "Simulation/TimeManager.h"
+#include "Disease/Disease.h"
+#include "Disease/DiseaseContainment.h"
+
 
 namespace UnitTests
 {

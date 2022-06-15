@@ -1,4 +1,11 @@
-#include "pch.h"
+#include <gtest/gtest.h>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <utility>
+#include "Enums.h"
+#include "Disease/Disease.h"
+#include "Disease/DiseaseBuilder.h"
 
 namespace UnitTests
 {
@@ -80,7 +87,7 @@ namespace UnitTests
 			for (uint32_t i = 0u; i < 10u; i++)
 			{
 				// Age will be between 0 and 89
-				age = static_cast<uint32_t>((index * 10u) + i);
+				age = index * 10u + i;
 				// mortalityByAge vector does only have 9 members so prevent an out of bound
 				if (index <= 8u)
 				{

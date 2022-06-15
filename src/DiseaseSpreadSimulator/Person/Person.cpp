@@ -359,7 +359,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		if (isNewDay)
 		{
 			travelDays++;
-			if (Random::Percent<float>() <= (baseTravelReturnChance * (travelDays / static_cast<float>(3))))
+			if (Random::Percent<float>() <= (baseTravelReturnChance * (static_cast<float>(travelDays) / static_cast<float>(3))))
 			{
 				isTraveling = false;
 				travelDays = 0u;
