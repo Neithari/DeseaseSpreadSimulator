@@ -2,25 +2,25 @@
 #include "IDGenerator/IDGenerator.h"
 #include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::Disease::Disease(std::string name,
+DiseaseSpreadSimulation::Disease::Disease(const std::string name,
 	const std::pair<uint32_t, uint32_t> incubationPeriod,
 	const uint32_t daysInfectious,
-	std::pair<uint32_t, uint32_t> diseaseDurationRange,
-	std::vector<float> mortalityByAge,
-	std::pair<uint32_t, uint32_t> daysTillDeathRange,
-	std::pair<float, float> spreadFactor,
-	float testAccuracy,
-	std::pair<float, float> symptomsDevelopment)
+	const std::pair<uint32_t, uint32_t> diseaseDurationRange,
+	const std::vector<float> mortalityByAge,
+	const std::pair<uint32_t, uint32_t> daysTillDeathRange,
+	const std::pair<float, float> spreadFactor,
+	const float testAccuracy,
+	const std::pair<float, float> symptomsDevelopment)
 	: m_id(IDGenerator::IDGenerator<Disease>::GetNextID()),
 	  m_name(std::move(name)),
-	  m_incubationPeriod(incubationPeriod),
+	  m_incubationPeriod(std::move(incubationPeriod)),
 	  m_daysInfectious(daysInfectious),
 	  m_durationRange(std::move(diseaseDurationRange)),
 	  m_mortalityByAge(std::move(mortalityByAge)),
 	  m_daysTillDeathRange(std::move(daysTillDeathRange)),
-	  m_spreadFactor(spreadFactor),
+	  m_spreadFactor(std::move(spreadFactor)),
 	  m_testAccuracy(testAccuracy),
-	  m_symptomsDevelopment(symptomsDevelopment)
+	  m_symptomsDevelopment(std::move(symptomsDevelopment))
 {
 }
 

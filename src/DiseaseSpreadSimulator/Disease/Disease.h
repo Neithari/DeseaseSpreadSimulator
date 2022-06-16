@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include <utility>
 #include <vector>
+#include <utility>
 #include "nlohmann/json.hpp"
 #include "Enums.h"
 
@@ -10,15 +10,15 @@ namespace DiseaseSpreadSimulation
 	class Disease
 	{
 	public:
-		Disease(std::string name,
+		Disease(const std::string name,
 			const std::pair<uint32_t, uint32_t> incubationPeriod,
 			const uint32_t daysInfectious,
-			std::pair<uint32_t, uint32_t> diseaseDurationRange,
-			std::vector<float> mortalityByAge,
-			std::pair<uint32_t, uint32_t> daysTillDeathRange,
-			std::pair<float, float> spreadFactor = {1.0f, 1.0f},
-			float testAccuracy = 1.0f,
-			std::pair<float, float> symptomsDevelopment = {1.0f, 1.0f});
+			const std::pair<uint32_t, uint32_t> diseaseDurationRange,
+			const std::vector<float> mortalityByAge,
+			const std::pair<uint32_t, uint32_t> daysTillDeathRange,
+			const std::pair<float, float> spreadFactor = {1.0f, 1.0f},
+			const float testAccuracy = 1.0f,
+			const std::pair<float, float> symptomsDevelopment = {1.0f, 1.0f});
 
 		// Check with ID
 		inline bool operator==(const Disease& rhs) const
@@ -49,21 +49,22 @@ namespace DiseaseSpreadSimulation
 		friend struct nlohmann::adl_serializer<Disease, void>;
 
 	private:
-		const uint32_t m_id = 0;
+		const uint32_t m_id{0};
 		const std::string m_name{};
 		// Incubation period in days
 		const std::pair<uint32_t, uint32_t> m_incubationPeriod{};
 		// Patient is contagious for x days after start of symptoms
-		const uint32_t m_daysInfectious = 0;
+		const uint32_t m_daysInfectious{0};
 		// Duration min, max in days
 		const std::pair<uint32_t, uint32_t> m_durationRange{};
 		// Mortality in percent from 0-1, age from 0-9, 10-19, 20-29,...., >80 years
 		const std::vector<float> m_mortalityByAge;
 		const std::pair<uint32_t, uint32_t> m_daysTillDeathRange{};
 		// In percent from 0-1 how likely it is to get infected at exposure
-		std::pair<float, float> m_spreadFactor{};
-		float m_testAccuracy = 1.0f;
-		std::pair<float, float> m_symptomsDevelopment{};
+		const std::pair<float, float> m_spreadFactor{};
+		const float m_testAccuracy{1.0f};
+		// Chance that symptoms will be developed, in percent from 0-1
+		const std::pair<float, float> m_symptomsDevelopment{};
 	};
 } // namespace DiseaseSpreadSimulation
 
