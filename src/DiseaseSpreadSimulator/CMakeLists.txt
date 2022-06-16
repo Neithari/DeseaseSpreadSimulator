@@ -43,9 +43,8 @@ target_link_libraries(
   PUBLIC
     project_options
     project_warnings
-  PRIVATE
-    fmt::fmt
     nlohmann_json::nlohmann_json
+    fmt::fmt
 )
 
 # Add a executable with terminal output
@@ -60,5 +59,4 @@ target_link_libraries(
     project_warnings
   PRIVATE
     ${CMAKE_PROJECT_NAME}
-    fmt::fmt
 )

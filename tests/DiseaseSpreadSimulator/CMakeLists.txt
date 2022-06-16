@@ -22,12 +22,9 @@ PUBLIC
   project_options
   project_warnings
 PRIVATE
-  ${CMAKE_THREAD_LIBS_INIT}
-  ${PThreadLib}
   Threads::Threads
   ${CMAKE_PROJECT_NAME}
   gtest_main
-  fmt::fmt
 )
 
 # automatic discovery of unit tests
