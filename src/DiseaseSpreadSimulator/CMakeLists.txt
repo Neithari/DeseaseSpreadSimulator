@@ -29,20 +29,20 @@ set(SOURCES
 add_library(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 # Add the current folder to the include directories
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-  $<INSTALL_INTERFACE:>
+target_include_directories(${CMAKE_PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:>
 )
 
-# Set the c++ version to 20 
-target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_20)
-
 # Link the external libraries
-target_link_libraries(
-  ${CMAKE_PROJECT_NAME}
+target_link_libraries(${CMAKE_PROJECT_NAME}
   PUBLIC
     project_options
     project_warnings
+)
+target_link_system_libraries(${CMAKE_PROJECT_NAME}
+  PUBLIC
     nlohmann_json::nlohmann_json
     fmt::fmt
 )
