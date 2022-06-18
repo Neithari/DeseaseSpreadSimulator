@@ -68,7 +68,7 @@ dynamic_project_options(
   # Note: PCH is disabled by default in developer mode because these headers become
   # globally included and they can mask other errors
   # ENABLE_PCH
-  PCH_HEADERS
+  # PCH_HEADERS
   # ENABLE_CONAN
   # CONAN_OPTIONS    # Extra options to pass to conan
   # MSVC_WARNINGS    # Override the defaults for the MSVC warnings
