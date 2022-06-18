@@ -1,23 +1,38 @@
-#include "pch.h"
 #include "Places/Community.h"
+#include "Places/PlaceBuilder.h"
+#include "Person/Person.h"
+#include "Person/PersonPopulator.h"
+#include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::Community::Community(std::vector<Person> population, Places places)
-	: m_population(std::move(population)),
-	  m_places(std::move(places))
+DiseaseSpreadSimulation::Community::Community(const size_t populationSize, const Country country)
 {
+	// Return early and leave places and population empty with a population size of 0
+	if (populationSize == 0)
+	{
+		return;
+	}
+
+	m_places = PlaceBuilder::CreatePlaces(populationSize, country);
+
+	PersonPopulator populationFactory(populationSize, PersonPopulator::GetCountryDistribution(country));
+	m_population = populationFactory.CreatePopulation(country, m_places.homes, m_places.workplaces, m_places.schools, this);
 }
 
 DiseaseSpreadSimulation::Community::Community(const Community& other)
 	: m_population(other.m_population),
 	  m_places(other.m_places),
-	  m_travelLocation(other.m_travelLocation)
+	  m_travelLocation(other.m_travelLocation),
+	  populationMutex(),
+	  placesMutex()
 {
 }
 
 DiseaseSpreadSimulation::Community::Community(Community&& other) noexcept
 	: m_population(std::move(other.m_population)),
 	  m_places(std::move(other.m_places)),
-	  m_travelLocation(std::move(other.m_travelLocation))
+	  m_travelLocation(std::move(other.m_travelLocation)),
+	  populationMutex(),
+	  placesMutex()
 {
 }
 
@@ -26,6 +41,8 @@ DiseaseSpreadSimulation::Community& DiseaseSpreadSimulation::Community::operator
 	return *this = Community(other);
 }
 
+// We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
+// cppcheck-suppress operatorEqVarError
 DiseaseSpreadSimulation::Community& DiseaseSpreadSimulation::Community::operator=(Community&& other) noexcept
 {
 	std::swap(m_population, other.m_population);
@@ -241,7 +258,7 @@ void DiseaseSpreadSimulation::Community::TestStation(Person* person)
 	}
 }
 
-bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* person) const
+bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* person)
 {
 	if (!person->HasDisease())
 	{

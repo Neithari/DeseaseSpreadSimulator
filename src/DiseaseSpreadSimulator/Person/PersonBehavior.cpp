@@ -1,11 +1,13 @@
-#include "pch.h"
 #include "Person/PersonBehavior.h"
+#include <array>
+#include <random>
+#include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint16_t foodBuyInterval, uint16_t hardwareBuyInterval, float acceptanceFactor, float travelNeed)
-	: foodBuyInterval(foodBuyInterval),
-	  hardwareBuyInterval(hardwareBuyInterval),
-	  acceptanceFactor(acceptanceFactor),
-	  travelNeed(travelNeed)
+DiseaseSpreadSimulation::PersonBehavior::PersonBehavior(uint32_t foodBuyIntervalIn, uint32_t hardwareBuyIntervalIn, float acceptanceFactorIn, float travelNeedIn)
+	: foodBuyInterval(foodBuyIntervalIn),
+	  hardwareBuyInterval(hardwareBuyIntervalIn),
+	  acceptanceFactor(acceptanceFactorIn),
+	  travelNeed(travelNeedIn)
 {
 }
 

@@ -1,9 +1,12 @@
 #pragma once
+#include <cstdint>
+#include <vector>
+#include <mutex>
 
 namespace DiseaseSpreadSimulation
 {
-	// Forward declare Person
 	class Person;
+	enum class Place_Type;
 
 	class Place
 	{
@@ -36,7 +39,8 @@ namespace DiseaseSpreadSimulation
 		Place(uint32_t id);
 		Place(const Place& other);
 		Place(Place&& other) noexcept;
-		Place& operator=(const Place& other) = default;
+		// Deleted here because a cast to abstract class is not allowed and we only need the derived versions
+		Place& operator=(const Place& other) = delete;
 		Place& operator=(Place&& other) noexcept;
 
 	protected:
@@ -151,14 +155,14 @@ namespace DiseaseSpreadSimulation
 		void Insert(Places other);
 	private:
 		template <typename T>
-		void AppendVectorAtEnd(std::vector<T>& dest, std::vector<T>& src)
+		static void AppendVectorAtEnd(std::vector<T>& dest, std::vector<T>& src)
 		{
 			while (!src.empty())
 			{
 				dest.push_back(std::move(src.back()));
 				src.pop_back();
 			}
-		};
+		}
 	public:
 		std::vector<Home> homes;
 		std::vector<Supply> supplyStores;

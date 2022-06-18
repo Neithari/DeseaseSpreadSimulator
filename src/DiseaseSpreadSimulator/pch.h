@@ -2,6 +2,7 @@
 #pragma once
 
 // Standard Library Header
+#include <cstdint>
 #include <format>
 #include <fstream>
 #include <memory>

@@ -1,5 +1,7 @@
-#include "pch.h"
 #include "Infection.h"
+#include "Enums.h"
+#include "RandomNumbers.h"
+#include "Places/Community.h"
 
 void DiseaseSpreadSimulation::Infection::Contaminate(const Disease* infection, Age_Group age)
 {
@@ -19,7 +21,7 @@ void DiseaseSpreadSimulation::Infection::Contaminate(const Disease* infection, A
 	}
 }
 
-const DiseaseSpreadSimulation::Disease* DiseaseSpreadSimulation::Infection::GetDisease()
+const DiseaseSpreadSimulation::Disease* DiseaseSpreadSimulation::Infection::GetDisease() const
 {
 	return disease;
 }
@@ -55,25 +57,25 @@ void DiseaseSpreadSimulation::Infection::AdvanceDay(Person& person)
 	if (isFatal)
 	{
 		// Decrement daysToLive and if it reached 0 the person will die
-		if (--daysToLive <= 0)
+		if (--daysToLive == 0)
 		{
 			person.Kill();
 		}
 	}
 }
 
-bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community) const
+bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community)
 {
 	// Map the acceptance factor to the inverse of the disease spread factor
 	// Acceptance factor range is always 0 to 1
 	// Disease spread factor range is spreadFactor to 1/10th of spreadFactor
-	float probability = Random::MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed.spreadFactor, exposed.spreadFactor * 0.1f);
+	double probability = static_cast<double>(Random::MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed.spreadFactor, exposed.spreadFactor * 0.1f));
 
 	// Decrease probability when there is a mask mandate. Take the median effectiveness of the 3 different masks
 	// https://www.cdc.gov/mmwr/volumes/71/wr/mm7106e1.htm
 	if (community->ContainmentMeasures().IsMaskMandate())
 	{
-		probability *= .68333f;
+		probability *= .68333;
 	}
 
 	std::bernoulli_distribution distribution(probability);
@@ -125,11 +127,6 @@ uint32_t DiseaseSpreadSimulation::Infection::GetSpreadCount() const
 	return spreadCount;
 }
 
-const DiseaseSpreadSimulation::Disease* DiseaseSpreadSimulation::Infection::GetDisease() const
-{
-	return disease;
-}
-
 void DiseaseSpreadSimulation::Infection::DiseaseCheck()
 {
 	switch (seirState)
@@ -138,7 +135,7 @@ void DiseaseSpreadSimulation::Infection::DiseaseCheck()
 		break;
 	case DiseaseSpreadSimulation::Seir_State::Exposed:
 		// Person is infectious when it was exposed to a disease and latent period is over
-		if (latentPeriod <= 0)
+		if (latentPeriod == 0)
 		{
 			hasSymptoms = disease->willDevelopSymptoms();
 			seirState = Seir_State::Infectious;
@@ -146,7 +143,7 @@ void DiseaseSpreadSimulation::Infection::DiseaseCheck()
 		break;
 	case DiseaseSpreadSimulation::Seir_State::Infectious:
 		// We switch to recovered state after we stop being infectious but we wait with flagging us recovered
-		if (daysInfectious <= 0)
+		if (daysInfectious == 0)
 		{
 			seirState = Seir_State::Recovered;
 		}
