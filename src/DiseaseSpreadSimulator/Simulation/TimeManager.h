@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+#include "Enums.h"
 
 namespace DiseaseSpreadSimulation
 {
@@ -17,19 +19,17 @@ namespace DiseaseSpreadSimulation
 		Day GetCurrentDay() const;
 		bool IsWorkday() const;
 		// Get the time in 24h format
-		uint16_t GetTime() const;
+		uint32_t GetTime() const;
 
 	private:
 		Day GetNextDay() const;
 
 	private:
-		bool pauseTime = true;
-
 		// In simulation hours. 1 hour per update
 		uint64_t simulationTime = 0u;
 
 		Day currentDay = Day::Monday;
 		bool isWorkday = true;
-		uint16_t dayTime = 0u;
+		uint32_t dayTime = 0u;
 	};
 } // namespace DiseaseSpreadSimulation

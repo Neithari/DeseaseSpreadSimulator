@@ -1,17 +1,18 @@
-#include "pch.h"
 #include "Disease/DiseaseBuilder.h"
+#include <fstream>
+#include <iostream>
 
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateCorona()
 {
 	// https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Steckbrief.html
 	// https://elemental.medium.com/from-infection-to-recovery-how-long-it-lasts-199e266fd018
 	SetDiseaseName("COVID-19");
-	static constexpr uint16_t coronaIncubationPeriodMin{1};
-	static constexpr uint16_t coronaIncubationPeriodMax{14};
+	static constexpr uint32_t coronaIncubationPeriodMin{1};
+	static constexpr uint32_t coronaIncubationPeriodMax{14};
 	SetIncubationPeriod(coronaIncubationPeriodMin, coronaIncubationPeriodMax);
 	SetDaysInfectious(10);
-	static constexpr uint16_t coronaDurationMin{14};
-	static constexpr uint16_t coronaDurationMax{56};
+	static constexpr uint32_t coronaDurationMin{14};
+	static constexpr uint32_t coronaDurationMax{56};
 	SetDiseaseDuration(coronaIncubationPeriodMin + coronaDurationMin, coronaIncubationPeriodMax + coronaDurationMax);
 	SetMortalityByAge({0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f});
 	SetDaysTillDeath(coronaDurationMin, coronaDurationMax);
@@ -49,21 +50,21 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetDiseaseName(std::string disease
 	name = std::move(diseaseName);
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SetIncubationPeriod(const uint16_t minDays, const uint16_t maxDays)
+void DiseaseSpreadSimulation::DiseaseBuilder::SetIncubationPeriod(const uint32_t minDays, const uint32_t maxDays)
 {
 	setupDone[1] = true;
 
 	incubationPeriod = {minDays, maxDays};
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysInfectious(const uint16_t days)
+void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysInfectious(const uint32_t days)
 {
 	setupDone[2] = true;
 
 	daysInfectious = days;
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SetDiseaseDuration(const uint16_t minDays, const uint16_t maxDays)
+void DiseaseSpreadSimulation::DiseaseBuilder::SetDiseaseDuration(const uint32_t minDays, const uint32_t maxDays)
 {
 	setupDone[3] = true;
 
@@ -77,7 +78,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetMortalityByAge(std::vector<floa
 	mortalityByAge = std::move(mortality);
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysTillDeath(const uint16_t min, const uint16_t max)
+void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysTillDeath(const uint32_t min, const uint32_t max)
 {
 	setupDone[5] = true;
 
@@ -107,13 +108,13 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetSymptomsDevelopment(const float
 
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateDisease()
 {
-	for (bool& setupStep : setupDone)
+	// Will throw if you didn't setup everything befor trying to create the disease
+	if (!std::all_of(setupDone.begin(), setupDone.end(), [](bool step)
+			{
+				return step;
+			}))
 	{
-		// Will throw if you didn't setup everything befor trying to create the disease
-		if (!setupStep)
-		{
-			throw std::logic_error("Complete setup to create a disease!");
-		}
+		throw std::logic_error("Complete setup to create a disease!");
 	}
 
 	return Disease{name,
@@ -127,7 +128,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		symptomsDevelopment};
 }
 
-std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseaseFromFile(std::string fileName)
+std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(std::string fileName)
 {
 	using json = nlohmann::json;
 	std::ifstream diseaseJsonFile{fileName};
@@ -143,10 +144,9 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 	diseaseJsonFile >> diseaseJson;
 
 	std::vector<Disease> diseases;
-	for (auto& disease : diseaseJson)
-	{
-		diseases.push_back(disease);
-	}
+	diseases.reserve(diseaseJson.size());
+
+	std::copy(diseaseJson.begin(), diseaseJson.end(), std::back_inserter(diseases));
 
 	return diseases;
 }

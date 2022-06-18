@@ -1,5 +1,5 @@
 #pragma once
-#include <type_traits>
+#include "Disease/Disease.h"
 
 namespace DiseaseSpreadSimulation
 {
@@ -12,11 +12,11 @@ namespace DiseaseSpreadSimulation
 		Infection() = default;
 
 		void Contaminate(const Disease* infection, Age_Group age);
-		const Disease* GetDisease();
+		const Disease* GetDisease() const;
 		void Update(Person& person, bool isNewDay);
 		void IncreaseSpreadCount();
 
-		bool WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community) const;
+		static bool WillInfect(const Infection& exposed, float acceptanceFactor, const Community* community);
 		bool IsSusceptible() const;
 		bool IsInfectious() const;
 		bool IsFatal() const;
@@ -26,7 +26,6 @@ namespace DiseaseSpreadSimulation
 		bool HasSymptoms() const;
 
 		uint32_t GetSpreadCount() const;
-		const Disease* GetDisease() const;
 
 	private:
 		// Advance daysTillOutbreak, daysContagious, daysTillCured, daysToLive by a delta time
@@ -40,10 +39,10 @@ namespace DiseaseSpreadSimulation
 		uint32_t spreadCount = 0;
 
 		const Disease* disease = nullptr;
-		uint16_t latentPeriod = 0;
-		uint16_t daysInfectious = 0;
-		uint16_t daysTillCured = 0;
-		uint16_t daysToLive = 0;
+		uint32_t latentPeriod = 0;
+		uint32_t daysInfectious = 0;
+		uint32_t daysTillCured = 0;
+		uint32_t daysToLive = 0;
 		bool isFatal = false;
 		float spreadFactor = 0.f;
 	};

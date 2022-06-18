@@ -1,4 +1,17 @@
-#include "pch.h"
+#include <gtest/gtest.h>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <utility>
+#include "Enums.h"
+#include "Places/Community.h"
+#include "Places/Places.h"
+#include "Person/Person.h"
+#include "Person/PersonBehavior.h"
+#include "Simulation/TimeManager.h"
+#include "Disease/Disease.h"
+#include "Disease/DiseaseContainment.h"
+
 
 namespace UnitTests
 {
@@ -7,7 +20,7 @@ namespace UnitTests
 	protected:
 		// Person
 		DiseaseSpreadSimulation::Home home{};
-		DiseaseSpreadSimulation::PersonBehavior behavior{0, 1, 1.f, 0.f};
+		DiseaseSpreadSimulation::PersonBehavior behavior{0u, 1u, 1.f, 0.f};
 		DiseaseSpreadSimulation::Person person{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Male, behavior, &community, &home};
 
 		// Community
@@ -16,15 +29,15 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Morgue morgue;
 		DiseaseSpreadSimulation::Workplace work;
 		DiseaseSpreadSimulation::School school;
-		DiseaseSpreadSimulation::Community community{std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{}};
+		DiseaseSpreadSimulation::Community community{0u, DiseaseSpreadSimulation::Country::USA};
 		DiseaseSpreadSimulation::TimeManager time;
 		// Values from Person.h
-		static constexpr uint16_t shopOpenTime = 7u;
-		static constexpr uint16_t shopCloseTime = 20u;
-		static constexpr uint16_t workStartTime = 8u;
-		static constexpr uint16_t workFinishTime = 17u;
-		static constexpr uint16_t schoolStartTime = 8u;
-		static constexpr uint16_t schoolFinishTime = 15u;
+		static constexpr uint32_t shopOpenTime = 7u;
+		static constexpr uint32_t shopCloseTime = 20u;
+		static constexpr uint32_t workStartTime = 8u;
+		static constexpr uint32_t workFinishTime = 17u;
+		static constexpr uint32_t schoolStartTime = 8u;
+		static constexpr uint32_t schoolFinishTime = 15u;
 
 		void InitCommunity()
 		{
@@ -60,13 +73,13 @@ namespace UnitTests
 		EXPECT_TRUE(person.IsQuarantined());
 
 		// Advance day and check if the person will stay at home
-		for (uint16_t i = 0; i < 10; i++)
+		for (uint32_t day = 0; day < 10; day++)
 		{
 			person.Update(1, true, true);
 
-			for (auto i = shopOpenTime; i <= shopCloseTime; i++)
+			for (auto hour = shopOpenTime; hour <= shopCloseTime; hour++)
 			{
-				person.Update(i, true, false);
+				person.Update(hour, true, false);
 				EXPECT_EQ(person.GetWhereabouts(), person.GetHome());
 			}
 		}
@@ -76,11 +89,11 @@ namespace UnitTests
 		InitCommunity();
 		// Disease
 		std::string name = "a";
-		std::pair<uint16_t, uint16_t> incubationPeriod{2, 2};
-		uint16_t daysInfectious = 1;
-		std::pair<uint16_t, uint16_t> diseaseDurationRange{3, 3};
+		std::pair<uint32_t, uint32_t> incubationPeriod{2u, 2u};
+		uint32_t daysInfectious = 1;
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{3u, 3u};
 		std::vector<float> mortalityByAge{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-		std::pair<uint16_t, uint16_t> daysTillDeathRange{1, 1};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 1u};
 		std::pair<float, float> spreadFactor{1.f, 1.f};
 		float testAccuracy{1.0f};
 		std::pair<float, float> symptomsDevelopment{1.f, 1.f};

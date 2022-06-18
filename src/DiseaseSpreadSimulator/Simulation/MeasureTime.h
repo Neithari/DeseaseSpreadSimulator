@@ -1,14 +1,16 @@
 #pragma once
+#include <chrono>
+#include <string>
 
 namespace Measure
 {
 	class MeasureTime
 	{
 	public:
-		MeasureTime(std::string&& measureName);
+		explicit(false) MeasureTime(std::string measureName); // cppcheck-suppress noExplicitConstructor
 		~MeasureTime();
 	private:
-		std::chrono::high_resolution_clock::time_point begin;
-		const std::string measureName;
+		std::chrono::high_resolution_clock::time_point m_begin;
+		const std::string m_measureName;
 	};
 } // namespace Measure

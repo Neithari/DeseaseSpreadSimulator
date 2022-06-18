@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Simulation/TimeManager.h"
 
 void DiseaseSpreadSimulation::TimeManager::Update()
@@ -7,7 +6,7 @@ void DiseaseSpreadSimulation::TimeManager::Update()
 	dayTime++;
 	if (dayTime == 24)
 	{
-		dayTime = 0;
+		dayTime = 0u;
 		currentDay = GetNextDay();
 
 		if (currentDay == Day::Saturday || currentDay == Day::Sunday)
@@ -36,7 +35,7 @@ DiseaseSpreadSimulation::Day DiseaseSpreadSimulation::TimeManager::GetCurrentDay
 	return currentDay;
 }
 
-uint16_t DiseaseSpreadSimulation::TimeManager::GetTime() const
+uint32_t DiseaseSpreadSimulation::TimeManager::GetTime() const
 {
 	return dayTime;
 }

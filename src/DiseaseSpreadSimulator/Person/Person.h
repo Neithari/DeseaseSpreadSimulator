@@ -1,10 +1,14 @@
 #pragma once
+#include <cstdint>
+#include <string>
+#include "Enums.h"
+#include "Disease/Infection.h"
 #include "Places/Places.h"
-#include "Simulation/TimeManager.h"
 #include "Person/PersonBehavior.h"
 
 namespace DiseaseSpreadSimulation
 {
+	class Disease;
 	class Community;
 	class DiseaseContainment;
 
@@ -26,7 +30,7 @@ namespace DiseaseSpreadSimulation
 			return id == rhs.id;
 		}
 
-		void Update(uint16_t currentTime, bool isWorkday, bool isNewDay);
+		void Update(uint32_t currentTime, bool isWorkday, bool isNewDay);
 
 		// Will try to infect a susceptible person when the other is infectious
 		void Contact(Person& other);
@@ -63,10 +67,10 @@ namespace DiseaseSpreadSimulation
 		void ChangeBehavior(PersonBehavior newBehavior);
 
 	private:
-		void CheckNextMove(uint16_t currentTime, bool& isWorkday, bool isNewDay);
+		void CheckNextMove(uint32_t currentTime, bool& isWorkday, bool isNewDay);
 		void PrepareShopping();
-		void GoSupplyShopping(uint16_t currentTime);
-		void GoHardwareShopping(uint16_t currentTime);
+		void GoSupplyShopping(uint32_t currentTime);
+		void GoHardwareShopping(uint32_t currentTime);
 		bool WillTravel() const;
 		void StartTraveling();
 
@@ -75,16 +79,16 @@ namespace DiseaseSpreadSimulation
 
 	private:
 		uint32_t id;
-		Age_Group age;
-		Sex sex;
-		PersonBehavior behavior;
+		Age_Group m_age;
+		Sex m_sex;
+		PersonBehavior m_behavior;
 		bool alive = true;
 		bool isTraveling = false;
 		bool isQuarantined = false;
 
 		// Not const because we will add ourself to the places
-		Community* community;
-		Home* home;
+		Community* m_community;
+		Home* m_home;
 		Place* whereabouts;
 		Workplace* workplace = nullptr;
 		School* school = nullptr;
@@ -92,20 +96,20 @@ namespace DiseaseSpreadSimulation
 		Infection infection;
 
 		// In days
-		uint16_t lastFoodBuy = 0u;
-		uint16_t lastHardwareBuy = 0u;
-		uint16_t travelDays = 0u;
+		uint32_t lastFoodBuy = 0u;
+		uint32_t lastHardwareBuy = 0u;
+		uint32_t travelDays = 0u;
 		// In hours
-		uint16_t buyTime = 0u;
-		uint16_t buyFinishTime = 0u;
+		uint32_t buyTime = 0u;
+		uint32_t buyFinishTime = 0u;
 		bool isShoppingDay = false;
 		// Time in x/24h
-		static constexpr uint16_t shopOpenTime = 7u;
-		static constexpr uint16_t shopCloseTime = 20u;
-		static constexpr uint16_t workStartTime = 8u;
-		static constexpr uint16_t workFinishTime = 17u;
-		static constexpr uint16_t schoolStartTime = 8u;
-		static constexpr uint16_t schoolFinishTime = 15u;
+		static constexpr uint32_t shopOpenTime = 7u;
+		static constexpr uint32_t shopCloseTime = 20u;
+		static constexpr uint32_t workStartTime = 8u;
+		static constexpr uint32_t workFinishTime = 17u;
+		static constexpr uint32_t schoolStartTime = 8u;
+		static constexpr uint32_t schoolFinishTime = 15u;
 		// Percent
 		static constexpr float baseTravelReturnChance = 0.3f;
 	};

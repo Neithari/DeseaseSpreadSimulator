@@ -1,4 +1,15 @@
-#include "pch.h"
+#include <gtest/gtest.h>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <utility>
+#include "Enums.h"
+#include "Places/Community.h"
+#include "Places/Places.h"
+#include "Person/Person.h"
+#include "Person/PersonBehavior.h"
+#include "Disease/Disease.h"
+#include "Disease/Infection.h"
 
 namespace UnitTests
 {
@@ -7,22 +18,22 @@ namespace UnitTests
 	protected:
 		// Disease
 		std::string name = "a";
-		std::pair<uint16_t, uint16_t> incubationPeriod{2, 2};
-		uint16_t daysInfectious = 1;
-		std::pair<uint16_t, uint16_t> diseaseDurationRange{3, 3};
+		std::pair<uint32_t, uint32_t> incubationPeriod{2u, 2u};
+		uint32_t daysInfectious = 1;
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{3u, 3u};
 		std::vector<float> mortalityByAge{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-		std::pair<uint16_t, uint16_t> daysTillDeathRange{1, 1};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 1u};
 		std::pair<float, float> spreadFactor{1.f, 1.f};
 		float testAccuracy{1.0f};
 		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 
 		std::string deadlyName = "DeadlyTestDisease";
-		std::pair<uint16_t, uint16_t> deadlyIncubationPeriod{1, 1};
-		uint16_t deadlyDaysInfectious = 1;
-		std::pair<uint16_t, uint16_t> deadlyDiseaseDurationRange{2, 2};
+		std::pair<uint32_t, uint32_t> deadlyIncubationPeriod{1u, 1u};
+		uint32_t deadlyDaysInfectious = 1;
+		std::pair<uint32_t, uint32_t> deadlyDiseaseDurationRange{2u, 2u};
 		std::vector<float> deadlyMortalityByAge{1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
-		std::pair<uint16_t, uint16_t> deadlyDaysTillDeathRange{2, 2};
+		std::pair<uint32_t, uint32_t> deadlyDaysTillDeathRange{2u, 2u};
 		std::pair<float, float> deadlySpreadFactor{1.f, 1.f};
 		float deadlyTestAccuracy{1.0f};
 		std::pair<float, float> deadlySymptomsDevelopment{1.f, 1.f};
@@ -30,9 +41,6 @@ namespace UnitTests
 
 		// Age groups
 		std::vector<DiseaseSpreadSimulation::Age_Group> ageGroups{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Age_Group::UnderFifty, DiseaseSpreadSimulation::Age_Group::UnderSixty, DiseaseSpreadSimulation::Age_Group::UnderSeventy, DiseaseSpreadSimulation::Age_Group::UnderEighty, DiseaseSpreadSimulation::Age_Group::AboveEighty};
-
-		// Community
-		DiseaseSpreadSimulation::Community community{std::vector<DiseaseSpreadSimulation::Person>{}, DiseaseSpreadSimulation::Places{}};
 
 		// Person
 		DiseaseSpreadSimulation::Home home{};
@@ -74,7 +82,7 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, UpdateWithoutDisease)
 	{
-		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, nullptr, &home);
 
 		DiseaseSpreadSimulation::Infection infection;
 
@@ -92,7 +100,7 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, UpdateWithDisease)
 	{
-		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, nullptr, &home);
 
 		DiseaseSpreadSimulation::Infection infection;
 
@@ -133,7 +141,7 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, UpdateWithDeadlyDisease)
 	{
-		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, &community, &home);
+		DiseaseSpreadSimulation::Person person(ageGroups.at(2), DiseaseSpreadSimulation::Sex::Female, behavior, nullptr, &home);
 
 		ASSERT_TRUE(person.IsAlive());
 
@@ -162,6 +170,8 @@ namespace UnitTests
 	}
 	TEST_F(InfectionTest, WillInfect)
 	{
+		// Community
+		DiseaseSpreadSimulation::Community community(0u, DiseaseSpreadSimulation::Country::USA);
 		DiseaseSpreadSimulation::Infection infection;
 		infection.Contaminate(&disease, ageGroups.at(2));
 		ASSERT_TRUE(infection.HasDisease());
@@ -169,8 +179,8 @@ namespace UnitTests
 		EXPECT_TRUE(infection.WillInfect(infection, 0.f, &community));
 
 		// To negate the small chance of being infected that everyone has we check multiple times
-		static constexpr uint16_t sampleSize{100};
-		uint16_t willInfect = 0;
+		static constexpr uint32_t sampleSize{100};
+		uint32_t willInfect = 0;
 
 		for (size_t i = 0; i < sampleSize; i++)
 		{
