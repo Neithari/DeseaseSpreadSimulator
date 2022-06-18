@@ -30,6 +30,8 @@ include(FetchContent)
 FetchContent_Declare(_project_options URL https://github.com/aminya/project_options/archive/refs/tags/v0.21.1.zip)
 FetchContent_MakeAvailable(_project_options)
 include(${_project_options_SOURCE_DIR}/Index.cmake)
+# Add dynamic CMake options
+include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 
 # Enable vcpkg:
 # Setup VCPKG_ROOT per command line or in a CMakeUserPresets.json
@@ -44,8 +46,6 @@ project(
   LANGUAGES CXX
 )
 
-include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
-
 # defaulted_project_options sets recommended defaults and provides user and developer
 # modes and full GUI support for choosing options at configure time
 
@@ -55,8 +55,11 @@ include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
 # set(<feature_name>_DEFAULT <value>) - set default for both user and developer modes
 # set(<feature_name>_DEVELOPER_DEFAULT <value>) - set default for developer mode
 # set(<feature_name>_USER_DEFAULT <value>) - set default for user mode
+
+# Set PCH to be on by default for all non-Developer Mode Builds
+set(ENABLE_PCH_DEVELOPER_DEFAULT OFF)
+set(ENABLE_PCH_USER_DEFAULT ON)
 set(ENABLE_CLANG_TIDY_DEFAULT OFF)
-set(ENABLE_CPPCHECK OFF)
 
 # Initialize project_options variable related to this project
 # This overwrites `project_options` and sets `project_warnings`
@@ -66,36 +69,6 @@ dynamic_project_options(
   # globally included and they can mask other errors
   # ENABLE_PCH
   PCH_HEADERS
-  <fstream>
-  <memory>
-  <stdexcept>
-  <random>
-  <algorithm>
-  <utility>
-  <mutex>
-  <shared_mutex>
-  <execution>
-  <optional>
-  <iostream>
-  <numeric>
-  # Data structures
-  <string>
-  <vector>
-  <array>
-  # Not STD
-  [["fmt/core.h"]]
-  [["nlohmann/json.hpp"]]
-  # Mine
-  src/DiseaseSpreadSimulator/Enums.h
-  src/DiseaseSpreadSimulator/RandomNumbers.h
-  src/DiseaseSpreadSimulator/Statistics.h
-  src/DiseaseSpreadSimulator/Disease/Disease.h
-  src/DiseaseSpreadSimulator/Disease/Infection.h
-  src/DiseaseSpreadSimulator/Person/Person.h
-  src/DiseaseSpreadSimulator/Places/Places.h
-  src/DiseaseSpreadSimulator/Places/Community.h
-  src/DiseaseSpreadSimulator/Simulation/MeasureTime.h
-
   # ENABLE_CONAN
   # CONAN_OPTIONS    # Extra options to pass to conan
   # MSVC_WARNINGS    # Override the defaults for the MSVC warnings

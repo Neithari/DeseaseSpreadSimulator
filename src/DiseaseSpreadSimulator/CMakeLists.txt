@@ -28,6 +28,12 @@ set(SOURCES
 # Add a library with the above sources
 add_library(${CMAKE_PROJECT_NAME} ${SOURCES})
 
+# Add precompiled headers
+if(OPT_ENABLE_PCH)
+  message("-- Building ${CMAKE_PROJECT_NAME} with PCH")
+  target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE pch.h)
+endif()
+
 # Add the current folder to the include directories
 target_include_directories(${CMAKE_PROJECT_NAME}
   PUBLIC
@@ -49,6 +55,12 @@ target_link_system_libraries(${CMAKE_PROJECT_NAME}
 
 # Add a executable with terminal output
 add_executable("${CMAKE_PROJECT_NAME}Terminal" DiseaseSpreadSimulator.cpp)
+
+# Add precompiled headers
+if(OPT_ENABLE_PCH)
+  message("-- Building ${CMAKE_PROJECT_NAME}Terminal with PCH")
+  target_precompile_headers("${CMAKE_PROJECT_NAME}Terminal" REUSE_FROM ${CMAKE_PROJECT_NAME})
+endif()
 
 target_include_directories("${CMAKE_PROJECT_NAME}Terminal" PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
