@@ -204,19 +204,6 @@ DiseaseSpreadSimulation::Home* DiseaseSpreadSimulation::PersonPopulator::AssignH
 	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(Random::RandomVectorIndex(homesByMemberCount.at(distIndex))));
 }
 
-DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const
-{
-	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
-	size_t distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
-	// Get a new index until the vector is not empty
-	while (workplacesBySize.at(distIndex).empty())
-	{
-		distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
-	}
-	// Return a random workplace at the chosen size
-	return workplacesBySize.at(distIndex).at(Random::RandomVectorIndex(workplacesBySize.at(distIndex)));
-}
-
 void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
 {
 	std::vector<Home*> homes;
@@ -232,6 +219,19 @@ void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vec
 	{
 		person.SetHome(PersonPopulator::AssignHome(country, person.GetAgeGroup(), homesByMemberCount));
 	}
+}
+
+DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize)
+{
+	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
+	size_t distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
+	// Get a new index until the vector is not empty
+	while (workplacesBySize.at(distIndex).empty())
+	{
+		distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
+	}
+	// Return a random workplace at the chosen size
+	return workplacesBySize.at(distIndex).at(Random::RandomVectorIndex(workplacesBySize.at(distIndex)));
 }
 
 std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> DiseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)

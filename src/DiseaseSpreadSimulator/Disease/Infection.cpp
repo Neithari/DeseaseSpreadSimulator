@@ -68,14 +68,17 @@ bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, fl
 {
 	// Map the acceptance factor to the inverse of the disease spread factor
 	// Acceptance factor range is always 0 to 1
+	static constexpr auto acceptanceFactorRange = std::make_pair(0.F, 1.F);
 	// Disease spread factor range is spreadFactor to 1/10th of spreadFactor
-	double probability = static_cast<double>(Random::MapOneRangeToAnother(acceptanceFactor, 0.f, 1.f, exposed.spreadFactor, exposed.spreadFactor * 0.1f));
+	static constexpr float tenth{0.1F};
+	auto probability = static_cast<double>(Random::MapOneRangeToAnother(acceptanceFactor, acceptanceFactorRange.first, acceptanceFactorRange.second, exposed.spreadFactor, exposed.spreadFactor * tenth));
 
 	// Decrease probability when there is a mask mandate. Take the median effectiveness of the 3 different masks
 	// https://www.cdc.gov/mmwr/volumes/71/wr/mm7106e1.htm
+	static constexpr double decreaseProbability{.68333};
 	if (community->ContainmentMeasures().IsMaskMandate())
 	{
-		probability *= .68333;
+		probability *= decreaseProbability;
 	}
 
 	std::bernoulli_distribution distribution(probability);

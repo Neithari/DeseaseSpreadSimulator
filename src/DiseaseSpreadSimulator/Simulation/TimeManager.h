@@ -26,10 +26,10 @@ namespace DiseaseSpreadSimulation
 
 	private:
 		// In simulation hours. 1 hour per update
-		uint64_t simulationTime = 0u;
-
-		Day currentDay = Day::Monday;
-		bool isWorkday = true;
-		uint32_t dayTime = 0u;
+		uint64_t simulationTime{0U};
+		Day currentDay{Day::Monday};
+		bool isWorkday{true};
+		uint32_t dayTime{0u};
+		static constexpr uint32_t hoursPerDay{24U};
 	};
 } // namespace DiseaseSpreadSimulation

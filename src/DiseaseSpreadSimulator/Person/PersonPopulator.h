@@ -37,7 +37,7 @@ namespace DiseaseSpreadSimulation
 		static size_t DistributionToCountHelper(size_t count, float percent);
 
 		static void AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country);
-		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
+		static Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize);
 
 		// Returns an index weighted by the given distribution
 		template <typename T, size_t SIZE>

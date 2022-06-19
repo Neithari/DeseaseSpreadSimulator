@@ -10,27 +10,27 @@
 namespace UnitTests
 {
 	template <typename T>
-	::testing::AssertionResult IsBetweenInclusive(T val, T a, T b)
+	::testing::AssertionResult IsBetweenInclusive(T val, std::pair<T, T> range)
 	{
-		if ((val >= a) && (val <= b))
+		if ((val >= range.first) && (val <= range.second))
 			return ::testing::AssertionSuccess();
 		else
 			return ::testing::AssertionFailure()
-				   << val << " is outside the range " << a << " to " << b;
+				   << val << " is outside the range " << range.first << " to " << range.second;
 	}
 
 	class DiseaseTest : public ::testing::Test
 	{
 	protected:
 		std::string name = "a";
-		std::pair<uint32_t, uint32_t> incubationPeriod{1u, 1u};
+		std::pair<uint32_t, uint32_t> incubationPeriod{1U, 1U};
 		uint32_t daysInfectious = 1;
-		std::pair<uint32_t, uint32_t> diseaseDurationRange{2u, 10u};
-		std::vector<float> mortalityByAge{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f};
-		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 2u};
-		std::pair<float, float> spreadFactor{1.f, 1.f};
-		float testAccuracy{1.0f};
-		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{2U, 10U};
+		std::vector<float> mortalityByAge{1.F, 2.F, 3.F, 4.F, 5.F, 6.F, 7.F, 8.F, 9.F};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1U, 2U};
+		std::pair<float, float> spreadFactor{1.F, 1.F};
+		float testAccuracy{1.F};
+		std::pair<float, float> symptomsDevelopment{1.F, 1.F};
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 
 		// Helper function to check if the given x is within the range
@@ -43,14 +43,16 @@ namespace UnitTests
 	TEST_F(DiseaseTest, TrivialDiseaseReturns)
 	{
 		EXPECT_EQ(disease.GetDiseaseName(), name);
-		EXPECT_TRUE(IsBetweenInclusive(disease.IncubationPeriod(), incubationPeriod.first, incubationPeriod.second));
+		EXPECT_TRUE(IsBetweenInclusive(disease.IncubationPeriod(), incubationPeriod));
 		EXPECT_EQ(disease.DaysInfectious(), daysInfectious);
 	}
 	TEST_F(DiseaseTest, DiseaseDurationRange)
 	{
 		// Check 10 times to get an average
+		static constexpr int testRuns{10};
+
 		uint32_t duration = 0;
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < testRuns; i++)
 		{
 			duration = disease.GetDiseaseDuration();
 			ASSERT_TRUE(inRange(duration, diseaseDurationRange)) << "Disease duration: " << duration << " is not between: " << diseaseDurationRange.first << " and " << diseaseDurationRange.second;
@@ -59,8 +61,10 @@ namespace UnitTests
 	TEST_F(DiseaseTest, DaysTillDeathRange)
 	{
 		// Check 10 times to get an average
+		static constexpr int testRuns{10};
+
 		uint32_t days = 0;
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < testRuns; i++)
 		{
 			days = disease.DaysTillDeath();
 			ASSERT_TRUE(inRange(days, daysTillDeathRange)) << "Days till death: " << days << " is not between: " << daysTillDeathRange.first << " and " << daysTillDeathRange.second;
@@ -81,15 +85,15 @@ namespace UnitTests
 	TEST_F(DiseaseTest, MortalityByAge)
 	{
 		// Check age 0-89
-		uint32_t age = 0u;
-		for (uint32_t index = 0u; index < mortalityByAge.size(); index++)
+		uint32_t age = 0U;
+		for (uint32_t index = 0U; index < mortalityByAge.size(); index++)
 		{
-			for (uint32_t i = 0u; i < 10u; i++)
+			for (uint32_t i = 0U; i < 10U; i++)
 			{
 				// Age will be between 0 and 89
-				age = index * 10u + i;
+				age = index * 10U + i;
 				// mortalityByAge vector does only have 9 members so prevent an out of bound
-				if (index <= 8u)
+				if (index <= 8U)
 				{
 					EXPECT_FLOAT_EQ(disease.GetMortalityByAge(age), mortalityByAge.at(index));
 				}
@@ -100,7 +104,7 @@ namespace UnitTests
 			}
 		}
 		// Check age >=90
-		for (age = 90; age < 111; age++)
+		for (age = 90; age < 111; age++) // NOLINT
 		{
 			EXPECT_FLOAT_EQ(disease.GetMortalityByAge(age), mortalityByAge.back());
 		}
@@ -116,47 +120,47 @@ namespace UnitTests
 	{
 		ASSERT_TRUE(disease.isSame(disease));
 
-		std::string name1 = "b";
+		const std::string name1 = "b";
 		DiseaseSpreadSimulation::Disease disease1{name1, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 		EXPECT_FALSE(disease1.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease1));
 
-		std::pair<uint32_t, uint32_t> incubationPeriod1{2, 2};
+		const std::pair<uint32_t, uint32_t> incubationPeriod1{2, 2};
 		DiseaseSpreadSimulation::Disease disease3{name, incubationPeriod1, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 		EXPECT_FALSE(disease3.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease3));
 
-		uint32_t daysInfectious1 = 2;
+		const uint32_t daysInfectious1 = 2;
 		DiseaseSpreadSimulation::Disease disease4{name, incubationPeriod, daysInfectious1, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 		EXPECT_FALSE(disease4.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease4));
 
-		std::pair<uint32_t, uint32_t> diseaseDurationRange1{0, 11};
+		const std::pair<uint32_t, uint32_t> diseaseDurationRange1{0, 11};
 		DiseaseSpreadSimulation::Disease disease5{name, incubationPeriod, daysInfectious, diseaseDurationRange1, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 		EXPECT_FALSE(disease5.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease5));
 
-		std::vector<float> mortalityByAge1{0.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f};
+		const std::vector<float> mortalityByAge1{0.F, 2.F, 3.F, 4.F, 5.F, 6.F, 7.F, 8.F, 9.F};
 		DiseaseSpreadSimulation::Disease disease6{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge1, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 		EXPECT_FALSE(disease6.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease6));
 
-		std::pair<uint32_t, uint32_t> daysTillDeathRange1{0, 3};
+		const std::pair<uint32_t, uint32_t> daysTillDeathRange1{0, 3};
 		DiseaseSpreadSimulation::Disease disease7{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange1, spreadFactor, testAccuracy, symptomsDevelopment};
 		EXPECT_FALSE(disease7.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease7));
 
-		std::pair<float, float> spreadFactor1{2.f, 2.f};
+		const std::pair<float, float> spreadFactor1{2.F, 2.F};
 		DiseaseSpreadSimulation::Disease disease8{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor1, testAccuracy, symptomsDevelopment};
 		EXPECT_FALSE(disease8.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease8));
 
-		float testAccuracy1{2.0f};
+		const float testAccuracy1{2.F};
 		DiseaseSpreadSimulation::Disease disease9{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy1, symptomsDevelopment};
 		EXPECT_FALSE(disease9.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease9));
 
-		std::pair<float, float> symptomsDevelopment1{2.f, 2.f};
+		const std::pair<float, float> symptomsDevelopment1{2.F, 2.F};
 		DiseaseSpreadSimulation::Disease disease10{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment1};
 		EXPECT_FALSE(disease10.isSame(disease));
 		EXPECT_FALSE(disease.isSame(disease10));
@@ -166,14 +170,14 @@ namespace UnitTests
 	{
 	protected:
 		std::string name = "a";
-		std::pair<uint32_t, uint32_t> incubationPeriod{1u, 1u};
-		uint32_t daysInfectious = 1;
-		std::pair<uint32_t, uint32_t> diseaseDurationRange{2u, 10u};
-		std::vector<float> mortalityByAge{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f};
-		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 2u};
-		std::pair<float, float> spreadFactor{1.f, 1.f};
-		float testAccuracy{1.0f};
-		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
+		std::pair<uint32_t, uint32_t> incubationPeriod{1U, 1U};
+		uint32_t daysInfectious = 1U;
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{2U, 10U};
+		std::vector<float> mortalityByAge{1.F, 2.F, 3.F, 4.F, 5.F, 6.F, 7.F, 8.F, 9.F};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1U, 2U};
+		std::pair<float, float> spreadFactor{1.F, 1.F};
+		float testAccuracy{1.F};
+		std::pair<float, float> symptomsDevelopment{1.F, 1.F};
 
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 	};
@@ -367,19 +371,19 @@ namespace UnitTests
 	}
 	TEST_F(DiseaseBuilderTest, CreateCorona)
 	{
-		std::string coronaName = "COVID-19";
+		static const std::string coronaName = "COVID-19";
 		static constexpr uint32_t coronaIncubationPeriodMin{1};
 		static constexpr uint32_t coronaIncubationPeriodMax{14};
-		std::pair<uint32_t, uint32_t> coronaIncubationPeriod{coronaIncubationPeriodMin, coronaIncubationPeriodMax};
-		uint32_t coronaDaysInfectious = 10;
+		static constexpr std::pair<uint32_t, uint32_t> coronaIncubationPeriod{coronaIncubationPeriodMin, coronaIncubationPeriodMax};
+		static constexpr uint32_t coronaDaysInfectious{10};
 		static constexpr uint32_t coronaDurationMin{14};
 		static constexpr uint32_t coronaDurationMax{56};
-		std::pair<uint32_t, uint32_t> coronaDiseaseDurationRange{coronaIncubationPeriodMin + coronaDurationMin, coronaIncubationPeriodMax + coronaDurationMax};
-		std::vector<float> coronaMortalityByAge{0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f};
-		std::pair<uint32_t, uint32_t> coronaDaysTillDeathRange{coronaDurationMin, coronaDurationMax};
-		std::pair<float, float> coronaSpreadFactor{0.0f, 0.5f};
-		float coronaTestAccuracy = 0.981f;
-		std::pair<float, float> coronaSymptomsDevelopment{0.55f, 0.85f};
+		static constexpr std::pair<uint32_t, uint32_t> coronaDiseaseDurationRange{coronaIncubationPeriodMin + coronaDurationMin, coronaIncubationPeriodMax + coronaDurationMax};
+		static const std::vector<float> coronaMortalityByAge{0.0f, 0.0014F, 0.0012F, 0.002F, 0.0038F, 0.0098F, .0298F, .0794F, .1734F};
+		static constexpr std::pair<uint32_t, uint32_t> coronaDaysTillDeathRange{coronaDurationMin, coronaDurationMax};
+		static constexpr std::pair<float, float> coronaSpreadFactor{0.0F, 0.5F};
+		static constexpr float coronaTestAccuracy{0.981F};
+		static constexpr std::pair<float, float> coronaSymptomsDevelopment{0.55F, 0.85F};
 
 		DiseaseSpreadSimulation::Disease corona{coronaName, coronaIncubationPeriod, coronaDaysInfectious, coronaDiseaseDurationRange, coronaMortalityByAge, coronaDaysTillDeathRange, coronaSpreadFactor, coronaTestAccuracy, coronaSymptomsDevelopment};
 
