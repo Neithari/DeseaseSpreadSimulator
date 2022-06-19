@@ -59,7 +59,8 @@ project(
 # Set PCH to be on by default for all non-Developer Mode Builds
 set(ENABLE_PCH_DEVELOPER_DEFAULT OFF)
 set(ENABLE_PCH_USER_DEFAULT ON)
-set(ENABLE_CLANG_TIDY_DEFAULT OFF)
+set(ENABLE_CLANG_TIDY_DEVELOPER_DEFAULT OFF)
+set(ENABLE_CPPCHECK_DEVELOPER_DEFAULT ON)
 
 # Initialize project_options variable related to this project
 # This overwrites `project_options` and sets `project_warnings`
