@@ -40,11 +40,11 @@ namespace DiseaseSpreadSimulation
 		bool CheckForNewDay();
 
 	private:
-		bool m_withPrint = false;
-		bool stop = true;
-		bool pause = false;
+		bool m_withPrint{false};
+		bool stop{true};
+		bool pause{false};
 
-		static constexpr Country country = Country::USA;
+		static constexpr Country country{Country::USA};
 		uint64_t m_populationSize{};
 		TimeManager time;
 		std::vector<Community> communities;
@@ -55,7 +55,7 @@ namespace DiseaseSpreadSimulation
 
 		uint64_t elapsedDays{};
 		// We start with the first hour
-		uint64_t elapsedHours{1u};
-		bool isNewDay = false;
+		uint64_t elapsedHours{1U};
+		bool isNewDay{false};
 	};
 } // namespace DiseaseSpreadSimulation

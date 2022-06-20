@@ -10,10 +10,10 @@ namespace Random
 	static std::mt19937_64 generator(seed());
 
 	template <typename T>
-	static auto RandomVectorIndex(const std::vector<T>& vector)
+	static auto RandomVectorIndex(const std::vector<T>&  /*vector*/)
 	{
 		// Prevent return of a negative index
-		if (vector.empty())
+		if (std::vector.empty())
 		{
 			throw(std::out_of_range("Vector is Empty!"));
 		}

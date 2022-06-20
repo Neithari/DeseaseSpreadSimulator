@@ -58,7 +58,7 @@ std::string DiseaseSpreadSimulation::Place::TypeToString(Place_Type type)
 	default:
 		break;
 	}
-	return std::string();
+	return {};
 }
 
 std::vector<DiseaseSpreadSimulation::Person*>& DiseaseSpreadSimulation::Place::GetPeople()

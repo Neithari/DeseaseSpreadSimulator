@@ -94,7 +94,7 @@ namespace UnitTests
 		float max{10};
 		for (float i = min; i <= max; i++)
 		{
-			EXPECT_FLOAT_EQ(Random::MapOneRangeToAnother(i, min, max, 11.f, 20.f), i + 10.f);
+			EXPECT_FLOAT_EQ(Random::MapOneRangeToAnother(i, min, max, 11.F, 20.F), i + 10.F);
 		}
 	}
 	TEST(RandomNumbersTests, MapRangeToPercent)
@@ -103,7 +103,7 @@ namespace UnitTests
 		float max{10};
 		for (float i = min; i <= max; i++)
 		{
-			EXPECT_FLOAT_EQ(Random::MapRangeToPercent(i, min, max), i * 0.1f);
+			EXPECT_FLOAT_EQ(Random::MapRangeToPercent(i, min, max), i * 0.1F);
 		}
 	}
 } // namespace UnitTests

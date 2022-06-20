@@ -121,7 +121,7 @@ DiseaseSpreadSimulation::Person DiseaseSpreadSimulation::PersonPopulator::GetNew
 		m_allAssigned = true;
 	}
 
-	return Person(m_currentHumanDistribution.ageGroup, m_currentHumanDistribution.sex, PersonBehavior(), community, home);
+	return {m_currentHumanDistribution.ageGroup, m_currentHumanDistribution.sex, PersonBehavior(), community, home};
 }
 
 size_t DiseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t populationSize, const Country country)
@@ -158,7 +158,7 @@ size_t DiseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t po
 		});
 }
 
-std::array<std::vector<DiseaseSpreadSimulation::Home*>, 4> DiseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes)
+std::array<std::vector<DiseaseSpreadSimulation::Home*>, 4> DiseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes)
 {
 	auto homeCounts(PlaceBuilder::GetHomeCounts(static_cast<float>(populationSize), country));
 

@@ -24,7 +24,7 @@ namespace UnitTests
 		std::vector<float> mortalityByAge{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
 		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 1u};
 		std::pair<float, float> spreadFactor{1.f, 1.f};
-		float testAccuracy{1.0f};
+		float testAccuracy{1.0F};
 		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 
@@ -35,7 +35,7 @@ namespace UnitTests
 		std::vector<float> deadlyMortalityByAge{1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
 		std::pair<uint32_t, uint32_t> deadlyDaysTillDeathRange{2u, 2u};
 		std::pair<float, float> deadlySpreadFactor{1.f, 1.f};
-		float deadlyTestAccuracy{1.0f};
+		float deadlyTestAccuracy{1.0F};
 		std::pair<float, float> deadlySymptomsDevelopment{1.f, 1.f};
 		DiseaseSpreadSimulation::Disease deadlyDisease{deadlyName, deadlyIncubationPeriod, deadlyDaysInfectious, deadlyDiseaseDurationRange, deadlyMortalityByAge, deadlyDaysTillDeathRange, deadlySpreadFactor, deadlyTestAccuracy, deadlySymptomsDevelopment};
 
@@ -44,7 +44,7 @@ namespace UnitTests
 
 		// Person
 		DiseaseSpreadSimulation::Home home{};
-		DiseaseSpreadSimulation::PersonBehavior behavior{10u, 10u, 0.f, 0.f};
+		DiseaseSpreadSimulation::PersonBehavior behavior{10U, 10U, 0.F, 0.F};
 	};
 	TEST_F(InfectionTest, Contaminate)
 	{
@@ -171,12 +171,12 @@ namespace UnitTests
 	TEST_F(InfectionTest, WillInfect)
 	{
 		// Community
-		DiseaseSpreadSimulation::Community community(0u, DiseaseSpreadSimulation::Country::USA);
+		DiseaseSpreadSimulation::Community community(0U, DiseaseSpreadSimulation::Country::USA);
 		DiseaseSpreadSimulation::Infection infection;
 		infection.Contaminate(&disease, ageGroups.at(2));
 		ASSERT_TRUE(infection.HasDisease());
 
-		EXPECT_TRUE(infection.WillInfect(infection, 0.f, &community));
+		EXPECT_TRUE(infection.WillInfect(infection, 0.F, &community));
 
 		// To negate the small chance of being infected that everyone has we check multiple times
 		static constexpr uint32_t sampleSize{100};
@@ -184,13 +184,13 @@ namespace UnitTests
 
 		for (size_t i = 0; i < sampleSize; i++)
 		{
-			if (infection.WillInfect(infection, 1.f, &community))
+			if (infection.WillInfect(infection, 1.F, &community))
 			{
 				willInfect++;
 			}
 		}
 
 		// Less than 20% should be infected
-		EXPECT_LT(willInfect, sampleSize * 0.2f);
+		EXPECT_LT(willInfect, sampleSize * 0.2F);
 	}
 } // namespace UnitTests

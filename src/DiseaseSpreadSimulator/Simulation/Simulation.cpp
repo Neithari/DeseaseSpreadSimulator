@@ -8,7 +8,7 @@
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	: m_withPrint(withPrint),
 	  m_populationSize(populationSize),
-	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.f, 1.f), nullptr)
+	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.F, 1.F), nullptr)
 {
 }
 void DiseaseSpreadSimulation::Simulation::Run()
@@ -101,7 +101,7 @@ void DiseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& trave
 	auto travelers = travelLocation.GetPeople();
 	std::for_each(std::execution::par_unseq, travelers.begin(), travelers.end(), [this](auto traveler)
 		{
-			auto numberOfContacts = Random::UniformIntRange(0u, 5u);
+			auto numberOfContacts = Random::UniformIntRange(0U, 5U);
 			for (size_t i = 0; i < numberOfContacts; i++)
 			{
 				std::shared_lock<std::shared_timed_mutex> lockTravelInfecter(travelInfecterMutex);
@@ -115,7 +115,7 @@ void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 	// Get all susceptible and infectious people
 	std::vector<Person*> susceptible;
 	std::vector<Person*> infectious;
-	for (auto person : place.GetPeople())
+	for (auto* person : place.GetPeople())
 	{
 		if (person->IsSusceptible())
 		{
@@ -128,9 +128,9 @@ void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 	}
 
 	// Every infectious person has a chance to infect a susceptible person
-	for (auto infectiousPerson : infectious)
+	for (auto* infectiousPerson : infectious)
 	{
-		for (auto susceptiblePerson : susceptible)
+		for (auto* susceptiblePerson : susceptible)
 		{
 			infectiousPerson->Contact(*susceptiblePerson);
 		}
@@ -200,7 +200,7 @@ void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 	size_t deadPeople = 0;
 	size_t traveling = 0;
 
-	for (auto& person : population)
+	for (const auto& person : population)
 	{
 		if (person.IsAlive())
 		{

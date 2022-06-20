@@ -14,16 +14,16 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 	static constexpr uint32_t coronaDurationMin{14};
 	static constexpr uint32_t coronaDurationMax{56};
 	SetDiseaseDuration(coronaIncubationPeriodMin + coronaDurationMin, coronaIncubationPeriodMax + coronaDurationMax);
-	SetMortalityByAge({0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f});
+	SetMortalityByAge({0.0F, 0.0014F, 0.0012F, 0.002F, 0.0038F, 0.0098F, .0298f, .0794f, .1734f});
 	SetDaysTillDeath(coronaDurationMin, coronaDurationMax);
 
 	// According to multiple sources only few individuals infect a lot of people.
 	// We use a log normal distribution with most people in the low percents because of that.
-	SetSpreadFactor(0.0f, 0.5f);
+	SetSpreadFactor(0.0F, 0.5F);
 
-	SetTestAccuracy(0.981f);
+	SetTestAccuracy(0.981F);
 	// https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Steckbrief.html -> Manifestationsindex
-	SetSymptomsDevelopment(0.55f, 0.85f);
+	SetSymptomsDevelopment(0.55F, 0.85F);
 
 	return CreateDisease();
 }
@@ -34,11 +34,11 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 	SetIncubationPeriod(1, 1);
 	SetDaysInfectious(10);
 	SetDiseaseDuration(10, 10);
-	SetMortalityByAge({1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f});
+	SetMortalityByAge({1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F});
 	SetDaysTillDeath(10, 10);
-	SetSpreadFactor(1.0f, 1.0f);
-	SetTestAccuracy(1.0f);
-	SetSymptomsDevelopment(1.f, 1.f);
+	SetSpreadFactor(1.0F, 1.0F);
+	SetTestAccuracy(1.0F);
+	SetSymptomsDevelopment(1.F, 1.F);
 
 	return CreateDisease();
 }
@@ -128,7 +128,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		symptomsDevelopment};
 }
 
-std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(std::string fileName)
+std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(const std::string& fileName)
 {
 	using json = nlohmann::json;
 	std::ifstream diseaseJsonFile{fileName};
@@ -151,7 +151,7 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 	return diseases;
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(std::string diseaseSaveName, const Disease& disease, std::string fileName)
+void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const std::string& diseaseSaveName, const Disease& disease, const std::string& fileName)
 {
 	using json = nlohmann::json;
 

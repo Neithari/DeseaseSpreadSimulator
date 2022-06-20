@@ -21,7 +21,7 @@ namespace DiseaseSpreadSimulation
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
 		static float WorkingPeopleCountFloat(const size_t populationSize, const Country country);
 		static size_t SchoolKidsCount(const size_t populationSize, const Country country);
-		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes);
+		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes);
 		static Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount);
 
 		static void AddCommunityToPopulation(Community* community, std::vector<Person>& population);

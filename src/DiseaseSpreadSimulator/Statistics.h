@@ -41,34 +41,34 @@ namespace DiseaseSpreadSimulation
 		};
 
 		// Workplace size estimates https://www.statista.com/statistics/944669/current-office-size-full-time-employees-usa/
-		static constexpr std::array<float, 5> workplaceSize{0.2649f, 0.308f, 0.1908f, 0.0821f, 0.1542f};
+		static constexpr std::array<float, 5> workplaceSize{0.2649F, 0.308F, 0.1908F, 0.0821F, 0.1542F};
 
 		// United States Census Bureau - Population by Age and Sex:2018 -> https://www.census.gov/data/tables/2018/demo/age-and-sex/2018-age-sex-composition.html
 		// Male population is only 99.9% in that document. Added .1% to AboveEighty to get to 100% and prevent possible bugs
 		// Value is in percent with 1.f = 100%
 		static const std::vector<HumanDistribution> defaultAgeDistributionUSA{
-			{Age_Group::UnderTen, Sex::Female, 0.0595f},
-			{Age_Group::UnderTwenty, Sex::Female, 0.062f},
-			{Age_Group::UnderThirty, Sex::Female, 0.067f},
-			{Age_Group::UnderFourty, Sex::Female, 0.0655f},
-			{Age_Group::UnderFifty, Sex::Female, 0.062f},
-			{Age_Group::UnderSixty, Sex::Female, 0.0665f},
-			{Age_Group::UnderSeventy, Sex::Female, 0.0595f},
-			{Age_Group::UnderEighty, Sex::Female, 0.0365f},
-			{Age_Group::AboveEighty, Sex::Female, 0.0215f},
+			{Age_Group::UnderTen, Sex::Female, 0.0595F},
+			{Age_Group::UnderTwenty, Sex::Female, 0.062F},
+			{Age_Group::UnderThirty, Sex::Female, 0.067F},
+			{Age_Group::UnderFourty, Sex::Female, 0.0655F},
+			{Age_Group::UnderFifty, Sex::Female, 0.062F},
+			{Age_Group::UnderSixty, Sex::Female, 0.0665F},
+			{Age_Group::UnderSeventy, Sex::Female, 0.0595F},
+			{Age_Group::UnderEighty, Sex::Female, 0.0365F},
+			{Age_Group::AboveEighty, Sex::Female, 0.0215F},
 
-			{Age_Group::UnderTen, Sex::Male, 0.0645f},
-			{Age_Group::UnderTwenty, Sex::Male, 0.067f},
-			{Age_Group::UnderThirty, Sex::Male, 0.071f},
-			{Age_Group::UnderFourty, Sex::Male, 0.0675f},
-			{Age_Group::UnderFifty, Sex::Male, 0.062f},
-			{Age_Group::UnderSixty, Sex::Male, 0.065f},
-			{Age_Group::UnderSeventy, Sex::Male, 0.055f},
-			{Age_Group::UnderEighty, Sex::Male, 0.0325f},
-			{Age_Group::AboveEighty, Sex::Male, 0.0155f}};
+			{Age_Group::UnderTen, Sex::Male, 0.0645F},
+			{Age_Group::UnderTwenty, Sex::Male, 0.067F},
+			{Age_Group::UnderThirty, Sex::Male, 0.071F},
+			{Age_Group::UnderFourty, Sex::Male, 0.0675F},
+			{Age_Group::UnderFifty, Sex::Male, 0.062F},
+			{Age_Group::UnderSixty, Sex::Male, 0.065F},
+			{Age_Group::UnderSeventy, Sex::Male, 0.055F},
+			{Age_Group::UnderEighty, Sex::Male, 0.0325F},
+			{Age_Group::AboveEighty, Sex::Male, 0.0155F}};
 		// United Nations - Household Size & Composition, 2019 -> https://population.un.org/Household/index.html#/countries/840
-		static constexpr HouseholdComposition householdUSA{0.2789f, 0.4949f, 0.1881f, 0.0381f};
-		static constexpr HouseholdComposition householdGermany{0.3953f, 0.47f, 0.1271f, 0.0076f};
+		static constexpr HouseholdComposition householdUSA{0.2789F, 0.4949F, 0.1881F, 0.0381F};
+		static constexpr HouseholdComposition householdGermany{0.3953F, 0.47F, 0.1271F, 0.0076F};
 
 		// NCES - Public elementary and secondary school stats -> https://nces.ed.gov/programs/digest/d20/tables/dt20_214.40.asp
 		static constexpr uint32_t averageSchoolSizeUSA{527};

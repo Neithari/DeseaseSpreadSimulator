@@ -106,13 +106,13 @@ bool DiseaseSpreadSimulation::Infection::HasDisease() const
 	return disease != nullptr;
 }
 
-std::string DiseaseSpreadSimulation::Infection::GetDiseaseName() const
+const std::string& DiseaseSpreadSimulation::Infection::GetDiseaseName() const
 {
 	if (HasDisease())
 	{
 		return disease->GetDiseaseName();
 	}
-	return "";
+	return noDisease;
 }
 
 bool DiseaseSpreadSimulation::Infection::HasRecovered() const

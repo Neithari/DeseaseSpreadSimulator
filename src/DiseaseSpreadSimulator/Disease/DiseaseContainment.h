@@ -17,10 +17,10 @@ namespace DiseaseSpreadSimulation
 		void ToggleLockdown();
 		void ToggleMaskMandate();
 
-		bool ShopsAreOpen() const;
-		bool WorkingFormHome() const;
-		bool IsLockdown() const;
-		bool IsMaskMandate() const;
+		[[nodiscard]] bool ShopsAreOpen() const;
+		[[nodiscard]] bool WorkingFormHome() const;
+		[[nodiscard]] bool IsLockdown() const;
+		[[nodiscard]] bool IsMaskMandate() const;
 
 	private:
 		bool areShopsOpen = true;

@@ -81,7 +81,7 @@ bool DiseaseSpreadSimulation::Person::IsAlive() const
 	return alive;
 }
 
-std::string DiseaseSpreadSimulation::Person::GetDiseaseName() const
+const std::string& DiseaseSpreadSimulation::Person::GetDiseaseName() const
 {
 	return infection.GetDiseaseName();
 }
@@ -170,7 +170,7 @@ void DiseaseSpreadSimulation::Person::SetHome(Home* newHome)
 {
 	m_home = newHome;
 	// Check if the person is already somewhere.
-	if (!whereabouts)
+	if (whereabouts == nullptr)
 	{
 		// If not set it's whereabouts to home...
 		whereabouts = m_home;
@@ -211,7 +211,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 	if (infection.HasSymptoms() && currentTime >= shopOpenTime)
 	{
 		// When our acceptance factor is too low, we decide random if we test or not
-		if (m_behavior.acceptanceFactor <= 0.6f && Random::Percent<float>() > m_behavior.acceptanceFactor)
+		if (m_behavior.acceptanceFactor <= 0.6F && Random::Percent<float>() > m_behavior.acceptanceFactor)
 		{
 			return;
 		}
@@ -362,7 +362,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 			if (Random::Percent<float>() <= (baseTravelReturnChance * (static_cast<float>(travelDays) / static_cast<float>(3))))
 			{
 				isTraveling = false;
-				travelDays = 0u;
+				travelDays = 0U;
 				whereabouts = m_community->TransferToHome(this);
 			}
 		}

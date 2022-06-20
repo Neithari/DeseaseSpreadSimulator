@@ -1,4 +1,5 @@
 #include "Places/Community.h"
+#include <utility>
 #include "Places/PlaceBuilder.h"
 #include "Person/Person.h"
 #include "Person/PersonPopulator.h"
@@ -72,7 +73,7 @@ void DiseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemo
 void DiseaseSpreadSimulation::Community::AddPlaces(Places places)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlaces(placesMutex);
-	m_places.Insert(places);
+	m_places.Insert(std::move(places));
 }
 
 void DiseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
@@ -109,42 +110,42 @@ std::optional<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::Communit
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToHome(Person* person)
 {
-	auto home = person->GetHome();
+	auto* home = person->GetHome();
 	TransferToPlace(person, home);
 	return home;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToSupplyStore(Person* person)
 {
-	auto store = GetSupplyStore();
+	auto* store = GetSupplyStore();
 	TransferToPlace(person, store);
 	return store;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToHardwareStore(Person* person)
 {
-	auto store = GetHardwareStore();
+	auto* store = GetHardwareStore();
 	TransferToPlace(person, store);
 	return store;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToWork(Person* person)
 {
-	auto work = person->GetWorkplace();
+	auto* work = person->GetWorkplace();
 	TransferToPlace(person, work);
 	return work;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToSchool(Person* person)
 {
-	auto school = person->GetSchool();
+	auto* school = person->GetSchool();
 	TransferToPlace(person, school);
 	return school;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToMorgue(Person* person)
 {
-	auto morgue = GetMorgue();
+	auto* morgue = GetMorgue();
 	TransferToPlace(person, morgue);
 	return morgue;
 }
@@ -212,37 +213,37 @@ DiseaseSpreadSimulation::Morgue* DiseaseSpreadSimulation::Community::GetMorgue()
 void DiseaseSpreadSimulation::Community::AddPlace(Home home)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.homes.push_back(home);
+	m_places.homes.push_back(std::move(home));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(Supply store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.supplyStores.push_back(store);
+	m_places.supplyStores.push_back(std::move(store));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.workplaces.push_back(workplace);
+	m_places.workplaces.push_back(std::move(workplace));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(School school)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.schools.push_back(school);
+	m_places.schools.push_back(std::move(school));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.hardwareStores.push_back(store);
+	m_places.hardwareStores.push_back(std::move(store));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.morgues.push_back(morgue);
+	m_places.morgues.push_back(std::move(morgue));
 }
 
 const DiseaseSpreadSimulation::DiseaseContainment& DiseaseSpreadSimulation::Community::ContainmentMeasures() const
@@ -266,11 +267,7 @@ bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* pe
 	}
 
 	// Return true when our test is inside the accuracy and false otherwise
-	if (Random::Percent<float>() < person->GetDisease()->GetTestAccuracy())
-	{
-		return true;
-	}
-	return false;
+	return Random::Percent<float>() < person->GetDisease()->GetTestAccuracy();
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)

@@ -27,7 +27,7 @@ DiseaseSpreadSimulation::Places DiseaseSpreadSimulation::PlaceBuilder::CreatePla
 
 	// Create workplaces for people between 20 and 69
 	// Get the workplace counts for the size groups and sum them
-	float workplaceCount = 0.f;
+	float workplaceCount{0.F};
 	for (size_t i = 0; i < Statistics::workplaceSize.size(); i++)
 	{
 		// Workplaces starting with 25 employees and increasing by 50 per size
@@ -41,7 +41,7 @@ DiseaseSpreadSimulation::Places DiseaseSpreadSimulation::PlaceBuilder::CreatePla
 	}
 
 	// Create one supply building and a morgue for every 5000 persons. At least one of each
-	size_t supplyCount = populationSize / 5000;
+	size_t supplyCount{populationSize / 5000};
 	if (supplyCount < 1)
 	{
 		supplyCount = 1;
@@ -56,7 +56,7 @@ DiseaseSpreadSimulation::Places DiseaseSpreadSimulation::PlaceBuilder::CreatePla
 	// Create schools
 	auto schoolKidsCount = PersonPopulator::SchoolKidsCount(populationSize, country);
 	auto schoolSize = Statistics::AverageSchoolSize(country);
-	size_t schoolCount;
+	size_t schoolCount{0};
 	// Open one extra school if there are 100 kids more than the average
 	size_t rest = schoolKidsCount % schoolSize;
 	if (schoolKidsCount < 100)
@@ -92,7 +92,7 @@ std::array<std::vector<DiseaseSpreadSimulation::Workplace*>, 5> DiseaseSpreadSim
 		}
 	}
 	// Assigne leftovers to under 20 people workplaces
-	while (workplaces.size() > 0)
+	while (!workplaces.empty())
 	{
 		workplacesBySize.at(0).push_back(workplaces.back());
 		workplaces.pop_back();
