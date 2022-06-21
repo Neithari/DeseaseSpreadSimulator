@@ -10,15 +10,15 @@ namespace DiseaseSpreadSimulation
 	class Disease
 	{
 	public:
-		Disease(const std::string name,
-			const std::pair<uint32_t, uint32_t> incubationPeriod,
-			const uint32_t daysInfectious,
-			const std::pair<uint32_t, uint32_t> diseaseDurationRange,
-			const std::vector<float> mortalityByAge,
-			const std::pair<uint32_t, uint32_t> daysTillDeathRange,
-			const std::pair<float, float> spreadFactor = {1.0f, 1.0f},
-			const float testAccuracy = 1.0f,
-			const std::pair<float, float> symptomsDevelopment = {1.0f, 1.0f});
+		Disease(std::string name,
+			std::pair<uint32_t, uint32_t> incubationPeriod,
+			uint32_t daysInfectious,
+			std::pair<uint32_t, uint32_t> diseaseDurationRange,
+			std::vector<float>& mortalityByAge,
+			std::pair<uint32_t, uint32_t> daysTillDeathRange,
+			std::pair<float, float> spreadFactor = {1.0F, 1.0F},
+			float testAccuracy = 1.0F,
+			std::pair<float, float> symptomsDevelopment = {1.0F, 1.0F});
 
 		// Check with ID
 		inline bool operator==(const Disease& rhs) const
@@ -58,7 +58,7 @@ namespace DiseaseSpreadSimulation
 		// Duration min, max in days
 		const std::pair<uint32_t, uint32_t> m_durationRange{};
 		// Mortality in percent from 0-1, age from 0-9, 10-19, 20-29,...., >80 years
-		const std::vector<float> m_mortalityByAge;
+		const std::vector<float> m_mortalityByAge{};
 		const std::pair<uint32_t, uint32_t> m_daysTillDeathRange{};
 		// In percent from 0-1 how likely it is to get infected at exposure
 		const std::pair<float, float> m_spreadFactor{};

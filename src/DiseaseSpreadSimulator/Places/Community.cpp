@@ -19,21 +19,22 @@ DiseaseSpreadSimulation::Community::Community(const size_t populationSize, const
 	m_population = populationFactory.CreatePopulation(country, m_places.homes, m_places.workplaces, m_places.schools, this);
 }
 
+// We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
+// cppcheck-suppress operatorEqVarError
 DiseaseSpreadSimulation::Community::Community(const Community& other)
 	: m_population(other.m_population),
 	  m_places(other.m_places),
-	  m_travelLocation(other.m_travelLocation),
-	  populationMutex(),
-	  placesMutex()
+	  m_travelLocation(other.m_travelLocation)
 {
 }
 
+
+// We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
+// cppcheck-suppress operatorEqVarError
 DiseaseSpreadSimulation::Community::Community(Community&& other) noexcept
 	: m_population(std::move(other.m_population)),
 	  m_places(std::move(other.m_places)),
-	  m_travelLocation(std::move(other.m_travelLocation)),
-	  populationMutex(),
-	  placesMutex()
+	  m_travelLocation(std::move(other.m_travelLocation))
 {
 }
 
@@ -59,7 +60,9 @@ void DiseaseSpreadSimulation::Community::AddPerson(Person person)
 	m_population.push_back(std::move(person));
 }
 
-void DiseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemove)
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+	void DiseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemove)
 {
 	std::lock_guard<std::shared_timed_mutex> lockRemovePerson(populationMutex);
 	m_population.erase(
@@ -70,12 +73,16 @@ void DiseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemo
 		m_population.end());
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void DiseaseSpreadSimulation::Community::AddPlaces(Places places)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlaces(placesMutex);
 	m_places.Insert(std::move(places));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, misc-unused-parameters)
 void DiseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPopulation(populationMutex);
@@ -83,25 +90,28 @@ void DiseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& popu
 	m_population.insert(m_population.end(), population.begin(), population.end());
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 std::optional<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::Community::TransferPerson(const Person& traveler)
 {
 	// The shared lock can't be upgraded to a full lock. Because of that we need to separate the read from the write part.
 	bool isEnditerator{true};
-	std::vector<Person>::iterator toTransfer;
-	{
-		std::shared_lock<std::shared_timed_mutex> lockFindPerson(populationMutex);
-		toTransfer = std::find_if(m_population.begin(), m_population.end(), [&](const Person& person)
-			{
-				return person == traveler;
-			});
-		isEnditerator = toTransfer == m_population.end();
-	}
+	
+	std::shared_lock<std::shared_timed_mutex> lockPopulation(populationMutex);
+	auto toTransfer = std::find_if(m_population.begin(), m_population.end(), [&](const Person& person)
+		{
+			return person == traveler;
+		});
+	isEnditerator = toTransfer == m_population.end();
+	lockPopulation.unlock();
+	
 
 	if (!isEnditerator)
 	{
-		std::lock_guard<std::shared_timed_mutex> lockPersonTransfer(populationMutex);
+		lockPopulation.lock();
 		std::optional<Person> transferPerson = std::move(*toTransfer);
 		m_population.erase(toTransfer);
+		lockPopulation.unlock();
 		return transferPerson;
 	}
 	// This should never happen, because the person to transfer should be calling it.
@@ -177,6 +187,8 @@ std::vector<DiseaseSpreadSimulation::Home>& DiseaseSpreadSimulation::Community::
 	return m_places.homes;
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 DiseaseSpreadSimulation::Supply* DiseaseSpreadSimulation::Community::GetSupplyStore()
 {
 	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
@@ -188,6 +200,8 @@ DiseaseSpreadSimulation::Supply* DiseaseSpreadSimulation::Community::GetSupplySt
 	return &m_places.supplyStores.at(Random::RandomVectorIndex(m_places.supplyStores));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 DiseaseSpreadSimulation::HardwareStore* DiseaseSpreadSimulation::Community::GetHardwareStore()
 {
 	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
@@ -199,6 +213,8 @@ DiseaseSpreadSimulation::HardwareStore* DiseaseSpreadSimulation::Community::GetH
 	return &m_places.hardwareStores.at(Random::RandomVectorIndex(m_places.hardwareStores));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 DiseaseSpreadSimulation::Morgue* DiseaseSpreadSimulation::Community::GetMorgue()
 {
 	std::shared_lock<std::shared_timed_mutex> lockGetPlaces(placesMutex);
@@ -210,36 +226,48 @@ DiseaseSpreadSimulation::Morgue* DiseaseSpreadSimulation::Community::GetMorgue()
 	return &m_places.morgues.at(Random::RandomVectorIndex(m_places.morgues));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Community::AddPlace(Home home)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.homes.push_back(std::move(home));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Community::AddPlace(Supply store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.supplyStores.push_back(std::move(store));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.workplaces.push_back(std::move(workplace));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Community::AddPlace(School school)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.schools.push_back(std::move(school));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
 	m_places.hardwareStores.push_back(std::move(store));
 }
 
+// Silence the false positive. We do manipulate local data so static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static, performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
@@ -270,6 +298,8 @@ bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* pe
 	return Random::Percent<float>() < person->GetDisease()->GetTestAccuracy();
 }
 
+// Silence the false positive. We do manipulate place and need a lock to do it save. So static is not ok
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
 {
 	std::lock_guard<std::shared_timed_mutex> lockTransferToPlace(placesMutex);
