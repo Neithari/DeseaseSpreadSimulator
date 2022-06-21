@@ -10,16 +10,16 @@ namespace Random
 	static std::mt19937_64 generator(seed());
 
 	template <typename T>
-	static auto RandomVectorIndex(const std::vector<T>&  /*vector*/)
+	static auto RandomVectorIndex(const std::vector<T>&  indexVector)
 	{
 		// Prevent return of a negative index
-		if (std::vector.empty())
+		if (indexVector.empty())
 		{
 			throw(std::out_of_range("Vector is Empty!"));
 		}
 
-		typedef typename std::vector<T>::size_type size_type;
-		std::uniform_int_distribution<size_type> distribution(static_cast<size_type>(0), vector.size() - static_cast<size_type>(1));
+		using size_type = std::vector<T>::size_type;
+		std::uniform_int_distribution<size_type> distribution(static_cast<size_type>(0), indexVector.size() - static_cast<size_type>(1));
 
 		return distribution(generator);
 	};

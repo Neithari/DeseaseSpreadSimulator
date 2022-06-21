@@ -3,8 +3,8 @@
 #include <vector>
 #include "Enums.h"
 #include "Statistics.h"
-#include "Places/Places.h"
 #include "RandomNumbers.h"
+#include "Places/Places.h"
 
 namespace DiseaseSpreadSimulation
 {
@@ -50,9 +50,9 @@ namespace DiseaseSpreadSimulation
 
 	private:
 		const size_t m_populationSize{};
-		bool m_allAssigned = false;
+		bool m_allAssigned{false};
 		size_t m_leftover{};
-		bool m_lastFew = false;
+		bool m_lastFew{false};
 		const std::vector<Statistics::HumanDistribution> m_ageDistribution;
 		// Set to 1 because we use the distribution on 0 inside the constructor
 		size_t m_ageDistributionIndex{};

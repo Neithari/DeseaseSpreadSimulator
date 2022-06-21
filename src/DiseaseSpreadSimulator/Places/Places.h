@@ -49,10 +49,10 @@ namespace DiseaseSpreadSimulation
 		Place& operator=(const Place& other) = delete;
 		Place& operator=(Place&& other) noexcept;
 
-	
-		uint32_t placeID = 0;
+	protected:
+		uint32_t placeID{0};
 		// People inside the place are not owned by the place
-		std::vector<Person*> people;
+		std::vector<Person*> people{};
 
 		std::mutex peopleMutex;
 	};
@@ -67,7 +67,6 @@ namespace DiseaseSpreadSimulation
 		Home& operator=(Home&& other) noexcept;
 		~Home() override = default;
 
-	
 		[[nodiscard]] Place_Type GetType() const override;
 	};
 
@@ -81,7 +80,6 @@ namespace DiseaseSpreadSimulation
 		Supply& operator=(Supply&& other) noexcept;
 		~Supply() override = default;
 
-	
 		[[nodiscard]] Place_Type GetType() const override;
 	};
 
@@ -95,7 +93,6 @@ namespace DiseaseSpreadSimulation
 		Workplace& operator=(Workplace&& other) noexcept;
 		~Workplace() override = default;
 
-	
 		[[nodiscard]] Place_Type GetType() const override;
 	};
 
@@ -109,7 +106,6 @@ namespace DiseaseSpreadSimulation
 		School& operator=(School&& other) noexcept;
 		~School() override = default;
 
-	
 		[[nodiscard]] Place_Type GetType() const override;
 	};
 
@@ -123,7 +119,6 @@ namespace DiseaseSpreadSimulation
 		HardwareStore& operator=(HardwareStore&& other) noexcept;
 		~HardwareStore() override = default;
 
-	
 		[[nodiscard]] Place_Type GetType() const override;
 	};
 	class Morgue : public Place
@@ -136,7 +131,6 @@ namespace DiseaseSpreadSimulation
 		Morgue& operator=(Morgue&& other) noexcept;
 		~Morgue() override = default;
 
-	
 		[[nodiscard]] Place_Type GetType() const override;
 	private:
 	};
@@ -151,7 +145,6 @@ namespace DiseaseSpreadSimulation
 		Travel& operator=(Travel&& other) noexcept;
 		~Travel() override = default;
 
-	
 		[[nodiscard]] Place_Type GetType() const override;
 	};
 
