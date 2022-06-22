@@ -46,12 +46,12 @@ namespace DiseaseSpreadSimulation
 
 		static constexpr Country country{Country::USA};
 		uint64_t m_populationSize{};
-		TimeManager time;
-		std::vector<Community> communities;
-		std::vector<Disease> diseases;
+		TimeManager time{};
+		std::vector<Community> communities{};
+		std::vector<Disease> diseases{};
 
 		Person travelInfecter;
-		std::shared_timed_mutex travelInfecterMutex;
+		std::shared_timed_mutex travelInfecterMutex{};
 
 		uint64_t elapsedDays{};
 		// We start with the first hour

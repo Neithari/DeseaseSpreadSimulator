@@ -22,6 +22,14 @@ namespace DiseaseSpreadSimulation
 		[[nodiscard]] bool IsLockdown() const;
 		[[nodiscard]] bool IsMaskMandate() const;
 
+	public:
+		// 50% of working people are allowed to go to work when there is a working from home mandate.
+		// Reflecting jobs that are not capable of work from home
+		static constexpr float percentOfJobsNoWorkFromHome{.5F};
+		// During a lockdown only 10% of people are allowed to go to work
+		// Reflecting jobs that are mandatory to supply people
+		static constexpr float percentOfJobsMandatoryToSupply{.1F};
+
 	private:
 		bool areShopsOpen = true;
 		bool massWorkingFromHome = false;

@@ -5,6 +5,8 @@
 #include "Disease/DiseaseContainment.h"
 #include "RandomNumbers.h"
 
+// Silence clang tidy because of false positive
+// NOLINTNEXTLINE(*-pro-type-member-init)
 DiseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
 	: id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	  m_age(age),
@@ -184,6 +186,8 @@ void DiseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 	m_behavior = newBehavior;
 }
 
+// TODO: Refactor this complex function. Silence warnings untill then
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& isWorkday, bool isNewDay)
 {
 	// Send the person to the morgue if not alive
@@ -211,7 +215,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 	if (infection.HasSymptoms() && currentTime >= shopOpenTime)
 	{
 		// When our acceptance factor is too low, we decide random if we test or not
-		if (m_behavior.acceptanceFactor <= 0.6F && Random::Percent<float>() > m_behavior.acceptanceFactor)
+		if (m_behavior.acceptanceFactor <= PersonBehavior::acceptanceFactorThreshold && Random::Percent<float>() > m_behavior.acceptanceFactor)
 		{
 			return;
 		}
@@ -269,7 +273,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 				{
 					// 50% of working people are allowed to go to work when there is a working from home mandate.
 					// Reflecting jobs that are not capable of work from home
-					if (Random::Percent<float>() <= .5f)
+					if (Random::Percent<float>() <= m_community->ContainmentMeasures().percentOfJobsNoWorkFromHome)
 					{
 						whereabouts = m_community->TransferToWork(this);
 					}
@@ -278,7 +282,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 				{
 					// During a lockdown only 10% of people are allowed to go to work
 					// Reflecting jobs that are mandatory to supply people
-					if (Random::Percent<float>() <= .1f)
+					if (Random::Percent<float>() <= m_community->ContainmentMeasures().percentOfJobsMandatoryToSupply)
 					{
 						whereabouts = m_community->TransferToWork(this);
 					}

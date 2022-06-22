@@ -154,7 +154,7 @@ namespace DiseaseSpreadSimulation
 		void Insert(Places other);
 	private:
 		template <typename T>
-		static void AppendVectorAtEnd(std::vector<T>& dest, std::vector<T>& src)
+		static void AppendVectorAtEnd(std::vector<T>& dest, std::vector<T>&& src)
 		{
 			while (!src.empty())
 			{

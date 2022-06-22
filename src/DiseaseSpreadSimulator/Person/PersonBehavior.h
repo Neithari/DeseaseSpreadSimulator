@@ -17,6 +17,7 @@ namespace DiseaseSpreadSimulation
 		// Percent from 0-1
 		float acceptanceFactor;
 		float travelNeed;
+		static constexpr float acceptanceFactorThreshold{0.6F};
 
 	private:
 		static constexpr uint32_t minDaysToNextFoodBuy = 1U;

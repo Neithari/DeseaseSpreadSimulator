@@ -8,7 +8,7 @@
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	: m_withPrint(withPrint),
 	  m_populationSize(populationSize),
-	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.F, 1.F), nullptr)
+	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.F, 1.F), nullptr) // NOLINT: There is no benefit in named constants here
 {
 }
 void DiseaseSpreadSimulation::Simulation::Run()
@@ -113,8 +113,8 @@ void DiseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& trave
 void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 {
 	// Get all susceptible and infectious people
-	std::vector<Person*> susceptible;
-	std::vector<Person*> infectious;
+	std::vector<Person*> susceptible{};
+	std::vector<Person*> infectious{};
 	for (auto* person : place.GetPeople())
 	{
 		if (person->IsSusceptible())
@@ -193,12 +193,12 @@ void DiseaseSpreadSimulation::Simulation::PrintOncePerDay()
 
 void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population)
 {
-	size_t populationCount = 0;
-	size_t susceptible = 0;
-	size_t withDisease = 0;
-	size_t infectious = 0;
-	size_t deadPeople = 0;
-	size_t traveling = 0;
+	size_t populationCount{0};
+	size_t susceptible{0};
+	size_t withDisease{0};
+	size_t infectious{0};
+	size_t deadPeople{0};
+	size_t traveling{0};
 
 	for (const auto& person : population)
 	{

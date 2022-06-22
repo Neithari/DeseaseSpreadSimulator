@@ -135,6 +135,8 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetSymptomsDevelopment(const float
 	symptomsDevelopment = {minPercent, maxPercent};
 }
 
+// Silence clang tidy warning because the function is depending on class state.
+// NOLINTNEXTLINE(readability-convert-member-function-to-static)
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateDisease()
 {
 	// Will throw if you didn't setup everything befor trying to create the disease
@@ -146,7 +148,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		throw std::logic_error("Complete setup to create a disease!");
 	}
 
-	return Disease{name,
+	return {name,
 		incubationPeriod,
 		daysInfectious,
 		diseaseDurationRange,
@@ -169,13 +171,10 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 		return {};
 	}
 
-	json diseaseJson;
+	json diseaseJson; // NOLINT: The library is already initializing it to null
 	diseaseJsonFile >> diseaseJson;
 
-	std::vector<Disease> diseases;
-	diseases.reserve(diseaseJson.size());
-
-	std::copy(diseaseJson.begin(), diseaseJson.end(), std::back_inserter(diseases));
+	std::vector<Disease> diseases{diseaseJson.begin(), diseaseJson.end()};
 
 	return diseases;
 }
@@ -185,11 +184,11 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const std::strin
 	using json = nlohmann::json;
 
 	// Because of the json formatting we can't just append the new desease
-	json diseaseJson;
+	json diseaseJson; // NOLINT: The library is already initializing it to null
 
 	// We need to check if the file exists
 	std::ifstream fileExists{fileName};
-	json existingDiseaseJson;
+	json existingDiseaseJson; // NOLINT: The library is already initializing it to null
 	if (fileExists)
 	{
 		// Copy all contents

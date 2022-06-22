@@ -76,17 +76,19 @@ DiseaseSpreadSimulation::Place::Place(uint32_t id)
 {
 }
 
+// We don't want to copy peopleMutexso we suppress the static analyzer warning
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Place::Place(const Place& other)
 	: placeID(other.placeID),
-	  people(other.people),
-	  peopleMutex()
+	  people(other.people)
 {
 }
 
+// We don't want to copy peopleMutexso we suppress the static analyzer warning
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Place::Place(Place&& other) noexcept
 	: placeID(std::move(other.placeID)),
-	  people(std::move(other.people)),
-	  peopleMutex()
+	  people(std::move(other.people))
 {
 }
 
@@ -316,23 +318,25 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Travel::GetType() c
 	return Place_Type::Travel;
 }
 
+// We move all part from other so the copy is not wasted and waring can be silenced
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Places::Insert(Places other)
 {
 	homes.reserve(homes.size() + other.homes.size());
-	AppendVectorAtEnd(homes, other.homes);
+	AppendVectorAtEnd(homes, std::move(other.homes));
 
 	supplyStores.reserve(supplyStores.size() + other.supplyStores.size());
-	AppendVectorAtEnd(supplyStores, other.supplyStores);
+	AppendVectorAtEnd(supplyStores, std::move(other.supplyStores));
 
 	workplaces.reserve(workplaces.size() + other.workplaces.size());
-	AppendVectorAtEnd(workplaces, other.workplaces);
+	AppendVectorAtEnd(workplaces, std::move(other.workplaces));
 
 	schools.reserve(schools.size() + other.schools.size());
-	AppendVectorAtEnd(schools, other.schools);
+	AppendVectorAtEnd(schools, std::move(other.schools));
 
 	hardwareStores.reserve(hardwareStores.size() + other.hardwareStores.size());
-	AppendVectorAtEnd(hardwareStores, other.hardwareStores);
+	AppendVectorAtEnd(hardwareStores, std::move(other.hardwareStores));
 
 	morgues.reserve(morgues.size() + other.morgues.size());
-	AppendVectorAtEnd(morgues, other.morgues);
+	AppendVectorAtEnd(morgues, std::move(other.morgues));
 }

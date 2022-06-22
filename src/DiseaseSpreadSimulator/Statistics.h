@@ -41,7 +41,8 @@ namespace DiseaseSpreadSimulation
 		};
 
 		// Workplace size estimates https://www.statista.com/statistics/944669/current-office-size-full-time-employees-usa/
-		static constexpr std::array<float, 5> workplaceSize{0.2649F, 0.308F, 0.1908F, 0.0821F, 0.1542F};
+		// Percentage of different sized workplaces
+		static constexpr std::array<float, 5> workplaceSizePercent{0.2649F, 0.308F, 0.1908F, 0.0821F, 0.1542F};
 
 		// United States Census Bureau - Population by Age and Sex:2018 -> https://www.census.gov/data/tables/2018/demo/age-and-sex/2018-age-sex-composition.html
 		// Male population is only 99.9% in that document. Added .1% to AboveEighty to get to 100% and prevent possible bugs
