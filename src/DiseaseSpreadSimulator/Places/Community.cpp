@@ -20,7 +20,7 @@ DiseaseSpreadSimulation::Community::Community(const size_t populationSize, const
 }
 
 // We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
-// cppcheck-suppress operatorEqVarError
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Community::Community(const Community& other)
 	: m_population(other.m_population),
 	  m_places(other.m_places),
@@ -30,7 +30,7 @@ DiseaseSpreadSimulation::Community::Community(const Community& other)
 
 
 // We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
-// cppcheck-suppress operatorEqVarError
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Community::Community(Community&& other) noexcept
 	: m_population(std::move(other.m_population)),
 	  m_places(std::move(other.m_places)),

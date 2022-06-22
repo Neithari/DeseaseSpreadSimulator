@@ -37,25 +37,25 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateDeadlyTestDisease()
 {
 	SetDiseaseName("DeadlyTestDisease");
-	static constexpr uint32_t incubationPeriodMin{1};
-	static constexpr uint32_t incubationPeriodMax{1};
-	SetIncubationPeriod(incubationPeriodMin, incubationPeriodMax);
-	static constexpr uint32_t daysInfectious{10};
-	SetDaysInfectious(daysInfectious);
-	static constexpr uint32_t durationMin{10};
-	static constexpr uint32_t durationMax{10};
-	SetDiseaseDuration(durationMin, durationMax);
-	static const std::vector<float> mortalityByAge{1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F};
-	SetMortalityByAge(mortalityByAge);
-	SetDaysTillDeath(durationMin, durationMax);
-	static constexpr float coronaSpreadFactorMin{1.F};
-	static constexpr float coronaSpreadFactorMax{1.F};
-	SetSpreadFactor(coronaSpreadFactorMin, coronaSpreadFactorMax);
-	static constexpr float coronaTestAccuracy{1.F};
-	SetTestAccuracy(coronaTestAccuracy);
-	static constexpr float coronaSymptomsDevelopmentMin{1.F};
-	static constexpr float coronaSymptomsDevelopmentMax{1.F};
-	SetSymptomsDevelopment(coronaSymptomsDevelopmentMin, coronaSymptomsDevelopmentMax);
+	static constexpr uint32_t deadlyIncubationPeriodMin{1};
+	static constexpr uint32_t deadlyIncubationPeriodMax{1};
+	SetIncubationPeriod(deadlyIncubationPeriodMin, deadlyIncubationPeriodMax);
+	static constexpr uint32_t deadlyDaysInfectious{10};
+	SetDaysInfectious(deadlyDaysInfectious);
+	static constexpr uint32_t deadlyDurationMin{10};
+	static constexpr uint32_t deadlyDurationMax{10};
+	SetDiseaseDuration(deadlyDurationMin, deadlyDurationMax);
+	static const std::vector<float> deadlyMortalityByAge{1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F};
+	SetMortalityByAge(deadlyMortalityByAge);
+	SetDaysTillDeath(deadlyDurationMin, deadlyDurationMax);
+	static constexpr float deadlySpreadFactorMin{1.F};
+	static constexpr float deadlySpreadFactorMax{1.F};
+	SetSpreadFactor(deadlySpreadFactorMin, deadlySpreadFactorMax);
+	static constexpr float deadlyTestAccuracy{1.F};
+	SetTestAccuracy(deadlyTestAccuracy);
+	static constexpr float deadlySymptomsDevelopmentMin{1.F};
+	static constexpr float deadlySymptomsDevelopmentMax{1.F};
+	SetSymptomsDevelopment(deadlySymptomsDevelopmentMin, deadlySymptomsDevelopmentMax);
 
 	return CreateDisease();
 }

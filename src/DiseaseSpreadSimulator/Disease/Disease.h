@@ -14,12 +14,13 @@ namespace DiseaseSpreadSimulation
 			std::pair<uint32_t, uint32_t> incubationPeriod,
 			uint32_t daysInfectious,
 			std::pair<uint32_t, uint32_t> diseaseDurationRange,
-			std::vector<float>& mortalityByAge,
+			std::vector<float> mortalityByAge,
 			std::pair<uint32_t, uint32_t> daysTillDeathRange,
 			std::pair<float, float> spreadFactor = {1.0F, 1.0F},
 			float testAccuracy = 1.0F,
 			std::pair<float, float> symptomsDevelopment = {1.0F, 1.0F});
 
+	public:
 		// Check with ID
 		inline bool operator==(const Disease& rhs) const
 		{
@@ -74,8 +75,6 @@ namespace nlohmann
 	template <>
 	struct adl_serializer<DiseaseSpreadSimulation::Disease>
 	{
-		// note: the return type is no longer 'void', and the method only takes
-		// one argument
 		static DiseaseSpreadSimulation::Disease from_json(const json& j)
 		{
 			return {
@@ -90,9 +89,6 @@ namespace nlohmann
 				j["Symptoms Development"].get<std::pair<float, float>>()};
 		}
 
-		// Here's the catch! You must provide a to_json method! Otherwise, you
-		// will not be able to convert move_only_type to json, since you fully
-		// specialized adl_serializer on that type
 		static void to_json(json& j, const DiseaseSpreadSimulation::Disease& disease)
 		{
 			j = {
