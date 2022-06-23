@@ -6,7 +6,6 @@
 #include "Person/Person.h"
 #include "Person/PersonBehavior.h"
 
-
 namespace UnitTests
 {
 	class PlaceTests : public ::testing::Test
@@ -69,7 +68,7 @@ namespace UnitTests
 		ASSERT_EQ(home.GetPersonCount(), 3);
 
 		// Check that a wrong ID will not remove a valid person
-		home.RemovePerson(12345);
+		home.RemovePerson(12345); // NOLINT(*-magic-numbers)
 		EXPECT_EQ(home.GetPersonCount(), 3);
 
 		home.RemovePerson(personID);

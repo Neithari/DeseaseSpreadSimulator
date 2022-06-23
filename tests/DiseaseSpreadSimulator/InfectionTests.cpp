@@ -13,30 +13,32 @@
 
 namespace UnitTests
 {
+	// Don't warn on magic numbers for tests
+	// NOLINTBEGIN(*-magic-numbers)
 	class InfectionTest : public ::testing::Test
 	{
 	protected:
 		// Disease
 		std::string name = "a";
-		std::pair<uint32_t, uint32_t> incubationPeriod{2u, 2u};
+		std::pair<uint32_t, uint32_t> incubationPeriod{2U, 2U};
 		uint32_t daysInfectious = 1;
-		std::pair<uint32_t, uint32_t> diseaseDurationRange{3u, 3u};
-		std::vector<float> mortalityByAge{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 1u};
-		std::pair<float, float> spreadFactor{1.f, 1.f};
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{3U, 3U};
+		std::vector<float> mortalityByAge{0.F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1U, 1U};
+		std::pair<float, float> spreadFactor{1.F, 1.F};
 		float testAccuracy{1.0F};
-		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
+		std::pair<float, float> symptomsDevelopment{1.F, 1.F};
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 
 		std::string deadlyName = "DeadlyTestDisease";
-		std::pair<uint32_t, uint32_t> deadlyIncubationPeriod{1u, 1u};
+		std::pair<uint32_t, uint32_t> deadlyIncubationPeriod{1U, 1U};
 		uint32_t deadlyDaysInfectious = 1;
-		std::pair<uint32_t, uint32_t> deadlyDiseaseDurationRange{2u, 2u};
-		std::vector<float> deadlyMortalityByAge{1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
-		std::pair<uint32_t, uint32_t> deadlyDaysTillDeathRange{2u, 2u};
-		std::pair<float, float> deadlySpreadFactor{1.f, 1.f};
+		std::pair<uint32_t, uint32_t> deadlyDiseaseDurationRange{2U, 2U};
+		std::vector<float> deadlyMortalityByAge{1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F};
+		std::pair<uint32_t, uint32_t> deadlyDaysTillDeathRange{2U, 2U};
+		std::pair<float, float> deadlySpreadFactor{1.F, 1.F};
 		float deadlyTestAccuracy{1.0F};
-		std::pair<float, float> deadlySymptomsDevelopment{1.f, 1.f};
+		std::pair<float, float> deadlySymptomsDevelopment{1.F, 1.F};
 		DiseaseSpreadSimulation::Disease deadlyDisease{deadlyName, deadlyIncubationPeriod, deadlyDaysInfectious, deadlyDiseaseDurationRange, deadlyMortalityByAge, deadlyDaysTillDeathRange, deadlySpreadFactor, deadlyTestAccuracy, deadlySymptomsDevelopment};
 
 		// Age groups
@@ -46,6 +48,9 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Home home{};
 		DiseaseSpreadSimulation::PersonBehavior behavior{10U, 10U, 0.F, 0.F};
 	};
+	// NOLINTEND(*-magic-numbers)
+	// No point in splitting the test
+	// NOLINTNEXTLINE(*-cognitive-complexity)
 	TEST_F(InfectionTest, Contaminate)
 	{
 		for (auto ageGroup : ageGroups)
@@ -91,7 +96,8 @@ namespace UnitTests
 		ASSERT_FALSE(infection.IsInfectious());
 
 		// Check that an update without a disease won't change anything
-		for (size_t i = 0; i < 10; i++)
+		static constexpr auto testSize{10U};
+		for (auto i{0U}; i < testSize; i++)
 		{
 			infection.Update(person, true);
 			ASSERT_TRUE(infection.IsSusceptible());

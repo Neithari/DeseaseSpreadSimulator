@@ -3,7 +3,6 @@
 #include "Enums.h"
 #include "Simulation/TimeManager.h"
 
-
 namespace UnitTests
 {
 	class TimeTests : public ::testing::Test
@@ -22,12 +21,15 @@ namespace UnitTests
 	};
 	TEST_F(TimeTests, HourProgressTest)
 	{
-		for (size_t i = 0; i < 100; i++)
+		constexpr auto testSize{100U};
+		for (auto i = 0U; i < testSize; i++)
 		{
 			EXPECT_EQ(time.GetElapsedHours(), i);
 			time.Update();
 		}
 	}
+	// No point in splitting the test
+	// NOLINTNEXTLINE(*-cognitive-complexity)
 	TEST_F(TimeTests, DayProgressTest)
 	{
 		EXPECT_EQ(time.GetElapsedDays(), 0);
@@ -78,7 +80,8 @@ namespace UnitTests
 	}
 	TEST_F(TimeTests, ClockTimeTest)
 	{
-		for (size_t i = 0; i < 100; i++)
+		constexpr auto testSize{100U};
+		for (auto i = 0U; i < testSize; i++)
 		{
 			for (size_t hour = 0; hour < hoursPerDay; hour++)
 			{

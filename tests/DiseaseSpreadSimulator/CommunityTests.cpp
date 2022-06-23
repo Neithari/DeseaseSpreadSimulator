@@ -12,7 +12,7 @@ namespace UnitTests
 	class CommunityTest : public ::testing::Test
 	{
 	protected:
-		DiseaseSpreadSimulation::Community community{0u, DiseaseSpreadSimulation::Country::USA};
+		DiseaseSpreadSimulation::Community community{0U, DiseaseSpreadSimulation::Country::USA};
 		DiseaseSpreadSimulation::PersonBehavior behavior;
 	};
 	TEST_F(CommunityTest, AddPlaceGetPlaces)
@@ -146,28 +146,28 @@ namespace UnitTests
 		person.SetSchool(&community.GetPlaces().schools.back());
 		person.SetWorkplace(&community.GetPlaces().workplaces.back());
 
-		auto supply = community.TransferToSupplyStore(&person);
+		auto* supply = community.TransferToSupplyStore(&person);
 		EXPECT_EQ(supply->GetType(), Place_Type::Supply);
 
-		auto home = community.TransferToHome(&person);
+		auto* home = community.TransferToHome(&person);
 		EXPECT_EQ(home->GetType(), Place_Type::Home);
 		EXPECT_EQ(home->GetID(), person.GetHome()->GetID());
 
-		auto hardware = community.TransferToHardwareStore(&person);
+		auto* hardware = community.TransferToHardwareStore(&person);
 		EXPECT_EQ(hardware->GetType(), Place_Type::HardwareStore);
 
-		auto work = community.TransferToWork(&person);
+		auto* work = community.TransferToWork(&person);
 		EXPECT_EQ(work->GetType(), Place_Type::Workplace);
 		EXPECT_EQ(work->GetID(), person.GetWorkplace()->GetID());
 
-		auto school = community.TransferToSchool(&person);
+		auto* school = community.TransferToSchool(&person);
 		EXPECT_EQ(school->GetType(), Place_Type::School);
 		EXPECT_EQ(school->GetID(), person.GetSchool()->GetID());
 
-		auto morgue = community.TransferToMorgue(&person);
+		auto* morgue = community.TransferToMorgue(&person);
 		EXPECT_EQ(morgue->GetType(), Place_Type::Morgue);
 
-		auto travel = community.TransferToTravelLocation(&person);
+		auto* travel = community.TransferToTravelLocation(&person);
 		EXPECT_EQ(travel->GetType(), Place_Type::Travel);
 	}
 	TEST_F(CommunityTest, AddHome)

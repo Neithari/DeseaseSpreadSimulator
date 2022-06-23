@@ -13,12 +13,16 @@ namespace UnitTests
 	::testing::AssertionResult IsBetweenInclusive(T val, std::pair<T, T> range)
 	{
 		if ((val >= range.first) && (val <= range.second))
+		{
 			return ::testing::AssertionSuccess();
+		}
 		else
-			return ::testing::AssertionFailure()
-				   << val << " is outside the range " << range.first << " to " << range.second;
+		{
+			return ::testing::AssertionFailure() << val << " is outside the range " << range.first << " to " << range.second;
+		}
 	}
-
+	// Don't warn on magic numbers for tests
+	// NOLINTBEGIN(*-magic-numbers)
 	class DiseaseTest : public ::testing::Test
 	{
 	protected:
@@ -33,12 +37,13 @@ namespace UnitTests
 		std::pair<float, float> symptomsDevelopment{1.F, 1.F};
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 
-		// Helper function to check if the given x is within the range
-		bool inRange(uint32_t x, std::pair<uint32_t, uint32_t> range)
+		// Helper function to check if the given value is within the range
+		static bool inRange(uint32_t value, std::pair<uint32_t, uint32_t> range)
 		{
-			return x >= range.first && x <= range.second;
+			return value >= range.first && value <= range.second;
 		}
 	};
+	// NOLINTEND(*-magic-numbers)
 
 	TEST_F(DiseaseTest, TrivialDiseaseReturns)
 	{
@@ -82,18 +87,21 @@ namespace UnitTests
 		ASSERT_EQ(disease.GetMortalityByAgeGroup(DiseaseSpreadSimulation::Age_Group::UnderEighty), mortalityByAge.at(7));
 		ASSERT_EQ(disease.GetMortalityByAgeGroup(DiseaseSpreadSimulation::Age_Group::AboveEighty), mortalityByAge.at(8));
 	}
+	// There is no point in splitting this test
+	// NOLINTBEGIN(*-cognitive-complexity)
 	TEST_F(DiseaseTest, MortalityByAge)
 	{
 		// Check age 0-89
-		uint32_t age = 0U;
-		for (uint32_t index = 0U; index < mortalityByAge.size(); index++)
+		uint32_t age{0U};
+		for (uint32_t index{0U}; index < mortalityByAge.size(); index++)
 		{
-			for (uint32_t i = 0U; i < 10U; i++)
+			constexpr auto digits{10U};
+			for (uint32_t i{0U}; i < digits; i++)
 			{
 				// Age will be between 0 and 89
-				age = index * 10U + i;
+				age = index * digits + i;
 				// mortalityByAge vector does only have 9 members so prevent an out of bound
-				if (index <= 8U)
+				if (index < mortalityByAge.size())
 				{
 					EXPECT_FLOAT_EQ(disease.GetMortalityByAge(age), mortalityByAge.at(index));
 				}
@@ -104,11 +112,12 @@ namespace UnitTests
 			}
 		}
 		// Check age >=90
-		for (age = 90; age < 111; age++) // NOLINT
+		for (age = 90; age < 111; age++) // NOLINT(*-magic-numbers)
 		{
 			EXPECT_FLOAT_EQ(disease.GetMortalityByAge(age), mortalityByAge.back());
 		}
 	}
+	// NOLINTEND(*-cognitive-complexity)
 	TEST_F(DiseaseTest, EqualsOperator)
 	{
 		ASSERT_TRUE(disease == disease);
@@ -166,6 +175,8 @@ namespace UnitTests
 		EXPECT_FALSE(disease.isSame(disease10));
 	}
 
+	// Don't warn on magic numbers for tests
+	// NOLINTBEGIN(*-magic-numbers)
 	class DiseaseBuilderTest : public ::testing::Test
 	{
 	protected:
@@ -181,6 +192,7 @@ namespace UnitTests
 
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 	};
+	// NOLINTEND(*-magic-numbers)
 	// Tests that CreateDisease() asserts are working properly for every set function
 	TEST_F(DiseaseBuilderTest, ThrowNameNotSet)
 	{
@@ -379,7 +391,7 @@ namespace UnitTests
 		static constexpr uint32_t coronaDurationMin{14};
 		static constexpr uint32_t coronaDurationMax{56};
 		static constexpr std::pair<uint32_t, uint32_t> coronaDiseaseDurationRange{coronaIncubationPeriodMin + coronaDurationMin, coronaIncubationPeriodMax + coronaDurationMax};
-		static const std::vector<float> coronaMortalityByAge{0.0f, 0.0014F, 0.0012F, 0.002F, 0.0038F, 0.0098F, .0298F, .0794F, .1734F};
+		static const std::vector<float> coronaMortalityByAge{0.0F, 0.0014F, 0.0012F, 0.002F, 0.0038F, 0.0098F, .0298F, .0794F, .1734F};
 		static constexpr std::pair<uint32_t, uint32_t> coronaDaysTillDeathRange{coronaDurationMin, coronaDurationMax};
 		static constexpr std::pair<float, float> coronaSpreadFactor{0.0F, 0.5F};
 		static constexpr float coronaTestAccuracy{0.981F};

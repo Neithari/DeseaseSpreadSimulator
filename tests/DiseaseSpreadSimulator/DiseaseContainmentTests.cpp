@@ -12,7 +12,6 @@
 #include "Disease/Disease.h"
 #include "Disease/DiseaseContainment.h"
 
-
 namespace UnitTests
 {
 	class DiseaseContainmentTest : public ::testing::Test
@@ -29,7 +28,7 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Morgue morgue;
 		DiseaseSpreadSimulation::Workplace work;
 		DiseaseSpreadSimulation::School school;
-		DiseaseSpreadSimulation::Community community{0u, DiseaseSpreadSimulation::Country::USA};
+		DiseaseSpreadSimulation::Community community{0U, DiseaseSpreadSimulation::Country::USA};
 		DiseaseSpreadSimulation::TimeManager time;
 		// Values from Person.h
 		static constexpr uint32_t shopOpenTime{7U};
@@ -50,6 +49,8 @@ namespace UnitTests
 			community.AddPlace(school);
 		}
 	};
+	// Ignore test complexity here. No point in splitting it.
+	// NOLINTBEGIN(*-complexity)
 	TEST_F(DiseaseContainmentTest, Quarantine)
 	{
 		InitCommunity();
@@ -73,7 +74,8 @@ namespace UnitTests
 		EXPECT_TRUE(person.IsQuarantined());
 
 		// Advance day and check if the person will stay at home
-		for (uint32_t day = 0; day < 10; day++)
+		constexpr uint32_t testCount{10U};
+		for (uint32_t day = 0U; day < testCount; day++)
 		{
 			person.Update(1, true, true);
 
@@ -84,19 +86,20 @@ namespace UnitTests
 			}
 		}
 	}
+	// NOLINTEND(*-complexity)
 	TEST_F(DiseaseContainmentTest, ReleaseWhenRecovered)
 	{
 		InitCommunity();
 		// Disease
-		std::string name = "a";
-		std::pair<uint32_t, uint32_t> incubationPeriod{2u, 2u};
-		uint32_t daysInfectious = 1;
-		std::pair<uint32_t, uint32_t> diseaseDurationRange{3u, 3u};
-		std::vector<float> mortalityByAge{0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 1u};
-		std::pair<float, float> spreadFactor{1.f, 1.f};
+		std::string name{"a"};
+		std::pair<uint32_t, uint32_t> incubationPeriod{2U, 2U};
+		uint32_t daysInfectious{1U};
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{3U, 3U};
+		std::vector<float> mortalityByAge{0.F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F, 0.F};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1U, 1U};
+		std::pair<float, float> spreadFactor{1.F, 1.F};
 		float testAccuracy{1.0F};
-		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
+		std::pair<float, float> symptomsDevelopment{1.F, 1.F};
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 
 		DiseaseSpreadSimulation::DiseaseContainment containment;
