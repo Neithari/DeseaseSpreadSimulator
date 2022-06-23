@@ -379,7 +379,7 @@ namespace UnitTests
 
 		PersonBehavior oldBehavior{person1.GetBehavior()};
 
-		person1.ChangeBehavior(PersonBehavior{});
+		person1.ChangeBehavior({0U, 0U, 10.F, 10.F});
 		auto& currentBehavior = person1.GetBehavior();
 		EXPECT_NE(currentBehavior.foodBuyInterval, oldBehavior.foodBuyInterval);
 		EXPECT_NE(currentBehavior.hardwareBuyInterval, oldBehavior.hardwareBuyInterval);
