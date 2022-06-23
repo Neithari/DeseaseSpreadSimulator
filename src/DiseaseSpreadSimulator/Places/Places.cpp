@@ -14,7 +14,7 @@ void DiseaseSpreadSimulation::Place::AddPerson(Person* person)
 	people.push_back(person);
 }
 
-void DiseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
+void DiseaseSpreadSimulation::Place::RemovePerson(uint32_t id) // NOLINT(*-identifier-length)
 {
 	std::lock_guard<std::mutex> lockPeople(peopleMutex);
 	people.erase(
@@ -71,7 +71,7 @@ size_t DiseaseSpreadSimulation::Place::GetPersonCount() const
 	return people.size();
 }
 
-DiseaseSpreadSimulation::Place::Place(uint32_t id)
+DiseaseSpreadSimulation::Place::Place(uint32_t id) // NOLINT(*-identifier-length)
 	: placeID(id)
 {
 }
@@ -87,7 +87,7 @@ DiseaseSpreadSimulation::Place::Place(const Place& other)
 // We don't want to copy peopleMutexso we suppress the static analyzer warning
 // cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Place::Place(Place&& other) noexcept
-	: placeID(std::move(other.placeID)),
+	: placeID(other.placeID),
 	  people(std::move(other.people))
 {
 }
@@ -106,6 +106,8 @@ DiseaseSpreadSimulation::Home::Home()
 {
 }
 
+// We cant use default, because it will delete it
+// NOLINTBEGIN(*-use-equals-default)
 DiseaseSpreadSimulation::Home::Home(const Home& other)
 	: Place(other)
 {
@@ -296,6 +298,7 @@ DiseaseSpreadSimulation::Travel::Travel(const Travel& other)
 	: Place(other)
 {
 }
+// NOLINTEND(*-use-equals-default)
 
 DiseaseSpreadSimulation::Travel::Travel(Travel&& other) noexcept
 	: Place(std::move(other))
@@ -318,8 +321,6 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Travel::GetType() c
 	return Place_Type::Travel;
 }
 
-// We move all part from other so the copy is not wasted and waring can be silenced
-// NOLINTNEXTLINE(performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::Places::Insert(Places other)
 {
 	homes.reserve(homes.size() + other.homes.size());

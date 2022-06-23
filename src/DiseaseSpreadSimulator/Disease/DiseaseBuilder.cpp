@@ -105,7 +105,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetMortalityByAge(std::vector<floa
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysTillDeath(const uint32_t min, const uint32_t max)
 {
-	setupDone[5] = true;
+	setupDone[5] = true; // NOLINT: Silence magic number false positive
 
 	daysTillDeathRange = {min, max};
 }
@@ -114,14 +114,14 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysTillDeath(const uint32_t mi
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetSpreadFactor(const float minFactor, const float maxFactor)
 {
-	setupDone[6] = true;
+	setupDone[6] = true; // NOLINT: Silence magic number false positive
 
 	spreadFactor = {minFactor, maxFactor};
 }
 
 void DiseaseSpreadSimulation::DiseaseBuilder::SetTestAccuracy(const float accuracy)
 {
-	setupDone[7] = true;
+	setupDone[7] = true; // NOLINT: Silence magic number false positive
 
 	testAccuracy = accuracy;
 }
@@ -130,13 +130,11 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetTestAccuracy(const float accura
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetSymptomsDevelopment(const float minPercent, const float maxPercent)
 {
-	setupDone[8] = true;
+	setupDone[8] = true; // NOLINT: Silence magic number false positive
 
 	symptomsDevelopment = {minPercent, maxPercent};
 }
 
-// Silence clang tidy warning because the function is depending on class state.
-// NOLINTNEXTLINE(readability-convert-member-function-to-static)
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateDisease()
 {
 	// Will throw if you didn't setup everything befor trying to create the disease

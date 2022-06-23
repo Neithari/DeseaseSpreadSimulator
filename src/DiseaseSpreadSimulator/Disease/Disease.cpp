@@ -2,8 +2,6 @@
 #include "IDGenerator/IDGenerator.h"
 #include "RandomNumbers.h"
 
-// Silence clang tidy because of false positive
-// NOLINTBEGIN(misc-unused-parameters)
 DiseaseSpreadSimulation::Disease::Disease(std::string name,
 	std::pair<uint32_t, uint32_t> incubationPeriod,
 	uint32_t daysInfectious,
@@ -25,7 +23,6 @@ DiseaseSpreadSimulation::Disease::Disease(std::string name,
 	  m_symptomsDevelopment(std::move(symptomsDevelopment))
 {
 }
-// NOLINTEND(misc-unused-parameters)
 
 const std::string& DiseaseSpreadSimulation::Disease::GetDiseaseName() const
 {
@@ -43,7 +40,6 @@ uint32_t DiseaseSpreadSimulation::Disease::DaysInfectious() const
 {
 	return m_daysInfectious;
 }
-
 
 // Silence clang tidy because of false positive cases 5-7 are markt
 // NOLINTBEGIN(*-magic-numbers)

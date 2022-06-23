@@ -4,8 +4,6 @@
 #include "Places/Community.h"
 #include "Places/PlaceBuilder.h"
 
-// Silence clang tidy because of false positive
-// NOLINTBEGIN(misc-unused-parameters)
 DiseaseSpreadSimulation::PersonPopulator::PersonPopulator(const size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution)
 	: m_populationSize(populationSize),
 	  m_leftover(populationSize),
@@ -20,9 +18,8 @@ DiseaseSpreadSimulation::PersonPopulator::PersonPopulator(const size_t populatio
 	}
 }
 
-// TODO: Consider refactor to a places class containing homes, workplaces, schools, etc
-// Silence unused-parameters because of false positive
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters, misc-unused-parameters)
+// TODO: Consider refactor to places class
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 std::vector<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::PersonPopulator::CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools, Community* community)
 {
 	std::vector<Person> population{};
@@ -163,25 +160,23 @@ size_t DiseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t po
 		});
 }
 
-// False positive for homes
-// NOLINTNEXTLINE(misc-unused-parameters)
 std::array<std::vector<DiseaseSpreadSimulation::Home*>, 4> DiseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes)
 {
 	auto homeCounts = PlaceBuilder::GetHomeCounts(static_cast<float>(populationSize), country);
 
 	// Set iterators to copy a part of the homes vector into the new vectores separated by size
-	auto from = homes.cbegin();
-	auto to = homes.cbegin() + static_cast<int64_t>(homeCounts.at(0));
-	std::vector<Home*> oneMember{from, to};
+	auto fromIt = homes.cbegin();
+	auto toIt = homes.cbegin() + static_cast<int64_t>(homeCounts.at(0));
+	std::vector<Home*> oneMember{fromIt, toIt};
 	// Change the iterators for the next size and do the same for every size
-	from = to;
-	to += static_cast<int64_t>(homeCounts.at(1));
-	std::vector<Home*> twoToThreeMembers{from, to};
-	from = to;
-	to += static_cast<int64_t>(homeCounts.at(2));
-	std::vector<Home*> fourToFiveMembers{from, to};
-	from = to;
-	std::vector<Home*> sixPlusMembers{from, homes.cend()};
+	fromIt = toIt;
+	toIt += static_cast<int64_t>(homeCounts.at(1));
+	std::vector<Home*> twoToThreeMembers{fromIt, toIt};
+	fromIt = toIt;
+	toIt += static_cast<int64_t>(homeCounts.at(2));
+	std::vector<Home*> fourToFiveMembers{fromIt, toIt};
+	fromIt = toIt;
+	std::vector<Home*> sixPlusMembers{fromIt, homes.cend()};
 
 	// Return an array with all size vectors
 	return {oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers};
@@ -211,8 +206,6 @@ DiseaseSpreadSimulation::Home* DiseaseSpreadSimulation::PersonPopulator::AssignH
 	return homesByMemberCount.at(distIndex).at(Random::RandomVectorIndex(homesByMemberCount.at(distIndex)));
 }
 
-// Flase positive. Parameters are not swappable and are used.
-// NOLINTNEXTLINE(*-easily-swappable-parameters, misc-unused-paramters)
 void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
 {
 	std::vector<Home*> homes{};
@@ -222,7 +215,7 @@ void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vec
 			return &home;
 		});
 
-	auto homesByMemberCount = PersonPopulator::HomesByMemberCount(population.size(), country, std::move(homes));
+	auto homesByMemberCount = PersonPopulator::HomesByMemberCount(population.size(), country, homes);
 
 	for (auto& person : population)
 	{
@@ -230,7 +223,7 @@ void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vec
 	}
 }
 
-DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize)
+DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) // NOLINT(*-magic-numbers)
 {
 	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
 	size_t distIndex{GetDistributedArrayIndex(Statistics::workplaceSizePercent)};
@@ -245,10 +238,10 @@ DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::As
 
 std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> DiseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)
 {
+	// TODO: Implement german distribution. Until then silence warnings
+	// NOLINTBEGIN(bugprone-branch-clone)
 	switch (country)
 	{
-		// TODO: Implement german distribution. Until then silence warnings
-		//NOLINTBEGIN(bugprone-branch-clone)
 	case DiseaseSpreadSimulation::Country::USA:
 		return Statistics::defaultAgeDistributionUSA;
 		break;
@@ -259,7 +252,7 @@ std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> DiseaseSprea
 		return Statistics::defaultAgeDistributionUSA;
 		break;
 	}
-	//NOLINTEND(bugprone-branch-clone)
+	// NOLINTEND(bugprone-branch-clone)
 }
 
 void DiseaseSpreadSimulation::PersonPopulator::AddCommunityToPopulation(Community* community, std::vector<Person>& population)
@@ -278,7 +271,6 @@ DiseaseSpreadSimulation::Statistics::HouseholdComposition DiseaseSpreadSimulatio
 		return Statistics::householdUSA;
 		break;
 	case DiseaseSpreadSimulation::Country::Germany:
-		// TODO: Implement german distribution
 		return Statistics::householdGermany;
 		break;
 	default:

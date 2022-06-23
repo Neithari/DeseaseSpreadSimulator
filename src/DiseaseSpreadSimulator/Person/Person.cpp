@@ -5,13 +5,11 @@
 #include "Disease/DiseaseContainment.h"
 #include "RandomNumbers.h"
 
-// Silence clang tidy because of false positive
-// NOLINTNEXTLINE(*-pro-type-member-init)
 DiseaseSpreadSimulation::Person::Person(Age_Group age, Sex sex, PersonBehavior behavior, Community* community, Home* home)
 	: id(IDGenerator::IDGenerator<Person>::GetNextID()),
 	  m_age(age),
 	  m_sex(sex),
-	  m_behavior(std::move(behavior)),
+	  m_behavior(behavior),
 	  m_community(community),
 	  m_home(home),
 	  whereabouts(home)

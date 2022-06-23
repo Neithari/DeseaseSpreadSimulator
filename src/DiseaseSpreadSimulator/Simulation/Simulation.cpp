@@ -8,7 +8,7 @@
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	: m_withPrint(withPrint),
 	  m_populationSize(populationSize),
-	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100, 100, 1.F, 1.F), nullptr) // NOLINT: There is no benefit in named constants here
+	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100U, 100U, 1.F, 1.F), nullptr) // NOLINT: There is no benefit in named constants here
 {
 }
 void DiseaseSpreadSimulation::Simulation::Run()
@@ -101,8 +101,8 @@ void DiseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& trave
 	auto travelers = travelLocation.GetPeople();
 	std::for_each(std::execution::par_unseq, travelers.begin(), travelers.end(), [this](auto traveler)
 		{
-			auto numberOfContacts = Random::UniformIntRange(0U, 5U);
-			for (size_t i = 0; i < numberOfContacts; i++)
+			auto numberOfContacts = Random::UniformIntRange(minTravelContacts, maxTravelContacts);
+			for (auto i = 0U; i < numberOfContacts; i++)
 			{
 				std::shared_lock<std::shared_timed_mutex> lockTravelInfecter(travelInfecterMutex);
 				traveler->Contact(travelInfecter);

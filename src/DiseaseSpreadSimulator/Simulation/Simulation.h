@@ -51,6 +51,8 @@ namespace DiseaseSpreadSimulation
 		std::vector<Disease> diseases{};
 
 		Person travelInfecter;
+		static constexpr auto minTravelContacts{0U};
+		static constexpr auto maxTravelContacts{5U};
 		std::shared_timed_mutex travelInfecterMutex{};
 
 		uint64_t elapsedDays{};

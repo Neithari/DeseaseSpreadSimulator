@@ -23,11 +23,11 @@ namespace DiseaseSpreadSimulation
 		auto operator<=>(const Place& rhs) const
 		{
 			if (placeID < rhs.placeID)
-			{ 
+			{
 				return -1;
 			}
 			if (placeID > rhs.placeID)
-			{ 
+			{
 				return 1;
 			}
 			return 0;
