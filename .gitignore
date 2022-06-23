@@ -11,6 +11,9 @@
 *.sln.docstates
 CMakeUserPresets.json
 
+# Visual studio code
+.vscode/
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
