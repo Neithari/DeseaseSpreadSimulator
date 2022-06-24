@@ -12,9 +12,7 @@ add_library(google_test INTERFACE)
 target_link_libraries(google_test
   INTERFACE
     Threads::Threads
-    GTest::gmock
     GTest::gtest
-    GTest::gmock_main
     GTest::gtest_main
 )
 
