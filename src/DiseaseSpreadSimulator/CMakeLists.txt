@@ -15,7 +15,7 @@ set(SOURCES
   Person/Person.cpp
   Person/PersonBehavior.cpp
   Person/PersonPopulator.cpp
-  #Places
+  # Places
   Places/Community.cpp
   Places/PlaceBuilder.cpp
   Places/Places.cpp
@@ -25,8 +25,34 @@ set(SOURCES
   Simulation/TimeManager.cpp
 )
 
+set(HEADERS
+  # Disease
+  Disease/Disease.h
+  Disease/DiseaseBuilder.h
+  Disease/DiseaseContainment.h
+  Disease/Infection.h
+  # IDGenerator
+  IDGenerator/IDGenerator.h
+  # Person
+  Person/Person.h
+  Person/PersonBehavior.h
+  Person/PersonPopulator.h
+  # Places
+  Places/Community.h
+  Places/PlaceBuilder.h
+  Places/Places.h
+  # Simulation
+  Simulation/MeasureTime.h
+  Simulation/Simulation.h
+  Simulation/TimeManager.h
+  # Other
+  Enums.h
+  RandomNumbers.h
+  Statistics.h
+)
+
 # Add a library with the above sources
-add_library(${CMAKE_PROJECT_NAME} ${SOURCES})
+add_library(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 # Add precompiled headers
 if(OPT_ENABLE_PCH)
