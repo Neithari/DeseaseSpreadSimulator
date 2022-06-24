@@ -98,7 +98,6 @@ dynamic_project_options(
 )
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
-# TODO: The INTERFACE library NAMESPACE ALIAS are missing! CK
 add_library(${CMAKE_PROJECT_NAME}::project_options INTERFACE IMPORTED)
 add_library(${CMAKE_PROJECT_NAME}::project_warnings INTERFACE IMPORTED)
 
