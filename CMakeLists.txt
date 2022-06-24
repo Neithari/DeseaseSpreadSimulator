@@ -3,35 +3,33 @@ cmake_minimum_required(VERSION 3.22)
 # For debugging: Print variables with "cmake_print_variables(MY_VARIABLE)"
 include(CMakePrintHelpers)
 
-# Not ideal to use this global variable, but necessary to make sure
-# that tooling and projects use the same version
-set(CMAKE_CXX_STANDARD 20)
-
-# strongly encouraged to enable this globally to avoid conflicts between
-# -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
-# when compiling with PCH enabled
-set(CMAKE_CXX_EXTENSIONS ON)
+# set a default CXX standard for the tools and targets that do not specify them.
+# If commented, the latest supported standard for your compiler is automatically set.
+# set(CMAKE_CXX_STANDARD 20)
 
 # Note: by default ENABLE_DEVELOPER_MODE is True
 # This means that all analysis (sanitizers, static analysis)
 # is enabled and all warnings are treated as errors
 # if you want to switch this behavior, change TRUE to FALSE
 set(ENABLE_DEVELOPER_MODE
-    TRUE
-    CACHE BOOL "Enable 'developer mode'"
+  TRUE
+  CACHE BOOL "Enable 'developer mode'"
 )
 
 # Change this to false if you want to disable warnings_as_errors in developer mode
 set(OPT_WARNINGS_AS_ERRORS_DEVELOPER_DEFAULT TRUE)
 
 # Add project_options v0.22.4
-# https://github.com/cpp-best-practices/project_options
+# https://github.com/aminya/project_options
+# Change the version in the following URL to update the package (watch the releases of the repository for future updates)
 include(FetchContent)
 FetchContent_Declare(_project_options URL https://github.com/aminya/project_options/archive/refs/tags/v0.22.4.zip)
 FetchContent_MakeAvailable(_project_options)
 include(${_project_options_SOURCE_DIR}/Index.cmake)
-# Add dynamic CMake options
-include(${_project_options_SOURCE_DIR}/src/DynamicProjectOptions.cmake)
+
+if(MSVC)
+  msvc_toolchain()
+endif()
 
 # Enable vcpkg:
 # Setup VCPKG_ROOT per command line or in a CMakeUserPresets.json
@@ -46,55 +44,67 @@ project(
   LANGUAGES CXX
 )
 
-# defaulted_project_options sets recommended defaults and provides user and developer
-# modes and full GUI support for choosing options at configure time
-
-# for more flexibility, look into project_options() macro
-
-# Any default can be overridden
-# set(<feature_name>_DEFAULT <value>) - set default for both user and developer modes
-# set(<feature_name>_DEVELOPER_DEFAULT <value>) - set default for developer mode
-# set(<feature_name>_USER_DEFAULT <value>) - set default for user mode
-
 # Set PCH to be on by default for all non-Developer Mode Builds
 set(ENABLE_PCH_DEVELOPER_DEFAULT OFF)
 set(ENABLE_PCH_USER_DEFAULT ON)
-# There are too many false positives to use clang tidy with msvc
-if(MSVC)
-  set(ENABLE_CLANG_TIDY_DEVELOPER_DEFAULT OFF)
-else()
-  set(ENABLE_CLANG_TIDY_DEVELOPER_DEFAULT ON)
+
+# enable sanitizers and clang-tidy if running the tests
+set(ENABLE_CLANG_TIDY OFF)
+set(ENABLE_CPPCHECK OFF)
+set(ENABLE_SANITIZER_ADDRESS OFF)
+set(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR OFF)
+set(ENABLE_COVERAGE OFF)
+
+option(ENABLE_TESTING "Enable the tests" ${PROJECT_IS_TOP_LEVEL})
+
+if(ENABLE_TESTING)
+  # MSVC and microsoft clang are producing too many false positives so we keep it disabled
+  if(NOT MSVC)
+    set(ENABLE_CLANG_TIDY "ENABLE_CLANG_TIDY")
+  endif()
+
+  set(ENABLE_CPPCHECK "ENABLE_CPPCHECK")
+  set(ENABLE_COVERAGE "ENABLE_COVERAGE")
+
+  if(NOT
+    "${CMAKE_SYSTEM_NAME}"
+    STREQUAL
+    "Windows")
+    set(ENABLE_SANITIZER_ADDRESS "ENABLE_SANITIZER_ADDRESS")
+    set(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "ENABLE_SANITIZER_UNDEFINED_BEHAVIOR")
+  else()
+    # or it is MSVC and has run vcvarsall
+    string(FIND "$ENV{PATH}" "$ENV{VSINSTALLDIR}" index_of_vs_install_dir)
+
+    if(MSVC AND "${index_of_vs_install_dir}" STREQUAL "-1")
+      set(ENABLE_SANITIZER_ADDRESS "ENABLE_SANITIZER_ADDRESS")
+    endif()
+  endif()
 endif()
-set(ENABLE_CLANG_TIDY_USER_DEFAULT OFF)
-set(ENABLE_CPPCHECK_DEVELOPER_DEFAULT ON)
-set(ENABLE_CPPCHECK_USER_DEFAULT OFF)
 
 # Initialize project_options variable related to this project
 # This overwrites `project_options` and sets `project_warnings`
-# uncomment the options to enable them:
-dynamic_project_options(
-  # Note: PCH is disabled by default in developer mode because these headers become
-  # globally included and they can mask other errors
+# uncomment to enable the options. Some of them accept one or more inputs:
+project_options(
+  ENABLE_CACHE
+  ${ENABLE_CPPCHECK}
+  ${ENABLE_CLANG_TIDY}
+  # ENABLE_INTERPROCEDURAL_OPTIMIZATION
+  # ENABLE_NATIVE_OPTIMIZATION
+  # ${ENABLE_DOXYGEN}
+  # ${ENABLE_COVERAGE}
+  ${ENABLE_SANITIZER_ADDRESS}
+  # ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
+  # ENABLE_SANITIZER_LEAK
+  # ENABLE_SANITIZER_THREAD
+  # ENABLE_SANITIZER_MEMORY
   # ENABLE_PCH
   # PCH_HEADERS
-  # ENABLE_CONAN
-  # CONAN_OPTIONS    # Extra options to pass to conan
-  # MSVC_WARNINGS    # Override the defaults for the MSVC warnings
-  # CLANG_WARNINGS   # Override the defaults for the CLANG warnings
-  # GCC_WARNINGS     # Override the defaults for the GCC warnings
-  CPPCHECK_OPTIONS
-  --enable=style,performance,warning,portability
-  --inline-suppr
-  # We cannot act on a bug/missing feature of cppcheck
-  --suppress=cppcheckError
-  --suppress=internalAstError
-  # if a file does not have an internalAstError, we get an unmatchedSuppression error
-  --suppress=unmatchedSuppression
-  --suppress=passedByValue
-  --suppress=syntaxError
-  --inconclusive
-  # suppress all google test files
-  --suppress=*:*gtest/*
+  # WARNINGS_AS_ERRORS
+  # ENABLE_INCLUDE_WHAT_YOU_USE
+  # ENABLE_USER_LINKER
+  # ENABLE_BUILD_WITH_TIME_TRACE
+  # ENABLE_UNITY
 )
 
 target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
@@ -105,9 +115,7 @@ add_library(${CMAKE_PROJECT_NAME}::project_warnings INTERFACE IMPORTED)
 add_subdirectory(src)
 
 # Adding the tests:
-option(ENABLE_TESTING "Enable the tests" ${PROJECT_IS_TOP_LEVEL})
 if(ENABLE_TESTING)
-  enable_testing()
   add_subdirectory(tests)
 endif()
 

@@ -19,7 +19,7 @@ namespace UnitTests
 			DiseaseSpreadSimulation::Day::Saturday,
 			DiseaseSpreadSimulation::Day::Sunday};
 	};
-	TEST_F(TimeTests, HourProgressTest)
+	TEST_F(TimeTests, HourProgressTest) // cppcheck-suppress syntaxError
 	{
 		constexpr auto testSize{100U};
 		for (auto i = 0U; i < testSize; i++)

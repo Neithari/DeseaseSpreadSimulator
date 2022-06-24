@@ -64,7 +64,7 @@ namespace UnitTests
 	// NOLINTEND(*-magic-numbers)
 	// No point in splitting the test
 	// NOLINTNEXTLINE(*-cognitive-complexity)
-	TEST_F(PersonTest, UpdateSupplyMoves)
+	TEST_F(PersonTest, UpdateSupplyMoves) // cppcheck-suppress syntaxError
 	{
 		InitCommunity();
 

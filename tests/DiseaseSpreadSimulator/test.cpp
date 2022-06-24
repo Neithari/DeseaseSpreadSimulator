@@ -7,7 +7,7 @@
 namespace UnitTests
 {
 	constexpr auto testSize{10U};
-	TEST(IDGeneratorTests, IDIncrementing)
+	TEST(IDGeneratorTests, IDIncrementing) // cppcheck-suppress syntaxError
 	{
 		for (size_t i = 0; i < testSize; i++)
 		{

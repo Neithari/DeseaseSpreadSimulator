@@ -45,7 +45,7 @@ namespace UnitTests
 	};
 	// NOLINTEND(*-magic-numbers)
 
-	TEST_F(DiseaseTest, TrivialDiseaseReturns)
+	TEST_F(DiseaseTest, TrivialDiseaseReturns) // cppcheck-suppress syntaxError
 	{
 		EXPECT_EQ(disease.GetDiseaseName(), name);
 		EXPECT_TRUE(IsBetweenInclusive(disease.IncubationPeriod(), incubationPeriod));

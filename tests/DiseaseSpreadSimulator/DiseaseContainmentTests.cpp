@@ -51,7 +51,7 @@ namespace UnitTests
 	};
 	// Ignore test complexity here. No point in splitting it.
 	// NOLINTBEGIN(*-complexity)
-	TEST_F(DiseaseContainmentTest, Quarantine)
+	TEST_F(DiseaseContainmentTest, Quarantine) // cppcheck-suppress syntaxError
 	{
 		InitCommunity();
 

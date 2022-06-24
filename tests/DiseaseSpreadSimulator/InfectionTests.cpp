@@ -51,7 +51,7 @@ namespace UnitTests
 	// NOLINTEND(*-magic-numbers)
 	// No point in splitting the test
 	// NOLINTNEXTLINE(*-cognitive-complexity)
-	TEST_F(InfectionTest, Contaminate)
+	TEST_F(InfectionTest, Contaminate) // cppcheck-suppress syntaxError
 	{
 		for (auto ageGroup : ageGroups)
 		{

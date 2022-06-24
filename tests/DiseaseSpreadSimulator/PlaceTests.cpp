@@ -20,7 +20,7 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Travel travel;
 		DiseaseSpreadSimulation::PersonBehavior behavior;
 	};
-	TEST_F(PlaceTests, GetType)
+	TEST_F(PlaceTests, GetType) // cppcheck-suppress syntaxError
 	{
 		EXPECT_EQ(home.GetType(), DiseaseSpreadSimulation::Place_Type::Home);
 		EXPECT_EQ(market.GetType(), DiseaseSpreadSimulation::Place_Type::Supply);

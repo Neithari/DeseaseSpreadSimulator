@@ -15,7 +15,7 @@ namespace UnitTests
 		DiseaseSpreadSimulation::Community community{0U, DiseaseSpreadSimulation::Country::USA};
 		DiseaseSpreadSimulation::PersonBehavior behavior;
 	};
-	TEST_F(CommunityTest, AddPlaceGetPlaces)
+	TEST_F(CommunityTest, AddPlaceGetPlaces) // cppcheck-suppress syntaxError
 	{
 		DiseaseSpreadSimulation::Home home1;
 		uint32_t home1ID = home1.GetID();
