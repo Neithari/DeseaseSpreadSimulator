@@ -3,12 +3,12 @@
 #include "Enums.h"
 #include "Simulation/TimeManager.h"
 
-
 namespace UnitTests
 {
 	class TimeTests : public ::testing::Test
 	{
 	protected:
+		static constexpr size_t hoursPerDay{24};
 		DiseaseSpreadSimulation::TimeManager time;
 		std::vector<DiseaseSpreadSimulation::Day> weekdays{
 			DiseaseSpreadSimulation::Day::Monday,
@@ -19,26 +19,29 @@ namespace UnitTests
 			DiseaseSpreadSimulation::Day::Saturday,
 			DiseaseSpreadSimulation::Day::Sunday};
 	};
-	TEST_F(TimeTests, HourProgressTest)
+	TEST_F(TimeTests, HourProgressTest) // cppcheck-suppress syntaxError
 	{
-		for (size_t i = 0; i < 100; i++)
+		constexpr auto testSize{100U};
+		for (auto i = 0U; i < testSize; i++)
 		{
 			EXPECT_EQ(time.GetElapsedHours(), i);
 			time.Update();
 		}
 	}
+	// No point in splitting the test
+	// NOLINTNEXTLINE(*-cognitive-complexity)
 	TEST_F(TimeTests, DayProgressTest)
 	{
 		EXPECT_EQ(time.GetElapsedDays(), 0);
 
-		for (size_t i = 0; i < 24; i++)
+		for (size_t hour = 0; hour < hoursPerDay; hour++)
 		{
 			EXPECT_EQ(time.GetElapsedDays(), 0);
 			time.Update();
 		}
 		EXPECT_EQ(time.GetElapsedDays(), 1);
 
-		for (size_t i = 0; i < 24; i++)
+		for (size_t hour = 0; hour < hoursPerDay; hour++)
 		{
 			EXPECT_EQ(time.GetElapsedDays(), 1);
 			time.Update();
@@ -49,7 +52,7 @@ namespace UnitTests
 	{
 		for (auto& day : weekdays)
 		{
-			for (size_t i = 0; i < 24; i++)
+			for (size_t hour = 0; hour < hoursPerDay; hour++)
 			{
 				EXPECT_EQ(time.GetCurrentDay(), day);
 				time.Update();
@@ -60,7 +63,7 @@ namespace UnitTests
 	{
 		for (size_t i = 0; i < weekdays.size() - 2; i++)
 		{
-			for (size_t j = 0; j < 24; j++)
+			for (size_t hour = 0; hour < hoursPerDay; hour++)
 			{
 				EXPECT_TRUE(time.IsWorkday());
 				time.Update();
@@ -68,7 +71,7 @@ namespace UnitTests
 		}
 		for (size_t i = weekdays.size() - 2; i < weekdays.size(); i++)
 		{
-			for (size_t j = 0; j < 24; j++)
+			for (size_t hour = 0; hour < hoursPerDay; hour++)
 			{
 				EXPECT_FALSE(time.IsWorkday());
 				time.Update();
@@ -77,9 +80,10 @@ namespace UnitTests
 	}
 	TEST_F(TimeTests, ClockTimeTest)
 	{
-		for (size_t i = 0; i < 100; i++)
+		constexpr auto testSize{100U};
+		for (auto i = 0U; i < testSize; i++)
 		{
-			for (size_t hour = 0; hour < 24; hour++)
+			for (size_t hour = 0; hour < hoursPerDay; hour++)
 			{
 				EXPECT_EQ(time.GetTime(), hour);
 				time.Update();

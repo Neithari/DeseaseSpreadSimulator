@@ -14,7 +14,7 @@ void DiseaseSpreadSimulation::Place::AddPerson(Person* person)
 	people.push_back(person);
 }
 
-void DiseaseSpreadSimulation::Place::RemovePerson(uint32_t id)
+void DiseaseSpreadSimulation::Place::RemovePerson(uint32_t id) // NOLINT(*-identifier-length)
 {
 	std::lock_guard<std::mutex> lockPeople(peopleMutex);
 	people.erase(
@@ -58,7 +58,7 @@ std::string DiseaseSpreadSimulation::Place::TypeToString(Place_Type type)
 	default:
 		break;
 	}
-	return std::string();
+	return {};
 }
 
 std::vector<DiseaseSpreadSimulation::Person*>& DiseaseSpreadSimulation::Place::GetPeople()
@@ -71,22 +71,24 @@ size_t DiseaseSpreadSimulation::Place::GetPersonCount() const
 	return people.size();
 }
 
-DiseaseSpreadSimulation::Place::Place(uint32_t id)
+DiseaseSpreadSimulation::Place::Place(uint32_t id) // NOLINT(*-identifier-length)
 	: placeID(id)
 {
 }
 
+// We don't want to copy peopleMutexso we suppress the static analyzer warning
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Place::Place(const Place& other)
 	: placeID(other.placeID),
-	  people(other.people),
-	  peopleMutex()
+	  people(other.people)
 {
 }
 
+// We don't want to copy peopleMutexso we suppress the static analyzer warning
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Place::Place(Place&& other) noexcept
-	: placeID(std::move(other.placeID)),
-	  people(std::move(other.people)),
-	  peopleMutex()
+	: placeID(other.placeID),
+	  people(std::move(other.people))
 {
 }
 
@@ -104,6 +106,8 @@ DiseaseSpreadSimulation::Home::Home()
 {
 }
 
+// We cant use default, because it will delete it
+// NOLINTBEGIN(*-use-equals-default)
 DiseaseSpreadSimulation::Home::Home(const Home& other)
 	: Place(other)
 {
@@ -294,6 +298,7 @@ DiseaseSpreadSimulation::Travel::Travel(const Travel& other)
 	: Place(other)
 {
 }
+// NOLINTEND(*-use-equals-default)
 
 DiseaseSpreadSimulation::Travel::Travel(Travel&& other) noexcept
 	: Place(std::move(other))
@@ -319,20 +324,20 @@ DiseaseSpreadSimulation::Place_Type DiseaseSpreadSimulation::Travel::GetType() c
 void DiseaseSpreadSimulation::Places::Insert(Places other)
 {
 	homes.reserve(homes.size() + other.homes.size());
-	AppendVectorAtEnd(homes, other.homes);
+	AppendVectorAtEnd(homes, std::move(other.homes));
 
 	supplyStores.reserve(supplyStores.size() + other.supplyStores.size());
-	AppendVectorAtEnd(supplyStores, other.supplyStores);
+	AppendVectorAtEnd(supplyStores, std::move(other.supplyStores));
 
 	workplaces.reserve(workplaces.size() + other.workplaces.size());
-	AppendVectorAtEnd(workplaces, other.workplaces);
+	AppendVectorAtEnd(workplaces, std::move(other.workplaces));
 
 	schools.reserve(schools.size() + other.schools.size());
-	AppendVectorAtEnd(schools, other.schools);
+	AppendVectorAtEnd(schools, std::move(other.schools));
 
 	hardwareStores.reserve(hardwareStores.size() + other.hardwareStores.size());
-	AppendVectorAtEnd(hardwareStores, other.hardwareStores);
+	AppendVectorAtEnd(hardwareStores, std::move(other.hardwareStores));
 
 	morgues.reserve(morgues.size() + other.morgues.size());
-	AppendVectorAtEnd(morgues, other.morgues);
+	AppendVectorAtEnd(morgues, std::move(other.morgues));
 }

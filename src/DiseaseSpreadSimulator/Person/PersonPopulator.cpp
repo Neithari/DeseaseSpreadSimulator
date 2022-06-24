@@ -8,19 +8,21 @@ DiseaseSpreadSimulation::PersonPopulator::PersonPopulator(const size_t populatio
 	: m_populationSize(populationSize),
 	  m_leftover(populationSize),
 	  m_ageDistribution(std::move(humanDistribution)),
-	  m_currentHumanDistribution(m_ageDistribution.front())
+	  m_currentHumanDistribution(m_ageDistribution.front()),
+	  m_currentHumanCount(DistributionToCountHelper(populationSize, m_currentHumanDistribution.percent))
 {
-	// Set the currentHumanCount to a percent of the population and to 1 if this will return 0
-	m_currentHumanCount = DistributionToCountHelper(populationSize, m_currentHumanDistribution.percent);
+	// Set currentHumanCount to at least 1 person
 	if (m_currentHumanCount == 0)
 	{
 		m_currentHumanCount = 1;
 	}
 }
 
+// TODO: Consider refactor to places class
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 std::vector<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::PersonPopulator::CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools, Community* community)
 {
-	std::vector<Person> population;
+	std::vector<Person> population{};
 	// Return early if the population is 0
 	if (m_populationSize == 0)
 	{
@@ -30,10 +32,10 @@ std::vector<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::PersonPopu
 	population.reserve(m_populationSize);
 
 	// This bool will ensure that a workplace is only assigned if there are workplaces
-	bool noWorkplace = workplaces.empty();
+	bool noWorkplace{workplaces.empty()};
 
 	// Create an array containing all workplaces sorted by size
-	std::vector<Workplace*> sortedWorkplaces;
+	std::vector<Workplace*> sortedWorkplaces{};
 	sortedWorkplaces.reserve(workplaces.size());
 
 	std::transform(workplaces.begin(), workplaces.end(), std::back_inserter(sortedWorkplaces), [](auto& workplace)
@@ -41,10 +43,10 @@ std::vector<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::PersonPopu
 			return &workplace;
 		});
 
-	auto workplacesBySize(PlaceBuilder::WorkplacesBySize(m_populationSize, country, std::move(sortedWorkplaces)));
+	auto workplacesBySize = PlaceBuilder::WorkplacesBySize(m_populationSize, country, std::move(sortedWorkplaces));
 
 	// Create the population
-	size_t schoolIndex = 0;
+	size_t schoolIndex{0};
 	auto averageSchoolSize = Statistics::AverageSchoolSize(country);
 	while (!m_allAssigned)
 	{
@@ -121,7 +123,7 @@ DiseaseSpreadSimulation::Person DiseaseSpreadSimulation::PersonPopulator::GetNew
 		m_allAssigned = true;
 	}
 
-	return Person(m_currentHumanDistribution.ageGroup, m_currentHumanDistribution.sex, PersonBehavior(), community, home);
+	return {m_currentHumanDistribution.ageGroup, m_currentHumanDistribution.sex, PersonBehavior(), community, home};
 }
 
 size_t DiseaseSpreadSimulation::PersonPopulator::WorkingPeopleCount(const size_t populationSize, const Country country)
@@ -158,23 +160,23 @@ size_t DiseaseSpreadSimulation::PersonPopulator::SchoolKidsCount(const size_t po
 		});
 }
 
-std::array<std::vector<DiseaseSpreadSimulation::Home*>, 4> DiseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes)
+std::array<std::vector<DiseaseSpreadSimulation::Home*>, 4> DiseaseSpreadSimulation::PersonPopulator::HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes)
 {
-	auto homeCounts(PlaceBuilder::GetHomeCounts(static_cast<float>(populationSize), country));
+	auto homeCounts = PlaceBuilder::GetHomeCounts(static_cast<float>(populationSize), country);
 
 	// Set iterators to copy a part of the homes vector into the new vectores separated by size
-	auto from = homes.cbegin();
-	auto to = homes.cbegin() + static_cast<int64_t>(homeCounts.at(0));
-	std::vector<Home*> oneMember(from, to);
+	auto fromIt = homes.cbegin();
+	auto toIt = homes.cbegin() + static_cast<int64_t>(homeCounts.at(0));
+	std::vector<Home*> oneMember{fromIt, toIt};
 	// Change the iterators for the next size and do the same for every size
-	from = to;
-	to += static_cast<int64_t>(homeCounts.at(1));
-	std::vector<Home*> twoToThreeMembers(from, to);
-	from = to;
-	to += static_cast<int64_t>(homeCounts.at(2));
-	std::vector<Home*> fourToFiveMembers(from, to);
-	from = to;
-	std::vector<Home*> sixPlusMembers(from, homes.cend());
+	fromIt = toIt;
+	toIt += static_cast<int64_t>(homeCounts.at(1));
+	std::vector<Home*> twoToThreeMembers{fromIt, toIt};
+	fromIt = toIt;
+	toIt += static_cast<int64_t>(homeCounts.at(2));
+	std::vector<Home*> fourToFiveMembers{fromIt, toIt};
+	fromIt = toIt;
+	std::vector<Home*> sixPlusMembers{fromIt, homes.cend()};
 
 	// Return an array with all size vectors
 	return {oneMember, twoToThreeMembers, fourToFiveMembers, sixPlusMembers};
@@ -194,39 +196,26 @@ DiseaseSpreadSimulation::Home* DiseaseSpreadSimulation::PersonPopulator::AssignH
 		static_cast<double>(PersonPopulator::GetHouseholdDistribution(country).fourToFiveMembers),
 		static_cast<double>(PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers)};
 
-	size_t distIndex = GetDistributedArrayIndex(distributionArray);
-	// Get a new index until the vector is not empty or the person is under twenty and the index is for one member homes
+	size_t distIndex{GetDistributedArrayIndex(distributionArray)};
+	// Get a new index when the vector is empty or the person is under twenty and the index is for one member homes
 	while (homesByMemberCount.at(distIndex).empty() || (ageGroup <= Age_Group::UnderTwenty && distIndex == 0))
 	{
 		distIndex = GetDistributedArrayIndex(distributionArray);
 	}
 	// Return a random home of the chosen size
-	return static_cast<Home*>(homesByMemberCount.at(distIndex).at(Random::RandomVectorIndex(homesByMemberCount.at(distIndex))));
-}
-
-DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const
-{
-	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
-	size_t distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
-	// Get a new index until the vector is not empty
-	while (workplacesBySize.at(distIndex).empty())
-	{
-		distIndex = GetDistributedArrayIndex(Statistics::workplaceSize);
-	}
-	// Return a random workplace at the chosen size
-	return workplacesBySize.at(distIndex).at(Random::RandomVectorIndex(workplacesBySize.at(distIndex)));
+	return homesByMemberCount.at(distIndex).at(Random::RandomVectorIndex(homesByMemberCount.at(distIndex)));
 }
 
 void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country)
 {
-	std::vector<Home*> homes;
+	std::vector<Home*> homes{};
 	homes.reserve(homesToAssigne.size());
 	std::transform(homesToAssigne.begin(), homesToAssigne.end(), std::back_inserter(homes), [](auto& home)
 		{
 			return &home;
 		});
 
-	auto homesByMemberCount = PersonPopulator::HomesByMemberCount(population.size(), country, std::move(homes));
+	auto homesByMemberCount = PersonPopulator::HomesByMemberCount(population.size(), country, homes);
 
 	for (auto& person : population)
 	{
@@ -234,21 +223,36 @@ void DiseaseSpreadSimulation::PersonPopulator::AssigneHomesToPopulation(std::vec
 	}
 }
 
+DiseaseSpreadSimulation::Workplace* DiseaseSpreadSimulation::PersonPopulator::AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) // NOLINT(*-magic-numbers)
+{
+	// TODO: Implement Supply, HardwareStore and Morgue as a workplace. Currently ignored
+	size_t distIndex{GetDistributedArrayIndex(Statistics::workplaceSizePercent)};
+	// Get a new index until the vector is not empty
+	while (workplacesBySize.at(distIndex).empty())
+	{
+		distIndex = GetDistributedArrayIndex(Statistics::workplaceSizePercent);
+	}
+	// Return a random workplace at the chosen size
+	return workplacesBySize.at(distIndex).at(Random::RandomVectorIndex(workplacesBySize.at(distIndex)));
+}
+
 std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> DiseaseSpreadSimulation::PersonPopulator::GetCountryDistribution(Country country)
 {
+	// TODO: Implement german distribution. Until then silence warnings
+	// NOLINTBEGIN(bugprone-branch-clone)
 	switch (country)
 	{
 	case DiseaseSpreadSimulation::Country::USA:
 		return Statistics::defaultAgeDistributionUSA;
 		break;
 	case DiseaseSpreadSimulation::Country::Germany:
-		// TODO: Implement german distribution
 		return Statistics::defaultAgeDistributionUSA;
 		break;
 	default:
 		return Statistics::defaultAgeDistributionUSA;
 		break;
 	}
+	// NOLINTEND(bugprone-branch-clone)
 }
 
 void DiseaseSpreadSimulation::PersonPopulator::AddCommunityToPopulation(Community* community, std::vector<Person>& population)
@@ -267,7 +271,6 @@ DiseaseSpreadSimulation::Statistics::HouseholdComposition DiseaseSpreadSimulatio
 		return Statistics::householdUSA;
 		break;
 	case DiseaseSpreadSimulation::Country::Germany:
-		// TODO: Implement german distribution
 		return Statistics::householdGermany;
 		break;
 	default:

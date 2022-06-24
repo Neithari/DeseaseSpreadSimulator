@@ -11,10 +11,10 @@ namespace DiseaseSpreadSimulation
 	class Place
 	{
 	public:
-		virtual Place_Type GetType() const = 0;
+		[[nodiscard]] virtual Place_Type GetType() const = 0;
 		std::vector<Person*>& GetPeople();
-		size_t GetPersonCount() const;
-		uint32_t GetID() const;
+		[[nodiscard]] size_t GetPersonCount() const;
+		[[nodiscard]] uint32_t GetID() const;
 		// People inside the place are not owned by the place
 		void AddPerson(Person* person);
 		void RemovePerson(uint32_t id);
@@ -22,8 +22,14 @@ namespace DiseaseSpreadSimulation
 
 		auto operator<=>(const Place& rhs) const
 		{
-			if (placeID < rhs.placeID) return -1;
-			if (placeID > rhs.placeID) return 1;
+			if (placeID < rhs.placeID)
+			{
+				return -1;
+			}
+			if (placeID > rhs.placeID)
+			{
+				return 1;
+			}
 			return 0;
 		};
 		inline bool operator==(const Place& rhs) const
@@ -36,7 +42,7 @@ namespace DiseaseSpreadSimulation
 		virtual ~Place() = default;
 
 	protected:
-		Place(uint32_t id);
+		explicit Place(uint32_t id);
 		Place(const Place& other);
 		Place(Place&& other) noexcept;
 		// Deleted here because a cast to abstract class is not allowed and we only need the derived versions
@@ -44,9 +50,9 @@ namespace DiseaseSpreadSimulation
 		Place& operator=(Place&& other) noexcept;
 
 	protected:
-		uint32_t placeID = 0;
+		uint32_t placeID{0};
 		// People inside the place are not owned by the place
-		std::vector<Person*> people;
+		std::vector<Person*> people{};
 
 		std::mutex peopleMutex;
 	};
@@ -59,10 +65,9 @@ namespace DiseaseSpreadSimulation
 		Home(Home&& other) noexcept;
 		Home& operator=(const Home& other);
 		Home& operator=(Home&& other) noexcept;
-		~Home() = default;
+		~Home() override = default;
 
-	public:
-		Place_Type GetType() const override;
+		[[nodiscard]] Place_Type GetType() const override;
 	};
 
 	class Supply : public Place
@@ -73,10 +78,9 @@ namespace DiseaseSpreadSimulation
 		Supply(Supply&& other) noexcept;
 		Supply& operator=(const Supply& other);
 		Supply& operator=(Supply&& other) noexcept;
-		~Supply() = default;
+		~Supply() override = default;
 
-	public:
-		Place_Type GetType() const override;
+		[[nodiscard]] Place_Type GetType() const override;
 	};
 
 	class Workplace : public Place
@@ -87,10 +91,9 @@ namespace DiseaseSpreadSimulation
 		Workplace(Workplace&& other) noexcept;
 		Workplace& operator=(const Workplace& other);
 		Workplace& operator=(Workplace&& other) noexcept;
-		~Workplace() = default;
+		~Workplace() override = default;
 
-	public:
-		Place_Type GetType() const override;
+		[[nodiscard]] Place_Type GetType() const override;
 	};
 
 	class School : public Place
@@ -101,10 +104,9 @@ namespace DiseaseSpreadSimulation
 		School(School&& other) noexcept;
 		School& operator=(const School& other);
 		School& operator=(School&& other) noexcept;
-		~School() = default;
+		~School() override = default;
 
-	public:
-		Place_Type GetType() const override;
+		[[nodiscard]] Place_Type GetType() const override;
 	};
 
 	class HardwareStore : public Place
@@ -115,10 +117,9 @@ namespace DiseaseSpreadSimulation
 		HardwareStore(HardwareStore&& other) noexcept;
 		HardwareStore& operator=(const HardwareStore& other);
 		HardwareStore& operator=(HardwareStore&& other) noexcept;
-		~HardwareStore() = default;
+		~HardwareStore() override = default;
 
-	public:
-		Place_Type GetType() const override;
+		[[nodiscard]] Place_Type GetType() const override;
 	};
 	class Morgue : public Place
 	{
@@ -128,10 +129,9 @@ namespace DiseaseSpreadSimulation
 		Morgue(Morgue&& other) noexcept;
 		Morgue& operator=(const Morgue& other);
 		Morgue& operator=(Morgue&& other) noexcept;
-		~Morgue() = default;
+		~Morgue() override = default;
 
-	public:
-		Place_Type GetType() const override;
+		[[nodiscard]] Place_Type GetType() const override;
 	private:
 	};
 
@@ -143,10 +143,9 @@ namespace DiseaseSpreadSimulation
 		Travel(Travel&& other) noexcept;
 		Travel& operator=(const Travel& other);
 		Travel& operator=(Travel&& other) noexcept;
-		~Travel() = default;
+		~Travel() override = default;
 
-	public:
-		Place_Type GetType() const override;
+		[[nodiscard]] Place_Type GetType() const override;
 	};
 
 	struct Places
@@ -155,7 +154,7 @@ namespace DiseaseSpreadSimulation
 		void Insert(Places other);
 	private:
 		template <typename T>
-		static void AppendVectorAtEnd(std::vector<T>& dest, std::vector<T>& src)
+		static void AppendVectorAtEnd(std::vector<T>& dest, std::vector<T>&& src)
 		{
 			while (!src.empty())
 			{
@@ -164,11 +163,11 @@ namespace DiseaseSpreadSimulation
 			}
 		}
 	public:
-		std::vector<Home> homes;
-		std::vector<Supply> supplyStores;
-		std::vector<Workplace> workplaces;
-		std::vector<School> schools;
-		std::vector<HardwareStore> hardwareStores;
-		std::vector<Morgue> morgues;
+		std::vector<Home> homes{};
+		std::vector<Supply> supplyStores{};
+		std::vector<Workplace> workplaces{};
+		std::vector<School> schools{};
+		std::vector<HardwareStore> hardwareStores{};
+		std::vector<Morgue> morgues{};
 	};
 } // namespace DiseaseSpreadSimulation

@@ -4,19 +4,13 @@ void DiseaseSpreadSimulation::TimeManager::Update()
 {
 	simulationTime++;
 	dayTime++;
-	if (dayTime == 24)
+
+	if (dayTime == hoursPerDay)
 	{
-		dayTime = 0u;
+		dayTime = 0U;
 		currentDay = GetNextDay();
 
-		if (currentDay == Day::Saturday || currentDay == Day::Sunday)
-		{
-			isWorkday = false;
-		}
-		else
-		{
-			isWorkday = true;
-		}
+		isWorkday = !(currentDay == Day::Saturday || currentDay == Day::Sunday);
 	}
 }
 
@@ -27,7 +21,7 @@ uint64_t DiseaseSpreadSimulation::TimeManager::GetElapsedHours() const
 
 uint64_t DiseaseSpreadSimulation::TimeManager::GetElapsedDays() const
 {
-	return simulationTime / 24u;
+	return simulationTime / hoursPerDay;
 }
 
 DiseaseSpreadSimulation::Day DiseaseSpreadSimulation::TimeManager::GetCurrentDay() const

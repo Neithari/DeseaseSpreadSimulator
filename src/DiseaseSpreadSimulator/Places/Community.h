@@ -65,7 +65,7 @@ namespace DiseaseSpreadSimulation
 	private:
 		std::vector<Person> m_population{};
 		Places m_places{};
-		Travel m_travelLocation{};
+		Travel m_travelLocation;
 		DiseaseContainment m_containmentMeasures{};
 
 		std::shared_timed_mutex populationMutex;

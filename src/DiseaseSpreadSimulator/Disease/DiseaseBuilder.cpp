@@ -10,20 +10,26 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 	static constexpr uint32_t coronaIncubationPeriodMin{1};
 	static constexpr uint32_t coronaIncubationPeriodMax{14};
 	SetIncubationPeriod(coronaIncubationPeriodMin, coronaIncubationPeriodMax);
-	SetDaysInfectious(10);
+	static constexpr uint32_t coronaDaysInfectious{10};
+	SetDaysInfectious(coronaDaysInfectious);
 	static constexpr uint32_t coronaDurationMin{14};
 	static constexpr uint32_t coronaDurationMax{56};
 	SetDiseaseDuration(coronaIncubationPeriodMin + coronaDurationMin, coronaIncubationPeriodMax + coronaDurationMax);
-	SetMortalityByAge({0.0f, 0.0014f, 0.0012f, 0.002f, 0.0038f, 0.0098f, .0298f, .0794f, .1734f});
+	static const std::vector<float> coronaMortalityByAge{0.0F, 0.0014F, 0.0012F, 0.002F, 0.0038F, 0.0098F, 0.0298F, 0.0794F, 0.1734F};
+	SetMortalityByAge(coronaMortalityByAge);
 	SetDaysTillDeath(coronaDurationMin, coronaDurationMax);
 
 	// According to multiple sources only few individuals infect a lot of people.
 	// We use a log normal distribution with most people in the low percents because of that.
-	SetSpreadFactor(0.0f, 0.5f);
-
-	SetTestAccuracy(0.981f);
+	static constexpr float coronaSpreadFactorMin{0.0F};
+	static constexpr float coronaSpreadFactorMax{0.5F};
+	SetSpreadFactor(coronaSpreadFactorMin, coronaSpreadFactorMax);
+	static constexpr float coronaTestAccuracy{0.981F};
+	SetTestAccuracy(coronaTestAccuracy);
 	// https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Steckbrief.html -> Manifestationsindex
-	SetSymptomsDevelopment(0.55f, 0.85f);
+	static constexpr float coronaSymptomsDevelopmentMin{0.55F};
+	static constexpr float coronaSymptomsDevelopmentMax{0.85F};
+	SetSymptomsDevelopment(coronaSymptomsDevelopmentMin, coronaSymptomsDevelopmentMax);
 
 	return CreateDisease();
 }
@@ -31,18 +37,31 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::CreateDeadlyTestDisease()
 {
 	SetDiseaseName("DeadlyTestDisease");
-	SetIncubationPeriod(1, 1);
-	SetDaysInfectious(10);
-	SetDiseaseDuration(10, 10);
-	SetMortalityByAge({1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f});
-	SetDaysTillDeath(10, 10);
-	SetSpreadFactor(1.0f, 1.0f);
-	SetTestAccuracy(1.0f);
-	SetSymptomsDevelopment(1.f, 1.f);
+	static constexpr uint32_t deadlyIncubationPeriodMin{1};
+	static constexpr uint32_t deadlyIncubationPeriodMax{1};
+	SetIncubationPeriod(deadlyIncubationPeriodMin, deadlyIncubationPeriodMax);
+	static constexpr uint32_t deadlyDaysInfectious{10};
+	SetDaysInfectious(deadlyDaysInfectious);
+	static constexpr uint32_t deadlyDurationMin{10};
+	static constexpr uint32_t deadlyDurationMax{10};
+	SetDiseaseDuration(deadlyDurationMin, deadlyDurationMax);
+	static const std::vector<float> deadlyMortalityByAge{1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F, 1.F};
+	SetMortalityByAge(deadlyMortalityByAge);
+	SetDaysTillDeath(deadlyDurationMin, deadlyDurationMax);
+	static constexpr float deadlySpreadFactorMin{1.F};
+	static constexpr float deadlySpreadFactorMax{1.F};
+	SetSpreadFactor(deadlySpreadFactorMin, deadlySpreadFactorMax);
+	static constexpr float deadlyTestAccuracy{1.F};
+	SetTestAccuracy(deadlyTestAccuracy);
+	static constexpr float deadlySymptomsDevelopmentMin{1.F};
+	static constexpr float deadlySymptomsDevelopmentMax{1.F};
+	SetSymptomsDevelopment(deadlySymptomsDevelopmentMin, deadlySymptomsDevelopmentMax);
 
 	return CreateDisease();
 }
 
+// Silence false positive because we move the name
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetDiseaseName(std::string diseaseName)
 {
 	setupDone[0] = true;
@@ -50,6 +69,8 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetDiseaseName(std::string disease
 	name = std::move(diseaseName);
 }
 
+// Silence clang tidy a std::pair would be less readable
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetIncubationPeriod(const uint32_t minDays, const uint32_t maxDays)
 {
 	setupDone[1] = true;
@@ -64,6 +85,8 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysInfectious(const uint32_t d
 	daysInfectious = days;
 }
 
+// Silence clang tidy a std::pair would be less readable
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetDiseaseDuration(const uint32_t minDays, const uint32_t maxDays)
 {
 	setupDone[3] = true;
@@ -78,30 +101,36 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SetMortalityByAge(std::vector<floa
 	mortalityByAge = std::move(mortality);
 }
 
+// Silence clang tidy a std::pair would be less readable
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetDaysTillDeath(const uint32_t min, const uint32_t max)
 {
-	setupDone[5] = true;
+	setupDone[5] = true; // NOLINT: Silence magic number false positive
 
 	daysTillDeathRange = {min, max};
 }
 
+// Silence clang tidy a std::pair would be less readable
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetSpreadFactor(const float minFactor, const float maxFactor)
 {
-	setupDone[6] = true;
+	setupDone[6] = true; // NOLINT: Silence magic number false positive
 
 	spreadFactor = {minFactor, maxFactor};
 }
 
 void DiseaseSpreadSimulation::DiseaseBuilder::SetTestAccuracy(const float accuracy)
 {
-	setupDone[7] = true;
+	setupDone[7] = true; // NOLINT: Silence magic number false positive
 
 	testAccuracy = accuracy;
 }
 
+// Silence clang tidy a std::pair would be less readable
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void DiseaseSpreadSimulation::DiseaseBuilder::SetSymptomsDevelopment(const float minPercent, const float maxPercent)
 {
-	setupDone[8] = true;
+	setupDone[8] = true; // NOLINT: Silence magic number false positive
 
 	symptomsDevelopment = {minPercent, maxPercent};
 }
@@ -117,7 +146,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		throw std::logic_error("Complete setup to create a disease!");
 	}
 
-	return Disease{name,
+	return {name,
 		incubationPeriod,
 		daysInfectious,
 		diseaseDurationRange,
@@ -128,7 +157,7 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		symptomsDevelopment};
 }
 
-std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(std::string fileName)
+std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(const std::string& fileName)
 {
 	using json = nlohmann::json;
 	std::ifstream diseaseJsonFile{fileName};
@@ -140,27 +169,24 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 		return {};
 	}
 
-	json diseaseJson;
+	json diseaseJson; // NOLINT: The library is already initializing it to null
 	diseaseJsonFile >> diseaseJson;
 
-	std::vector<Disease> diseases;
-	diseases.reserve(diseaseJson.size());
-
-	std::copy(diseaseJson.begin(), diseaseJson.end(), std::back_inserter(diseases));
+	std::vector<Disease> diseases{diseaseJson.begin(), diseaseJson.end()};
 
 	return diseases;
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(std::string diseaseSaveName, const Disease& disease, std::string fileName)
+void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const std::string& diseaseSaveName, const Disease& disease, const std::string& fileName)
 {
 	using json = nlohmann::json;
 
 	// Because of the json formatting we can't just append the new desease
-	json diseaseJson;
+	json diseaseJson; // NOLINT: The library is already initializing it to null
 
 	// We need to check if the file exists
 	std::ifstream fileExists{fileName};
-	json existingDiseaseJson;
+	json existingDiseaseJson; // NOLINT: The library is already initializing it to null
 	if (fileExists)
 	{
 		// Copy all contents

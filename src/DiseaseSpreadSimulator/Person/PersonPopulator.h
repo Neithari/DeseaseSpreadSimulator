@@ -3,8 +3,8 @@
 #include <vector>
 #include "Enums.h"
 #include "Statistics.h"
-#include "Places/Places.h"
 #include "RandomNumbers.h"
+#include "Places/Places.h"
 
 namespace DiseaseSpreadSimulation
 {
@@ -21,7 +21,7 @@ namespace DiseaseSpreadSimulation
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
 		static float WorkingPeopleCountFloat(const size_t populationSize, const Country country);
 		static size_t SchoolKidsCount(const size_t populationSize, const Country country);
-		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, std::vector<Home*> homes);
+		static std::array<std::vector<Home*>, 4> HomesByMemberCount(const size_t populationSize, const Country country, const std::vector<Home*>& homes);
 		static Home* AssignHome(const Country country, const Age_Group ageGroup, const std::array<std::vector<Home*>, 4>& homesByMemberCount);
 
 		static void AddCommunityToPopulation(Community* community, std::vector<Person>& population);
@@ -37,7 +37,7 @@ namespace DiseaseSpreadSimulation
 		static size_t DistributionToCountHelper(size_t count, float percent);
 
 		static void AssigneHomesToPopulation(std::vector<Person>& population, std::vector<Home>& homesToAssigne, Country country);
-		Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize) const;
+		static Workplace* AssignWorkplace(const std::array<std::vector<Workplace*>, 5>& workplacesBySize);
 
 		// Returns an index weighted by the given distribution
 		template <typename T, size_t SIZE>
@@ -50,9 +50,9 @@ namespace DiseaseSpreadSimulation
 
 	private:
 		const size_t m_populationSize{};
-		bool m_allAssigned = false;
+		bool m_allAssigned{false};
 		size_t m_leftover{};
-		bool m_lastFew = false;
+		bool m_lastFew{false};
 		const std::vector<Statistics::HumanDistribution> m_ageDistribution;
 		// Set to 1 because we use the distribution on 0 inside the constructor
 		size_t m_ageDistributionIndex{};
