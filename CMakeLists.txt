@@ -128,7 +128,7 @@ if(MSVC)
 endif()
 
 # set the startup project for the "play" button in MSVC
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${CMAKE_PROJECT_NAME})
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "${CMAKE_PROJECT_NAME}Terminal")
 
 if(CMAKE_SKIP_INSTALL_RULES)
   return()
