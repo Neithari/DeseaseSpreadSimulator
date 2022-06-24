@@ -30,11 +30,7 @@ PUBLIC
 PRIVATE
   ${CMAKE_PROJECT_NAME}
 )
-target_link_system_libraries(${UNIT_TEST_NAME}
-  PUBLIC
-    Threads::Threads
-    gtest_main
-)
+target_link_system_libraries(${UNIT_TEST_NAME} PRIVATE google_test)
 
 # automatic discovery of unit tests
 gtest_discover_tests(unit_tests_simulator)

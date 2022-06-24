@@ -18,35 +18,37 @@
 
 namespace UnitTests
 {
+	// Don't warn on magic numbers for tests
+	// NOLINTBEGIN(*-magic-numbers)
 	class PersonTest : public ::testing::Test
 	{
 	protected:
-		std::string name = "a";
-		std::pair<uint32_t, uint32_t> incubationPeriod{1u, 1u};
-		uint32_t daysInfectious = 1;
-		std::pair<uint32_t, uint32_t> diseaseDurationRange{2u, 10u};
-		std::vector<float> mortalityByAge{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f};
-		std::pair<uint32_t, uint32_t> daysTillDeathRange{1u, 2u};
-		std::pair<float, float> spreadFactor{1.f, 1.f};
-		float testAccuracy{1.0f};
-		std::pair<float, float> symptomsDevelopment{1.f, 1.f};
+		std::string name{"a"};
+		std::pair<uint32_t, uint32_t> incubationPeriod{1U, 1U};
+		uint32_t daysInfectious{1U};
+		std::pair<uint32_t, uint32_t> diseaseDurationRange{2U, 10U};
+		std::vector<float> mortalityByAge{1.F, 2.F, 3.F, 4.F, 5.F, 6.F, 7.F, 8.F, 9.F};
+		std::pair<uint32_t, uint32_t> daysTillDeathRange{1U, 2U};
+		std::pair<float, float> spreadFactor{1.F, 1.F};
+		float testAccuracy{1.0F};
+		std::pair<float, float> symptomsDevelopment{1.F, 1.F};
 		std::vector<DiseaseSpreadSimulation::Home> homes{DiseaseSpreadSimulation::Home{}};
 		DiseaseSpreadSimulation::HardwareStore hwStore;
 		DiseaseSpreadSimulation::Supply supplyStore;
 		DiseaseSpreadSimulation::Morgue morgue;
 		DiseaseSpreadSimulation::Workplace work;
 		DiseaseSpreadSimulation::School school;
-		DiseaseSpreadSimulation::Community community{0u, DiseaseSpreadSimulation::Country::USA};
-		DiseaseSpreadSimulation::PersonBehavior behavior{10u, 10u, 0.f, 0.f};
+		DiseaseSpreadSimulation::Community community{0U, DiseaseSpreadSimulation::Country::USA};
+		DiseaseSpreadSimulation::PersonBehavior behavior{10U, 10U, 0.F, 0.F};
 		DiseaseSpreadSimulation::Disease disease{name, incubationPeriod, daysInfectious, diseaseDurationRange, mortalityByAge, daysTillDeathRange, spreadFactor, testAccuracy, symptomsDevelopment};
 		DiseaseSpreadSimulation::TimeManager time;
 		// Values from Person.h
-		static constexpr uint32_t shopOpenTime = 7u;
-		static constexpr uint32_t shopCloseTime = 20u;
-		static constexpr uint32_t workStartTime = 8u;
-		static constexpr uint32_t workFinishTime = 17u;
-		static constexpr uint32_t schoolStartTime = 8u;
-		static constexpr uint32_t schoolFinishTime = 15u;
+		static constexpr uint32_t shopOpenTime{7U};
+		static constexpr uint32_t shopCloseTime{20U};
+		static constexpr uint32_t workStartTime{8U};
+		static constexpr uint32_t workFinishTime{17U};
+		static constexpr uint32_t schoolStartTime{8U};
+		static constexpr uint32_t schoolFinishTime{15U};
 
 		void InitCommunity()
 		{
@@ -59,12 +61,15 @@ namespace UnitTests
 			community.AddPlace(school);
 		}
 	};
-	TEST_F(PersonTest, UpdateSupplyMoves)
+	// NOLINTEND(*-magic-numbers)
+	// No point in splitting the test
+	// NOLINTNEXTLINE(*-cognitive-complexity)
+	TEST_F(PersonTest, UpdateSupplyMoves) // cppcheck-suppress syntaxError
 	{
 		InitCommunity();
 
 		using namespace DiseaseSpreadSimulation;
-		PersonBehavior foodBuyBehavior{0, 100, 1.f, 0.f};
+		PersonBehavior foodBuyBehavior{0, 100, 1.F, 0.F}; // NOLINT(*-magic-numbers)
 
 		Person person1(Age_Group::UnderThirty, Sex::Female, foodBuyBehavior, &community, &homes.back());
 		ASSERT_EQ(person1.GetWhereabouts(), person1.GetHome());
@@ -97,7 +102,7 @@ namespace UnitTests
 			}
 		}
 		ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::Supply);
-		PersonBehavior hardwareBuyBehavior{100, 0, 1.f, 0.f};
+		PersonBehavior hardwareBuyBehavior{100, 0, 1.F, 0.F}; // NOLINT(*-magic-numbers)
 		person2.ChangeBehavior(hardwareBuyBehavior);
 		person2.Update(buyEndTime, true, false);
 		ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::HardwareStore);
@@ -120,12 +125,14 @@ namespace UnitTests
 		person3.Update(buyEndTime, true, false);
 		ASSERT_EQ(person3.GetWhereabouts(), person3.GetHome());
 	}
+	// No point in splitting the test
+	// NOLINTNEXTLINE(*-cognitive-complexity)
 	TEST_F(PersonTest, UpdateHardwareMoves)
 	{
 		InitCommunity();
 
 		using namespace DiseaseSpreadSimulation;
-		PersonBehavior hardwareBuyBehavior{100, 0, 1.f, 0.f};
+		PersonBehavior hardwareBuyBehavior{100, 0, 1.F, 0.F}; // NOLINT(*-magic-numbers)
 
 		Person person1(Age_Group::UnderThirty, Sex::Male, hardwareBuyBehavior, &community, &homes.back());
 		ASSERT_EQ(person1.GetWhereabouts(), person1.GetHome());
@@ -158,7 +165,7 @@ namespace UnitTests
 			}
 		}
 		ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::HardwareStore);
-		PersonBehavior foodBuyBehavior{0, 100, 1.f, 0.f};
+		PersonBehavior foodBuyBehavior{0, 100, 1.F, 0.F}; // NOLINT(*-magic-numbers)
 		person2.ChangeBehavior(foodBuyBehavior);
 		person2.Update(buyEndTime, true, false);
 		ASSERT_EQ(person2.GetWhereabouts()->GetType(), Place_Type::Supply);
@@ -186,7 +193,7 @@ namespace UnitTests
 		InitCommunity();
 
 		using namespace DiseaseSpreadSimulation;
-		PersonBehavior travelBehavior{100, 100, 0.f, 1.f};
+		PersonBehavior travelBehavior{100, 100, 0.F, 1.F}; // NOLINT(*-magic-numbers)
 
 		Person traveler(Age_Group::UnderThirty, Sex::Female, travelBehavior, &community, &homes.back());
 		ASSERT_EQ(traveler.GetWhereabouts(), traveler.GetHome());
@@ -207,7 +214,7 @@ namespace UnitTests
 		InitCommunity();
 
 		using namespace DiseaseSpreadSimulation;
-		PersonBehavior workerBehavior{100, 100, 1.f, 0.f};
+		PersonBehavior workerBehavior{100, 100, 1.F, 0.F}; // NOLINT(*-magic-numbers)
 
 		Person worker(Age_Group::UnderThirty, Sex::Female, workerBehavior, &community, &homes.back());
 		ASSERT_EQ(worker.GetWhereabouts(), worker.GetHome());
@@ -225,7 +232,7 @@ namespace UnitTests
 		// Check travel after work
 		worker.Update(workStartTime, true, false);
 		ASSERT_EQ(worker.GetWhereabouts(), worker.GetWorkplace());
-		PersonBehavior travelBehavior{100, 100, 0.f, 1.f};
+		PersonBehavior travelBehavior{100, 100, 0.F, 1.F}; // NOLINT(*-magic-numbers)
 		worker.ChangeBehavior(travelBehavior);
 
 		worker.Update(workFinishTime, true, false);
@@ -236,7 +243,7 @@ namespace UnitTests
 		InitCommunity();
 
 		using namespace DiseaseSpreadSimulation;
-		PersonBehavior schoolBehavior{100, 100, 1.f, 0.f};
+		PersonBehavior schoolBehavior{100, 100, 1.F, 0.F}; // NOLINT(*-magic-numbers)
 
 		Person schoolKid(Age_Group::UnderThirty, Sex::Male, schoolBehavior, &community, &homes.back());
 		ASSERT_EQ(schoolKid.GetWhereabouts(), schoolKid.GetHome());
@@ -251,6 +258,8 @@ namespace UnitTests
 		schoolKid.Update(schoolFinishTime, true, false);
 		EXPECT_EQ(schoolKid.GetWhereabouts(), schoolKid.GetHome());
 	}
+	// No point in splitting the test and ignore magic numbers
+	// NOLINTBEGIN(*-cognitive-complexity, *-magic-numbers)
 	TEST_F(PersonTest, UpdateMorgueMoves)
 	{
 		InitCommunity();
@@ -267,20 +276,22 @@ namespace UnitTests
 		ASSERT_EQ(person.GetWhereabouts()->GetType(), Place_Type::Morgue);
 
 		// Check that the person stays in morgue
-		for (size_t i = 0; i < 1000; i++)
+		static constexpr size_t testRuns{1000};
+		for (size_t i = 0; i < testRuns; i++)
 		{
-			for (uint32_t h = 0; h < 24; h++)
+			for (uint32_t hour = 0; hour < 24; hour++)
 			{
-				person.Update(h, true, true);
+				person.Update(hour, true, true);
 				ASSERT_EQ(person.GetWhereabouts()->GetType(), Place_Type::Morgue);
 			}
-			// Check other random behaviors
+			// Check other random behaviors every 5. run
 			if (i % 5 == 0)
 			{
 				person.ChangeBehavior(PersonBehavior{});
 			}
 		}
 	}
+	// NOLINTEND(*-cognitive-complexity, *-magic-numbers)
 	TEST_F(PersonTest, UpdateInfection)
 	{
 		InitCommunity();
@@ -379,14 +390,15 @@ namespace UnitTests
 
 		PersonBehavior oldBehavior{person1.GetBehavior()};
 
-		person1.ChangeBehavior(PersonBehavior{});
-		auto& currentBehavior = person1.GetBehavior();
+		person1.ChangeBehavior({0U, 0U, 10.F, 10.F}); // NOLINT(*-magic-numbers)
+		const auto& currentBehavior = person1.GetBehavior();
 		EXPECT_NE(currentBehavior.foodBuyInterval, oldBehavior.foodBuyInterval);
 		EXPECT_NE(currentBehavior.hardwareBuyInterval, oldBehavior.hardwareBuyInterval);
 		EXPECT_NE(currentBehavior.acceptanceFactor, oldBehavior.acceptanceFactor);
 		EXPECT_NE(currentBehavior.travelNeed, oldBehavior.travelNeed);
 	}
 
+	// NOLINTBEGIN(*-magic-numbers)
 	class PersonPopulatorTest : public ::testing::Test
 	{
 	protected:
@@ -394,15 +406,15 @@ namespace UnitTests
 		static constexpr size_t unevenCount{111};
 		DiseaseSpreadSimulation::Country country{DiseaseSpreadSimulation::Country::USA};
 
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human1{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Sex::Male, 0.25f};
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human2{DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, 0.25f};
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human3{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Male, 0.25f};
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human4{DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Sex::Female, 0.25f};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human1{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Sex::Male, 0.25F};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human2{DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, 0.25F};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human3{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Male, 0.25F};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human4{DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Sex::Female, 0.25F};
 
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human5{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Sex::Male, 0.10f};
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human6{DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, 0.20f};
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human7{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Male, 0.30f};
-		DiseaseSpreadSimulation::Statistics::HumanDistribution human8{DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Sex::Female, 0.40f};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human5{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Sex::Male, 0.10F};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human6{DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, 0.20F};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human7{DiseaseSpreadSimulation::Age_Group::UnderThirty, DiseaseSpreadSimulation::Sex::Male, 0.30F};
+		DiseaseSpreadSimulation::Statistics::HumanDistribution human8{DiseaseSpreadSimulation::Age_Group::UnderFourty, DiseaseSpreadSimulation::Sex::Female, 0.40F};
 
 		std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> evenDistribution{human1, human2, human3, human4};
 		std::vector<DiseaseSpreadSimulation::Statistics::HumanDistribution> unevenDistribution{human5, human6, human7, human8};
@@ -412,6 +424,7 @@ namespace UnitTests
 		DiseaseSpreadSimulation::PersonPopulator populator3{evenCount, unevenDistribution};
 		DiseaseSpreadSimulation::PersonPopulator populator4{unevenCount, unevenDistribution};
 	};
+	// NOLINTEND(*-magic-numbers)
 	TEST_F(PersonPopulatorTest, SizeIsEqualEvenDistributionEvenCount)
 	{
 		// Setup population
@@ -446,10 +459,10 @@ namespace UnitTests
 	}
 	TEST_F(PersonPopulatorTest, EvenDistributionEvenCount)
 	{
-		float countHumanDistribution1 = 0.f;
-		float countHumanDistribution2 = 0.f;
-		float countHumanDistribution3 = 0.f;
-		float countHumanDistribution4 = 0.f;
+		float countHumanDistribution1{0.F};
+		float countHumanDistribution2{0.F};
+		float countHumanDistribution3{0.F};
+		float countHumanDistribution4{0.F};
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(evenCount, country);
@@ -457,23 +470,23 @@ namespace UnitTests
 
 		for (const auto& person : population1)
 		{
-			DiseaseSpreadSimulation::Statistics::HumanDistribution h{person.GetAgeGroup(), person.GetSex(), 0.f};
+			DiseaseSpreadSimulation::Statistics::HumanDistribution human{person.GetAgeGroup(), person.GetSex(), 0.F};
 
-			if (h == human1)
+			if (human == human1)
 			{
-				countHumanDistribution1++;
+				countHumanDistribution1 += 1.F;
 			}
-			else if (h == human2)
+			else if (human == human2)
 			{
-				countHumanDistribution2++;
+				countHumanDistribution2 += 1.F;
 			}
-			else if (h == human3)
+			else if (human == human3)
 			{
-				countHumanDistribution3++;
+				countHumanDistribution3 += 1.F;
 			}
-			else if (h == human4)
+			else if (human == human4)
 			{
-				countHumanDistribution4++;
+				countHumanDistribution4 += 1.F;
 			}
 		}
 
@@ -482,17 +495,17 @@ namespace UnitTests
 		countHumanDistribution3 = countHumanDistribution3 / evenCount;
 		countHumanDistribution4 = countHumanDistribution4 / evenCount;
 
-		EXPECT_NEAR(countHumanDistribution1, human1.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution2, human2.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01f);
+		EXPECT_NEAR(countHumanDistribution1, human1.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution2, human2.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01F);
 	}
 	TEST_F(PersonPopulatorTest, EvenDistributionUnevenCount)
 	{
-		float countHumanDistribution1 = 0.f;
-		float countHumanDistribution2 = 0.f;
-		float countHumanDistribution3 = 0.f;
-		float countHumanDistribution4 = 0.f;
+		float countHumanDistribution1{0.F};
+		float countHumanDistribution2{0.F};
+		float countHumanDistribution3{0.F};
+		float countHumanDistribution4{0.F};
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(unevenCount, country);
@@ -500,23 +513,23 @@ namespace UnitTests
 
 		for (const auto& person : population2)
 		{
-			DiseaseSpreadSimulation::Statistics::HumanDistribution h{person.GetAgeGroup(), person.GetSex(), 0.f};
+			DiseaseSpreadSimulation::Statistics::HumanDistribution human{person.GetAgeGroup(), person.GetSex(), 0.F};
 
-			if (h == human1)
+			if (human == human1)
 			{
-				countHumanDistribution1++;
+				countHumanDistribution1 += 1.F;
 			}
-			else if (h == human2)
+			else if (human == human2)
 			{
-				countHumanDistribution2++;
+				countHumanDistribution2 += 1.F;
 			}
-			else if (h == human3)
+			else if (human == human3)
 			{
-				countHumanDistribution3++;
+				countHumanDistribution3 += 1.F;
 			}
-			else if (h == human4)
+			else if (human == human4)
 			{
-				countHumanDistribution4++;
+				countHumanDistribution4 += 1.F;
 			}
 		}
 
@@ -525,17 +538,17 @@ namespace UnitTests
 		countHumanDistribution3 = countHumanDistribution3 / unevenCount;
 		countHumanDistribution4 = countHumanDistribution4 / unevenCount;
 
-		EXPECT_NEAR(countHumanDistribution1, human1.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution2, human2.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01f);
+		EXPECT_NEAR(countHumanDistribution1, human1.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution2, human2.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution3, human3.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution4, human4.percent, 0.01F);
 	}
 	TEST_F(PersonPopulatorTest, UnevenDistributionEvenCount)
 	{
-		float countHumanDistribution1 = 0.f;
-		float countHumanDistribution2 = 0.f;
-		float countHumanDistribution3 = 0.f;
-		float countHumanDistribution4 = 0.f;
+		float countHumanDistribution1{0.F};
+		float countHumanDistribution2{0.F};
+		float countHumanDistribution3{0.F};
+		float countHumanDistribution4{0.F};
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(evenCount, country);
@@ -543,23 +556,23 @@ namespace UnitTests
 
 		for (const auto& person : population3)
 		{
-			DiseaseSpreadSimulation::Statistics::HumanDistribution h{person.GetAgeGroup(), person.GetSex(), 0.f};
+			DiseaseSpreadSimulation::Statistics::HumanDistribution human{person.GetAgeGroup(), person.GetSex(), 0.F};
 
-			if (h == human5)
+			if (human == human5)
 			{
-				countHumanDistribution1 += 1.f;
+				countHumanDistribution1 += 1.F;
 			}
-			else if (h == human6)
+			else if (human == human6)
 			{
-				countHumanDistribution2 += 1.f;
+				countHumanDistribution2 += 1.F;
 			}
-			else if (h == human7)
+			else if (human == human7)
 			{
-				countHumanDistribution3++;
+				countHumanDistribution3 += 1.F;
 			}
-			else if (h == human8)
+			else if (human == human8)
 			{
-				countHumanDistribution4 += 1.f;
+				countHumanDistribution4 += 1.F;
 			}
 		}
 
@@ -568,17 +581,17 @@ namespace UnitTests
 		countHumanDistribution3 = countHumanDistribution3 / evenCount;
 		countHumanDistribution4 = countHumanDistribution4 / evenCount;
 
-		EXPECT_NEAR(countHumanDistribution1, human5.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01f);
+		EXPECT_NEAR(countHumanDistribution1, human5.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01F);
 	}
 	TEST_F(PersonPopulatorTest, UnevenDistributionUnevenCount)
 	{
-		float countHumanDistribution1 = 0.f;
-		float countHumanDistribution2 = 0.f;
-		float countHumanDistribution3 = 0.f;
-		float countHumanDistribution4 = 0.f;
+		float countHumanDistribution1{0.F};
+		float countHumanDistribution2{0.F};
+		float countHumanDistribution3{0.F};
+		float countHumanDistribution4{0.F};
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(unevenCount, country);
@@ -586,23 +599,23 @@ namespace UnitTests
 
 		for (const auto& person : population4)
 		{
-			DiseaseSpreadSimulation::Statistics::HumanDistribution h{person.GetAgeGroup(), person.GetSex(), 0.f};
+			DiseaseSpreadSimulation::Statistics::HumanDistribution human{person.GetAgeGroup(), person.GetSex(), 0.F};
 
-			if (h == human5)
+			if (human == human5)
 			{
-				countHumanDistribution1 += 1.f;
+				countHumanDistribution1 += 1.F;
 			}
-			else if (h == human6)
+			else if (human == human6)
 			{
-				countHumanDistribution2 += 1.f;
+				countHumanDistribution2 += 1.F;
 			}
-			else if (h == human7)
+			else if (human == human7)
 			{
-				countHumanDistribution3++;
+				countHumanDistribution3 += 1.F;
 			}
-			else if (h == human8)
+			else if (human == human8)
 			{
-				countHumanDistribution4 += 1.f;
+				countHumanDistribution4 += 1.F;
 			}
 		}
 
@@ -611,10 +624,10 @@ namespace UnitTests
 		countHumanDistribution3 = countHumanDistribution3 / unevenCount;
 		countHumanDistribution4 = countHumanDistribution4 / unevenCount;
 
-		EXPECT_NEAR(countHumanDistribution1, human5.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01f);
-		EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01f);
+		EXPECT_NEAR(countHumanDistribution1, human5.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution2, human6.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution3, human7.percent, 0.01F);
+		EXPECT_NEAR(countHumanDistribution4, human8.percent, 0.01F);
 	}
 	// Helper function to get the percentages per category form a population so it can be compared to the distribution weights
 	std::array<float, 4> GetHomePercentFromPopulation(std::vector<DiseaseSpreadSimulation::Person>& population)
@@ -624,18 +637,20 @@ namespace UnitTests
 		// Get the homes of every person in the population and put it into a map to filter multiples
 		for (auto& person : population)
 		{
-			auto home = person.GetHome();
+			auto* home = person.GetHome();
 			homesByID.try_emplace(home->GetID(), home);
 		}
 
 		// Put the person count in every home into a vector
 		std::vector<size_t> peopleCount;
+		peopleCount.reserve(homesByID.size());
 		for (auto& [id, home] : homesByID)
 		{
 			peopleCount.emplace_back(home->GetPeople().size());
 		}
 
 		// Count the homes separated by category
+		// NOLINTBEGIN(*-magic-numbers)
 		std::array<size_t, 4> homeCount{};
 		for (auto& count : peopleCount)
 		{
@@ -661,6 +676,7 @@ namespace UnitTests
 			}
 		}
 		size_t sum = homeCount.at(0) + homeCount.at(1) + homeCount.at(2) + homeCount.at(3);
+		// NOLINTEND(*-magic-numbers)
 
 		// Get the percent of the count by dividing it by the sum of all homes and check if it is near our distribution
 
@@ -681,8 +697,8 @@ namespace UnitTests
 			PersonPopulator::GetHouseholdDistribution(country).sixPlusMembers};
 		std::shared_mutex distributionArrayMutex;
 
-		constexpr size_t populationSize1 = 1000;
-		constexpr size_t testSize = 20;
+		constexpr size_t populationSize1{1000};
+		constexpr size_t testSize{20};
 		std::vector<std::thread> threads;
 		threads.reserve(testSize);
 		for (size_t j = 0; j < testSize; j++)
@@ -698,7 +714,7 @@ namespace UnitTests
 					{
 						std::shared_lock lock(distributionArrayMutex, std::defer_lock);
 						lock.lock();
-						EXPECT_NEAR(homePercent1.at(i), distributionArray.at(i), 0.2f);
+						EXPECT_NEAR(homePercent1.at(i), distributionArray.at(i), 0.2F);
 					}
 				});
 		}
@@ -707,7 +723,7 @@ namespace UnitTests
 			thread.join();
 		}
 
-		size_t populationSize2 = 10000;
+		size_t populationSize2{10000}; // NOLINT(*-magic-numbers)
 		PersonPopulator populationFactory(populationSize2, PersonPopulator::GetCountryDistribution(country));
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(populationSize2, country);
 		auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools);
@@ -715,7 +731,7 @@ namespace UnitTests
 		auto homePercent2 = GetHomePercentFromPopulation(population);
 		for (size_t i = 0; i < homePercent2.size(); i++)
 		{
-			EXPECT_NEAR(homePercent2.at(i), distributionArray.at(i), 0.13f);
+			EXPECT_NEAR(homePercent2.at(i), distributionArray.at(i), 0.13F);
 		}
 	}
 	// Helper to sum up all working people
@@ -737,6 +753,7 @@ namespace UnitTests
 		}
 		return workingPeople;
 	}
+	// NOLINTBEGIN(*-magic-numbers)
 	TEST_F(PersonPopulatorTest, WorkingPeopleCount)
 	{
 		using namespace DiseaseSpreadSimulation;
@@ -752,4 +769,5 @@ namespace UnitTests
 		populationSize = 7777;
 		EXPECT_EQ(PersonPopulator::WorkingPeopleCount(populationSize, country), SumWorkingPeople(populationSize, country));
 	}
+	// NOLINTEND(*-magic-numbers)
 } // namespace UnitTests

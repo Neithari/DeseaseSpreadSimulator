@@ -10,40 +10,41 @@ namespace DiseaseSpreadSimulation
 	class Disease
 	{
 	public:
-		Disease(const std::string name,
-			const std::pair<uint32_t, uint32_t> incubationPeriod,
-			const uint32_t daysInfectious,
-			const std::pair<uint32_t, uint32_t> diseaseDurationRange,
-			const std::vector<float> mortalityByAge,
-			const std::pair<uint32_t, uint32_t> daysTillDeathRange,
-			const std::pair<float, float> spreadFactor = {1.0f, 1.0f},
-			const float testAccuracy = 1.0f,
-			const std::pair<float, float> symptomsDevelopment = {1.0f, 1.0f});
+		Disease(std::string name,
+			std::pair<uint32_t, uint32_t> incubationPeriod,
+			uint32_t daysInfectious,
+			std::pair<uint32_t, uint32_t> diseaseDurationRange,
+			std::vector<float> mortalityByAge,
+			std::pair<uint32_t, uint32_t> daysTillDeathRange,
+			std::pair<float, float> spreadFactor = {1.0F, 1.0F},
+			float testAccuracy = 1.0F,
+			std::pair<float, float> symptomsDevelopment = {1.0F, 1.0F});
 
+	public:
 		// Check with ID
 		inline bool operator==(const Disease& rhs) const
 		{
 			return m_id == rhs.m_id;
 		};
 
-		const std::string& GetDiseaseName() const;
-		uint32_t IncubationPeriod() const;
-		uint32_t DaysInfectious() const;
-		float GetMortalityByAge(uint32_t age) const;
-		float GetMortalityByAgeGroup(Age_Group age) const;
+		[[nodiscard]] const std::string& GetDiseaseName() const;
+		[[nodiscard]] uint32_t IncubationPeriod() const;
+		[[nodiscard]] uint32_t DaysInfectious() const;
+		[[nodiscard]] float GetMortalityByAge(uint32_t age) const;
+		[[nodiscard]] float GetMortalityByAgeGroup(Age_Group age) const;
 		// Return a random duration out of the range
-		uint32_t GetDiseaseDuration() const;
+		[[nodiscard]] uint32_t GetDiseaseDuration() const;
 		// Return a random death time out of the range
-		uint32_t DaysTillDeath() const;
-		float GetSpreadFactor() const;
-		float GetTestAccuracy() const;
+		[[nodiscard]] uint32_t DaysTillDeath() const;
+		[[nodiscard]] float GetSpreadFactor() const;
+		[[nodiscard]] float GetTestAccuracy() const;
 
-		uint32_t GetID() const;
+		[[nodiscard]] uint32_t GetID() const;
 		// Check without ID
-		bool isSame(const Disease& other) const;
-		bool hasSameID(const Disease& other) const;
-		bool isFatal(Age_Group age) const;
-		bool willDevelopSymptoms() const;
+		[[nodiscard]] bool isSame(const Disease& other) const;
+		[[nodiscard]] bool hasSameID(const Disease& other) const;
+		[[nodiscard]] bool isFatal(Age_Group age) const;
+		[[nodiscard]] bool willDevelopSymptoms() const;
 
 		// For nlohmann/json conversion
 		friend struct nlohmann::adl_serializer<Disease, void>;
@@ -58,11 +59,11 @@ namespace DiseaseSpreadSimulation
 		// Duration min, max in days
 		const std::pair<uint32_t, uint32_t> m_durationRange{};
 		// Mortality in percent from 0-1, age from 0-9, 10-19, 20-29,...., >80 years
-		const std::vector<float> m_mortalityByAge;
+		const std::vector<float> m_mortalityByAge{};
 		const std::pair<uint32_t, uint32_t> m_daysTillDeathRange{};
 		// In percent from 0-1 how likely it is to get infected at exposure
 		const std::pair<float, float> m_spreadFactor{};
-		const float m_testAccuracy{1.0f};
+		const float m_testAccuracy{1.0F};
 		// Chance that symptoms will be developed, in percent from 0-1
 		const std::pair<float, float> m_symptomsDevelopment{};
 	};
@@ -74,8 +75,6 @@ namespace nlohmann
 	template <>
 	struct adl_serializer<DiseaseSpreadSimulation::Disease>
 	{
-		// note: the return type is no longer 'void', and the method only takes
-		// one argument
 		static DiseaseSpreadSimulation::Disease from_json(const json& j)
 		{
 			return {
@@ -90,9 +89,6 @@ namespace nlohmann
 				j["Symptoms Development"].get<std::pair<float, float>>()};
 		}
 
-		// Here's the catch! You must provide a to_json method! Otherwise, you
-		// will not be able to convert move_only_type to json, since you fully
-		// specialized adl_serializer on that type
 		static void to_json(json& j, const DiseaseSpreadSimulation::Disease& disease)
 		{
 			j = {

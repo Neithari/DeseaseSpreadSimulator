@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Build with time trace file
+-.json
+
 # User-specific files
 *.rsuser
 *.suo
@@ -10,6 +13,9 @@
 *.userosscache
 *.sln.docstates
 CMakeUserPresets.json
+
+# Visual studio code
+.vscode/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

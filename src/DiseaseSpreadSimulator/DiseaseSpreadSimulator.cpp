@@ -3,7 +3,7 @@
 
 int main()
 {
-	constexpr uint64_t populationSize = 5000u;
+	constexpr uint64_t populationSize = 5000U;
 
 	DiseaseSpreadSimulation::Simulation simulation{populationSize, true};
 

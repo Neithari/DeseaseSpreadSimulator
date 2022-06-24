@@ -2,15 +2,15 @@
 #include "IDGenerator/IDGenerator.h"
 #include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::Disease::Disease(const std::string name,
-	const std::pair<uint32_t, uint32_t> incubationPeriod,
-	const uint32_t daysInfectious,
-	const std::pair<uint32_t, uint32_t> diseaseDurationRange,
-	const std::vector<float> mortalityByAge,
-	const std::pair<uint32_t, uint32_t> daysTillDeathRange,
-	const std::pair<float, float> spreadFactor,
-	const float testAccuracy,
-	const std::pair<float, float> symptomsDevelopment)
+DiseaseSpreadSimulation::Disease::Disease(std::string name,
+	std::pair<uint32_t, uint32_t> incubationPeriod,
+	uint32_t daysInfectious,
+	std::pair<uint32_t, uint32_t> diseaseDurationRange,
+	std::vector<float> mortalityByAge,
+	std::pair<uint32_t, uint32_t> daysTillDeathRange,
+	std::pair<float, float> spreadFactor,
+	float testAccuracy,
+	std::pair<float, float> symptomsDevelopment)
 	: m_id(IDGenerator::IDGenerator<Disease>::GetNextID()),
 	  m_name(std::move(name)),
 	  m_incubationPeriod(std::move(incubationPeriod)),
@@ -41,11 +41,14 @@ uint32_t DiseaseSpreadSimulation::Disease::DaysInfectious() const
 	return m_daysInfectious;
 }
 
+// Silence clang tidy because of false positive cases 5-7 are markt
+// NOLINTBEGIN(*-magic-numbers)
 float DiseaseSpreadSimulation::Disease::GetMortalityByAge(uint32_t age) const
 {
-	// any number devided by 10 will result the tens and we switch on them to get the Age_Group
-	// everything above 7 is Age_Group::AboveEighty
-	switch (age / 10)
+	// Any number devided by 10 will result the tens and we switch on them to get the Age_Group
+	// Everything above 7 is Age_Group::AboveEighty
+	static constexpr uint32_t tenths{10};
+	switch (age / tenths)
 	{
 	case 0:
 		return GetMortalityByAgeGroup(Age_Group::UnderTen);
@@ -76,6 +79,7 @@ float DiseaseSpreadSimulation::Disease::GetMortalityByAge(uint32_t age) const
 		break;
 	}
 }
+// NOLINTEND(*-magic-numbers)
 
 float DiseaseSpreadSimulation::Disease::GetMortalityByAgeGroup(Age_Group age) const
 {

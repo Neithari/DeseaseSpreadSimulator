@@ -17,11 +17,12 @@ namespace DiseaseSpreadSimulation
 		// Percent from 0-1
 		float acceptanceFactor;
 		float travelNeed;
+		static constexpr float acceptanceFactorThreshold{0.6F};
 
 	private:
-		static constexpr uint32_t minDaysToNextFoodBuy = 1u;
-		static constexpr uint32_t maxDaysToNextFoodBuy = 30u;
-		static constexpr uint32_t minDaysToNextHardwareBuy = 10u;
-		static constexpr uint32_t maxDaysToNextHardwareBuy = 90u;
+		static constexpr uint32_t minDaysToNextFoodBuy = 1U;
+		static constexpr uint32_t maxDaysToNextFoodBuy = 30U;
+		static constexpr uint32_t minDaysToNextHardwareBuy = 10U;
+		static constexpr uint32_t maxDaysToNextHardwareBuy = 90U;
 	};
 } // namespace DiseaseSpreadSimulation

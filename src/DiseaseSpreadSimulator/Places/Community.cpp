@@ -1,4 +1,5 @@
 #include "Places/Community.h"
+#include <utility>
 #include "Places/PlaceBuilder.h"
 #include "Person/Person.h"
 #include "Person/PersonPopulator.h"
@@ -18,21 +19,21 @@ DiseaseSpreadSimulation::Community::Community(const size_t populationSize, const
 	m_population = populationFactory.CreatePopulation(country, m_places.homes, m_places.workplaces, m_places.schools, this);
 }
 
+// We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Community::Community(const Community& other)
 	: m_population(other.m_population),
 	  m_places(other.m_places),
-	  m_travelLocation(other.m_travelLocation),
-	  populationMutex(),
-	  placesMutex()
+	  m_travelLocation(other.m_travelLocation)
 {
 }
 
+// We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
+// cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Community::Community(Community&& other) noexcept
 	: m_population(std::move(other.m_population)),
 	  m_places(std::move(other.m_places)),
-	  m_travelLocation(std::move(other.m_travelLocation)),
-	  populationMutex(),
-	  placesMutex()
+	  m_travelLocation(std::move(other.m_travelLocation))
 {
 }
 
@@ -72,7 +73,7 @@ void DiseaseSpreadSimulation::Community::RemovePerson(const Person& personToRemo
 void DiseaseSpreadSimulation::Community::AddPlaces(Places places)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlaces(placesMutex);
-	m_places.Insert(places);
+	m_places.Insert(std::move(places));
 }
 
 void DiseaseSpreadSimulation::Community::AddPopulation(std::vector<Person>& population)
@@ -86,21 +87,21 @@ std::optional<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::Communit
 {
 	// The shared lock can't be upgraded to a full lock. Because of that we need to separate the read from the write part.
 	bool isEnditerator{true};
-	std::vector<Person>::iterator toTransfer;
-	{
-		std::shared_lock<std::shared_timed_mutex> lockFindPerson(populationMutex);
-		toTransfer = std::find_if(m_population.begin(), m_population.end(), [&](const Person& person)
-			{
-				return person == traveler;
-			});
-		isEnditerator = toTransfer == m_population.end();
-	}
+
+	std::shared_lock<std::shared_timed_mutex> lockPopulation(populationMutex);
+	auto toTransfer = std::find_if(m_population.begin(), m_population.end(), [&](const Person& person)
+		{
+			return person == traveler;
+		});
+	isEnditerator = toTransfer == m_population.end();
+	lockPopulation.unlock();
 
 	if (!isEnditerator)
 	{
-		std::lock_guard<std::shared_timed_mutex> lockPersonTransfer(populationMutex);
+		lockPopulation.lock();
 		std::optional<Person> transferPerson = std::move(*toTransfer);
 		m_population.erase(toTransfer);
+		lockPopulation.unlock();
 		return transferPerson;
 	}
 	// This should never happen, because the person to transfer should be calling it.
@@ -109,42 +110,42 @@ std::optional<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::Communit
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToHome(Person* person)
 {
-	auto home = person->GetHome();
+	auto* home = person->GetHome();
 	TransferToPlace(person, home);
 	return home;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToSupplyStore(Person* person)
 {
-	auto store = GetSupplyStore();
+	auto* store = GetSupplyStore();
 	TransferToPlace(person, store);
 	return store;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToHardwareStore(Person* person)
 {
-	auto store = GetHardwareStore();
+	auto* store = GetHardwareStore();
 	TransferToPlace(person, store);
 	return store;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToWork(Person* person)
 {
-	auto work = person->GetWorkplace();
+	auto* work = person->GetWorkplace();
 	TransferToPlace(person, work);
 	return work;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToSchool(Person* person)
 {
-	auto school = person->GetSchool();
+	auto* school = person->GetSchool();
 	TransferToPlace(person, school);
 	return school;
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToMorgue(Person* person)
 {
-	auto morgue = GetMorgue();
+	auto* morgue = GetMorgue();
 	TransferToPlace(person, morgue);
 	return morgue;
 }
@@ -212,37 +213,37 @@ DiseaseSpreadSimulation::Morgue* DiseaseSpreadSimulation::Community::GetMorgue()
 void DiseaseSpreadSimulation::Community::AddPlace(Home home)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.homes.push_back(home);
+	m_places.homes.push_back(std::move(home));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(Supply store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.supplyStores.push_back(store);
+	m_places.supplyStores.push_back(std::move(store));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(Workplace workplace)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.workplaces.push_back(workplace);
+	m_places.workplaces.push_back(std::move(workplace));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(School school)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.schools.push_back(school);
+	m_places.schools.push_back(std::move(school));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(HardwareStore store)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.hardwareStores.push_back(store);
+	m_places.hardwareStores.push_back(std::move(store));
 }
 
 void DiseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 {
 	std::lock_guard<std::shared_timed_mutex> lockAddPlace(placesMutex);
-	m_places.morgues.push_back(morgue);
+	m_places.morgues.push_back(std::move(morgue));
 }
 
 const DiseaseSpreadSimulation::DiseaseContainment& DiseaseSpreadSimulation::Community::ContainmentMeasures() const
@@ -266,11 +267,7 @@ bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* pe
 	}
 
 	// Return true when our test is inside the accuracy and false otherwise
-	if (Random::Percent<float>() < person->GetDisease()->GetTestAccuracy())
-	{
-		return true;
-	}
-	return false;
+	return Random::Percent<float>() < person->GetDisease()->GetTestAccuracy();
 }
 
 DiseaseSpreadSimulation::Place* DiseaseSpreadSimulation::Community::TransferToPlace(Person* person, Place* place)
