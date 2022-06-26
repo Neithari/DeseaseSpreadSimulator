@@ -23,7 +23,7 @@ namespace UnitTests
 			ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), i);
 		}
 
-		ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), 10U);
+		ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), testSize);
 		ASSERT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), 0U);
 
 		for (auto i = 1U; i < testSize; i++)
