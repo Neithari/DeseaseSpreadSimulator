@@ -16,8 +16,10 @@ set(ENABLE_DEVELOPER_MODE
   CACHE BOOL "Enable 'developer mode'"
 )
 
-# Change this to false if you want to disable warnings_as_errors in developer mode
-set(OPT_WARNINGS_AS_ERRORS_DEVELOPER_DEFAULT TRUE)
+# Change this to "" if you want to disable warnings_as_errors in developer mode
+if(ENABLE_DEVELOPER_MODE)
+  set(WARNINGS_AS_ERRORS "WARNINGS_AS_ERRORS")
+endif()
 
 # Add project_options v0.22.4
 # https://github.com/aminya/project_options
@@ -44,32 +46,39 @@ project(
   LANGUAGES CXX
 )
 
-# Set PCH to be on by default for all non-Developer Mode Builds
-set(ENABLE_PCH_DEVELOPER_DEFAULT OFF)
-set(ENABLE_PCH_USER_DEFAULT ON)
+option(ENABLE_PCH "Enable PCH Usage" OFF)
+# Enable PCH in user mode
+if(NOT ENABLE_DEVELOPER_MODE)
+  set(ENABLE_PCH ON)
+endif()
 
-# enable sanitizers and clang-tidy if running the tests
+# Enable sanitizers and clang-tidy if running the tests
 set(ENABLE_CLANG_TIDY OFF)
 set(ENABLE_CPPCHECK OFF)
 set(ENABLE_SANITIZER_ADDRESS OFF)
 set(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR OFF)
-set(ENABLE_COVERAGE OFF)
+set(ENABLE_INCLUDE_WHAT_YOU_USE OFF)
 
 option(ENABLE_TESTING "Enable the tests" ${PROJECT_IS_TOP_LEVEL})
 
 if(ENABLE_TESTING)
   # MSVC and microsoft clang are producing too many false positives so we keep it disabled
   if(NOT MSVC)
+    # Clang-tidy only works with clang when PCH is enabled
+    if(${ENABLE_PCH} AND (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
+      message(${WARNING_MESSAGE}
+        "Clang-tidy can't be enabled with non-clang compiler and PCH, it can't handle gcc's PCH file. Disabling PCH..."
+      )
+      set(ENABLE_PCH OFF)
+    endif()
+
     set(ENABLE_CLANG_TIDY "ENABLE_CLANG_TIDY")
   endif()
 
   set(ENABLE_CPPCHECK "ENABLE_CPPCHECK")
-  set(ENABLE_COVERAGE "ENABLE_COVERAGE")
+  set(ENABLE_INCLUDE_WHAT_YOU_USE "ENABLE_INCLUDE_WHAT_YOU_USE")
 
-  if(NOT
-    "${CMAKE_SYSTEM_NAME}"
-    STREQUAL
-    "Windows")
+  if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     set(ENABLE_SANITIZER_ADDRESS "ENABLE_SANITIZER_ADDRESS")
     set(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "ENABLE_SANITIZER_UNDEFINED_BEHAVIOR")
   else()
@@ -94,14 +103,14 @@ project_options(
   # ${ENABLE_DOXYGEN}
   # ${ENABLE_COVERAGE}
   ${ENABLE_SANITIZER_ADDRESS}
-  # ENABLE_SANITIZER_UNDEFINED_BEHAVIOR
+  ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}
   # ENABLE_SANITIZER_LEAK
   # ENABLE_SANITIZER_THREAD
   # ENABLE_SANITIZER_MEMORY
   # ENABLE_PCH
   # PCH_HEADERS
-  # WARNINGS_AS_ERRORS
-  # ENABLE_INCLUDE_WHAT_YOU_USE
+  ${WARNINGS_AS_ERRORS}
+  ${ENABLE_INCLUDE_WHAT_YOU_USE}
   # ENABLE_USER_LINKER
   # ENABLE_BUILD_WITH_TIME_TRACE
   # ENABLE_UNITY
