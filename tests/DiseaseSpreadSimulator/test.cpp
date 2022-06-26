@@ -9,7 +9,7 @@ namespace UnitTests
 	constexpr auto testSize{10U};
 	TEST(IDGeneratorTests, IDIncrementing) // cppcheck-suppress syntaxError
 	{
-		for (size_t i = 0; i < testSize; i++)
+		for (auto i = 0U; i < testSize; i++)
 		{
 			ASSERT_EQ(IDGenerator::IDGenerator<char>::GetNextID(), i);
 		}
@@ -18,22 +18,22 @@ namespace UnitTests
 	// NOLINTNEXTLINE(*-cognitive-complexity)
 	TEST(IDGeneratorTests, IndependentIDs)
 	{
-		for (size_t i = 0; i < testSize; i++)
+		for (auto i = 0U; i < testSize; i++)
 		{
 			ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), i);
 		}
 
-		ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), 10);
-		ASSERT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), 0);
+		ASSERT_EQ(IDGenerator::IDGenerator<int>::GetNextID(), 10U);
+		ASSERT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), 0U);
 
-		for (size_t i = 1; i < testSize; i++)
+		for (auto i = 1U; i < testSize; i++)
 		{
 			ASSERT_EQ(IDGenerator::IDGenerator<bool>::GetNextID(), i);
 		}
 
-		ASSERT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), 0);
+		ASSERT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), 0U);
 
-		for (size_t i = 1; i < testSize; i++)
+		for (auto i = 1U; i < testSize; i++)
 		{
 			ASSERT_EQ(IDGenerator::IDGenerator<std::string>::GetNextID(), i);
 		}
