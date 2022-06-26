@@ -55,8 +55,8 @@ set(HEADERS
 add_library(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 # Add precompiled headers
-if(OPT_ENABLE_PCH)
-  message("-- Building ${CMAKE_PROJECT_NAME} with PCH")
+if(ENABLE_PCH)
+  message("Will build ${CMAKE_PROJECT_NAME} with PCH")
   target_precompile_headers(${CMAKE_PROJECT_NAME} PRIVATE pch.h)
 endif()
 
@@ -83,8 +83,8 @@ target_link_system_libraries(${CMAKE_PROJECT_NAME}
 add_executable("${CMAKE_PROJECT_NAME}Terminal" DiseaseSpreadSimulator.cpp)
 
 # Add precompiled headers
-if(OPT_ENABLE_PCH)
-  message("-- Building ${CMAKE_PROJECT_NAME}Terminal with PCH")
+if(ENABLE_PCH)
+  message("Will build ${CMAKE_PROJECT_NAME}Terminal with PCH")
   target_precompile_headers("${CMAKE_PROJECT_NAME}Terminal" REUSE_FROM ${CMAKE_PROJECT_NAME})
 endif()
 

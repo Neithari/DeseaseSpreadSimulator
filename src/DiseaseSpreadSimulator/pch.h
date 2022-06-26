@@ -3,7 +3,6 @@
 
 // Standard Library Header
 #include <cstdint>
-#include <format>
 #include <fstream>
 #include <memory>
 #include <stdexcept>
@@ -20,9 +19,6 @@
 #include <string>
 #include <vector>
 #include <array>
-
-// GSL: Guidelines Support Library
-//#include <gsl/gsl>
 
 // Extern libs
 #include "fmt/core.h"
