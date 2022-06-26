@@ -18,8 +18,8 @@ add_executable(${UNIT_TEST_NAME} ${SIMULATORSOURCES})
 target_include_directories(${UNIT_TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add precompiled headers
-if(OPT_ENABLE_PCH)
-  message("-- Building ${UNIT_TEST_NAME} with PCH")
+if(ENABLE_PCH)
+  message("Will build ${UNIT_TEST_NAME} with PCH")
   target_precompile_headers(${UNIT_TEST_NAME} PRIVATE pch.h)
 endif()
 
