@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <optional>
 #include <vector>
 #include <algorithm>
@@ -55,14 +56,18 @@ namespace DiseaseSpreadSimulation
 		void AddPlace(HardwareStore store);
 		void AddPlace(Morgue morgue);
 
+		DiseaseContainment& SetContainmentMeasures();
 		const DiseaseContainment& ContainmentMeasures() const;
 		void TestStation(Person* person);
+
+		[[nodiscard]] uint32_t GetID() const;
 
 	private:
 		static bool TestPersonForInfection(const Person* person);
 		Place* TransferToPlace(Person* person, Place* place);
 
 	private:
+		const uint32_t m_id{0};
 		std::vector<Person> m_population{};
 		Places m_places{};
 		Travel m_travelLocation;

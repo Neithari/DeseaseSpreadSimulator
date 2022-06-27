@@ -4,8 +4,10 @@
 #include "Person/Person.h"
 #include "Person/PersonPopulator.h"
 #include "RandomNumbers.h"
+#include "IDGenerator/IDGenerator.h"
 
 DiseaseSpreadSimulation::Community::Community(const size_t populationSize, const Country country)
+	: m_id(IDGenerator::IDGenerator<Community>::GetNextID())
 {
 	// Return early and leave places and population empty with a population size of 0
 	if (populationSize == 0)
@@ -22,7 +24,8 @@ DiseaseSpreadSimulation::Community::Community(const size_t populationSize, const
 // We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
 // cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Community::Community(const Community& other)
-	: m_population(other.m_population),
+	: m_id(IDGenerator::IDGenerator<Community>::GetNextID()),
+	  m_population(other.m_population),
 	  m_places(other.m_places),
 	  m_travelLocation(other.m_travelLocation)
 {
@@ -31,7 +34,8 @@ DiseaseSpreadSimulation::Community::Community(const Community& other)
 // We don't want to copy populationMutex and placesMutex so we suppress the static analyzer warning
 // cppcheck-suppress missingMemberCopy
 DiseaseSpreadSimulation::Community::Community(Community&& other) noexcept
-	: m_population(std::move(other.m_population)),
+	: m_id(other.m_id),
+	  m_population(std::move(other.m_population)),
 	  m_places(std::move(other.m_places)),
 	  m_travelLocation(std::move(other.m_travelLocation))
 {
@@ -246,6 +250,11 @@ void DiseaseSpreadSimulation::Community::AddPlace(Morgue morgue)
 	m_places.morgues.push_back(std::move(morgue));
 }
 
+DiseaseSpreadSimulation::DiseaseContainment& DiseaseSpreadSimulation::Community::SetContainmentMeasures()
+{
+	return m_containmentMeasures;
+}
+
 const DiseaseSpreadSimulation::DiseaseContainment& DiseaseSpreadSimulation::Community::ContainmentMeasures() const
 {
 	return m_containmentMeasures;
@@ -257,6 +266,11 @@ void DiseaseSpreadSimulation::Community::TestStation(Person* person)
 	{
 		m_containmentMeasures.Quarantine(person);
 	}
+}
+
+uint32_t DiseaseSpreadSimulation::Community::GetID() const
+{
+	return m_id;
 }
 
 bool DiseaseSpreadSimulation::Community::TestPersonForInfection(const Person* person)
