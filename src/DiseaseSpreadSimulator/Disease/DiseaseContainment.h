@@ -11,16 +11,19 @@ namespace DiseaseSpreadSimulation
 		// Start the quarantine and send the person home
 		static void Quarantine(Person* person);
 		static void ReleaseWhenRecovered(Person* person);
+		// Mask mandate
+		void ToggleMaskMandate();
+		// Home office mandate
+		void ToggleWorkingFromHome();
 		// Open or close shops
 		void ToggleShops();
-		void ToggleWorkingFromHome();
+		// Full lockdown
 		void ToggleLockdown();
-		void ToggleMaskMandate();
 
-		[[nodiscard]] bool ShopsAreOpen() const;
-		[[nodiscard]] bool WorkingFormHome() const;
-		[[nodiscard]] bool IsLockdown() const;
 		[[nodiscard]] bool IsMaskMandate() const;
+		[[nodiscard]] bool WorkingFormHome() const;
+		[[nodiscard]] bool ShopsAreClosed() const;
+		[[nodiscard]] bool IsLockdown() const;
 
 	public:
 		// 50% of working people are allowed to go to work when there is a working from home mandate.
