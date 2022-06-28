@@ -27,7 +27,7 @@ void DiseaseSpreadSimulation::DiseaseContainment::ToggleWorkingFromHome()
 
 void DiseaseSpreadSimulation::DiseaseContainment::ToggleShops()
 {
-	areShopsOpen = !areShopsOpen;
+	areShopsClosed = !areShopsClosed;
 }
 
 void DiseaseSpreadSimulation::DiseaseContainment::ToggleLockdown()
@@ -47,7 +47,7 @@ bool DiseaseSpreadSimulation::DiseaseContainment::WorkingFormHome() const
 
 bool DiseaseSpreadSimulation::DiseaseContainment::ShopsAreClosed() const
 {
-	return areShopsOpen;
+	return areShopsClosed;
 }
 
 bool DiseaseSpreadSimulation::DiseaseContainment::IsLockdown() const

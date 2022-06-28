@@ -16,6 +16,8 @@ namespace DiseaseSpreadSimulation
 		explicit Simulation(uint64_t populationSize, bool withPrint);
 
 		void Run();
+		// Will run the simulation for the stated days and print a result after
+		void RunForDays(uint32_t days);
 		void Stop();
 		void Pause();
 		void Resume();
@@ -36,6 +38,7 @@ namespace DiseaseSpreadSimulation
 		void PrintEveryHour(); // cppcheck-suppress unusedPrivateFunction
 		void PrintOncePerDay();
 		static void PrintPopulation(const std::vector<Person>& population);
+		void PrintRunResult();
 
 		bool CheckForNewDay();
 
@@ -44,7 +47,8 @@ namespace DiseaseSpreadSimulation
 		bool stop{true};
 		bool pause{false};
 
-		static constexpr Country country{Country::USA};
+		static constexpr auto m_country{Country::USA};
+		static constexpr auto m_communityCount{1U};
 		uint64_t m_populationSize{};
 		TimeManager time{};
 		std::vector<Community> communities{};
@@ -53,7 +57,7 @@ namespace DiseaseSpreadSimulation
 		Person travelInfecter;
 		static constexpr auto minTravelContacts{0U};
 		static constexpr auto maxTravelContacts{5U};
-		std::shared_timed_mutex travelInfecterMutex{};
+		std::shared_mutex travelInfecterMutex{};
 
 		uint64_t elapsedDays{};
 		// We start with the first hour

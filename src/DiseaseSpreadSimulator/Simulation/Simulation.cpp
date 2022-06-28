@@ -13,7 +13,7 @@ DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool wi
 }
 void DiseaseSpreadSimulation::Simulation::Run()
 {
-	SetupEverything(1);
+	SetupEverything(m_communityCount);
 
 	while (!stop)
 	{
@@ -24,6 +24,23 @@ void DiseaseSpreadSimulation::Simulation::Run()
 
 		Update();
 	}
+}
+
+void DiseaseSpreadSimulation::Simulation::RunForDays(uint32_t days)
+{
+	SetupEverything(m_communityCount);
+
+	for (auto i = 0U; i < days; i++)
+	{
+		Update();
+	}
+
+	// Separate the output when we print during the simulation
+	if (m_withPrint)
+	{
+		fmt::print("\n\n");
+	}
+	PrintRunResult();
 }
 
 void DiseaseSpreadSimulation::Simulation::Stop()
@@ -104,7 +121,7 @@ void DiseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& trave
 			auto numberOfContacts = Random::UniformIntRange(minTravelContacts, maxTravelContacts);
 			for (auto i = 0U; i < numberOfContacts; i++)
 			{
-				std::shared_lock<std::shared_timed_mutex> lockTravelInfecter(travelInfecterMutex);
+				std::shared_lock<std::shared_mutex> lockTravelInfecter(travelInfecterMutex);
 				traveler->Contact(travelInfecter);
 			}
 		});
@@ -237,6 +254,49 @@ void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 	fmt::print("Have died:    {}\n", deadPeople);
 }
 
+void DiseaseSpreadSimulation::Simulation::PrintRunResult()
+{
+	// Containment measures
+	// Starting population
+	// Deaths
+	// Survives
+	// infection max
+	// infection min
+	// disease discovered by tests
+	// Persons quarantined
+
+	fmt::print("-------------------------------------------------------------------------------------\n");
+	fmt::print("Simulation started with {} persons in {} communities.\n", m_populationSize, m_communityCount);
+	for (auto& community : communities)
+	{
+		// Print mandates
+		fmt::print("Community with id {}", community.GetID());
+		
+		const auto& containmentMeasures = community.ContainmentMeasures();
+		if (containmentMeasures.IsMaskMandate())
+		{
+			fmt::print(" has mask mandate");
+		}
+		if (containmentMeasures.WorkingFormHome())
+		{
+			fmt::print(" has home office mandate");
+		}
+		if (containmentMeasures.ShopsAreClosed())
+		{
+			fmt::print(" has shops are closed");
+		}
+		if (containmentMeasures.IsLockdown())
+		{
+			fmt::print(" has full lockdown");
+		}
+		fmt::print("\n");
+
+		// Print deaths and survived
+		// TODO: Implement a population count and a death count for community.
+		PrintPopulation(community.GetPopulation());
+	}
+}
+
 bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
 {
 	if (time.GetElapsedDays() <= elapsedDays)
@@ -256,7 +316,7 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCoun
 
 	for (size_t i = 0; i < communityCount; i++)
 	{
-		communities.emplace_back(m_populationSize, country);
+		communities.emplace_back(m_populationSize, m_country);
 
 		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
 		SetupTravelInfecter(&diseases.back(), &communities.back());

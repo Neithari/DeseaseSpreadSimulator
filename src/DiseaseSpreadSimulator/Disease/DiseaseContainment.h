@@ -34,9 +34,9 @@ namespace DiseaseSpreadSimulation
 		static constexpr float percentOfJobsMandatoryToSupply{.1F};
 
 	private:
-		bool areShopsOpen = true;
-		bool massWorkingFromHome = false;
-		bool isLockdown = false;
-		bool isMaskMandate = false;
+		bool areShopsClosed{false};
+		bool massWorkingFromHome{false};
+		bool isLockdown{false};
+		bool isMaskMandate{false};
 	};
 } // namespace DiseaseSpreadSimulation
