@@ -80,6 +80,7 @@ namespace DiseaseSpreadSimulation
 		[[nodiscard]] bool WillTravel() const;
 		void StartTraveling();
 
+		static void SpreadDisease(Person& spreader, Person& other);
 		void StartQuarantine();
 		void EndQuarantine();
 

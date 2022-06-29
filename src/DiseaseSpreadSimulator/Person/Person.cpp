@@ -32,16 +32,14 @@ void DiseaseSpreadSimulation::Person::Contact(Person& other)
 	{
 		if (infection.WillInfect(other.infection, m_behavior.acceptanceFactor, m_community))
 		{
-			infection.Contaminate(other.infection.GetDisease(), m_age);
-			other.infection.IncreaseSpreadCount();
+			SpreadDisease(other, *this);
 		}
 	}
 	else if (IsInfectious() && other.IsSusceptible())
 	{
 		if (other.infection.WillInfect(infection, other.m_behavior.acceptanceFactor, other.m_community))
 		{
-			other.infection.Contaminate(infection.GetDisease(), other.m_age);
-			infection.IncreaseSpreadCount();
+			SpreadDisease(*this, other);
 		}
 	}
 }
@@ -412,6 +410,12 @@ void DiseaseSpreadSimulation::Person::StartTraveling()
 {
 	whereabouts = m_community->TransferToTravelLocation(this);
 	isTraveling = true;
+}
+
+void DiseaseSpreadSimulation::Person::SpreadDisease(Person& spreader, Person& other)
+{
+	other.infection.Contaminate(spreader.infection.GetDisease(), other.m_age);
+	spreader.infection.IncreaseSpreadCount();
 }
 
 void DiseaseSpreadSimulation::Person::StartQuarantine()
