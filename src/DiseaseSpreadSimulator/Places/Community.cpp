@@ -298,11 +298,11 @@ uint32_t DiseaseSpreadSimulation::Community::GetID() const
 size_t DiseaseSpreadSimulation::Community::CurrentInfectionMax() const
 {
 	std::shared_lock<std::shared_mutex> lockPopulation(populationMutex);
-	return std::count_if(m_population.begin(), m_population.end(), [](const auto& person)
+	return static_cast<size_t>(std::count_if(m_population.begin(), m_population.end(), [](const auto& person)
 		{
 			// Every person that is no longer alive or has recovered was infected
 			return (!person.IsAlive() || person.HasRecovered() || person.IsInfectious());
-		});
+		}));
 }
 
 size_t DiseaseSpreadSimulation::Community::NumberOfPositiveTests() const

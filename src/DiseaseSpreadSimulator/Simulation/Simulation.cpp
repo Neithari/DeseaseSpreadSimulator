@@ -181,19 +181,19 @@ void DiseaseSpreadSimulation::Simulation::PrintEveryHour() const
 
 		// Print public places
 		const auto& places = community.GetPlaces();
-		for (auto& place : places.workplaces)
+		for (const auto& place : places.workplaces)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
-		for (auto& place : places.schools)
+		for (const auto& place : places.schools)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
-		for (auto& place : places.supplyStores)
+		for (const auto& place : places.supplyStores)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
-		for (auto& place : places.hardwareStores)
+		for (const auto& place : places.hardwareStores)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
