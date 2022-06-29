@@ -33,12 +33,12 @@ namespace DiseaseSpreadSimulation
 		void Contacts(Places& places, Travel& travelLocation);
 		static void ContactForPlace(Place& place);
 
-		void Print();
+		void Print() const;
 		// Very verbose printing. Should only be used for debugging
-		void PrintEveryHour(); // cppcheck-suppress unusedPrivateFunction
-		void PrintOncePerDay();
-		static void PrintPopulation(const std::vector<Person>& population);
-		void PrintRunResult();
+		void PrintEveryHour() const; // cppcheck-suppress unusedPrivateFunction
+		void PrintOncePerDay() const;
+		void PrintPopulation(const std::vector<Person>& population) const;
+		void PrintRunResult(const uint32_t runNumber, const uint32_t days) const;
 
 		bool CheckForNewDay();
 
@@ -50,6 +50,7 @@ namespace DiseaseSpreadSimulation
 		static constexpr auto m_country{Country::USA};
 		static constexpr auto m_communityCount{1U};
 		uint64_t m_populationSize{};
+		const uint32_t m_initialPopulationSizeDigitCount{};
 		TimeManager time{};
 		std::vector<Community> communities{};
 		std::vector<Disease> diseases{};

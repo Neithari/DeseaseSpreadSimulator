@@ -39,7 +39,9 @@ namespace DiseaseSpreadSimulation
 		Place* TransferToTravelLocation(Person* person);
 
 		std::vector<Person>& GetPopulation();
+		const std::vector<Person>& GetPopulation() const;
 		Places& GetPlaces();
+		const Places& GetPlaces() const;
 		Travel& GetTravelLocation();
 		std::vector<Home>& GetHomes();
 		// Returns a random supply store

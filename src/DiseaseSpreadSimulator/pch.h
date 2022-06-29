@@ -14,6 +14,7 @@
 #include <execution>
 #include <optional>
 #include <iostream>
+#include <cmath>
 
 // Data structures
 #include <string>
@@ -28,6 +29,7 @@
 #include "Enums.h"
 #include "RandomNumbers.h"
 #include "Statistics.h"
+#include "IDGenerator/IDGenerator.h"
 #include "Disease/Disease.h"
 #include "Disease/Infection.h"
 #include "Person/Person.h"

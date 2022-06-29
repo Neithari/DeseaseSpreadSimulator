@@ -1,6 +1,7 @@
 #include "Simulation/Simulation.h"
 #include <algorithm>
 #include <execution>
+#include <cmath>
 #include "fmt/core.h"
 #include "Disease/DiseaseBuilder.h"
 #include "RandomNumbers.h"
@@ -8,6 +9,8 @@
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	: m_withPrint(withPrint),
 	  m_populationSize(populationSize),
+	  // log10(x) + 1 casted to integral will give us the digit count of x (1=1, 10=2, 100=3,...)
+	  m_initialPopulationSizeDigitCount(static_cast<uint32_t>(std::log10(populationSize)) + 1U),
 	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100U, 100U, 1.F, 1.F), nullptr) // NOLINT: There is no benefit in named constants here
 {
 }
@@ -28,9 +31,11 @@ void DiseaseSpreadSimulation::Simulation::Run()
 
 void DiseaseSpreadSimulation::Simulation::RunForDays(uint32_t days)
 {
+	constexpr auto runNumber{1U};
+	const auto runHours = days * 24U;
 	SetupEverything(m_communityCount);
 
-	for (auto i = 0U; i < days; i++)
+	for (auto hours = 0U; hours < runHours; hours++)
 	{
 		Update();
 	}
@@ -40,7 +45,7 @@ void DiseaseSpreadSimulation::Simulation::RunForDays(uint32_t days)
 	{
 		fmt::print("\n\n");
 	}
-	PrintRunResult();
+	PrintRunResult(runNumber, days);
 }
 
 void DiseaseSpreadSimulation::Simulation::Stop()
@@ -154,7 +159,7 @@ void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::Print()
+void DiseaseSpreadSimulation::Simulation::Print() const
 {
 	// Only print once per hour
 	//PrintEveryHour();
@@ -165,18 +170,17 @@ void DiseaseSpreadSimulation::Simulation::Print()
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintEveryHour()
+void DiseaseSpreadSimulation::Simulation::PrintEveryHour() const
 {
-	for (size_t i = 0; i < communities.size(); i++)
+	for (const auto& community : communities)
 	{
-		auto& community = communities.at(i);
 
-		fmt::print("\nCommunity #{} Day: {} Time : {} o'clock\n", i + 1, elapsedDays, time.GetTime());
+		fmt::print("\nCommunity id: {} Day: {} Time : {} o'clock\n", community.GetID(), elapsedDays, time.GetTime());
 
 		PrintPopulation(community.GetPopulation());
 
 		// Print public places
-		auto& places = community.GetPlaces();
+		const auto& places = community.GetPlaces();
 		for (auto& place : places.workplaces)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
@@ -196,19 +200,17 @@ void DiseaseSpreadSimulation::Simulation::PrintEveryHour()
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintOncePerDay()
+void DiseaseSpreadSimulation::Simulation::PrintOncePerDay() const
 {
-	for (size_t i = 0; i < communities.size(); i++)
+	for (const auto& community : communities)
 	{
-		auto& community = communities.at(i);
-
-		fmt::print("\nCommunity #{} Day: {} Time : {} o'clock\n", i + 1, elapsedDays, time.GetTime());
+		fmt::print("\nCommunity id: {} Day: {} Time : {} o'clock\n", community.GetID(), elapsedDays, time.GetTime());
 
 		PrintPopulation(community.GetPopulation());
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population)
+void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population) const
 {
 	size_t populationCount{0};
 	size_t susceptible{0};
@@ -246,54 +248,65 @@ void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 		}
 	}
 
-	fmt::print("Population:   {}\n", populationCount);
-	fmt::print("Susceptible:  {}\n", susceptible);
-	fmt::print("With Disease: {}\n", withDisease);
-	fmt::print("Infectious:   {}\n", infectious);
-	fmt::print("Traveling:    {}\n", traveling);
-	fmt::print("Have died:    {}\n", deadPeople);
+	fmt::print("Population:   {:>{}}\t\t", populationCount, m_initialPopulationSizeDigitCount);
+	fmt::print("Susceptible: {:>{}}\n", susceptible, m_initialPopulationSizeDigitCount);
+	fmt::print("With Disease: {:>{}}\t\t", withDisease, m_initialPopulationSizeDigitCount);
+	fmt::print("Infectious:  {:>{}}\n", infectious, m_initialPopulationSizeDigitCount);
+	fmt::print("Traveling:    {:>{}}\t\t", traveling, m_initialPopulationSizeDigitCount);
+	fmt::print("Have died:   {:>{}}\n", deadPeople, m_initialPopulationSizeDigitCount);
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintRunResult()
+void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t runNumber, const uint32_t days) const
 {
 	// Containment measures
 	// Starting population
 	// Deaths
 	// Survives
 	// infection max
-	// infection min
 	// disease discovered by tests
 	// Persons quarantined
 
 	fmt::print("-------------------------------------------------------------------------------------\n");
-	fmt::print("Simulation started with {} persons in {} communities.\n", m_populationSize, m_communityCount);
-	for (auto& community : communities)
+	fmt::print("Simulation #{} simulated {} days and started with {} persons in {} communities.\n", runNumber, days, m_populationSize, m_communityCount);
+	for (const auto& community : communities)
 	{
 		// Print mandates
 		fmt::print("Community with id {}", community.GetID());
 		
 		const auto& containmentMeasures = community.ContainmentMeasures();
-		if (containmentMeasures.IsMaskMandate())
+		if (!containmentMeasures.IsMaskMandate()
+			&& !containmentMeasures.WorkingFormHome()
+			&& !containmentMeasures.ShopsAreClosed()
+			&& !containmentMeasures.IsLockdown())
 		{
-			fmt::print(" has mask mandate");
+			fmt::print(" has no containment measures");
 		}
-		if (containmentMeasures.WorkingFormHome())
+		else
 		{
-			fmt::print(" has home office mandate");
+			if (containmentMeasures.IsMaskMandate())
+			{
+				fmt::print(" has mask mandate");
+			}
+			if (containmentMeasures.WorkingFormHome())
+			{
+				fmt::print(" has home office mandate");
+			}
+			if (containmentMeasures.ShopsAreClosed())
+			{
+				fmt::print(" has shops are closed");
+			}
+			if (containmentMeasures.IsLockdown())
+			{
+				fmt::print(" has full lockdown");
+			}
 		}
-		if (containmentMeasures.ShopsAreClosed())
-		{
-			fmt::print(" has shops are closed");
-		}
-		if (containmentMeasures.IsLockdown())
-		{
-			fmt::print(" has full lockdown");
-		}
-		fmt::print("\n");
-
-		// Print deaths and survived
-		// TODO: Implement a population count and a death count for community.
+		
+		fmt::print("\nCurrent population status:\n");
 		PrintPopulation(community.GetPopulation());
+
+		fmt::print("Total infection count: {}\n", community.CurrentInfectionMax());
+		fmt::print("Positive Tests: {}\t", community.NumberOfPositiveTests());
+		fmt::print("Persons Quarantined: {}\n", community.NumberOfPersonsQuarantined());
 	}
 }
 

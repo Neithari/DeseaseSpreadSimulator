@@ -174,7 +174,17 @@ std::vector<DiseaseSpreadSimulation::Person>& DiseaseSpreadSimulation::Community
 	return m_population;
 }
 
+const std::vector<DiseaseSpreadSimulation::Person>& DiseaseSpreadSimulation::Community::GetPopulation() const
+{
+	return m_population;
+}
+
 DiseaseSpreadSimulation::Places& DiseaseSpreadSimulation::Community::GetPlaces()
+{
+	return m_places;
+}
+
+const DiseaseSpreadSimulation::Places& DiseaseSpreadSimulation::Community::GetPlaces() const
 {
 	return m_places;
 }
