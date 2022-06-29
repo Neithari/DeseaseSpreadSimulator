@@ -62,6 +62,10 @@ namespace DiseaseSpreadSimulation
 
 		[[nodiscard]] uint32_t GetID() const;
 
+		[[nodiscard]] size_t CurrentInfectionMax() const;
+		[[nodiscard]] size_t NumberOfPositiveTests() const;
+		[[nodiscard]] size_t NumberOfPersonsQuarantined() const;
+
 	private:
 		static bool TestPersonForInfection(const Person* person);
 		Place* TransferToPlace(Person* person, Place* place);
@@ -73,7 +77,11 @@ namespace DiseaseSpreadSimulation
 		Travel m_travelLocation;
 		DiseaseContainment m_containmentMeasures{};
 
-		std::shared_timed_mutex populationMutex;
-		std::shared_timed_mutex placesMutex;
+		size_t m_positiveTests{0};
+		size_t m_personsQuarantined{0};
+
+		mutable std::shared_mutex populationMutex;
+		mutable std::shared_mutex placesMutex;
+		mutable std::shared_mutex testStationMutex;
 	};
 } // namespace DiseaseSpreadSimulation
