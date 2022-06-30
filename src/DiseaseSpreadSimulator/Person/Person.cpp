@@ -28,18 +28,18 @@ void DiseaseSpreadSimulation::Person::Update(uint32_t currentTime, bool isWorkda
 
 void DiseaseSpreadSimulation::Person::Contact(Person& other)
 {
-	if (other.IsInfectious() && IsSusceptible())
-	{
-		if (infection.WillInfect(other.infection, m_behavior.acceptanceFactor, m_community))
-		{
-			SpreadDisease(other, *this);
-		}
-	}
-	else if (IsInfectious() && other.IsSusceptible())
+	if (IsInfectious() && other.IsSusceptible())
 	{
 		if (other.infection.WillInfect(infection, other.m_behavior.acceptanceFactor, other.m_community))
 		{
 			SpreadDisease(*this, other);
+		}
+	}
+	else if (other.IsInfectious() && IsSusceptible())
+	{
+		if (infection.WillInfect(other.infection, m_behavior.acceptanceFactor, m_community))
+		{
+			SpreadDisease(other, *this);
 		}
 	}
 }
@@ -244,6 +244,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 
 	bool needFood = lastFoodBuy >= m_behavior.foodBuyInterval;
 	bool needHardware = lastHardwareBuy >= m_behavior.hardwareBuyInterval;
+	const auto& containmentMeasures = m_community->ContainmentMeasures();
 
 	switch (currentPlace)
 	{
@@ -262,8 +263,8 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		// Hardware shopping is suspended during a lockdown
 		else if (needHardware
 				 && currentTime >= shopOpenTime
-				 && !m_community->ContainmentMeasures().ShopsAreClosed()
-				 && !m_community->ContainmentMeasures().IsLockdown())
+				 && !containmentMeasures.ShopsAreClosed()
+				 && !containmentMeasures.IsLockdown())
 		{
 			PrepareShopping();
 
@@ -277,7 +278,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 			// No traveling during a lockdown
 			if (WillTravel()
 				&& currentTime >= shopOpenTime
-				&& !m_community->ContainmentMeasures().IsLockdown())
+				&& !containmentMeasures.IsLockdown())
 			{
 				StartTraveling();
 			}
@@ -286,13 +287,13 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 					 && currentTime <= workFinishTime
 					 && isWorkday)
 			{
-				if (m_community->ContainmentMeasures().WorkingFromHome() && canWorkFromHome)
+				if (containmentMeasures.WorkingFromHome() && canWorkFromHome)
 				{
 					// 50% of working people are allowed to go to work when there is a working from home mandate.
 					// Reflecting jobs that are not capable of work from home
 					return;
 				}
-				else if (m_community->ContainmentMeasures().IsLockdown() && !hasCriticalInfrastructureJob)
+				else if (containmentMeasures.IsLockdown() && !hasCriticalInfrastructureJob)
 				{
 					// During a lockdown only 10% of people are allowed to go to work
 					// Reflecting jobs that are mandatory to supply people
@@ -308,8 +309,8 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 					 && currentTime >= schoolStartTime
 					 && currentTime <= schoolFinishTime
 					 && isWorkday
-					 && !m_community->ContainmentMeasures().WorkingFromHome()
-					 && !m_community->ContainmentMeasures().IsLockdown())
+					 && !containmentMeasures.WorkingFromHome()
+					 && !containmentMeasures.IsLockdown())
 			{
 				whereabouts = m_community->TransferToSchool(this);
 			}
@@ -320,7 +321,9 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		if (currentTime >= buyFinishTime)
 		{
 			// Hardware stores are closed during a lockdown
-			if (lastHardwareBuy >= m_behavior.hardwareBuyInterval && !m_community->ContainmentMeasures().IsLockdown())
+			if (lastHardwareBuy >= m_behavior.hardwareBuyInterval
+				&& !containmentMeasures.ShopsAreClosed()
+				&& !containmentMeasures.IsLockdown())
 			{
 				// No preparation needed. Just go shopping.
 				GoHardwareShopping(currentTime);
@@ -334,7 +337,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 	case DiseaseSpreadSimulation::Place_Type::Workplace:
 		// Go traveling or home after the work has finished
 		// No traveling during a lockdown
-		if (WillTravel() && !m_community->ContainmentMeasures().IsLockdown())
+		if (WillTravel() && !containmentMeasures.IsLockdown())
 		{
 			StartTraveling();
 		}
