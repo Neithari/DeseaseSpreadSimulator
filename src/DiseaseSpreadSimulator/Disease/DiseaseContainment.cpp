@@ -80,7 +80,7 @@ bool DiseaseSpreadSimulation::DiseaseContainment::IsMaskMandate() const
 	return isMaskMandate;
 }
 
-bool DiseaseSpreadSimulation::DiseaseContainment::WorkingFormHome() const
+bool DiseaseSpreadSimulation::DiseaseContainment::WorkingFromHome() const
 {
 	return massWorkingFromHome;
 }

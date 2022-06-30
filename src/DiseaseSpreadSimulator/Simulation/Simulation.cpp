@@ -306,7 +306,7 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) co
 		
 		const auto& containmentMeasures = community.ContainmentMeasures();
 		if (!containmentMeasures.IsMaskMandate()
-			&& !containmentMeasures.WorkingFormHome()
+			&& !containmentMeasures.WorkingFromHome()
 			&& !containmentMeasures.ShopsAreClosed()
 			&& !containmentMeasures.IsLockdown())
 		{
@@ -318,7 +318,7 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) co
 			{
 				fmt::print(" has mask mandate");
 			}
-			if (containmentMeasures.WorkingFormHome())
+			if (containmentMeasures.WorkingFromHome())
 			{
 				fmt::print(" has home office mandate");
 			}

@@ -29,7 +29,7 @@ namespace DiseaseSpreadSimulation
 		void ResetLockdown(bool set = false);
 
 		[[nodiscard]] bool IsMaskMandate() const;
-		[[nodiscard]] bool WorkingFormHome() const;
+		[[nodiscard]] bool WorkingFromHome() const;
 		[[nodiscard]] bool ShopsAreClosed() const;
 		[[nodiscard]] bool IsLockdown() const;
 

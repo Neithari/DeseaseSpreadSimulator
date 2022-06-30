@@ -154,6 +154,26 @@ void DiseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
 	workplace = newWorkplace;
 }
 
+void DiseaseSpreadSimulation::Person::SetCanWorkFromHome(bool set)
+{
+	if (hasCriticalInfrastructureJob)
+	{
+		hasCriticalInfrastructureJob = !hasCriticalInfrastructureJob;
+	}
+
+	canWorkFromHome = set;
+}
+
+void DiseaseSpreadSimulation::Person::SetHasCriticalInfrastructureJob(bool set)
+{
+	if (canWorkFromHome)
+	{
+		canWorkFromHome = !canWorkFromHome;
+	}
+
+	hasCriticalInfrastructureJob = set;
+}
+
 void DiseaseSpreadSimulation::Person::SetSchool(School* newSchool)
 {
 	school = newSchool;
@@ -186,11 +206,13 @@ void DiseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& isWorkday, bool isNewDay)
 {
+	auto currentPlace = whereabouts->GetType();
+
 	// Send the person to the morgue if not alive
 	if (!alive)
 	{
 		// TODO: Maybe delete person and just increase a counter
-		if (whereabouts->GetType() == Place_Type::Morgue)
+		if (currentPlace == Place_Type::Morgue)
 		{
 			return;
 		}
@@ -223,8 +245,6 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 	bool needFood = lastFoodBuy >= m_behavior.foodBuyInterval;
 	bool needHardware = lastHardwareBuy >= m_behavior.hardwareBuyInterval;
 
-	auto currentPlace = whereabouts->GetType();
-
 	switch (currentPlace)
 	{
 	case DiseaseSpreadSimulation::Place_Type::Home:
@@ -242,6 +262,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		// Hardware shopping is suspended during a lockdown
 		else if (needHardware
 				 && currentTime >= shopOpenTime
+				 && !m_community->ContainmentMeasures().ShopsAreClosed()
 				 && !m_community->ContainmentMeasures().IsLockdown())
 		{
 			PrepareShopping();
@@ -265,23 +286,17 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 					 && currentTime <= workFinishTime
 					 && isWorkday)
 			{
-				if (m_community->ContainmentMeasures().WorkingFormHome())
+				if (m_community->ContainmentMeasures().WorkingFromHome() && canWorkFromHome)
 				{
 					// 50% of working people are allowed to go to work when there is a working from home mandate.
 					// Reflecting jobs that are not capable of work from home
-					if (Random::Percent<float>() <= m_community->ContainmentMeasures().percentOfJobsNoWorkFromHome)
-					{
-						whereabouts = m_community->TransferToWork(this);
-					}
+					return;
 				}
-				else if (m_community->ContainmentMeasures().IsLockdown())
+				else if (m_community->ContainmentMeasures().IsLockdown() && !hasCriticalInfrastructureJob)
 				{
 					// During a lockdown only 10% of people are allowed to go to work
 					// Reflecting jobs that are mandatory to supply people
-					if (Random::Percent<float>() <= m_community->ContainmentMeasures().percentOfJobsMandatoryToSupply)
-					{
-						whereabouts = m_community->TransferToWork(this);
-					}
+					return;
 				}
 				else
 				{
@@ -293,7 +308,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 					 && currentTime >= schoolStartTime
 					 && currentTime <= schoolFinishTime
 					 && isWorkday
-					 && !m_community->ContainmentMeasures().WorkingFormHome()
+					 && !m_community->ContainmentMeasures().WorkingFromHome()
 					 && !m_community->ContainmentMeasures().IsLockdown())
 			{
 				whereabouts = m_community->TransferToSchool(this);

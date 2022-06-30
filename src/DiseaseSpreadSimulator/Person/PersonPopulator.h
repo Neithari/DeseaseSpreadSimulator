@@ -16,7 +16,7 @@ namespace DiseaseSpreadSimulation
 	public:
 		PersonPopulator(const size_t populationSize, std::vector<Statistics::HumanDistribution> humanDistribution);
 
-		std::vector<Person> CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools, Community* community = nullptr);
+		std::vector<Person> CreatePopulation(Country country, std::vector<Home>& homes, std::vector<Workplace>& workplaces, std::vector<School>& schools, Community* community);
 
 		static size_t WorkingPeopleCount(const size_t populationSize, const Country country);
 		static float WorkingPeopleCountFloat(const size_t populationSize, const Country country);
