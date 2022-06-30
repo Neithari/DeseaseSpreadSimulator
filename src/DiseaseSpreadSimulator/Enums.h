@@ -57,4 +57,12 @@ namespace DiseaseSpreadSimulation
 		Female,
 		Male
 	};
+	enum class DiseaseContainmentMeasures
+	{
+		Nothing,
+		MaskMandate,
+		WorkingFromHome,
+		CloseShops,
+		Lockdown
+	};
 } // namespace DiseaseSpreadSimulation

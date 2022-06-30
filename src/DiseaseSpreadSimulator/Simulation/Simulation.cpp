@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <execution>
 #include <cmath>
+#include <mutex>
 #include "fmt/core.h"
 #include "Disease/DiseaseBuilder.h"
 #include "RandomNumbers.h"
@@ -16,7 +17,15 @@ DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool wi
 }
 void DiseaseSpreadSimulation::Simulation::Run()
 {
-	SetupEverything(m_communityCount);
+	{
+		std::unique_lock<std::shared_mutex> runNumberLock(runNumberMutex);
+		++runNumber;
+	}
+
+	if (!isSetupDone)
+	{
+		SetupEverything(1U);
+	}
 
 	while (!stop)
 	{
@@ -31,9 +40,17 @@ void DiseaseSpreadSimulation::Simulation::Run()
 
 void DiseaseSpreadSimulation::Simulation::RunForDays(uint32_t days)
 {
-	constexpr auto runNumber{1U};
+	{
+		std::unique_lock<std::shared_mutex> runNumberLock(runNumberMutex);
+		++runNumber;
+	}
+
+	if (!isSetupDone)
+	{
+		SetupEverything(1U);
+	}
+
 	const auto runHours = days * 24U;
-	SetupEverything(m_communityCount);
 
 	for (auto hours = 0U; hours < runHours; hours++)
 	{
@@ -45,7 +62,18 @@ void DiseaseSpreadSimulation::Simulation::RunForDays(uint32_t days)
 	{
 		fmt::print("\n\n");
 	}
-	PrintRunResult(runNumber, days);
+	PrintRunResult(days);
+}
+
+void DiseaseSpreadSimulation::Simulation::CompareContainmentMeasures(uint32_t runDays, uint32_t numberOfRuns)
+{
+	SetupEverything(DiseaseContainmentMeasuresEnumSizePlusBase);
+
+	for (auto i = 0U; i < numberOfRuns; i++)
+	{
+		RunForDays(runDays);
+		ResetCommunities();
+	}
 }
 
 void DiseaseSpreadSimulation::Simulation::Stop()
@@ -256,7 +284,7 @@ void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 	fmt::print("Have died:   {:>{}}\n", deadPeople, m_initialPopulationSizeDigitCount);
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t runNumber, const uint32_t days) const
+void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) const
 {
 	// Containment measures
 	// Starting population
@@ -266,10 +294,13 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t runNumbe
 	// disease discovered by tests
 	// Persons quarantined
 
-	fmt::print("-------------------------------------------------------------------------------------\n");
-	fmt::print("Simulation #{} simulated {} days and started with {} persons in {} communities.\n", runNumber, days, m_populationSize, m_communityCount);
+	// Will print a line of 80 times -
+	fmt::print("{:-^80}\n", "");
+	fmt::print("Simulation #{} simulated {} days and started with {} persons in {} communities.\n", runNumber, days, m_populationSize, communities.size());
+	std::shared_lock<std::shared_mutex> communitiesLock(communitiesMutex);
 	for (const auto& community : communities)
 	{
+		fmt::print("{:-^80}\n", "");
 		// Print mandates
 		fmt::print("Community with id {}", community.GetID());
 		
@@ -321,22 +352,75 @@ bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
 	return true;
 }
 
+void DiseaseSpreadSimulation::Simulation::SetDiseaseContainmentMeasures(Community& community)
+{
+	static auto currentMeasures{DiseaseContainmentMeasures::Nothing};
+
+	auto& setContainmentMeasures = community.SetContainmentMeasures();
+	switch (currentMeasures)
+	{
+	case DiseaseContainmentMeasures::Nothing:
+		setContainmentMeasures.ResetMaskMandate();
+		setContainmentMeasures.ResetWorkingFromHome();
+		setContainmentMeasures.ResetShopsClosed();
+		setContainmentMeasures.ResetLockdown();
+
+		currentMeasures = DiseaseContainmentMeasures::MaskMandate;
+		break;
+	case DiseaseContainmentMeasures::MaskMandate:
+		setContainmentMeasures.SetMaskMandate();
+
+		currentMeasures = DiseaseContainmentMeasures::WorkingFromHome;
+		break;
+	case DiseaseContainmentMeasures::WorkingFromHome:
+		setContainmentMeasures.SetMaskMandate();
+		setContainmentMeasures.SetWorkingFromHome();
+
+		currentMeasures = DiseaseContainmentMeasures::CloseShops;
+		break;
+	case DiseaseContainmentMeasures::CloseShops:
+		setContainmentMeasures.SetMaskMandate();
+		setContainmentMeasures.SetWorkingFromHome();
+		setContainmentMeasures.SetShopsClosed();
+
+		currentMeasures = DiseaseContainmentMeasures::Lockdown;
+		break;
+	case DiseaseContainmentMeasures::Lockdown:
+		setContainmentMeasures.SetMaskMandate();
+		setContainmentMeasures.SetWorkingFromHome();
+		setContainmentMeasures.SetShopsClosed();
+		setContainmentMeasures.SetLockdown();
+
+		currentMeasures = DiseaseContainmentMeasures::Nothing;
+		break;
+	default:
+		break;
+	}
+}
+
 void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCount)
 {
+	// Don't run the setup twice
+	if (isSetupDone)
+	{
+		return;
+	}
+
 	DiseaseBuilder dbuilder;
 	//diseases.push_back(dbuilder.CreateCorona());
 	diseases.push_back(dbuilder.CreateDeadlyTestDisease());
 
-	for (size_t i = 0; i < communityCount; i++)
-	{
-		communities.emplace_back(m_populationSize, m_country);
+	communities.reserve(communityCount);
+	CreateCommunities(communityCount);
 
-		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
-		SetupTravelInfecter(&diseases.back(), &communities.back());
-	}
+	// Only one travel infecter is needed
+	SetupTravelInfecter(&diseases.back(), &communities.front());
 
 	stop = false;
-	fmt::print("Setup complete\n");
+	isSetupDone = true;
+
+	fmt::print("Setup complete{:^11}", '-');
+	fmt::print("{} disease and {} communities created\n", diseases.size(), communities.size());
 }
 
 void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* disease, std::vector<Person>& population)
@@ -344,14 +428,31 @@ void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* dise
 	population.at(Random::RandomVectorIndex(population)).Contaminate(disease);
 }
 
-void DiseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Disease* disease, Community* communitie)
+void DiseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Disease* disease, Community* community)
 {
 	travelInfecter.Contaminate(disease);
-	travelInfecter.SetCommunity(communitie);
+	travelInfecter.SetCommunity(community);
 	Home home{};
 	travelInfecter.SetHome(&home);
 	while (!travelInfecter.IsInfectious())
 	{
 		travelInfecter.Update(0, true, true);
 	}
+}
+
+void DiseaseSpreadSimulation::Simulation::CreateCommunities(uint32_t communityCount)
+{
+	for (auto i = 0U; i < communityCount; i++)
+	{
+		communities.emplace_back(m_populationSize, m_country);
+		SetDiseaseContainmentMeasures(communities.back());
+		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
+	}
+}
+
+void DiseaseSpreadSimulation::Simulation::ResetCommunities()
+{
+	auto communityCount = communities.size();
+	communities.clear();
+	CreateCommunities(communityCount);
 }
