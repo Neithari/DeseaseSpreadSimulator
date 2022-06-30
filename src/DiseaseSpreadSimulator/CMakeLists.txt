@@ -9,8 +9,6 @@ set(SOURCES
   Disease/DiseaseBuilder.cpp
   Disease/DiseaseContainment.cpp
   Disease/Infection.cpp
-  # IDGenerator
-  IDGenerator/IDGenerator.cpp
   # Person
   Person/Person.cpp
   Person/PersonBehavior.cpp
