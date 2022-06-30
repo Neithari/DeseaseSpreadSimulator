@@ -280,6 +280,7 @@ const DiseaseSpreadSimulation::DiseaseContainment& DiseaseSpreadSimulation::Comm
 
 void DiseaseSpreadSimulation::Community::TestStation(Person* person)
 {
+	// Send the person into quarantine when the test is positive and release the person from quarantine if negative
 	if (TestPersonForInfection(person))
 	{
 		m_containmentMeasures.Quarantine(person);
@@ -287,6 +288,13 @@ void DiseaseSpreadSimulation::Community::TestStation(Person* person)
 		std::unique_lock lockTestStation(testStationMutex);
 		++m_positiveTests;
 		++m_personsQuarantined;
+	}
+	else
+	{
+		if (person->IsQuarantined())
+		{
+			m_containmentMeasures.ReleaseWhenRecovered(person);
+		}
 	}
 }
 
