@@ -19,6 +19,14 @@ namespace DiseaseSpreadSimulation
 		void ToggleShops();
 		// Full lockdown
 		void ToggleLockdown();
+		void SetMaskMandate(bool set = true);
+		void SetWorkingFromHome(bool set = true);
+		void SetShopsClosed(bool set = true);
+		void SetLockdown(bool set = true);
+		void ResetMaskMandate(bool set = false);
+		void ResetWorkingFromHome(bool set = false);
+		void ResetShopsClosed(bool set = false);
+		void ResetLockdown(bool set = false);
 
 		[[nodiscard]] bool IsMaskMandate() const;
 		[[nodiscard]] bool WorkingFormHome() const;
@@ -34,9 +42,9 @@ namespace DiseaseSpreadSimulation
 		static constexpr float percentOfJobsMandatoryToSupply{.1F};
 
 	private:
-		bool areShopsClosed{false};
-		bool massWorkingFromHome{false};
-		bool isLockdown{false};
 		bool isMaskMandate{false};
+		bool massWorkingFromHome{false};
+		bool areShopsClosed{false};
+		bool isLockdown{false};
 	};
 } // namespace DiseaseSpreadSimulation
