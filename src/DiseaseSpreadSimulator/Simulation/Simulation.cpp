@@ -164,7 +164,9 @@ void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 {
 	// Get all susceptible and infectious people
 	std::vector<Person*> susceptible{};
+	susceptible.reserve(place.GetPersonCount());
 	std::vector<Person*> infectious{};
+	infectious.reserve(place.GetPersonCount());
 	for (auto* person : place.GetPeople())
 	{
 		if (person->IsSusceptible())
