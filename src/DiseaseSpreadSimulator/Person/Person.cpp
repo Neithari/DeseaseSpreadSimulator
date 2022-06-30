@@ -189,7 +189,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 	// Send the person to the morgue if not alive
 	if (!alive)
 	{
-		// Maybe delete person and just increase a counter
+		// TODO: Maybe delete person and just increase a counter
 		if (whereabouts->GetType() == Place_Type::Morgue)
 		{
 			return;
