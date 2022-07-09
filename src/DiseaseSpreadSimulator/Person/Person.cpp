@@ -421,7 +421,26 @@ void DiseaseSpreadSimulation::Person::GoHardwareShopping(uint32_t currentTime)
 
 bool DiseaseSpreadSimulation::Person::WillTravel() const
 {
-	return Random::Percent<float>() <= m_behavior.travelNeed;
+	auto modifiedTravelNeed = m_behavior.travelNeed;
+
+	// Reduce the travel need by 10% per mandate if the person is compliant
+	if (m_behavior.acceptanceFactor >= PersonBehavior::acceptanceFactorThreshold)
+	{
+		if (m_community->ContainmentMeasures().IsMaskMandate())
+		{
+			modifiedTravelNeed *= .9F;
+		}
+		if (m_community->ContainmentMeasures().WorkingFromHome())
+		{
+			modifiedTravelNeed *= .9F;
+		}
+		if (m_community->ContainmentMeasures().ShopsAreClosed())
+		{
+			modifiedTravelNeed *= .9F;
+		}
+	}
+
+	return Random::Percent<float>() <= modifiedTravelNeed;
 }
 
 void DiseaseSpreadSimulation::Person::StartTraveling()
