@@ -304,9 +304,7 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) co
 	constexpr auto baseLineLength = 99U;
 
 
-	const auto introduction = fmt::format(
-		"Simulation #{} simulated {} days and started with {} persons in {} communities.\n"
-		, runNumber, days, m_populationSize, communities.size());
+	const auto introduction = fmt::format("Simulation #{} simulated {} days and started with {} persons in {} communities.\n", runNumber, days, m_populationSize, communities.size());
 	bool firstCommunity{true};
 
 	std::shared_lock<std::shared_mutex> communitiesLock(communitiesMutex);
@@ -465,5 +463,5 @@ void DiseaseSpreadSimulation::Simulation::ResetCommunities()
 {
 	auto communityCount = communities.size();
 	communities.clear();
-	CreateCommunities(communityCount);
+	CreateCommunities(static_cast<uint32_t>(communityCount));
 }

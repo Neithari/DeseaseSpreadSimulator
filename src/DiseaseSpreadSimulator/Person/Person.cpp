@@ -431,17 +431,18 @@ bool DiseaseSpreadSimulation::Person::WillTravel() const
 	// Reduce the travel need by 10% per mandate if the person is compliant
 	if (m_behavior.acceptanceFactor >= PersonBehavior::acceptanceFactorThreshold)
 	{
+		constexpr float travelNeedReduction{.9F};
 		if (m_community->ContainmentMeasures().IsMaskMandate())
 		{
-			modifiedTravelNeed *= .9F;
+			modifiedTravelNeed *= travelNeedReduction;
 		}
 		if (m_community->ContainmentMeasures().WorkingFromHome())
 		{
-			modifiedTravelNeed *= .9F;
+			modifiedTravelNeed *= travelNeedReduction;
 		}
 		if (m_community->ContainmentMeasures().ShopsAreClosed())
 		{
-			modifiedTravelNeed *= .9F;
+			modifiedTravelNeed *= travelNeedReduction;
 		}
 	}
 
