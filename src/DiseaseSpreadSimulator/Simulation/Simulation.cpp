@@ -10,7 +10,7 @@
 DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
 	: m_withPrint(withPrint),
 	  m_populationSize(populationSize),
-	  // log10(x) + 1 casted to integral will give us the digit count of x (1=1, 10=2, 100=3,...)
+	  // log10(x) + 1 casted to int will give us the digit count of x (1=1, 10=2, 100=3,...)
 	  m_initialPopulationSizeDigitCount(static_cast<uint32_t>(std::log10(populationSize)) + 1U),
 	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100U, 100U, 1.F, 1.F), nullptr) // NOLINT: There is no benefit in named constants here
 {
@@ -253,28 +253,32 @@ void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 	{
 		if (person.IsAlive())
 		{
-			populationCount++;
+			++populationCount;
 
 			if (person.IsSusceptible())
 			{
-				susceptible++;
+				++susceptible;
 			}
-			if (person.IsInfectious())
+			else
 			{
-				infectious++;
-			}
-			if (person.HasDisease())
-			{
-				withDisease++;
+				if (person.HasDisease())
+				{
+					++withDisease;
+
+					if (person.IsInfectious())
+					{
+						++infectious;
+					}
+				}
 			}
 			if (person.IsTraveling())
 			{
-				traveling++;
+				++traveling;
 			}
 		}
 		else
 		{
-			deadPeople++;
+			++deadPeople;
 		}
 	}
 
