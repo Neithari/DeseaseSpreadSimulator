@@ -206,6 +206,11 @@ void DiseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& isWorkday, bool isNewDay)
 {
+	if (isNewDay)
+	{
+		noTravelToday = false;
+	}
+
 	auto currentPlace = whereabouts->GetType();
 
 	// Send the person to the morgue if not alive
@@ -278,41 +283,38 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 			// No traveling during a lockdown
 			if (WillTravel()
 				&& currentTime >= shopOpenTime
-				&& !containmentMeasures.IsLockdown())
+				&& !containmentMeasures.IsLockdown()
+				&& !noTravelToday)
 			{
 				StartTraveling();
 			}
-			else if (workplace != nullptr
-					 && currentTime >= workStartTime
-					 && currentTime <= workFinishTime
-					 && isWorkday)
+			else
 			{
-				if (containmentMeasures.WorkingFromHome() && canWorkFromHome)
-				{
+				noTravelToday = true;
+
+				if (workplace != nullptr
+					&& currentTime >= workStartTime
+					&& currentTime <= workFinishTime
+					&& isWorkday
 					// 50% of working people are allowed to go to work when there is a working from home mandate.
-					// Reflecting jobs that are not capable of work from home
-					return;
-				}
-				else if (containmentMeasures.IsLockdown() && !hasCriticalInfrastructureJob)
-				{
+					// Reflecting jobs that are not capable of work from home.
+					&& !(containmentMeasures.WorkingFromHome() && canWorkFromHome)
 					// During a lockdown only 10% of people are allowed to go to work
 					// Reflecting jobs that are mandatory to supply people
-					return;
-				}
-				else
+					&& !(containmentMeasures.IsLockdown() && !hasCriticalInfrastructureJob))
 				{
 					whereabouts = m_community->TransferToWork(this);
 				}
-			}
-			// Schools will close when there is a work form home mandate and when there is a lockdown
-			else if (school != nullptr
-					 && currentTime >= schoolStartTime
-					 && currentTime <= schoolFinishTime
-					 && isWorkday
-					 && !containmentMeasures.WorkingFromHome()
-					 && !containmentMeasures.IsLockdown())
-			{
-				whereabouts = m_community->TransferToSchool(this);
+				// Schools will close when there is a work form home mandate and when there is a lockdown
+				else if (school != nullptr
+						 && currentTime >= schoolStartTime
+						 && currentTime <= schoolFinishTime
+						 && isWorkday
+						 && !containmentMeasures.WorkingFromHome()
+						 && !containmentMeasures.IsLockdown())
+				{
+					whereabouts = m_community->TransferToSchool(this);
+				}
 			}
 		}
 		break;
@@ -336,14 +338,17 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		break;
 	case DiseaseSpreadSimulation::Place_Type::Workplace:
 		// Go traveling or home after the work has finished
-		// No traveling during a lockdown
-		if (WillTravel() && !containmentMeasures.IsLockdown())
+		if (currentTime >= workFinishTime)
 		{
-			StartTraveling();
-		}
-		else if (currentTime >= workFinishTime)
-		{
-			whereabouts = m_community->TransferToHome(this);
+			// No traveling during a lockdown
+			if (WillTravel() && !containmentMeasures.IsLockdown())
+			{
+				StartTraveling();
+			}
+			else
+			{
+				whereabouts = m_community->TransferToHome(this);
+			}
 		}
 		break;
 	case DiseaseSpreadSimulation::Place_Type::School:

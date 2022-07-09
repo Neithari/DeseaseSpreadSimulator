@@ -115,6 +115,7 @@ namespace DiseaseSpreadSimulation
 		uint32_t buyTime{0U};
 		uint32_t buyFinishTime{0U};
 		bool isShoppingDay{false};
+		bool noTravelToday{false};
 		// Time in x/24h
 		static constexpr uint32_t shopOpenTime{7U};
 		static constexpr uint32_t shopCloseTime{20U};
