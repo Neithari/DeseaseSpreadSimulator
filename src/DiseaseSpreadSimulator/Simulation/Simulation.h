@@ -42,6 +42,8 @@ namespace DiseaseSpreadSimulation
 		void PrintOncePerDay() const;
 		void PrintPopulation(const std::vector<Person>& population) const;
 		void PrintRunResult(const uint32_t days) const;
+		// Return X when true and a space when false
+		static char XorSpace(bool printX);
 
 		bool CheckForNewDay();
 

@@ -297,42 +297,21 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) co
 	// Persons quarantined
 
 	// Will print a line of 80 times -
-	fmt::print("{:-^80}\n", "");
+	fmt::print("{:-^99}\n", "");
 	fmt::print("Simulation #{} simulated {} days and started with {} persons in {} communities.\n", runNumber, days, m_populationSize, communities.size());
 	std::shared_lock<std::shared_mutex> communitiesLock(communitiesMutex);
 	for (const auto& community : communities)
 	{
-		fmt::print("{:-^80}\n", "");
+		const auto lineLength = 99U + static_cast<uint32_t>(community.GetID() / 10);
+		fmt::print("{:-^{}}\n", "", lineLength);
 		// Print mandates
+		const auto& containmentMeasures = community.ContainmentMeasures();
 		fmt::print("Community with id {}", community.GetID());
 		
-		const auto& containmentMeasures = community.ContainmentMeasures();
-		if (!containmentMeasures.IsMaskMandate()
-			&& !containmentMeasures.WorkingFromHome()
-			&& !containmentMeasures.ShopsAreClosed()
-			&& !containmentMeasures.IsLockdown())
-		{
-			fmt::print(" has no containment measures");
-		}
-		else
-		{
-			if (containmentMeasures.IsMaskMandate())
-			{
-				fmt::print(" has mask mandate");
-			}
-			if (containmentMeasures.WorkingFromHome())
-			{
-				fmt::print(" has home office mandate");
-			}
-			if (containmentMeasures.ShopsAreClosed())
-			{
-				fmt::print(" has shops are closed");
-			}
-			if (containmentMeasures.IsLockdown())
-			{
-				fmt::print(" has full lockdown");
-			}
-		}
+		fmt::print(" [{}] mask mandate", XorSpace(containmentMeasures.IsMaskMandate()));
+		fmt::print(" [{}] home office mandate", XorSpace(containmentMeasures.WorkingFromHome()));
+		fmt::print(" [{}] shops are closed", XorSpace(containmentMeasures.ShopsAreClosed()));
+		fmt::print(" [{}] full lockdown", XorSpace(containmentMeasures.IsLockdown()));		
 		
 		fmt::print("\nCurrent population status:\n");
 		PrintPopulation(community.GetPopulation());
@@ -341,6 +320,15 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) co
 		fmt::print("Positive Tests: {}\t", community.NumberOfPositiveTests());
 		fmt::print("Persons Quarantined: {}\n", community.NumberOfPersonsQuarantined());
 	}
+}
+
+char DiseaseSpreadSimulation::Simulation::XorSpace(bool printX)
+{
+	if (printX)
+	{
+		return 'X';
+	}
+	return ' ';
 }
 
 bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
