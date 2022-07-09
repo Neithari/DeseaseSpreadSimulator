@@ -297,13 +297,30 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) co
 	// Persons quarantined
 
 	// Will print a line of 80 times -
-	fmt::print("{:-^99}\n", "");
-	fmt::print("Simulation #{} simulated {} days and started with {} persons in {} communities.\n", runNumber, days, m_populationSize, communities.size());
+	constexpr auto baseLineLength = 99U;
+
+
+	const auto introduction = fmt::format(
+		"Simulation #{} simulated {} days and started with {} persons in {} communities.\n"
+		, runNumber, days, m_populationSize, communities.size());
+	bool firstCommunity{true};
+
 	std::shared_lock<std::shared_mutex> communitiesLock(communitiesMutex);
 	for (const auto& community : communities)
 	{
-		const auto lineLength = 99U + static_cast<uint32_t>(community.GetID() / 10);
+		const auto lineLength = baseLineLength + static_cast<uint32_t>(community.GetID() / 10);
+		
+		if (firstCommunity)
+		{
+
+			fmt::print("{:-^{}}\n", "", lineLength);
+			fmt::print("{}", introduction);
+
+			firstCommunity = false;
+		}
+		
 		fmt::print("{:-^{}}\n", "", lineLength);
+
 		// Print mandates
 		const auto& containmentMeasures = community.ContainmentMeasures();
 		fmt::print("Community with id {}", community.GetID());
