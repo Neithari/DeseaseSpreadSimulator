@@ -64,7 +64,7 @@ namespace DiseaseSpreadSimulation
 
 		Person travelInfecter;
 		static constexpr auto minTravelContacts{0U};
-		static constexpr auto maxTravelContacts{5U};
+		static constexpr auto maxTravelContacts{3U};
 		mutable std::shared_mutex travelInfecterMutex{};
 		mutable std::shared_mutex runNumberMutex{};
 		mutable std::shared_mutex communitiesMutex{};
