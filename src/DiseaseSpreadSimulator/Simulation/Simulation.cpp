@@ -91,6 +91,19 @@ void DiseaseSpreadSimulation::Simulation::Resume()
 	pause = false;
 }
 
+void DiseaseSpreadSimulation::Simulation::CreateCommunity(bool maskMandate, bool homeOffice, bool closeShops, bool lockdown)
+{
+	communities.emplace_back(m_populationSize, m_country);
+	auto& setContainmentMeasures = communities.back().SetContainmentMeasures();
+
+	setContainmentMeasures.SetMaskMandate(maskMandate);
+	setContainmentMeasures.SetWorkingFromHome(homeOffice);
+	setContainmentMeasures.SetShopsClosed(closeShops);
+	setContainmentMeasures.SetLockdown(lockdown);
+	
+	InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
+}
+
 void DiseaseSpreadSimulation::Simulation::Update()
 {
 	time.Update();
@@ -415,9 +428,7 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCoun
 		return;
 	}
 
-	DiseaseBuilder dbuilder;
-	//diseases.push_back(dbuilder.CreateCorona());
-	diseases.push_back(dbuilder.CreateDeadlyTestDisease());
+	CreateDisease(true);
 
 	communities.reserve(communityCount);
 	CreateCommunities(communityCount);
@@ -464,4 +475,30 @@ void DiseaseSpreadSimulation::Simulation::ResetCommunities()
 	auto communityCount = communities.size();
 	communities.clear();
 	CreateCommunities(static_cast<uint32_t>(communityCount));
+}
+
+void DiseaseSpreadSimulation::Simulation::CreateDisease(bool testDisease)
+{
+	DiseaseBuilder dbuilder;
+
+	if (!testDisease)
+	{
+		diseases.push_back(dbuilder.CreateCorona());
+	}
+	else
+	{
+		diseases.push_back(dbuilder.CreateDeadlyTestDisease());
+	}
+}
+
+void DiseaseSpreadSimulation::Simulation::CreateDiseasesFromFile(const std::string& fileName)
+{
+	DiseaseBuilder dbuilder;
+	auto createdDiseases = dbuilder.CreateDiseasesFromFile(fileName);
+
+	// Append the new diseases to our disease vector
+	std::transform(createdDiseases.begin(), createdDiseases.end(), std::back_inserter(diseases), [](auto disease)
+		{
+			return disease;
+		});
 }

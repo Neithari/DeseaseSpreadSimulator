@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <string>
 #include <shared_mutex>
 #include "Enums.h"
 #include "Simulation/TimeManager.h"
@@ -22,6 +23,7 @@ namespace DiseaseSpreadSimulation
 		void Stop();
 		void Pause();
 		void Resume();
+		void CreateCommunity(bool maskMandate = false, bool homeOffice = false, bool closeShops = false, bool lockdown = false);
 
 	private:
 		void SetupEverything(uint32_t communityCount);
@@ -29,6 +31,8 @@ namespace DiseaseSpreadSimulation
 		void SetupTravelInfecter(const Disease* disease, Community* community);
 		void CreateCommunities(uint32_t communityCount);
 		void ResetCommunities();
+		void CreateDisease(bool testDisease = false);
+		void CreateDiseasesFromFile(const std::string& fileName); // cppcheck-suppress unusedPrivateFunction
 
 		void Update();
 		void UpdatePopulation(std::vector<Person>& population);
