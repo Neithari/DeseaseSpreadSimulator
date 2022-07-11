@@ -363,10 +363,10 @@ bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
 
 void DiseaseSpreadSimulation::Simulation::SetDiseaseContainmentMeasures(Community& community)
 {
-	static auto currentMeasures{DiseaseContainmentMeasures::Nothing};
+	static auto nextMeasure{DiseaseContainmentMeasures::Nothing};
 
 	auto& setContainmentMeasures = community.SetContainmentMeasures();
-	switch (currentMeasures)
+	switch (nextMeasure)
 	{
 	case DiseaseContainmentMeasures::Nothing:
 		setContainmentMeasures.ResetMaskMandate();
@@ -374,25 +374,25 @@ void DiseaseSpreadSimulation::Simulation::SetDiseaseContainmentMeasures(Communit
 		setContainmentMeasures.ResetShopsClosed();
 		setContainmentMeasures.ResetLockdown();
 
-		currentMeasures = DiseaseContainmentMeasures::MaskMandate;
+		nextMeasure = DiseaseContainmentMeasures::MaskMandate;
 		break;
 	case DiseaseContainmentMeasures::MaskMandate:
 		setContainmentMeasures.SetMaskMandate();
 
-		currentMeasures = DiseaseContainmentMeasures::WorkingFromHome;
+		nextMeasure = DiseaseContainmentMeasures::WorkingFromHome;
 		break;
 	case DiseaseContainmentMeasures::WorkingFromHome:
 		setContainmentMeasures.SetMaskMandate();
 		setContainmentMeasures.SetWorkingFromHome();
 
-		currentMeasures = DiseaseContainmentMeasures::CloseShops;
+		nextMeasure = DiseaseContainmentMeasures::CloseShops;
 		break;
 	case DiseaseContainmentMeasures::CloseShops:
 		setContainmentMeasures.SetMaskMandate();
 		setContainmentMeasures.SetWorkingFromHome();
 		setContainmentMeasures.SetShopsClosed();
 
-		currentMeasures = DiseaseContainmentMeasures::Lockdown;
+		nextMeasure = DiseaseContainmentMeasures::Lockdown;
 		break;
 	case DiseaseContainmentMeasures::Lockdown:
 		setContainmentMeasures.SetMaskMandate();
@@ -400,7 +400,7 @@ void DiseaseSpreadSimulation::Simulation::SetDiseaseContainmentMeasures(Communit
 		setContainmentMeasures.SetShopsClosed();
 		setContainmentMeasures.SetLockdown();
 
-		currentMeasures = DiseaseContainmentMeasures::Nothing;
+		nextMeasure = DiseaseContainmentMeasures::Nothing;
 		break;
 	default:
 		break;
