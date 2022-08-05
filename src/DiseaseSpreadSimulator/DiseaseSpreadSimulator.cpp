@@ -3,12 +3,13 @@
 
 int main()
 {
-	constexpr uint64_t populationSize{5000U};
+	constexpr uint64_t populationSize{20000U};
 	constexpr uint32_t daysToRun{365U};
+	constexpr uint32_t numberOfRuns{3U};
 
 	DiseaseSpreadSimulation::Simulation simulation{populationSize, true};
 
-	simulation.RunForDays(daysToRun);
+	simulation.CompareContainmentMeasures(daysToRun, numberOfRuns);
 
 	return 0;
 }
