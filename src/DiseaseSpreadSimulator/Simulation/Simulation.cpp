@@ -72,7 +72,9 @@ void DiseaseSpreadSimulation::Simulation::CompareContainmentMeasures(uint32_t ru
 	for (auto i = 0U; i < numberOfRuns; i++)
 	{
 		RunForDays(runDays);
+
 		ResetCommunities();
+		ResetElapsedTime();
 	}
 }
 
@@ -482,6 +484,13 @@ void DiseaseSpreadSimulation::Simulation::ResetCommunities()
 	auto communityCount = communities.size();
 	communities.clear();
 	CreateCommunities(static_cast<uint32_t>(communityCount));
+}
+
+void DiseaseSpreadSimulation::Simulation::ResetElapsedTime()
+{
+	elapsedDays = 0U;
+	elapsedHours = 1U;
+	time = TimeManager();
 }
 
 void DiseaseSpreadSimulation::Simulation::CreateDisease(bool testDisease)

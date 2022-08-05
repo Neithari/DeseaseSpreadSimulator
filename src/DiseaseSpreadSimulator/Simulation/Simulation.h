@@ -31,6 +31,7 @@ namespace DiseaseSpreadSimulation
 		void SetupTravelInfecter(const Disease* disease, Community* community);
 		void CreateCommunities(uint32_t communityCount);
 		void ResetCommunities();
+		void ResetElapsedTime();
 		void CreateDisease(bool testDisease = false);
 		void CreateDiseasesFromFile(const std::string& fileName); // cppcheck-suppress unusedPrivateFunction
 
