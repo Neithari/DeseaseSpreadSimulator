@@ -422,9 +422,16 @@ void DiseaseSpreadSimulation::Simulation::SetDiseaseContainmentMeasures(Communit
 
 void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCount)
 {
-	// Don't run the setup twice
+	// Don't run the whole setup twice
 	if (isSetupDone)
 	{
+		// Create more communities if we need to
+		if (communityCount > communities.size())
+		{
+			auto newCommunityCount = communityCount - static_cast<uint32_t>(communities.size());
+			communities.reserve(newCommunityCount);
+			CreateCommunities(newCommunityCount);
+		}
 		return;
 	}
 
