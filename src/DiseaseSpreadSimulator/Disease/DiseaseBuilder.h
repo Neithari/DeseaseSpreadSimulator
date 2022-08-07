@@ -28,9 +28,9 @@ namespace DiseaseSpreadSimulation
 		Disease CreateDisease();
 
 		// In json format
-		static std::vector<Disease> CreateDiseasesFromFile(const std::string& fileName);
+		static std::vector<Disease> CreateDiseasesFromFile(const std::string& filename);
 		// In json format
-		static void SaveDiseaseToFile(const std::string& diseaseSaveName, const Disease& disease, const std::string& fileName);
+		static void SaveDiseaseToFile(const std::string& diseaseSaveName, const Disease& disease, const std::string& filename);
 
 	private:
 		std::string name{};

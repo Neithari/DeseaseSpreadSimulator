@@ -3,6 +3,7 @@
 #include <execution>
 #include <cmath>
 #include <mutex>
+#include <cassert>
 #include "fmt/core.h"
 #include "Disease/DiseaseBuilder.h"
 #include "RandomNumbers.h"
@@ -507,10 +508,12 @@ void DiseaseSpreadSimulation::Simulation::CreateDisease(bool testDisease)
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::CreateDiseasesFromFile(const std::string& fileName)
+void DiseaseSpreadSimulation::Simulation::CreateDiseasesFromFile(const std::string& filename)
 {
+	assert(!filename.empty());
 	DiseaseBuilder dbuilder;
-	auto createdDiseases = dbuilder.CreateDiseasesFromFile(fileName);
+
+	auto createdDiseases = dbuilder.CreateDiseasesFromFile(filename);
 
 	// Append the new diseases to our disease vector
 	std::transform(createdDiseases.begin(), createdDiseases.end(), std::back_inserter(diseases), [](auto disease)

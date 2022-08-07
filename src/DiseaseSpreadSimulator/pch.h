@@ -15,6 +15,7 @@
 #include <optional>
 #include <iostream>
 #include <cmath>
+#include <cassert>
 
 // Data structures
 #include <string>

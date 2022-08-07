@@ -33,7 +33,7 @@ namespace DiseaseSpreadSimulation
 		void ResetCommunities();
 		void ResetElapsedTime();
 		void CreateDisease(bool testDisease = false);
-		void CreateDiseasesFromFile(const std::string& fileName); // cppcheck-suppress unusedPrivateFunction
+		void CreateDiseasesFromFile(const std::string& filename); // cppcheck-suppress unusedPrivateFunction
 
 		void Update();
 		void UpdatePopulation(std::vector<Person>& population);
