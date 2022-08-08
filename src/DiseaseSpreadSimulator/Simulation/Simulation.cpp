@@ -441,7 +441,7 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCoun
 
 	if (m_diseaseFilename.empty())
 	{
-		CreateDisease(true);
+		CreateDisease();
 	}
 	else
 	{
