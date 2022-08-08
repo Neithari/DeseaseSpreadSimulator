@@ -406,7 +406,7 @@ namespace UnitTests
 	}
 	TEST_F(DiseaseBuilderTest, SaveCreateDeseaseFromFile)
 	{
-		std::string filename{"testDiseaseFile.txt"};
+		std::string filename{"testDiseaseFile.json"};
 
 		DiseaseSpreadSimulation::DiseaseBuilder builder;
 		auto corona = builder.CreateCorona();
