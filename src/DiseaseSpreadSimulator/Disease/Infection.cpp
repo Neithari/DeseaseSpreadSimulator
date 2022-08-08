@@ -78,7 +78,7 @@ bool DiseaseSpreadSimulation::Infection::WillInfect(const Infection& exposed, fl
 	static constexpr double decreaseProbability{.68333};
 	if (community->ContainmentMeasures().IsMaskMandate())
 	{
-		probability *= decreaseProbability;
+		probability *= 1. - decreaseProbability;
 	}
 
 	std::bernoulli_distribution distribution(probability);

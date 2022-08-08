@@ -1,19 +1,33 @@
 #include "Simulation/Simulation.h"
 #include <algorithm>
 #include <execution>
+#include <cmath>
+#include <mutex>
+#include <cassert>
 #include "fmt/core.h"
 #include "Disease/DiseaseBuilder.h"
 #include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
+DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint, const std::string& diseaseFilename)
 	: m_withPrint(withPrint),
 	  m_populationSize(populationSize),
+	  m_diseaseFilename(diseaseFilename),
+	  // log10(x) + 1 casted to int will give us the digit count of x (1=1, 10=2, 100=3,...)
+	  m_initialPopulationSizeDigitCount(static_cast<uint32_t>(std::log10(populationSize)) + 1U),
 	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100U, 100U, 1.F, 1.F), nullptr) // NOLINT: There is no benefit in named constants here
 {
 }
 void DiseaseSpreadSimulation::Simulation::Run()
 {
-	SetupEverything(1);
+	{
+		std::unique_lock<std::shared_mutex> runNumberLock(runNumberMutex);
+		++runNumber;
+	}
+
+	if (!isSetupDone)
+	{
+		SetupEverything(1U);
+	}
 
 	while (!stop)
 	{
@@ -23,6 +37,46 @@ void DiseaseSpreadSimulation::Simulation::Run()
 		}
 
 		Update();
+	}
+}
+
+void DiseaseSpreadSimulation::Simulation::RunForDays(uint32_t days)
+{
+	{
+		std::unique_lock<std::shared_mutex> runNumberLock(runNumberMutex);
+		++runNumber;
+	}
+
+	if (!isSetupDone)
+	{
+		SetupEverything(1U);
+	}
+
+	const auto runHours = days * 24U;
+
+	for (auto hours = 0U; hours < runHours; hours++)
+	{
+		Update();
+	}
+
+	// Separate the output when we print during the simulation
+	if (m_withPrint)
+	{
+		fmt::print("\n\n");
+	}
+	PrintRunResult(days);
+}
+
+void DiseaseSpreadSimulation::Simulation::CompareContainmentMeasures(uint32_t runDays, uint32_t numberOfRuns)
+{
+	SetupEverything(DiseaseContainmentMeasuresEnumSizePlusBase);
+
+	for (auto i = 0U; i < numberOfRuns; i++)
+	{
+		RunForDays(runDays);
+
+		ResetCommunities();
+		ResetElapsedTime();
 	}
 }
 
@@ -39,6 +93,19 @@ void DiseaseSpreadSimulation::Simulation::Pause()
 void DiseaseSpreadSimulation::Simulation::Resume()
 {
 	pause = false;
+}
+
+void DiseaseSpreadSimulation::Simulation::CreateCommunity(bool maskMandate, bool homeOffice, bool closeShops, bool lockdown)
+{
+	communities.emplace_back(m_populationSize, m_country);
+	auto& setContainmentMeasures = communities.back().SetContainmentMeasures();
+
+	setContainmentMeasures.SetMaskMandate(maskMandate);
+	setContainmentMeasures.SetWorkingFromHome(homeOffice);
+	setContainmentMeasures.SetShopsClosed(closeShops);
+	setContainmentMeasures.SetLockdown(lockdown);
+	
+	InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
 }
 
 void DiseaseSpreadSimulation::Simulation::Update()
@@ -104,7 +171,7 @@ void DiseaseSpreadSimulation::Simulation::Contacts(Places& places, Travel& trave
 			auto numberOfContacts = Random::UniformIntRange(minTravelContacts, maxTravelContacts);
 			for (auto i = 0U; i < numberOfContacts; i++)
 			{
-				std::shared_lock<std::shared_timed_mutex> lockTravelInfecter(travelInfecterMutex);
+				std::shared_lock<std::shared_mutex> lockTravelInfecter(travelInfecterMutex);
 				traveler->Contact(travelInfecter);
 			}
 		});
@@ -114,7 +181,9 @@ void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 {
 	// Get all susceptible and infectious people
 	std::vector<Person*> susceptible{};
+	susceptible.reserve(place.GetPersonCount());
 	std::vector<Person*> infectious{};
+	infectious.reserve(place.GetPersonCount());
 	for (auto* person : place.GetPeople())
 	{
 		if (person->IsSusceptible())
@@ -137,7 +206,7 @@ void DiseaseSpreadSimulation::Simulation::ContactForPlace(Place& place)
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::Print()
+void DiseaseSpreadSimulation::Simulation::Print() const
 {
 	// Only print once per hour
 	//PrintEveryHour();
@@ -148,50 +217,47 @@ void DiseaseSpreadSimulation::Simulation::Print()
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintEveryHour()
+void DiseaseSpreadSimulation::Simulation::PrintEveryHour() const
 {
-	for (size_t i = 0; i < communities.size(); i++)
+	for (const auto& community : communities)
 	{
-		auto& community = communities.at(i);
 
-		fmt::print("\nCommunity #{} Day: {} Time : {} o'clock\n", i + 1, elapsedDays, time.GetTime());
+		fmt::print("\nCommunity id: {} Day: {} Time : {} o'clock\n", community.GetID(), elapsedDays, time.GetTime());
 
 		PrintPopulation(community.GetPopulation());
 
 		// Print public places
-		auto& places = community.GetPlaces();
-		for (auto& place : places.workplaces)
+		const auto& places = community.GetPlaces();
+		for (const auto& place : places.workplaces)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
-		for (auto& place : places.schools)
+		for (const auto& place : places.schools)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
-		for (auto& place : places.supplyStores)
+		for (const auto& place : places.supplyStores)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
-		for (auto& place : places.hardwareStores)
+		for (const auto& place : places.hardwareStores)
 		{
 			fmt::print("{} #{}: {} persons\n", Place::TypeToString(place.GetType()), place.GetID() + 1, place.GetPersonCount());
 		}
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintOncePerDay()
+void DiseaseSpreadSimulation::Simulation::PrintOncePerDay() const
 {
-	for (size_t i = 0; i < communities.size(); i++)
+	for (const auto& community : communities)
 	{
-		auto& community = communities.at(i);
-
-		fmt::print("\nCommunity #{} Day: {} Time : {} o'clock\n", i + 1, elapsedDays, time.GetTime());
+		fmt::print("\nCommunity id: {} Day: {} Time : {} o'clock\n", community.GetID(), elapsedDays, time.GetTime());
 
 		PrintPopulation(community.GetPopulation());
 	}
 }
 
-void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population)
+void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Person>& population) const
 {
 	size_t populationCount{0};
 	size_t susceptible{0};
@@ -204,37 +270,101 @@ void DiseaseSpreadSimulation::Simulation::PrintPopulation(const std::vector<Pers
 	{
 		if (person.IsAlive())
 		{
-			populationCount++;
+			++populationCount;
 
 			if (person.IsSusceptible())
 			{
-				susceptible++;
+				++susceptible;
 			}
-			if (person.IsInfectious())
+			else
 			{
-				infectious++;
-			}
-			if (person.HasDisease())
-			{
-				withDisease++;
+				if (person.HasDisease())
+				{
+					++withDisease;
+
+					if (person.IsInfectious())
+					{
+						++infectious;
+					}
+				}
 			}
 			if (person.IsTraveling())
 			{
-				traveling++;
+				++traveling;
 			}
 		}
 		else
 		{
-			deadPeople++;
+			++deadPeople;
 		}
 	}
 
-	fmt::print("Population:   {}\n", populationCount);
-	fmt::print("Susceptible:  {}\n", susceptible);
-	fmt::print("With Disease: {}\n", withDisease);
-	fmt::print("Infectious:   {}\n", infectious);
-	fmt::print("Traveling:    {}\n", traveling);
-	fmt::print("Have died:    {}\n", deadPeople);
+	fmt::print("Population:   {:>{}}\t\t", populationCount, m_initialPopulationSizeDigitCount);
+	fmt::print("Susceptible: {:>{}}\n", susceptible, m_initialPopulationSizeDigitCount);
+	fmt::print("With Disease: {:>{}}\t\t", withDisease, m_initialPopulationSizeDigitCount);
+	fmt::print("Infectious:  {:>{}}\n", infectious, m_initialPopulationSizeDigitCount);
+	fmt::print("Traveling:    {:>{}}\t\t", traveling, m_initialPopulationSizeDigitCount);
+	fmt::print("Have died:   {:>{}}\n", deadPeople, m_initialPopulationSizeDigitCount);
+}
+
+void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) const
+{
+	// Containment measures
+	// Starting population
+	// Deaths
+	// Survives
+	// infection max
+	// disease discovered by tests
+	// Persons quarantined
+
+	// Will print a line of 80 times -
+	constexpr auto baseLineLength = 99U;
+
+
+	const auto introduction = fmt::format("Simulation #{} simulated {} days and started with {} persons in {} communities.\n", runNumber, days, m_populationSize, communities.size());
+	bool firstCommunity{true};
+
+	std::shared_lock<std::shared_mutex> communitiesLock(communitiesMutex);
+	for (const auto& community : communities)
+	{
+		const auto lineLength = baseLineLength + community.GetID() / 10;
+		
+		if (firstCommunity)
+		{
+
+			fmt::print("{:-^{}}\n", "", lineLength);
+			fmt::print("{}", introduction);
+
+			firstCommunity = false;
+		}
+		
+		fmt::print("{:-^{}}\n", "", lineLength);
+
+		// Print mandates
+		const auto& containmentMeasures = community.ContainmentMeasures();
+		fmt::print("Community with id {}", community.GetID());
+		
+		fmt::print(" [{}] mask mandate", XorSpace(containmentMeasures.IsMaskMandate()));
+		fmt::print(" [{}] home office mandate", XorSpace(containmentMeasures.WorkingFromHome()));
+		fmt::print(" [{}] shops are closed", XorSpace(containmentMeasures.ShopsAreClosed()));
+		fmt::print(" [{}] full lockdown", XorSpace(containmentMeasures.IsLockdown()));		
+		
+		fmt::print("\nCurrent population status:\n");
+		PrintPopulation(community.GetPopulation());
+
+		fmt::print("Total infection count: {}\n", community.CurrentInfectionMax());
+		fmt::print("Positive Tests: {}\t", community.NumberOfPositiveTests());
+		fmt::print("Persons Quarantined: {}\n", community.NumberOfPersonsQuarantined());
+	}
+}
+
+char DiseaseSpreadSimulation::Simulation::XorSpace(bool printX)
+{
+	if (printX)
+	{
+		return 'X';
+	}
+	return ' ';
 }
 
 bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
@@ -248,22 +378,94 @@ bool DiseaseSpreadSimulation::Simulation::CheckForNewDay()
 	return true;
 }
 
+void DiseaseSpreadSimulation::Simulation::SetDiseaseContainmentMeasures(Community& community)
+{
+	static auto nextMeasure{DiseaseContainmentMeasures::Nothing};
+
+	auto& setContainmentMeasures = community.SetContainmentMeasures();
+	switch (nextMeasure)
+	{
+	case DiseaseContainmentMeasures::Nothing:
+		setContainmentMeasures.ResetMaskMandate();
+		setContainmentMeasures.ResetWorkingFromHome();
+		setContainmentMeasures.ResetShopsClosed();
+		setContainmentMeasures.ResetLockdown();
+
+		nextMeasure = DiseaseContainmentMeasures::MaskMandate;
+		break;
+	case DiseaseContainmentMeasures::MaskMandate:
+		setContainmentMeasures.SetMaskMandate();
+
+		nextMeasure = DiseaseContainmentMeasures::WorkingFromHome;
+		break;
+	case DiseaseContainmentMeasures::WorkingFromHome:
+		setContainmentMeasures.SetMaskMandate();
+		setContainmentMeasures.SetWorkingFromHome();
+
+		nextMeasure = DiseaseContainmentMeasures::CloseShops;
+		break;
+	case DiseaseContainmentMeasures::CloseShops:
+		setContainmentMeasures.SetMaskMandate();
+		setContainmentMeasures.SetWorkingFromHome();
+		setContainmentMeasures.SetShopsClosed();
+
+		nextMeasure = DiseaseContainmentMeasures::Lockdown;
+		break;
+	case DiseaseContainmentMeasures::Lockdown:
+		setContainmentMeasures.SetMaskMandate();
+		setContainmentMeasures.SetWorkingFromHome();
+		setContainmentMeasures.SetShopsClosed();
+		setContainmentMeasures.SetLockdown();
+
+		nextMeasure = DiseaseContainmentMeasures::Nothing;
+		break;
+	default:
+		break;
+	}
+}
+
 void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCount)
 {
-	DiseaseBuilder dbuilder;
-	//diseases.push_back(dbuilder.CreateCorona());
-	diseases.push_back(dbuilder.CreateDeadlyTestDisease());
-
-	for (size_t i = 0; i < communityCount; i++)
+	// Don't run the whole setup twice
+	if (isSetupDone)
 	{
-		communities.emplace_back(m_populationSize, country);
-
-		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
-		SetupTravelInfecter(&diseases.back(), &communities.back());
+		// Create more communities if we need to
+		if (communityCount > communities.size())
+		{
+			auto newCommunityCount = communityCount - static_cast<uint32_t>(communities.size());
+			communities.reserve(newCommunityCount);
+			CreateCommunities(newCommunityCount);
+		}
+		return;
 	}
 
+	if (m_diseaseFilename.empty())
+	{
+		CreateDisease(true);
+	}
+	else
+	{
+		CreateDiseasesFromFile(m_diseaseFilename);
+	}
+
+	communities.reserve(communityCount);
+	CreateCommunities(communityCount);
+
+	// Only one travel infecter is needed
+	SetupTravelInfecter(&diseases.back(), &communities.front());
+
 	stop = false;
-	fmt::print("Setup complete\n");
+	isSetupDone = true;
+
+	fmt::print("Setup complete{:^11}", '-');
+	fmt::print("{} disease and {} communities created\n", diseases.size(), communities.size());
+
+	fmt::print("Disease created: ");
+	for (const auto& disease : diseases)
+	{
+		fmt::print("{} ", disease.GetDiseaseName());
+	}
+	fmt::print("\n");
 }
 
 void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* disease, std::vector<Person>& population)
@@ -271,14 +473,66 @@ void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* dise
 	population.at(Random::RandomVectorIndex(population)).Contaminate(disease);
 }
 
-void DiseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Disease* disease, Community* communitie)
+void DiseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Disease* disease, Community* community)
 {
 	travelInfecter.Contaminate(disease);
-	travelInfecter.SetCommunity(communitie);
+	travelInfecter.SetCommunity(community);
 	Home home{};
 	travelInfecter.SetHome(&home);
 	while (!travelInfecter.IsInfectious())
 	{
 		travelInfecter.Update(0, true, true);
 	}
+}
+
+void DiseaseSpreadSimulation::Simulation::CreateCommunities(uint32_t communityCount)
+{
+	for (auto i = 0U; i < communityCount; i++)
+	{
+		communities.emplace_back(m_populationSize, m_country);
+		SetDiseaseContainmentMeasures(communities.back());
+		InfectRandomPerson(&diseases.back(), communities.back().GetPopulation());
+	}
+}
+
+void DiseaseSpreadSimulation::Simulation::ResetCommunities()
+{
+	auto communityCount = communities.size();
+	communities.clear();
+	CreateCommunities(static_cast<uint32_t>(communityCount));
+}
+
+void DiseaseSpreadSimulation::Simulation::ResetElapsedTime()
+{
+	elapsedDays = 0U;
+	elapsedHours = 1U;
+	time = TimeManager();
+}
+
+void DiseaseSpreadSimulation::Simulation::CreateDisease(bool testDisease)
+{
+	DiseaseBuilder dbuilder;
+
+	if (!testDisease)
+	{
+		diseases.push_back(dbuilder.CreateCorona());
+	}
+	else
+	{
+		diseases.push_back(dbuilder.CreateDeadlyTestDisease());
+	}
+}
+
+void DiseaseSpreadSimulation::Simulation::CreateDiseasesFromFile(const std::string& filename)
+{
+	assert(!filename.empty());
+	DiseaseBuilder dbuilder;
+
+	auto createdDiseases = dbuilder.CreateDiseasesFromFile(filename);
+
+	// Append the new diseases to our disease vector
+	std::transform(createdDiseases.begin(), createdDiseases.end(), std::back_inserter(diseases), [](auto disease)
+		{
+			return disease;
+		});
 }

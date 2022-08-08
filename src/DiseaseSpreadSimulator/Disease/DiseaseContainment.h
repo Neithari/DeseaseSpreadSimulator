@@ -11,16 +11,27 @@ namespace DiseaseSpreadSimulation
 		// Start the quarantine and send the person home
 		static void Quarantine(Person* person);
 		static void ReleaseWhenRecovered(Person* person);
+		// Mask mandate
+		void ToggleMaskMandate();
+		// Home office mandate
+		void ToggleWorkingFromHome();
 		// Open or close shops
 		void ToggleShops();
-		void ToggleWorkingFromHome();
+		// Full lockdown
 		void ToggleLockdown();
-		void ToggleMaskMandate();
+		void SetMaskMandate(bool set = true);
+		void SetWorkingFromHome(bool set = true);
+		void SetShopsClosed(bool set = true);
+		void SetLockdown(bool set = true);
+		void ResetMaskMandate(bool set = false);
+		void ResetWorkingFromHome(bool set = false);
+		void ResetShopsClosed(bool set = false);
+		void ResetLockdown(bool set = false);
 
-		[[nodiscard]] bool ShopsAreOpen() const;
-		[[nodiscard]] bool WorkingFormHome() const;
-		[[nodiscard]] bool IsLockdown() const;
 		[[nodiscard]] bool IsMaskMandate() const;
+		[[nodiscard]] bool WorkingFromHome() const;
+		[[nodiscard]] bool ShopsAreClosed() const;
+		[[nodiscard]] bool IsLockdown() const;
 
 	public:
 		// 50% of working people are allowed to go to work when there is a working from home mandate.
@@ -31,9 +42,9 @@ namespace DiseaseSpreadSimulation
 		static constexpr float percentOfJobsMandatoryToSupply{.1F};
 
 	private:
-		bool areShopsOpen = true;
-		bool massWorkingFromHome = false;
-		bool isLockdown = false;
-		bool isMaskMandate = false;
+		bool isMaskMandate{false};
+		bool massWorkingFromHome{false};
+		bool areShopsClosed{false};
+		bool isLockdown{false};
 	};
 } // namespace DiseaseSpreadSimulation

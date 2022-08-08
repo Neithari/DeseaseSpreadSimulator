@@ -67,6 +67,9 @@ namespace DiseaseSpreadSimulation
 
 		void SetHome(Home* newHome);
 		void SetWorkplace(Workplace* newWorkplace);
+		void SetCanWorkFromHome(bool set = true);
+		// When you set mandatory supply job then work from home will be reset
+		void SetHasCriticalInfrastructureJob(bool set = true);
 		void SetSchool(School* newSchool);
 		void SetCommunity(Community* newCommunity);
 
@@ -80,6 +83,7 @@ namespace DiseaseSpreadSimulation
 		[[nodiscard]] bool WillTravel() const;
 		void StartTraveling();
 
+		static void SpreadDisease(Person& spreader, Person& other);
 		void StartQuarantine();
 		void EndQuarantine();
 
@@ -91,6 +95,8 @@ namespace DiseaseSpreadSimulation
 		bool alive{true};
 		bool isTraveling{false};
 		bool isQuarantined{false};
+		bool canWorkFromHome{false};
+		bool hasCriticalInfrastructureJob{false};
 
 		// Not const because we will add ourself to the places
 		Community* m_community;
@@ -109,6 +115,7 @@ namespace DiseaseSpreadSimulation
 		uint32_t buyTime{0U};
 		uint32_t buyFinishTime{0U};
 		bool isShoppingDay{false};
+		bool noTravelToday{false};
 		// Time in x/24h
 		static constexpr uint32_t shopOpenTime{7U};
 		static constexpr uint32_t shopCloseTime{20U};

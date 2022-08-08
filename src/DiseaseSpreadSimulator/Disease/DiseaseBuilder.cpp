@@ -157,15 +157,15 @@ DiseaseSpreadSimulation::Disease DiseaseSpreadSimulation::DiseaseBuilder::Create
 		symptomsDevelopment};
 }
 
-std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(const std::string& fileName)
+std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBuilder::CreateDiseasesFromFile(const std::string& filename)
 {
 	using json = nlohmann::json;
-	std::ifstream diseaseJsonFile{fileName};
+	std::ifstream diseaseJsonFile{filename};
 
 	if (!diseaseJsonFile)
 	{
 
-		std::cerr << fileName << " could not be opened for reading!\n";
+		std::cerr << filename << " could not be opened for reading!\n";
 		return {};
 	}
 
@@ -177,7 +177,7 @@ std::vector<DiseaseSpreadSimulation::Disease> DiseaseSpreadSimulation::DiseaseBu
 	return diseases;
 }
 
-void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const std::string& diseaseSaveName, const Disease& disease, const std::string& fileName)
+void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const std::string& diseaseSaveName, const Disease& disease, const std::string& filename)
 {
 	using json = nlohmann::json;
 
@@ -185,7 +185,7 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const std::strin
 	json diseaseJson; // NOLINT: The library is already initializing it to null
 
 	// We need to check if the file exists
-	std::ifstream fileExists{fileName};
+	std::ifstream fileExists{filename};
 	json existingDiseaseJson; // NOLINT: The library is already initializing it to null
 	if (fileExists)
 	{
@@ -202,11 +202,11 @@ void DiseaseSpreadSimulation::DiseaseBuilder::SaveDiseaseToFile(const std::strin
 	// Append the new desease
 	diseaseJson.emplace(diseaseSaveName, disease);
 
-	std::ofstream diseaseSaveFile{fileName};
+	std::ofstream diseaseSaveFile{filename};
 
 	if (!diseaseSaveFile)
 	{
-		std::cerr << fileName << " could not be opened for writing!\n";
+		std::cerr << filename << " could not be opened for writing!\n";
 		return;
 	}
 

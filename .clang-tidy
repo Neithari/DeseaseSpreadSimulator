@@ -17,3 +17,6 @@ Checks: "*,
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 FormatStyle:     none
+CheckOptions:
+  - key:             bugprone-easily-swappable-parameters.MinimumLength
+    value:           '4'

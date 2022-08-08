@@ -9,8 +9,6 @@ set(SOURCES
   Disease/DiseaseBuilder.cpp
   Disease/DiseaseContainment.cpp
   Disease/Infection.cpp
-  # IDGenerator
-  IDGenerator/IDGenerator.cpp
   # Person
   Person/Person.cpp
   Person/PersonBehavior.cpp
@@ -80,7 +78,7 @@ target_link_system_libraries(${CMAKE_PROJECT_NAME}
 )
 
 # Add a executable with terminal output
-add_executable("${CMAKE_PROJECT_NAME}Terminal" DiseaseSpreadSimulator.cpp)
+add_executable("${CMAKE_PROJECT_NAME}Terminal" DiseaseSpreadSimulator.cpp CommandParser.cpp)
 
 # Add precompiled headers
 if(ENABLE_PCH)

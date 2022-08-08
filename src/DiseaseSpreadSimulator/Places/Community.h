@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <optional>
 #include <vector>
 #include <algorithm>
@@ -38,7 +39,9 @@ namespace DiseaseSpreadSimulation
 		Place* TransferToTravelLocation(Person* person);
 
 		std::vector<Person>& GetPopulation();
+		const std::vector<Person>& GetPopulation() const;
 		Places& GetPlaces();
+		const Places& GetPlaces() const;
 		Travel& GetTravelLocation();
 		std::vector<Home>& GetHomes();
 		// Returns a random supply store
@@ -55,20 +58,32 @@ namespace DiseaseSpreadSimulation
 		void AddPlace(HardwareStore store);
 		void AddPlace(Morgue morgue);
 
+		DiseaseContainment& SetContainmentMeasures();
 		const DiseaseContainment& ContainmentMeasures() const;
 		void TestStation(Person* person);
+
+		[[nodiscard]] uint32_t GetID() const;
+
+		[[nodiscard]] size_t CurrentInfectionMax() const;
+		[[nodiscard]] size_t NumberOfPositiveTests() const;
+		[[nodiscard]] size_t NumberOfPersonsQuarantined() const;
 
 	private:
 		static bool TestPersonForInfection(const Person* person);
 		Place* TransferToPlace(Person* person, Place* place);
 
 	private:
+		const uint32_t m_id{0};
 		std::vector<Person> m_population{};
 		Places m_places{};
 		Travel m_travelLocation;
 		DiseaseContainment m_containmentMeasures{};
 
-		std::shared_timed_mutex populationMutex;
-		std::shared_timed_mutex placesMutex;
+		size_t m_positiveTests{0};
+		size_t m_personsQuarantined{0};
+
+		mutable std::shared_mutex populationMutex;
+		mutable std::shared_mutex placesMutex;
+		mutable std::shared_mutex testStationMutex;
 	};
 } // namespace DiseaseSpreadSimulation
