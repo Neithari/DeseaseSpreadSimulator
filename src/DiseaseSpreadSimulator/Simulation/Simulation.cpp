@@ -465,6 +465,7 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCoun
 	{
 		fmt::print("{} ", disease.GetDiseaseName());
 	}
+	fmt::print("\n");
 }
 
 void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* disease, std::vector<Person>& population)
