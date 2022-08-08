@@ -1,15 +1,13 @@
-#include <cstdint>
+#include "CommandParser.h"
 #include "Simulation/Simulation.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-	constexpr uint64_t populationSize{20000U};
-	constexpr uint32_t daysToRun{365U};
-	constexpr uint32_t numberOfRuns{3U};
+	DiseaseSpreadSimulation::CommandParser commands{argc, argv};
 
-	DiseaseSpreadSimulation::Simulation simulation{populationSize, true};
+	DiseaseSpreadSimulation::Simulation simulation{commands.GetPopulationSize(), commands.GetWithPrint(), commands.GetDiseaseFilename()};
 
-	simulation.CompareContainmentMeasures(daysToRun, numberOfRuns);
+	simulation.CompareContainmentMeasures(commands.GetDaysToRun(), commands.GetNumberOfRuns());
 
 	return 0;
 }

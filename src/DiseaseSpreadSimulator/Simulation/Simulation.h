@@ -14,7 +14,7 @@ namespace DiseaseSpreadSimulation
 	class Simulation
 	{
 	public:
-		explicit Simulation(uint64_t populationSize, bool withPrint);
+		explicit Simulation(uint64_t populationSize, bool withPrint, const std::string& diseaseFilename);
 
 		void Run();
 		// Will run the simulation for the stated days and print a result after
@@ -62,6 +62,7 @@ namespace DiseaseSpreadSimulation
 
 		static constexpr auto m_country{Country::USA};
 		uint64_t m_populationSize{};
+		const std::string& m_diseaseFilename;
 		const uint32_t m_initialPopulationSizeDigitCount{};
 		TimeManager time{};
 		std::vector<Community> communities{};

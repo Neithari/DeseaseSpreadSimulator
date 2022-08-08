@@ -8,9 +8,10 @@
 #include "Disease/DiseaseBuilder.h"
 #include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint)
+DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint, const std::string& diseaseFilename)
 	: m_withPrint(withPrint),
 	  m_populationSize(populationSize),
+	  m_diseaseFilename(diseaseFilename),
 	  // log10(x) + 1 casted to int will give us the digit count of x (1=1, 10=2, 100=3,...)
 	  m_initialPopulationSizeDigitCount(static_cast<uint32_t>(std::log10(populationSize)) + 1U),
 	  travelInfecter(Age_Group::UnderThirty, Sex::Male, PersonBehavior(100U, 100U, 1.F, 1.F), nullptr) // NOLINT: There is no benefit in named constants here
@@ -438,7 +439,14 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCoun
 		return;
 	}
 
-	CreateDisease(true);
+	if (m_diseaseFilename.empty())
+	{
+		CreateDisease(true);
+	}
+	else
+	{
+		CreateDiseasesFromFile(m_diseaseFilename);
+	}
 
 	communities.reserve(communityCount);
 	CreateCommunities(communityCount);
@@ -451,6 +459,12 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCoun
 
 	fmt::print("Setup complete{:^11}", '-');
 	fmt::print("{} disease and {} communities created\n", diseases.size(), communities.size());
+
+	fmt::print("Disease created: ");
+	for (const auto& disease : diseases)
+	{
+		fmt::print("{} ", disease.GetDiseaseName());
+	}
 }
 
 void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* disease, std::vector<Person>& population)
