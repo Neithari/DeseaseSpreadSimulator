@@ -17,5 +17,7 @@ Containment measures are as follows:
  - -o -> Will print a daily summary
  - -f disease.json -> Will use the disease inside the json file. See [sampleDiseaseFile.json](src/DiseaseSpreadSimulator/sampleDiseaseFile.json) for the format.
 
+ ![ezcv logo](.github/output.jpg)
+
 CMake files do use project options licenced under MIT and available here:
 https://github.com/aminya/project_options
