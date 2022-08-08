@@ -96,7 +96,7 @@ namespace UnitTests
 		ASSERT_FALSE(infection.IsInfectious());
 
 		// Check that an update without a disease won't change anything
-		static constexpr auto testSize{10U};
+		static constexpr auto testSize{200U};
 		for (auto i{0U}; i < testSize; i++)
 		{
 			infection.Update(person, true);
@@ -141,6 +141,7 @@ namespace UnitTests
 		EXPECT_FALSE(infection.HasRecovered());
 
 		infection.Update(person, true);
+		EXPECT_FALSE(infection.HasDisease());
 		EXPECT_FALSE(infection.IsInfectious());
 		EXPECT_FALSE(infection.HasSymptoms());
 		EXPECT_TRUE(infection.HasRecovered());

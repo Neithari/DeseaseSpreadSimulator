@@ -37,6 +37,11 @@ void DiseaseSpreadSimulation::Infection::Update(Person& person, bool isNewDay)
 
 void DiseaseSpreadSimulation::Infection::AdvanceDay(Person& person)
 {
+	// daysTillCured can be > 0 even when recovered
+	if (daysTillCured > 0)
+	{
+		daysTillCured--;
+	}
 	// If the person has no disease, has recovered, is immune or dead do nothing (recovered/immune/dead are all Seir_State::Recovered)
 	if (seirState == Seir_State::Susceptible || seirState == Seir_State::Recovered)
 	{
@@ -49,10 +54,6 @@ void DiseaseSpreadSimulation::Infection::AdvanceDay(Person& person)
 	if (daysInfectious > 0)
 	{
 		daysInfectious--;
-	}
-	if (daysTillCured > 0)
-	{
-		daysTillCured--;
 	}
 	if (isFatal)
 	{
