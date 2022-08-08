@@ -327,7 +327,7 @@ void DiseaseSpreadSimulation::Simulation::PrintRunResult(const uint32_t days) co
 	std::shared_lock<std::shared_mutex> communitiesLock(communitiesMutex);
 	for (const auto& community : communities)
 	{
-		const auto lineLength = baseLineLength + static_cast<uint32_t>(community.GetID() / 10);
+		const auto lineLength = baseLineLength + community.GetID() / 10;
 		
 		if (firstCommunity)
 		{
