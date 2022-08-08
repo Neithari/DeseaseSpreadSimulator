@@ -14,8 +14,8 @@ Containment measures are as follows:
  - -p 1000 -> Will set the population to the given number.
  - -d 365 -> Will set the days the simulation will run to the given number.
  - -n 1 -> Will set the number of runs to the given number.
- - -f disease.json -> Will use the disease inside the json file. See src/DiseaseSpreadSimulator/sampleDiseaseFile.json for the format.
  - -o -> Will print a daily summary
+ - -f disease.json -> Will use the disease inside the json file. See src/DiseaseSpreadSimulator/sampleDiseaseFile.json for the format.
 
 CMake files do use project options licenced under MIT and available here:
 https://github.com/aminya/project_options
