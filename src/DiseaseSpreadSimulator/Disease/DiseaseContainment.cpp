@@ -15,9 +15,9 @@ void DiseaseSpreadSimulation::DiseaseContainment::ReleaseWhenRecovered(Person* p
 	}
 }
 
-void DiseaseSpreadSimulation::DiseaseContainment::ToggleShops()
+void DiseaseSpreadSimulation::DiseaseContainment::ToggleMaskMandate()
 {
-	areShopsOpen = !areShopsOpen;
+	isMaskMandate = !isMaskMandate;
 }
 
 void DiseaseSpreadSimulation::DiseaseContainment::ToggleWorkingFromHome()
@@ -25,32 +25,72 @@ void DiseaseSpreadSimulation::DiseaseContainment::ToggleWorkingFromHome()
 	massWorkingFromHome = !massWorkingFromHome;
 }
 
+void DiseaseSpreadSimulation::DiseaseContainment::ToggleShops()
+{
+	areShopsClosed = !areShopsClosed;
+}
+
 void DiseaseSpreadSimulation::DiseaseContainment::ToggleLockdown()
 {
 	isLockdown = !isLockdown;
 }
 
-void DiseaseSpreadSimulation::DiseaseContainment::ToggleMaskMandate()
+void DiseaseSpreadSimulation::DiseaseContainment::SetMaskMandate(bool set)
 {
-	isMaskMandate = !isMaskMandate;
+	isMaskMandate = set;
 }
 
-bool DiseaseSpreadSimulation::DiseaseContainment::ShopsAreOpen() const
+void DiseaseSpreadSimulation::DiseaseContainment::SetWorkingFromHome(bool set)
 {
-	return areShopsOpen;
+	massWorkingFromHome = set;
 }
 
-bool DiseaseSpreadSimulation::DiseaseContainment::WorkingFormHome() const
+void DiseaseSpreadSimulation::DiseaseContainment::SetShopsClosed(bool set)
 {
-	return massWorkingFromHome;
+	areShopsClosed = set;
 }
 
-bool DiseaseSpreadSimulation::DiseaseContainment::IsLockdown() const
+void DiseaseSpreadSimulation::DiseaseContainment::SetLockdown(bool set)
 {
-	return isLockdown;
+	isLockdown = set;
+}
+
+void DiseaseSpreadSimulation::DiseaseContainment::ResetMaskMandate(bool set)
+{
+	SetMaskMandate(set);
+}
+
+void DiseaseSpreadSimulation::DiseaseContainment::ResetWorkingFromHome(bool set)
+{
+	SetWorkingFromHome(set);
+}
+
+void DiseaseSpreadSimulation::DiseaseContainment::ResetShopsClosed(bool set)
+{
+	SetShopsClosed(set);
+}
+
+void DiseaseSpreadSimulation::DiseaseContainment::ResetLockdown(bool set)
+{
+	SetLockdown(set);
 }
 
 bool DiseaseSpreadSimulation::DiseaseContainment::IsMaskMandate() const
 {
 	return isMaskMandate;
+}
+
+bool DiseaseSpreadSimulation::DiseaseContainment::WorkingFromHome() const
+{
+	return massWorkingFromHome;
+}
+
+bool DiseaseSpreadSimulation::DiseaseContainment::ShopsAreClosed() const
+{
+	return areShopsClosed;
+}
+
+bool DiseaseSpreadSimulation::DiseaseContainment::IsLockdown() const
+{
+	return isLockdown;
 }

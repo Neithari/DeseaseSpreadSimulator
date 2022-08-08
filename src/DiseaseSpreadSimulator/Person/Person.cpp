@@ -28,20 +28,18 @@ void DiseaseSpreadSimulation::Person::Update(uint32_t currentTime, bool isWorkda
 
 void DiseaseSpreadSimulation::Person::Contact(Person& other)
 {
-	if (other.IsInfectious() && IsSusceptible())
-	{
-		if (infection.WillInfect(other.infection, m_behavior.acceptanceFactor, m_community))
-		{
-			infection.Contaminate(other.infection.GetDisease(), m_age);
-			other.infection.IncreaseSpreadCount();
-		}
-	}
-	else if (IsInfectious() && other.IsSusceptible())
+	if (IsInfectious() && other.IsSusceptible())
 	{
 		if (other.infection.WillInfect(infection, other.m_behavior.acceptanceFactor, other.m_community))
 		{
-			other.infection.Contaminate(infection.GetDisease(), other.m_age);
-			infection.IncreaseSpreadCount();
+			SpreadDisease(*this, other);
+		}
+	}
+	else if (other.IsInfectious() && IsSusceptible())
+	{
+		if (infection.WillInfect(other.infection, m_behavior.acceptanceFactor, m_community))
+		{
+			SpreadDisease(other, *this);
 		}
 	}
 }
@@ -156,6 +154,26 @@ void DiseaseSpreadSimulation::Person::SetWorkplace(Workplace* newWorkplace)
 	workplace = newWorkplace;
 }
 
+void DiseaseSpreadSimulation::Person::SetCanWorkFromHome(bool set)
+{
+	if (hasCriticalInfrastructureJob)
+	{
+		hasCriticalInfrastructureJob = !hasCriticalInfrastructureJob;
+	}
+
+	canWorkFromHome = set;
+}
+
+void DiseaseSpreadSimulation::Person::SetHasCriticalInfrastructureJob(bool set)
+{
+	if (canWorkFromHome)
+	{
+		canWorkFromHome = !canWorkFromHome;
+	}
+
+	hasCriticalInfrastructureJob = set;
+}
+
 void DiseaseSpreadSimulation::Person::SetSchool(School* newSchool)
 {
 	school = newSchool;
@@ -188,11 +206,18 @@ void DiseaseSpreadSimulation::Person::ChangeBehavior(PersonBehavior newBehavior)
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& isWorkday, bool isNewDay)
 {
+	if (isNewDay)
+	{
+		noTravelToday = false;
+	}
+
+	auto currentPlace = whereabouts->GetType();
+
 	// Send the person to the morgue if not alive
 	if (!alive)
 	{
-		// Maybe delete person and just increase a counter
-		if (whereabouts->GetType() == Place_Type::Morgue)
+		// TODO: Maybe delete person and just increase a counter
+		if (currentPlace == Place_Type::Morgue)
 		{
 			return;
 		}
@@ -224,8 +249,7 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 
 	bool needFood = lastFoodBuy >= m_behavior.foodBuyInterval;
 	bool needHardware = lastHardwareBuy >= m_behavior.hardwareBuyInterval;
-
-	auto currentPlace = whereabouts->GetType();
+	const auto& containmentMeasures = m_community->ContainmentMeasures();
 
 	switch (currentPlace)
 	{
@@ -244,7 +268,8 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		// Hardware shopping is suspended during a lockdown
 		else if (needHardware
 				 && currentTime >= shopOpenTime
-				 && !m_community->ContainmentMeasures().IsLockdown())
+				 && !containmentMeasures.ShopsAreClosed()
+				 && !containmentMeasures.IsLockdown())
 		{
 			PrepareShopping();
 
@@ -258,47 +283,38 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 			// No traveling during a lockdown
 			if (WillTravel()
 				&& currentTime >= shopOpenTime
-				&& !m_community->ContainmentMeasures().IsLockdown())
+				&& !containmentMeasures.IsLockdown()
+				&& !noTravelToday)
 			{
 				StartTraveling();
 			}
-			else if (workplace != nullptr
-					 && currentTime >= workStartTime
-					 && currentTime <= workFinishTime
-					 && isWorkday)
+			else
 			{
-				if (m_community->ContainmentMeasures().WorkingFormHome())
-				{
+				noTravelToday = true;
+
+				if (workplace != nullptr
+					&& currentTime >= workStartTime
+					&& currentTime <= workFinishTime
+					&& isWorkday
 					// 50% of working people are allowed to go to work when there is a working from home mandate.
-					// Reflecting jobs that are not capable of work from home
-					if (Random::Percent<float>() <= m_community->ContainmentMeasures().percentOfJobsNoWorkFromHome)
-					{
-						whereabouts = m_community->TransferToWork(this);
-					}
-				}
-				else if (m_community->ContainmentMeasures().IsLockdown())
-				{
+					// Reflecting jobs that are not capable of work from home.
+					&& !(containmentMeasures.WorkingFromHome() && canWorkFromHome)
 					// During a lockdown only 10% of people are allowed to go to work
 					// Reflecting jobs that are mandatory to supply people
-					if (Random::Percent<float>() <= m_community->ContainmentMeasures().percentOfJobsMandatoryToSupply)
-					{
-						whereabouts = m_community->TransferToWork(this);
-					}
-				}
-				else
+					&& !(containmentMeasures.IsLockdown() && !hasCriticalInfrastructureJob))
 				{
 					whereabouts = m_community->TransferToWork(this);
 				}
-			}
-			// Schools will close when there is a work form home mandate and when there is a lockdown
-			else if (school != nullptr
-					 && currentTime >= schoolStartTime
-					 && currentTime <= schoolFinishTime
-					 && isWorkday
-					 && !m_community->ContainmentMeasures().WorkingFormHome()
-					 && !m_community->ContainmentMeasures().IsLockdown())
-			{
-				whereabouts = m_community->TransferToSchool(this);
+				// Schools will close when there is a work form home mandate and when there is a lockdown
+				else if (school != nullptr
+						 && currentTime >= schoolStartTime
+						 && currentTime <= schoolFinishTime
+						 && isWorkday
+						 && !containmentMeasures.WorkingFromHome()
+						 && !containmentMeasures.IsLockdown())
+				{
+					whereabouts = m_community->TransferToSchool(this);
+				}
 			}
 		}
 		break;
@@ -307,7 +323,9 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		if (currentTime >= buyFinishTime)
 		{
 			// Hardware stores are closed during a lockdown
-			if (lastHardwareBuy >= m_behavior.hardwareBuyInterval && !m_community->ContainmentMeasures().IsLockdown())
+			if (lastHardwareBuy >= m_behavior.hardwareBuyInterval
+				&& !containmentMeasures.ShopsAreClosed()
+				&& !containmentMeasures.IsLockdown())
 			{
 				// No preparation needed. Just go shopping.
 				GoHardwareShopping(currentTime);
@@ -320,14 +338,17 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 		break;
 	case DiseaseSpreadSimulation::Place_Type::Workplace:
 		// Go traveling or home after the work has finished
-		// No traveling during a lockdown
-		if (WillTravel() && !m_community->ContainmentMeasures().IsLockdown())
+		if (currentTime >= workFinishTime)
 		{
-			StartTraveling();
-		}
-		else if (currentTime >= workFinishTime)
-		{
-			whereabouts = m_community->TransferToHome(this);
+			// No traveling during a lockdown
+			if (WillTravel() && !containmentMeasures.IsLockdown())
+			{
+				StartTraveling();
+			}
+			else
+			{
+				whereabouts = m_community->TransferToHome(this);
+			}
 		}
 		break;
 	case DiseaseSpreadSimulation::Place_Type::School:
@@ -405,13 +426,39 @@ void DiseaseSpreadSimulation::Person::GoHardwareShopping(uint32_t currentTime)
 
 bool DiseaseSpreadSimulation::Person::WillTravel() const
 {
-	return Random::Percent<float>() <= m_behavior.travelNeed;
+	auto modifiedTravelNeed = m_behavior.travelNeed;
+
+	// Reduce the travel need by 10% per mandate if the person is compliant
+	if (m_behavior.acceptanceFactor >= PersonBehavior::acceptanceFactorThreshold)
+	{
+		constexpr float travelNeedReduction{.9F};
+		if (m_community->ContainmentMeasures().IsMaskMandate())
+		{
+			modifiedTravelNeed *= travelNeedReduction;
+		}
+		if (m_community->ContainmentMeasures().WorkingFromHome())
+		{
+			modifiedTravelNeed *= travelNeedReduction;
+		}
+		if (m_community->ContainmentMeasures().ShopsAreClosed())
+		{
+			modifiedTravelNeed *= travelNeedReduction;
+		}
+	}
+
+	return Random::Percent<float>() <= modifiedTravelNeed;
 }
 
 void DiseaseSpreadSimulation::Person::StartTraveling()
 {
 	whereabouts = m_community->TransferToTravelLocation(this);
 	isTraveling = true;
+}
+
+void DiseaseSpreadSimulation::Person::SpreadDisease(Person& spreader, Person& other)
+{
+	other.infection.Contaminate(spreader.infection.GetDisease(), other.m_age);
+	spreader.infection.IncreaseSpreadCount();
 }
 
 void DiseaseSpreadSimulation::Person::StartQuarantine()

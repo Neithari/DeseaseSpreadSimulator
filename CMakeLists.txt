@@ -41,7 +41,7 @@ run_vcpkg(ENABLE_VCPKG_UPDATE TRUE VCPKG_DIR "${VCPKG_ROOT}")
 # Set the project name and language
 project(
   DiseaseSpreadSimulator
-  VERSION 0.0.1
+  VERSION 0.1.0
   DESCRIPTION "Simulating the spread of a disease"
   LANGUAGES CXX
 )

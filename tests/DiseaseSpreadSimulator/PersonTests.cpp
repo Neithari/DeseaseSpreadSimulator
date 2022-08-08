@@ -405,6 +405,7 @@ namespace UnitTests
 		static constexpr size_t evenCount{100};
 		static constexpr size_t unevenCount{111};
 		DiseaseSpreadSimulation::Country country{DiseaseSpreadSimulation::Country::USA};
+		DiseaseSpreadSimulation::Community community{0U, DiseaseSpreadSimulation::Country::USA};
 
 		DiseaseSpreadSimulation::Statistics::HumanDistribution human1{DiseaseSpreadSimulation::Age_Group::UnderTen, DiseaseSpreadSimulation::Sex::Male, 0.25F};
 		DiseaseSpreadSimulation::Statistics::HumanDistribution human2{DiseaseSpreadSimulation::Age_Group::UnderTwenty, DiseaseSpreadSimulation::Sex::Female, 0.25F};
@@ -429,7 +430,7 @@ namespace UnitTests
 	{
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(evenCount, country);
-		auto population1 = populator1.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population1 = populator1.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		ASSERT_EQ(population1.size(), evenCount);
 	}
@@ -437,7 +438,7 @@ namespace UnitTests
 	{
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(unevenCount, country);
-		auto population2 = populator2.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population2 = populator2.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		ASSERT_EQ(population2.size(), unevenCount);
 	}
@@ -445,7 +446,7 @@ namespace UnitTests
 	{
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(evenCount, country);
-		auto population3 = populator3.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population3 = populator3.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		ASSERT_EQ(population3.size(), evenCount);
 	}
@@ -453,7 +454,7 @@ namespace UnitTests
 	{
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(unevenCount, country);
-		auto population4 = populator4.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population4 = populator4.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		ASSERT_EQ(population4.size(), unevenCount);
 	}
@@ -466,7 +467,7 @@ namespace UnitTests
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(evenCount, country);
-		auto population1 = populator1.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population1 = populator1.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		for (const auto& person : population1)
 		{
@@ -509,7 +510,7 @@ namespace UnitTests
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(unevenCount, country);
-		auto population2 = populator2.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population2 = populator2.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		for (const auto& person : population2)
 		{
@@ -552,7 +553,7 @@ namespace UnitTests
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(evenCount, country);
-		auto population3 = populator3.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population3 = populator3.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		for (const auto& person : population3)
 		{
@@ -595,7 +596,7 @@ namespace UnitTests
 
 		// Setup population
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(unevenCount, country);
-		auto population4 = populator4.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population4 = populator4.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		for (const auto& person : population4)
 		{
@@ -707,7 +708,7 @@ namespace UnitTests
 				{
 					PersonPopulator populationFactory(populationSize1, PersonPopulator::GetCountryDistribution(country));
 					auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(populationSize1, country);
-					auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+					auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 					auto homePercent1 = GetHomePercentFromPopulation(population);
 					for (size_t i = 0; i < homePercent1.size(); i++)
@@ -726,7 +727,7 @@ namespace UnitTests
 		size_t populationSize2{10000}; // NOLINT(*-magic-numbers)
 		PersonPopulator populationFactory(populationSize2, PersonPopulator::GetCountryDistribution(country));
 		auto places = DiseaseSpreadSimulation::PlaceBuilder::CreatePlaces(populationSize2, country);
-		auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools);
+		auto population = populationFactory.CreatePopulation(country, places.homes, places.workplaces, places.schools, &community);
 
 		auto homePercent2 = GetHomePercentFromPopulation(population);
 		for (size_t i = 0; i < homePercent2.size(); i++)

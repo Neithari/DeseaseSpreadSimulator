@@ -57,6 +57,20 @@ std::vector<DiseaseSpreadSimulation::Person> DiseaseSpreadSimulation::PersonPopu
 		if (!noWorkplace && person.GetAgeGroup() > Age_Group::UnderTwenty && person.GetAgeGroup() <= Age_Group::UnderSeventy)
 		{
 			person.SetWorkplace(AssignWorkplace(workplacesBySize));
+			// Check if the person can work from home or has a critical infrastructure job
+
+			// 50% of working people are allowed to go to work when there is a working from home mandate.
+			// Reflecting jobs that are not capable of work from home
+			if (Random::Percent<float>() <= community->ContainmentMeasures().percentOfJobsNoWorkFromHome)
+			{
+				person.SetCanWorkFromHome();
+			}
+			// During a lockdown only 10% of people are allowed to go to work
+			// Reflecting jobs that are mandatory to supply people
+			if (Random::Percent<float>() <= community->ContainmentMeasures().percentOfJobsMandatoryToSupply)
+			{
+				person.SetHasCriticalInfrastructureJob();
+			}
 		}
 		// Assign a school for every person under twenty
 		else if (person.GetAgeGroup() <= Age_Group::UnderTwenty)
