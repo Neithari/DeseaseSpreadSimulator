@@ -309,7 +309,7 @@ size_t DiseaseSpreadSimulation::Community::CurrentInfectionMax() const
 	return static_cast<size_t>(std::count_if(m_population.begin(), m_population.end(), [](const auto& person)
 		{
 			// Every person that is no longer alive or has recovered or has a disease is or was infected
-			return (!person.IsAlive() || person.HasRecovered() || person.IsInfectious() || person.HasDisease());
+			return (!person.IsAlive() || person.HasRecovered() || person.HasDisease());
 		}));
 }
 
