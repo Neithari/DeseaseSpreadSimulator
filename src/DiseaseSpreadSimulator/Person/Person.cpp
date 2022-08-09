@@ -235,14 +235,11 @@ void DiseaseSpreadSimulation::Person::CheckNextMove(uint32_t currentTime, bool& 
 	}
 
 	// Test if we have symptoms
-	if (infection.HasSymptoms() && currentTime >= shopOpenTime)
+	// When our acceptance factor is too low, we decide random if we test or not with a small chance for a test
+	if ((infection.HasSymptoms() && currentTime >= shopOpenTime) &&
+		!(m_behavior.acceptanceFactor <= PersonBehavior::acceptanceFactorThreshold
+			&& Random::Percent<float>() > m_behavior.acceptanceFactor))
 	{
-		// When our acceptance factor is too low, we decide random if we test or not
-		if (m_behavior.acceptanceFactor <= PersonBehavior::acceptanceFactorThreshold && Random::Percent<float>() > m_behavior.acceptanceFactor)
-		{
-			return;
-		}
-
 		m_community->TestStation(this);
 		return;
 	}
