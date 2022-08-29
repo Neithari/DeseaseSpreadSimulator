@@ -60,6 +60,25 @@ const std::string& DiseaseSpreadSimulation::CommandParser::GetDiseaseFilename() 
 	return emptyString;
 }
 
+DiseaseSpreadSimulation::Country DiseaseSpreadSimulation::CommandParser::GetCountry() const
+{
+	static constexpr auto command{"-c"};
+	if (CommandExist(command))
+	{
+		const auto& country = GetCommandOption(command);
+		if (country == "USA")
+		{
+			return Country::USA;
+		}
+		if (country == "Germany")
+		{
+			return Country::Germany;
+		}
+	}
+
+	return Country::USA;
+}
+
 bool DiseaseSpreadSimulation::CommandParser::CommandExist(std::string_view command) const
 {
 	return std::find(commands.begin(), commands.end(), command) != commands.end();
