@@ -1,6 +1,8 @@
+#include <cstdint>
 #include <vector>
 #include <string>
 #include <string_view>
+#include "Enums.h"
 
 namespace DiseaseSpreadSimulation
 {
@@ -11,15 +13,21 @@ namespace DiseaseSpreadSimulation
 
 		// Will return default or command line argument provided population size
 		[[nodiscard]] uint64_t GetPopulationSize() const;
+
 		// Will return default or command line argument provided days to run
 		[[nodiscard]] uint32_t GetDaysToRun() const;
+
 		// Will return default or command line argument provided number of runs
 		[[nodiscard]] uint32_t GetNumberOfRuns() const;
+
 		// Will return false default or true if command line argument is provided
 		[[nodiscard]] bool GetWithPrint() const;
-		
+
 		// Filename can be empty
 		[[nodiscard]] const std::string& GetDiseaseFilename() const;
+
+		// Will return default or command line argument provided country
+		[[nodiscard]] Country GetCountry() const;
 
 		[[nodiscard]] bool CommandExist(std::string_view command) const;
 		[[nodiscard]] const std::string& GetCommandOption(std::string_view command) const;

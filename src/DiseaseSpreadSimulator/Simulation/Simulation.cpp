@@ -8,8 +8,9 @@
 #include "Disease/DiseaseBuilder.h"
 #include "RandomNumbers.h"
 
-DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint, const std::string& diseaseFilename)
+DiseaseSpreadSimulation::Simulation::Simulation(uint64_t populationSize, bool withPrint, const std::string& diseaseFilename, Country country)
 	: m_withPrint(withPrint),
+	  m_country(country),
 	  m_populationSize(populationSize),
 	  m_diseaseFilename(diseaseFilename),
 	  // log10(x) + 1 casted to int will give us the digit count of x (1=1, 10=2, 100=3,...)
@@ -424,6 +425,18 @@ void DiseaseSpreadSimulation::Simulation::SetDiseaseContainmentMeasures(Communit
 	}
 }
 
+void DiseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Disease* disease, Community* community)
+{
+	travelInfecter.Contaminate(disease);
+	travelInfecter.SetCommunity(community);
+	Home home{};
+	travelInfecter.SetHome(&home);
+	while (!travelInfecter.IsInfectious())
+	{
+		travelInfecter.Update(0, true, true);
+	}
+}
+
 void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCount)
 {
 	// Don't run the whole setup twice
@@ -471,18 +484,6 @@ void DiseaseSpreadSimulation::Simulation::SetupEverything(uint32_t communityCoun
 void DiseaseSpreadSimulation::Simulation::InfectRandomPerson(const Disease* disease, std::vector<Person>& population)
 {
 	population.at(Random::RandomVectorIndex(population)).Contaminate(disease);
-}
-
-void DiseaseSpreadSimulation::Simulation::SetupTravelInfecter(const Disease* disease, Community* community)
-{
-	travelInfecter.Contaminate(disease);
-	travelInfecter.SetCommunity(community);
-	Home home{};
-	travelInfecter.SetHome(&home);
-	while (!travelInfecter.IsInfectious())
-	{
-		travelInfecter.Update(0, true, true);
-	}
 }
 
 void DiseaseSpreadSimulation::Simulation::CreateCommunities(uint32_t communityCount)

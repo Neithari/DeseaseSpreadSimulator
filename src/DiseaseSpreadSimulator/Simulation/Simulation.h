@@ -14,7 +14,7 @@ namespace DiseaseSpreadSimulation
 	class Simulation
 	{
 	public:
-		explicit Simulation(uint64_t populationSize, bool withPrint, const std::string& diseaseFilename);
+		explicit Simulation(uint64_t populationSize, bool withPrint, const std::string& diseaseFilename, Country country);
 
 		void Run();
 		// Will run the simulation for the stated days and print a result after
@@ -26,9 +26,9 @@ namespace DiseaseSpreadSimulation
 		void CreateCommunity(bool maskMandate = false, bool homeOffice = false, bool closeShops = false, bool lockdown = false);
 
 	private:
+		void SetupTravelInfecter(const Disease* disease, Community* community);
 		void SetupEverything(uint32_t communityCount);
 		static void InfectRandomPerson(const Disease* disease, std::vector<Person>& population);
-		void SetupTravelInfecter(const Disease* disease, Community* community);
 		void CreateCommunities(uint32_t communityCount);
 		void ResetCommunities();
 		void ResetElapsedTime();
@@ -60,7 +60,7 @@ namespace DiseaseSpreadSimulation
 		bool pause{false};
 		bool isSetupDone{false};
 
-		static constexpr auto m_country{Country::USA};
+		const Country m_country{};
 		uint64_t m_populationSize{};
 		const std::string& m_diseaseFilename;
 		const uint32_t m_initialPopulationSizeDigitCount{};
